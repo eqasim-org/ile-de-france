@@ -5,8 +5,8 @@
 This repository contains the code to create an open data synthetic population
 of the Île-de-France region around in Paris.
 
-- [How to use this pipeline to create your own scenario](howto.md)
-- [How to run a MATSim transport simulation for Île-de-France](howto.md)
+- [How to use this pipeline to create your own scenario](docs/howto.md)
+- [How to run a MATSim transport simulation for Île-de-France](docs/howto.md)
 
 ## Main reference
 
