@@ -1,0 +1,14 @@
+matplotlib==3.1.3
+pandas==0.25.3
+scipy==1.2.1
+numpy==1.17.4
+geopandas==0.7.0
+numba==0.49.0
+palettable==3.3.0
+scikit_learn==0.22.2.post1
+Shapely==1.7.0
+simpledbf==0.2.6
+tqdm==4.45.0
+synpp==1.2.1
+tables==3.6.1
+xlrd==1.2.0

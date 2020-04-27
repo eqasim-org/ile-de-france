@@ -1,0 +1,122 @@
+import pandas as pd
+import numpy as np
+
+def configure(context):
+    context.stage("data.od.weighted")
+    context.stage("synthesis.destinations")
+
+    context.stage("synthesis.population.spatial.home.zones")
+    context.stage("synthesis.population.enriched")
+    context.stage("synthesis.population.trips")
+
+    context.config("random_seed")
+
+def sample_destination_municipalities(context, arguments):
+    # Load data
+    origin_id, count, random_seed = arguments
+    df_od = context.data("df_od")
+
+    # Prepare state
+    random = np.random.RandomState(random_seed)
+    df_od = df_od[df_od["origin_id"] == origin_id].copy()
+
+    # Sample destinations
+    df_od["count"] = random.multinomial(count, df_od["weight"].values)
+    df_od = df_od[df_od["count"] > 0]
+
+    context.progress.update()
+    return df_od[["origin_id", "destination_id", "count"]]
+
+def sample_locations(context, arguments):
+    # Load data
+    destination_id, random_seed = arguments
+    df_destinations, df_flow = context.data("df_destinations"), context.data("df_flow")
+
+    # Prepare state
+    random = np.random.RandomState(random_seed)
+    df_destinations = df_destinations[df_destinations["commune_id"] == destination_id]
+
+    # Determine demand
+    df_flow = df_flow[df_flow["destination_id"] == destination_id]
+    count = df_flow["count"].sum()
+
+    # Sample destinations
+    indices = random.randint(len(df_destinations), size = count)
+
+    # Construct a data set for all commutes to this zone
+    origin_id = np.repeat(df_flow["origin_id"].values, df_flow["count"].values)
+    destination_ids = df_destinations.iloc[indices]["destination_id"].values
+
+    df_result = pd.DataFrame.from_records(dict(
+        origin_commune_id = origin_id,
+        destination_id = destination_ids
+    ))
+    df_result["destination_commune_id"] = destination_id
+
+    return df_result
+
+def process(context, purpose, random, df_persons, df_od, df_destinations):
+    df_persons = df_persons[df_persons["has_%s_trip" % purpose]]
+
+    # Sample commute flows based on population
+    df_demand = df_persons.groupby("commune_id").size().reset_index(name = "count")
+    df_demand["random_seed"] = random.randint(0, int(1e6), len(df_demand))
+    df_demand = df_demand[["commune_id", "count", "random_seed"]]
+
+    df_flow = []
+
+    with context.progress(label = "Sampling %s municipalities" % purpose, total = len(df_demand)) as progress:
+        with context.parallel(dict(df_od = df_od)) as parallel:
+            for df_partial in parallel.imap_unordered(sample_destination_municipalities, df_demand.itertuples(index = False, name = None)):
+                df_flow.append(df_partial)
+
+    df_flow = pd.concat(df_flow)
+
+    # Sample destinations based on the obtained flows
+    unique_ids = df_flow["destination_id"].unique()
+    random_seeds = random.randint(0, int(1e6), len(unique_ids))
+
+    df_result = []
+
+    with context.progress(label = "Sampling %s destinations" % purpose, total = len(df_demand)) as progress:
+        with context.parallel(dict(df_destinations = df_destinations, df_flow = df_flow)) as parallel:
+            for df_partial in parallel.imap_unordered(sample_locations, zip(unique_ids, random_seeds)):
+                df_result.append(df_partial)
+
+    df_result = pd.concat(df_result)
+
+    return df_result[["origin_commune_id", "destination_commune_id", "destination_id"]]
+
+def execute(context):
+    # Prepare population data
+    df_persons = context.stage("synthesis.population.enriched")[["person_id", "household_id"]].copy()
+    df_trips = context.stage("synthesis.population.trips")
+
+    df_persons["has_work_trip"] = df_persons["person_id"].isin(df_trips[df_trips["following_purpose"] == "work"]["person_id"])
+    df_persons["has_education_trip"] = df_persons["person_id"].isin(df_trips[df_trips["following_purpose"] == "education"]["person_id"])
+
+    df_homes = context.stage("synthesis.population.spatial.home.zones")
+    df_persons = pd.merge(df_persons, df_homes, on = "household_id")
+
+    # Prepare spatial data
+    df_work_od, df_education_od = context.stage("data.od.weighted")
+    df_destinations = context.stage("synthesis.destinations")
+
+    # Sampling
+    random = np.random.RandomState(context.config("random_seed"))
+
+    df_work = process(context, "work", random, df_persons,
+        df_work_od, df_destinations[df_destinations["offers_work"]]
+    )
+
+    df_education = process(context, "education", random, df_persons,
+        df_education_od, df_destinations[df_destinations["offers_education"]]
+    )
+
+    return dict(
+        work_candidates = df_work,
+        education_candidates = df_education,
+        persons = df_persons[df_persons["has_work_trip"] | df_persons["has_education_trip"]][[
+            "person_id", "household_id", "commune_id", "has_work_trip", "has_education_trip"
+        ]]
+    )

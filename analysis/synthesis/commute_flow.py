@@ -1,0 +1,65 @@
+import pandas as pd
+import numpy as np
+
+import analysis.bootstrapping as bs
+import analysis.statistics as stats
+import analysis.marginals as marginals
+
+ESTIMATION_SAMPLE_SIZE = 1000
+
+def configure(context):
+    acquisition_sample_size = context.config("acquisition_sample_size")
+
+    bs.configure(context, "synthesis.population.spatial.home.zones", acquisition_sample_size)
+    bs.configure(context, "synthesis.population.spatial.primary.locations", acquisition_sample_size)
+    bs.configure(context, "synthesis.population.sampled", acquisition_sample_size)
+
+def execute(context):
+    acquisition_sample_size = context.config("acquisition_sample_size")
+
+    feeder = zip(
+        bs.get_stages(context, "synthesis.population.spatial.home.zones", acquisition_sample_size),
+        bs.get_stages(context, "synthesis.population.spatial.primary.locations", acquisition_sample_size),
+        bs.get_stages(context, "synthesis.population.sampled", acquisition_sample_size),
+    )
+
+    work_flows = []
+    education_flows = []
+
+    with context.progress(label = "Processing commute data ...", total = acquisition_sample_size) as progress:
+        for sample, (df_home, df_spatial, df_persons) in enumerate(feeder):
+            # Prepare home
+            df_home = pd.merge(df_persons[["person_id", "household_id"]], df_home, on = "household_id")
+            df_home = df_home[["person_id", "departement_id"]].rename(columns = { "departement_id": "home" })
+
+            # Prepare work
+            df_work = df_spatial[0]
+            df_work["departement_id"] = df_work["commune_id"] // 1000
+            df_work = df_work[["person_id", "departement_id"]].rename(columns = { "departement_id": "work" })
+
+            # Calculate work
+            df_work = pd.merge(df_home, df_work, on = "person_id").groupby(["home", "work"]).size().reset_index(name = "weight")
+            df_work = df_work.reset_index()
+            df_work["sample"] = sample
+            work_flows.append(df_work)
+
+            # Prepare work
+            df_education = df_spatial[1]
+            df_education["departement_id"] = df_education["commune_id"] // 1000
+            df_education = df_education[["person_id", "departement_id"]].rename(columns = { "departement_id": "education" })
+
+            # Calculate education
+            df_education = pd.merge(df_home, df_education, on = "person_id").groupby(["home", "education"]).size().reset_index(name = "weight")
+            df_education = df_education.reset_index()
+            df_education["sample"] = sample
+            education_flows.append(df_education)
+
+            progress.update()
+
+    df_work = pd.concat(work_flows)
+    df_education = pd.concat(education_flows)
+
+    df_work = stats.bootstrap(df_work, ESTIMATION_SAMPLE_SIZE)
+    df_education = stats.bootstrap(df_education, ESTIMATION_SAMPLE_SIZE)
+
+    return dict(work = df_work, education = df_education)

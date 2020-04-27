@@ -1,0 +1,105 @@
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+
+def configure(context):
+    context.stage("synthesis.population.spatial.primary.candidates")
+    context.stage("synthesis.population.spatial.commute_distance")
+    context.stage("synthesis.population.spatial.home.locations")
+    context.stage("synthesis.destinations")
+
+def define_distance_ordering(df_persons, df_candidates):
+    indices = []
+
+    commute_coordinates = np.vstack([
+        df_candidates["geometry"].x.values,
+        df_candidates["geometry"].y.values
+    ]).T
+
+    for home_coordinate, commute_distance in zip(df_persons["home_location"], df_persons["commute_distance"]):
+        distances = np.sqrt(np.sum((commute_coordinates - home_coordinate)**2, axis = 1))
+        costs = np.abs(distances - commute_distance)
+        costs[indices] = np.inf
+        indices.append(np.argmin(costs))
+
+    return indices
+
+def define_random_ordering(df_persons, df_candidates):
+    return np.arange(len(df_candidates))
+
+define_ordering = define_distance_ordering
+
+def process_municipality(context, origin_id):
+    # Load data
+    df_candidates, df_persons = context.data("df_candidates"), context.data("df_persons")
+
+    # Find relevant records
+    df_persons = df_persons[df_persons["commune_id"] == origin_id][[
+        "person_id", "home_location", "commute_distance"
+    ]].copy()
+    df_candidates = df_candidates[df_candidates["origin_commune_id"] == origin_id]
+
+    # From previous step, this should be equal!
+    assert len(df_persons) == len(df_candidates)
+
+    indices = define_ordering(df_persons, df_candidates)
+    df_candidates = df_candidates.iloc[indices]
+
+    df_candidates["person_id"] = df_persons["person_id"].values
+    df_candidates = df_candidates.rename(columns = dict(destination_commune_id = "commune_id"))
+
+    return df_candidates[["person_id", "commune_id", "destination_id", "geometry"]]
+
+def process(context, purpose, df_persons, df_candidates):
+    unique_ids = df_candidates["origin_commune_id"].unique()
+
+    df_result = []
+
+    with context.progress(label = "Distributing %s destinations" % purpose, total = len(unique_ids)) as progress:
+        with context.parallel(dict(df_persons = df_persons, df_candidates = df_candidates)) as parallel:
+            for df_partial in parallel.imap_unordered(process_municipality, unique_ids):
+                df_result.append(df_partial)
+
+    return pd.concat(df_result)
+
+def execute(context):
+    data = context.stage("synthesis.population.spatial.primary.candidates")
+    df_persons = data["persons"]
+
+    # Separate data set
+    df_work = df_persons[df_persons["has_work_trip"]]
+    df_education = df_persons[df_persons["has_education_trip"]]
+
+    # Attach home locations
+    df_home = context.stage("synthesis.population.spatial.home.locations")
+
+    df_work = pd.merge(df_work, df_home[["household_id", "geometry"]].rename(columns = {
+        "geometry": "home_location"
+    }), how = "left", on = "household_id")
+
+    df_education = pd.merge(df_education, df_home[["household_id", "geometry"]].rename(columns = {
+        "geometry": "home_location"
+    }), how = "left", on = "household_id")
+
+    # Attach commute distances
+    df_commute_distance = context.stage("synthesis.population.spatial.commute_distance")
+
+    df_work = pd.merge(df_work, df_commute_distance["work"], how = "left", on = "person_id")
+    df_education = pd.merge(df_education, df_commute_distance["education"], how = "left", on = "person_id")
+
+    # Attach geometry
+    df_destinations = context.stage("synthesis.destinations")[["destination_id", "geometry"]]
+
+    df_work_candidates = data["work_candidates"]
+    df_work_candidates = pd.merge(df_work_candidates, df_destinations, how = "left", on = "destination_id")
+    df_work_candidates = gpd.GeoDataFrame(df_work_candidates)
+
+    df_education_candidates = data["education_candidates"]
+    df_education_candidates = pd.merge(df_education_candidates, df_destinations, how = "left", on = "destination_id")
+    df_education_candidates = gpd.GeoDataFrame(df_education_candidates)
+
+    # Assign destinations
+    df_work = process(context, "work", df_work, df_work_candidates)
+    df_education = process(context, "education", df_education, df_education_candidates)
+
+    return df_work, df_education
