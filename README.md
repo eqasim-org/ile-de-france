@@ -1,4 +1,4 @@
-# Synthetic population for Île-de-France
+# An open synthetic population of Île-de-France
 
 ![Via Île-de-France](docs/via.png "Via Île-de-France")
 
