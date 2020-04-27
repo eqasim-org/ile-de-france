@@ -315,7 +315,7 @@ If you want to run the simulation again (in the pipeline it is only run for
 two iterations to test that everything works), you can now call the following:
 
 ```bash
-java -Xmx14G -cp ile_de_france-1.0.5.jar org.eqasim.ile_de_france.RunSimulation ile_de_france_config.xml
+java -Xmx14G -cp ile_de_france-1.0.5.jar org.eqasim.ile_de_france.RunSimulation --config-path ile_de_france_config.xml
 ```
 
 This will create a `simulation_output` folder (as defined in the `ile_de_france_config.xml`)
