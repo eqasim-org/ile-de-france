@@ -2,7 +2,6 @@ import numpy as np
 
 def configure(context):
     context.stage("data.hts.entd.filtered")
-    context.stage("data.hts.egt.filtered")
 
 def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.entd.filtered")
