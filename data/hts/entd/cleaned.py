@@ -169,7 +169,7 @@ def execute(context):
 
     # Trip purpose
     df_trips["following_purpose"] = "other"
-    df_trips["preceeding_purpose"] = "other"
+    df_trips["preceding_purpose"] = "other"
 
     for prefix, activity_type in PURPOSE_MAP:
         df_trips.loc[
@@ -177,11 +177,11 @@ def execute(context):
         ] = activity_type
 
         df_trips.loc[
-            df_trips["V2_MMOTIFORI"].astype(np.str).str.startswith(prefix), "preceeding_purpose"
+            df_trips["V2_MMOTIFORI"].astype(np.str).str.startswith(prefix), "preceding_purpose"
         ] = activity_type
 
     df_trips["following_purpose"] = df_trips["following_purpose"].astype("category")
-    df_trips["preceeding_purpose"] = df_trips["preceeding_purpose"].astype("category")
+    df_trips["preceding_purpose"] = df_trips["preceding_purpose"].astype("category")
 
     # Trip mode
     df_trips["mode"] = "pt"

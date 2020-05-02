@@ -13,7 +13,7 @@ def execute(context):
     df_households, df_persons, df_activities = context.stage("hts")
 
     # Shift times and types of trips to arrive at activities
-    df_activities["purpose"] = df_activities["preceeding_purpose"]
+    df_activities["purpose"] = df_activities["preceding_purpose"]
     df_activities["end_time"] = df_activities["departure_time"]
 
     df_activities["start_time"] = df_activities.shift(1)["arrival_time"]

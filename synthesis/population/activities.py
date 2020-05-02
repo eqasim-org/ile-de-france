@@ -20,11 +20,11 @@ def execute(context):
 
     # Make sure that days start and end at home. May be handled more flexible
     # in the future.
-    assert not np.any(df_activities["is_first_trip"] & (df_activities["preceeding_purpose"] != "home"))
+    assert not np.any(df_activities["is_first_trip"] & (df_activities["preceding_purpose"] != "home"))
     assert not np.any(df_activities["is_last_trip"] & (df_activities["following_purpose"] != "home"))
 
     # Shift times and types of trips to arrive at activities
-    df_activities["purpose"] = df_activities["preceeding_purpose"]
+    df_activities["purpose"] = df_activities["preceding_purpose"]
     df_activities["end_time"] = df_activities["departure_time"]
 
     df_activities["start_time"] = df_activities.shift(1)["arrival_time"]

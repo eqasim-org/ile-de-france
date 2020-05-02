@@ -24,7 +24,7 @@ def fix_trip_times(df_trips):
 
     - Intresecting trips
     """
-    columns = ["trip_id", "person_id", "departure_time", "arrival_time", "preceeding_purpose", "following_purpose", "is_first_trip", "is_last_trip"]
+    columns = ["trip_id", "person_id", "departure_time", "arrival_time", "preceding_purpose", "following_purpose", "is_first_trip", "is_last_trip"]
     df_main = df_trips
     df_next = df_main.shift(-1)
     df_previous = df_main.shift(1)
@@ -56,7 +56,7 @@ def fix_trip_times(df_trips):
     df_main.loc[f_negative, "arrival_time"] += 24 * 3600.0
 
     # 2) Current trip is after following trip
-    #    = preceeding trip is after current trip
+    #    = preceding trip is after current trip
     shifted_count = 1
     round = 0
 
@@ -162,15 +162,15 @@ def check_trip_times(df_trips):
         return True
 
 def fix_activity_types(df_trips):
-    f = (df_trips["preceeding_purpose"] != df_trips["following_purpose"].shift(1)) & ~df_trips["is_first_trip"]
-    df_trips.loc[f, "preceeding_purpose"] = df_trips.shift(1)["following_purpose"][f].values
+    f = (df_trips["preceding_purpose"] != df_trips["following_purpose"].shift(1)) & ~df_trips["is_first_trip"]
+    df_trips.loc[f, "preceding_purpose"] = df_trips.shift(1)["following_purpose"][f].values
     print("Fixing %d inconsistent activity types" % np.count_nonzero(f))
 
     check_activity_types(df_trips)
 
 def check_activity_types(df_trips):
-    f  = (df_trips["following_purpose"] != df_trips["preceeding_purpose"].shift(-1)) & ~df_trips["is_last_trip"]
-    f |= (df_trips["following_purpose"].shift(1) != df_trips["preceeding_purpose"]) & ~df_trips["is_first_trip"]
+    f  = (df_trips["following_purpose"] != df_trips["preceding_purpose"].shift(-1)) & ~df_trips["is_last_trip"]
+    f |= (df_trips["following_purpose"].shift(1) != df_trips["preceding_purpose"]) & ~df_trips["is_first_trip"]
 
     error_count = np.count_nonzero(f)
     print("Trips with inconsistent activity types: %d" % error_count)
@@ -231,7 +231,7 @@ TRIP_COLUMNS = [
     "person_id", "trip_id", "trip_weight",
     "departure_time", "arrival_time",
     "trip_duration", "activity_duration",
-    "following_purpose", "preceeding_purpose", "is_last_trip", "is_first_trip",
+    "following_purpose", "preceding_purpose", "is_last_trip", "is_first_trip",
     "mode", "origin_departement_id", "destination_departement_id"
 ]
 

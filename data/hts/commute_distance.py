@@ -15,8 +15,8 @@ def get_commuting_distance(df_persons, df_trips, activity_type, random):
 
     # Add commuting distances
     df_commute_distance = df_trips[
-        ((df_trips["preceeding_purpose"] == "home") & (df_trips["following_purpose"] == activity_type)) |
-        ((df_trips["preceeding_purpose"] == activity_type) & (df_trips["following_purpose"] == "home"))
+        ((df_trips["preceding_purpose"] == "home") & (df_trips["following_purpose"] == activity_type)) |
+        ((df_trips["preceding_purpose"] == activity_type) & (df_trips["following_purpose"] == "home"))
     ].drop_duplicates("person_id", keep = "first")[["person_id", distance_slot]].rename(columns = { distance_slot: "commute_distance" })
 
     df_persons = pd.merge(df_persons, df_commute_distance, on = "person_id", how = "left")

@@ -34,7 +34,7 @@ def execute(context):
 
             # Merge mode into distances
             df_trips = pd.merge(
-                df_trips[["person_id", "trip_index", "mode", "preceeding_purpose", "following_purpose", "departure_time", "arrival_time"]],
+                df_trips[["person_id", "trip_index", "mode", "preceding_purpose", "following_purpose", "departure_time", "arrival_time"]],
                 df_locations, on = ["person_id", "trip_index"], how = "inner"
             )
             df_trips["travel_time"] = df_trips["arrival_time"] - df_trips["departure_time"]
@@ -43,7 +43,7 @@ def execute(context):
             primary_activities = ["home", "work", "education"]
             #primary_activities = []
             df_trips = df_trips[~(
-                df_trips["preceeding_purpose"].isin(primary_activities) &
+                df_trips["preceding_purpose"].isin(primary_activities) &
                 df_trips["following_purpose"].isin(primary_activities)
             )]
 

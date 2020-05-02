@@ -1,14 +1,14 @@
 import numpy as np
 import pandas as pd
 
-FIELDS = ["person_id", "trip_index", "preceeding_purpose", "following_purpose", "mode", "travel_time"]
+FIELDS = ["person_id", "trip_index", "preceding_purpose", "following_purpose", "mode", "travel_time"]
 FIXED_PURPOSES = ["home", "work", "education"]
 
 def find_bare_assignment_problems(df):
     problem = None
 
     for row in df[FIELDS].itertuples(index = False):
-        person_id, trip_index, preceeding_purpose, following_purpose, mode, travel_time = row
+        person_id, trip_index, preceding_purpose, following_purpose, mode, travel_time = row
 
         if not problem is None and person_id != problem["person_id"]:
             # We switch person, but we're still tracking a problem. This is a tail!
@@ -18,7 +18,7 @@ def find_bare_assignment_problems(df):
         if problem is None:
             # Start a new problem
             problem = dict(
-                person_id = person_id, trip_index = trip_index, purposes = [preceeding_purpose],
+                person_id = person_id, trip_index = trip_index, purposes = [preceding_purpose],
                 modes = [], travel_times = []
             )
 

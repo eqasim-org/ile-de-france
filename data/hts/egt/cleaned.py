@@ -122,14 +122,14 @@ def execute(context):
 
     # Trip purpose
     df_trips["following_purpose"] = "other"
-    df_trips["preceeding_purpose"] = "other"
+    df_trips["preceding_purpose"] = "other"
 
     for category, purpose in PURPOSE_MAP.items():
         df_trips.loc[df_trips["DESTMOT_H9"] == category, "following_purpose"] = purpose
-        df_trips.loc[df_trips["ORMOT_H9"] == category, "preceeding_purpose"] = purpose
+        df_trips.loc[df_trips["ORMOT_H9"] == category, "preceding_purpose"] = purpose
 
     df_trips["following_purpose"] = df_trips["following_purpose"].astype("category")
-    df_trips["preceeding_purpose"] = df_trips["preceeding_purpose"].astype("category")
+    df_trips["preceding_purpose"] = df_trips["preceding_purpose"].astype("category")
 
     # Trip mode
     df_trips["mode"] = "pt"

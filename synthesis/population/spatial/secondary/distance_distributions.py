@@ -33,12 +33,12 @@ def execute(context):
     df_trips["travel_time"] = df_trips["arrival_time"] - df_trips["departure_time"]
 
     distance_column = "euclidean_distance" if "euclidean_distance" in df_trips else "routed_distance"
-    df = df_trips[["mode", "travel_time", distance_column, "weight", "preceeding_purpose", "following_purpose"]].rename(columns = { distance_column: "distance" })
+    df = df_trips[["mode", "travel_time", distance_column, "weight", "preceding_purpose", "following_purpose"]].rename(columns = { distance_column: "distance" })
 
     # Filtering
     primary_activities = ["home", "work", "education"]
     df = df[~(
-        df["preceeding_purpose"].isin(primary_activities) &
+        df["preceding_purpose"].isin(primary_activities) &
         df["following_purpose"].isin(primary_activities)
     )]
 
