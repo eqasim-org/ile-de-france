@@ -216,7 +216,7 @@ environment using [Anaconda](https://www.anaconda.com/):
 
 ```bash
 cd ile-de-france
-conda create -n ile-de-france --file environment.yml
+conda env create -f environment.yml
 ```
 
 This will create a new Anaconda environment with the name `ile-de-france`. (In
