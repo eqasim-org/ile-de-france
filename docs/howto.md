@@ -211,22 +211,22 @@ git clone https://github.com/eqasim-org/ile-de-france
 
 which will create the `ile-de-france` folder containing the pipeline code. To
 set up all dependencies, especially the [synpp](https://github.com/eqasim-org/synpp) package,
-which is the code of the pipeline code, we recommend setting up a virtual
-environment in Python inside of the `ile-de-france` folder:
+which is the code of the pipeline code, we recommend setting up a Python
+environment using [Anaconda](https://www.anaconda.com/):
 
 ```bash
 cd ile-de-france
-python3 -m virtualenv env
+conda create -n ile-de-france --file environment.yml
 ```
 
-This will create a new virtual environment inside of the `env` folder. To install
-all dependencies, we provide a `requirements.txt` which can be used with
-`pip`. For that, we first need to enter the virtual environment and then let
-`pip` collect all dependencies:
+This will create a new Anaconda environment with the name `ile-de-france`. (In
+case you don't want to use Anaconda, we also provide a `requirements.txt` to
+install all dependencies in a `virtualenv` using `pip install -r requirements.txt`).
+
+To activate the environment, run:
 
 ```bash
-source env/bin/activate
-pip install -r requirements.txt
+conda activate ile-de-france
 ```
 
 Now have a look at `config.yml` which is the configuration of the pipeline.
