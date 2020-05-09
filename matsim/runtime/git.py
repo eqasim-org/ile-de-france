@@ -23,7 +23,7 @@ def run(context, arguments = [], cwd = None):
         raise RuntimeError("Git return code: %d" % return_code)
 
 def validate(context):
-    assert b"2.25" in sp.check_output([
+    assert b"2.23" in sp.check_output([
         context.config("git_binary"),
         "--version"
     ], stderr = sp.STDOUT)

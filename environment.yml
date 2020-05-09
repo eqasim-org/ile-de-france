@@ -17,6 +17,7 @@ dependencies:
   - pytables=3.6.1
   - xlrd=1.2.0
   - pip=20.0.2
+  - git=2.23
 
   - pip:
     - simpledbf==0.2.6
