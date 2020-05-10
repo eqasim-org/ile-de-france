@@ -33,10 +33,11 @@ def run(context, arguments = [], cwd = None):
         raise RuntimeError("Maven return code: %d" % return_code)
 
 def validate(context):
-    assert b"3.6" in sp.check_output([
+    if not b"3." in sp.check_output([
         context.config("maven_binary"),
         "-version"
-    ], stderr = sp.STDOUT)
+    ], stderr = sp.STDOUT):
+        raise RuntimeError("Maven 3.x.x is required for this pipeline.")
 
 def execute(context):
     pass
