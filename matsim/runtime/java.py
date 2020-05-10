@@ -60,10 +60,11 @@ def run(context, entry_point, arguments = [], class_path = None, vm_arguments = 
         raise RuntimeError("Mode is expected to be one of 'raise', 'return_code' or 'output'")
 
 def validate(context):
-    assert b"11" in sp.check_output([
+    if not b"11" in sp.check_output([
         context.config("java_binary"),
         "-version"
-    ], stderr = sp.STDOUT)
+    ], stderr = sp.STDOUT):
+        raise RuntimeError("A Java JDK 11 is required for this pipeline.")
 
 def execute(context):
     pass
