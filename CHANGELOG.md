@@ -2,7 +2,8 @@
 
 **1.0.0-dev**
 
-- No changes yet
+- Make error message for runtime dependencies more verbose
+- Switch default instructions to Anaconda
 
 **1.0.0**
 
