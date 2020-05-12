@@ -1,7 +1,7 @@
 import shutil
 
 def configure(context):
-    context.stage("matsim.simulation.run")
+    context.stage("matsim.simulation.run", dict(iterations = 1))
     context.stage("matsim.simulation.prepare")
     context.stage("matsim.runtime.eqasim")
 

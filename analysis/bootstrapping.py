@@ -20,6 +20,13 @@ def configure(context, stage, sample_size, parameters = {}, alias = None, epheme
 def get_stage(context, alias, index):
     return context.stage("bootstrap_%s_%d" % (alias, index))
 
+def get_path(context, alias, index):
+    return context.path("bootstrap_%s_%d" % (alias, index))
+
 def get_stages(context, alias, sample_size):
     for index in range(sample_size):
         yield get_stage(context, alias, index)
+
+def get_paths(context, alias, sample_size):
+    for index in range(sample_size):
+        yield get_path(context, alias, index)
