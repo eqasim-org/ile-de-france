@@ -14,7 +14,7 @@ def execute(context):
     primary_activities = ["home", "work", "education"]
     #primary_activities = []
     df = df[~(
-        df["preceeding_purpose"].isin(primary_activities) &
+        df["preceding_purpose"].isin(primary_activities) &
         df["following_purpose"].isin(primary_activities)
     )]
 

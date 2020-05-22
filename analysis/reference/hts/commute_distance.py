@@ -14,13 +14,13 @@ def execute(context):
 
     # Prepare data frames
     df_work = df_trips[
-        ((df_trips["preceeding_purpose"] == "home") & (df_trips["following_purpose"] == "work")) |
-        ((df_trips["preceeding_purpose"] == "work") & (df_trips["following_purpose"] == "home"))
+        ((df_trips["preceding_purpose"] == "home") & (df_trips["following_purpose"] == "work")) |
+        ((df_trips["preceding_purpose"] == "work") & (df_trips["following_purpose"] == "home"))
     ].drop_duplicates("person_id", keep = "first")[["euclidean_distance", "weight"]]
 
     df_education = df_trips[
-        ((df_trips["preceeding_purpose"] == "home") & (df_trips["following_purpose"] == "education")) |
-        ((df_trips["preceeding_purpose"] == "education") & (df_trips["following_purpose"] == "home"))
+        ((df_trips["preceding_purpose"] == "home") & (df_trips["following_purpose"] == "education")) |
+        ((df_trips["preceding_purpose"] == "education") & (df_trips["following_purpose"] == "home"))
     ].drop_duplicates("person_id", keep = "first")[["euclidean_distance", "weight"]]
 
     # Prepare distributions

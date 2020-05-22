@@ -56,13 +56,13 @@ def execute(context):
         columns = { "trip_index": "following_trip_index" }
     )
 
-    df_activities["preceeding_trip_index"] = df_activities["following_trip_index"].shift(1)
-    df_activities.loc[df_activities["is_first"], "preceeding_trip_index"] = -1
-    df_activities["preceeding_trip_index"] = df_activities["preceeding_trip_index"].astype(int)
+    df_activities["preceding_trip_index"] = df_activities["following_trip_index"].shift(1)
+    df_activities.loc[df_activities["is_first"], "preceding_trip_index"] = -1
+    df_activities["preceding_trip_index"] = df_activities["preceding_trip_index"].astype(int)
 
     df_activities = df_activities[[
         "person_id", "activity_index",
-        "preceeding_trip_index", "following_trip_index",
+        "preceding_trip_index", "following_trip_index",
         "purpose", "start_time", "end_time",
         "is_first", "is_last"
     ]]
@@ -77,14 +77,14 @@ def execute(context):
         }
     )
 
-    df_trips["preceeding_activity_index"] = df_trips["trip_index"]
+    df_trips["preceding_activity_index"] = df_trips["trip_index"]
     df_trips["following_activity_index"] = df_trips["trip_index"] + 1
 
     df_trips = df_trips[[
         "person_id", "trip_index",
-        "preceeding_activity_index", "following_activity_index",
+        "preceding_activity_index", "following_activity_index",
         "departure_time", "arrival_time", "mode",
-        "preceeding_purpose", "following_purpose",
+        "preceding_purpose", "following_purpose",
         "is_first", "is_last"
     ]]
 
@@ -108,9 +108,9 @@ def execute(context):
     df_spatial = pd.merge(df_trips, df_locations[[
         "person_id", "activity_index", "geometry"
     ]].rename(columns = {
-        "activity_index": "preceeding_activity_index",
-        "geometry": "preceeding_geometry"
-    }), how = "left", on = ["person_id", "preceeding_activity_index"])
+        "activity_index": "preceding_activity_index",
+        "geometry": "preceding_geometry"
+    }), how = "left", on = ["person_id", "preceding_activity_index"])
 
     df_spatial = pd.merge(df_spatial, df_locations[[
         "person_id", "activity_index", "geometry"
@@ -121,14 +121,14 @@ def execute(context):
 
     df_spatial["geometry"] = [
         geo.LineString(od)
-        for od in zip(df_spatial["preceeding_geometry"], df_spatial["following_geometry"])
+        for od in zip(df_spatial["preceding_geometry"], df_spatial["following_geometry"])
     ]
 
-    df_spatial = df_spatial.drop(columns = ["preceeding_geometry", "following_geometry"])
+    df_spatial = df_spatial.drop(columns = ["preceding_geometry", "following_geometry"])
 
     df_spatial = gpd.GeoDataFrame(df_spatial, crs = dict(init = "epsg:2154"))
     df_spatial["following_purpose"] = df_spatial["following_purpose"].astype(str)
-    df_spatial["preceeding_purpose"] = df_spatial["preceeding_purpose"].astype(str)
+    df_spatial["preceding_purpose"] = df_spatial["preceding_purpose"].astype(str)
     df_spatial["mode"] = df_spatial["mode"].astype(str)
     df_spatial.to_file("%s/trips.gpkg" % output_path, driver = "GPKG")
 

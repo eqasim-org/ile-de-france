@@ -13,11 +13,11 @@ def execute(context):
 
     df_trips = context.stage("hts")[2][[
         "person_id", "origin_departement_id", "destination_departement_id",
-        "preceeding_purpose", "following_purpose"
+        "preceding_purpose", "following_purpose"
     ]]
 
     # Prepare homes
-    df_homes = df_trips[df_trips["preceeding_purpose"] == "home"][["person_id", "origin_departement_id"]].rename(
+    df_homes = df_trips[df_trips["preceding_purpose"] == "home"][["person_id", "origin_departement_id"]].rename(
         columns = { "origin_departement_id": "home" }
     ).drop_duplicates("person_id")
 
