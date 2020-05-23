@@ -18,7 +18,7 @@ file and additional data sets need to be provided.
 
 Corsica is not included in the census data set that is used for
 [Île-de-France](howto.md) (*Zone A*). Instead, the *dbase* version of
-*Zone E* needs to be downloaded from the [same source](https://www.insee.fr/fr/statistiques/362522).
+*Zone E* needs to be downloaded from the [same source](https://www.insee.fr/fr/statistiques/3625223).
 The downloaded file *FD_INDCVIZE_2015.dbf* should be put next to the file
 for Île-de-France (or instead of it) into the `rp_2015` data folder.
 
