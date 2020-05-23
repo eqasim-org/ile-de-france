@@ -22,7 +22,11 @@ def calculate_bounds(values, bin_size):
             bounds.append(value)
             previous_bound = value
 
-    bounds[-1] = np.inf
+    if len(bounds) > 0:
+        bounds[-1] = np.inf
+    else:
+        bounds.append(np.inf)
+        
     return bounds
 
 def execute(context):

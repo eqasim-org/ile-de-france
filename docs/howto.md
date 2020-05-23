@@ -101,7 +101,16 @@ The IRIS zoning system is available from IGN:
   - *CONTOURS-IRIS_2-1_SHP_LAMB93_FXX-2017*
 - Copy the contents of this folder (like *CONTOURS-IRIS.shp*) into the folder `data/iris_2017`.
 
-### 8) *(Optional)* Road network (OpenStreetMap)
+### 8) Zoning registry
+
+We make use of a zoning registry by INSEE that establishes a connection between
+the identifiers of IRIS, municipalities, departments and regions:
+
+- [Zoning data](https://www.insee.fr/fr/information/2017499)
+- Download the **2017** edition as a *zip* file.
+- Open the *zip* and copy the file `reference_IRIS_geo2017.xls` into `data/codes_2017`.
+
+### 9) *(Optional)* Road network (OpenStreetMap)
 
 Only in case you want to run a full simulation of the scenario (rather than
 creating the synthetic population in itself), you need to download OpenStreetMap
@@ -123,7 +132,7 @@ commands comvert the file:
 
 At the end, the `ile-de-france-latest.osm.gz` should be located in the folder.
 
-### 9) *(Optional)* Public transit schedule (GTFS)
+### 10) *(Optional)* Public transit schedule (GTFS)
 
 Again, only if you want to run a full simulation, you need to download the
 public transit schedule. It is available from Île-de-France mobilités:
@@ -179,6 +188,7 @@ Your folder structure should now have at least the following files:
 - `data/iris_2017/CONTOURS-IRIS.prj`
 - `data/iris_2017/CONTOURS-IRIS.shp`
 - `data/iris_2017/CONTOURS-IRIS.shx`
+- `data/codes_2017/reference_IRIS_geo2017.xls`
 
 If you want to run the simulation, there should be also the following files:
 

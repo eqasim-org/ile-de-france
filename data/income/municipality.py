@@ -13,7 +13,7 @@ Loads and prepares income distributions by municipality:
 
 def configure(context):
     context.config("data_path")
-    context.stage("data.spatial.zones")
+    context.stage("data.spatial.municipalities")
 
 def execute(context):
     # Load income distribution
@@ -24,26 +24,20 @@ def execute(context):
     df.columns = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
     df["reference_median"] = df["q5"].values
 
-    # Filter out invalid commune names
-    df["commune_id"] = pd.to_numeric(df["commune_id"], errors = "coerce")
-    df = df[~df["commune_id"].isna()]
-    df["commune_id"] = df["commune_id"].astype(int)
-
-    # Filter for all necessary communes
-    df_communes = context.stage("data.spatial.zones")
-    df_communes = df_communes[df_communes["zone_level"] == "commune"]
-    required_ids = set(df_communes["commune_id"])
-    df = df[df["commune_id"].isin(required_ids)]
+    # Verify spatial data for education
+    df_municipalities = context.stage("data.spatial.municipalities")
+    requested_communes = set(df_municipalities["commune_id"].unique())
+    df = df[df["commune_id"].isin(requested_communes)]
 
     # Find communes without data
-    existing_ids = set(df["commune_id"])
-    missing_ids = required_ids - existing_ids
-    print("Found %d/%d municipalities that are missing" % (len(missing_ids), len(required_ids)))
+    df["commune_id"] = df["commune_id"].astype("category")
+    missing_communes = set(df_municipalities["commune_id"].unique()) - set(df["commune_id"].unique())
+    print("Found %d/%d municipalities that are missing" % (len(missing_communes), len(requested_communes)))
 
     # Find communes without full distribution
     df["is_imputed"] = df["q2"].isna()
     df["is_missing"] = False
-    print("Found %d/%d municipalities which do not have full distribution" % (sum(df["is_imputed"]), len(required_ids)))
+    print("Found %d/%d municipalities which do not have full distribution" % (sum(df["is_imputed"]), len(requested_communes)))
 
     # First, find suitable distribution for incomplete cases by finding the one with the most similar median
     incomplete_medians = df[df["is_imputed"]]["q5"].values
@@ -58,12 +52,12 @@ def execute(context):
 
     # Second, add missing municipalities by neirest neighbor
     # ... build tree of existing communes
-    df_existing = df_communes[df_communes["commune_id"].isin(df["commune_id"])]
+    df_existing = df_municipalities[df_municipalities["commune_id"].astype(str).isin(df["commune_id"])] # pandas Bug
     coordinates = np.vstack([df_existing["geometry"].centroid.x, df_existing["geometry"].centroid.y]).T
     kd_tree = KDTree(coordinates)
 
     # ... query tree for missing communes
-    df_missing = df_communes[df_communes["commune_id"].isin(missing_ids)]
+    df_missing = df_municipalities[df_municipalities["commune_id"].astype(str).isin(missing_communes)] # pandas Bug
     coordinates = np.vstack([df_missing["geometry"].centroid.x, df_missing["geometry"].centroid.y]).T
     indices = kd_tree.query(coordinates)[1].flatten()
 
@@ -79,7 +73,7 @@ def execute(context):
     # ... merge the data frames
     df = pd.concat([df, df_reconstructed])
     assert len(df) == len(df["commune_id"].unique())
-    assert len(required_ids - set(df["commune_id"])) == 0
+    assert len(requested_communes - set(df["commune_id"].unique())) == 0
 
     return df[["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "is_imputed", "is_missing", "reference_median"]]
 

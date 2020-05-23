@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 
-FILTER_DEPARTEMENTS = [75, 77, 78, 91, 92, 93, 94, 95]
-
 def swap_departure_arrival_times(df, f):
     assert "arrival_time" in df
     assert "departure_time" in df

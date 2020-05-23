@@ -8,7 +8,10 @@ This stage loads the raw data from the French population census.
 """
 
 def configure(context):
+    context.stage("data.spatial.codes")
+
     context.config("data_path")
+    context.config("census_path", "rp_2015/FD_INDCVIZA_2015.dbf")
 
 COLUMNS = [
     "CANTVILLE", "NUMMI", "AGED",
@@ -22,13 +25,17 @@ COLUMNS = [
 ]
 
 def execute(context):
-    table = simpledbf.Dbf5("%s/rp_2015/FD_INDCVIZA_2015.dbf" % context.config("data_path"))
+    df_codes = context.stage("data.spatial.codes")
+    requested_departements = df_codes["departement_id"].unique()
+
+    table = simpledbf.Dbf5("%s/%s" % (context.config("data_path"), context.config("census_path")))
     records = []
 
     with context.progress(total = 4320619, label = "Reading census ...") as progress:
         for df_chunk in table.to_dataframe(chunksize = 10240):
             progress.update(len(df_chunk))
-            df_chunk = df_chunk[df_chunk["REGION"] == "11"]
+
+            df_chunk = df_chunk[df_chunk["DEPT"].isin(requested_departements)]
             df_chunk = df_chunk[COLUMNS]
 
             if len(df_chunk) > 0:
@@ -37,7 +44,7 @@ def execute(context):
     pd.concat(records).to_hdf("%s/census.hdf" % context.path(), "census")
 
 def validate(context):
-    if not os.path.exists("%s/rp_2015/FD_INDCVIZA_2015.dbf" % context.config("data_path")):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("census_path"))):
         raise RuntimeError("RP 2015 data is not available")
 
-    return os.path.getsize("%s/rp_2015/FD_INDCVIZA_2015.dbf" % context.config("data_path"))
+    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("census_path")))

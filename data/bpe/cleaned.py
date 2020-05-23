@@ -1,9 +1,8 @@
-import simpledbf
-from tqdm import tqdm
 import pandas as pd
 import numpy as np
-import data.spatial.utils
-import data.spatial.zones as zones
+
+import shapely.geometry as geo
+import data.spatial.utils as spatial_utils
 
 """
 This stage cleans the enterprise census:
@@ -14,7 +13,10 @@ This stage cleans the enterprise census:
 
 def configure(context):
     context.stage("data.bpe.raw")
-    context.stage("data.spatial.zones")
+
+    context.stage("data.spatial.iris")
+    context.stage("data.spatial.municipalities")
+
     context.config("bpe_random_seed", 0)
 
 ACTIVITY_TYPE_MAP = [
@@ -27,6 +29,21 @@ ACTIVITY_TYPE_MAP = [
     ("F", "leisure"),       # Sports & Culture
     ("G", "other"),         # Tourism, hotels, etc. (Hôtel = G102)
 ]
+
+def find_outside(context, commune_id):
+    df_municipalities = context.data("df_municipalities")
+    df = context.data("df")
+
+    df = df[df["commune_id"] == commune_id]
+    zone = df_municipalities[df_municipalities["commune_id"] == commune_id]["geometry"].values[0]
+
+    indices = [
+        index for index, x, y in df[["x", "y"]].itertuples()
+        if not zone.contains(geo.Point(x, y))
+    ]
+
+    context.progress.update()
+    return indices
 
 def execute(context):
     df = context.stage("data.bpe.raw")
@@ -47,32 +64,65 @@ def execute(context):
 
     # Clean IRIS and commune
     df["iris_id"] = df["DCIRIS"].str.replace("_", "")
-    df["commune_id"] = df["DEPCOM"].astype(np.int)
+    df.loc[df["DEPCOM"] == df["DCIRIS"], "iris_id"] = "undefined"
+    df.loc[df["DCIRIS"].str.endswith("0000"), "iris_id"] = "undefined"
 
-    df["has_iris"] = df["DEPCOM"] != df["DCIRIS"]
-    df.loc[~df["has_iris"], "iris_id"] = -1
-    df["iris_id"] = df["iris_id"].astype(np.int)
+    df["iris_id"] = df["iris_id"].astype("category")
+    df["commune_id"] = df["DEPCOM"].astype("category")
 
-    # Impute zone ID
-    df_zones = context.stage("data.spatial.zones")
-
-    initial_count = len(df)
-    df = pd.merge(df, zones.translate_zone_ids(df_zones, df, "enterprise_id"))
-    final_count = len(df)
-
-    assert (df["commune_id"] >= 0).all()
-
-    print("Removing %d/%d (%.2f%%) enterprises with unknown zone ..." % (
-        initial_count - final_count, initial_count, 100 * (initial_count - final_count) / initial_count
+    print("Found %d/%d (%.2f%%) observations without IRIS" % (
+        (df["iris_id"] == "undefined").sum(), len(df), 100 * (df["iris_id"] == "undefined").mean()
     ))
 
-    # Impute missing coordinates
-    df["imputed_location"] = df["x"].isna()
+    # Check whether all communes in BPE are within our set of requested data
+    df_municipalities = context.stage("data.spatial.municipalities")
+    excess_communes = set(df["commune_id"].unique()) - set(df_municipalities["commune_id"].unique())
 
-    df_imputed = df[df["imputed_location"]].copy()
+    if len(excess_communes) > 0:
+        raise RuntimeError("Found additional communes: %s" % excess_communes)
+
+    # We notice that we have some additional IRIS. Make sure they will be placed randomly in there commune later.
+    df_iris = context.stage("data.spatial.iris")
+    excess_iris = set(df[df["iris_id"] != "undefined"]["iris_id"].unique()) - set(df_iris["iris_id"].unique())
+    df.loc[df["iris_id"].isin(excess_iris), "iris_id"] = "undefined"
+    print("Excess IRIS without valid code:", excess_iris)
+
+    # Impute missing coordinates for known IRIS
     random = np.random.RandomState(context.config("bpe_random_seed"))
-    zones.sample_coordinates(context, df_zones, df_imputed, random, label = "Imputing unknown coordinates ...")
-    df = pd.concat([df[~df["imputed_location"]], df_imputed])
 
-    df = data.spatial.utils.to_gpd(context, df)
-    return df[["enterprise_id", "activity_type", "commune_id", "geometry", "imputed_location"]]
+    f_undefined = df["iris_id"] == "undefined"
+    f_missing = df["x"].isna()
+
+    df.update(spatial_utils.sample_from_zones(
+        context, df_iris, df[f_missing & ~f_undefined], "iris_id", random, label = "Imputing IRIS coordinates ..."))
+
+    # Impute missing coordinates for unknown IRIS
+    df.update(spatial_utils.sample_from_zones(
+        context, df_municipalities, df[f_missing & f_undefined], "commune_id", random, label = "Imputing municipality coordinates ..."))
+
+    # Consolidate
+    df["imputed"] = f_missing
+    assert not df["x"].isna().any()
+
+    # Intrestingly, some of the given coordinates are not really inside of
+    # the respective municipality. Find them and move them back in.
+    outside_indices = []
+
+    with context.progress(label = "Finding outside observations ...", total = len(df["commune_id"].unique())):
+        with context.parallel(dict(df = df, df_municipalities = df_municipalities)) as parallel:
+            for partial in parallel.imap(find_outside, df["commune_id"].unique()):
+                outside_indices += partial
+
+    df.loc[outside_indices, "x"] = np.nan
+    df.loc[outside_indices, "y"] = np.nan
+
+    df.update(spatial_utils.sample_from_zones(
+        context, df_municipalities, df.loc[outside_indices], "commune_id", random, label = "Fixing outside locations ..."))
+
+    df.loc[outside_indices, "imputed"] = True
+
+    # Package up data set
+    df = df[["enterprise_id", "activity_type", "commune_id", "imputed", "x", "y"]]
+    df = spatial_utils.to_gpd(context, df.copy())
+
+    return df

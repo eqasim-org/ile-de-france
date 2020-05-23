@@ -1,8 +1,5 @@
 import numpy as np
 import pandas as pd
-import data.spatial.zones as zones
-from tqdm import tqdm
-import data.spatial.utils
 
 """
 This stage samples home zones for all synthesized households. From the census
@@ -17,7 +14,10 @@ has less than 200 inhabitants to the second case.
 
 def configure(context):
     context.stage("synthesis.population.sampled")
-    context.stage("data.spatial.zones")
+
+    context.stage("data.spatial.municipalities")
+    context.stage("data.spatial.iris")
+    context.stage("data.spatial.population")
 
     context.config("random_seed")
 
@@ -25,66 +25,83 @@ def execute(context):
     random = np.random.RandomState(context.config("random_seed"))
 
     df_households = context.stage("synthesis.population.sampled").drop_duplicates("household_id")[[
-        "household_id", "has_commune", "has_iris", "commune_id", "iris_id", "departement_id"
-    ]].copy()
+        "household_id", "commune_id", "iris_id", "departement_id"
+    ]].copy().set_index("household_id")
 
-    df_zones = context.stage("data.spatial.zones")
+    f_has_commune = df_households["commune_id"] != "undefined"
+    f_has_iris = df_households["iris_id"] != "undefined"
 
     # Fix missing communes (we select from those without IRIS)
-    f_missing_commune = ~df_households["has_commune"]
-    df_missing_commune = df_households[f_missing_commune].copy()
+    df_municipalities = context.stage("data.spatial.municipalities").set_index("commune_id")
+    df_population = context.stage("data.spatial.population").groupby("commune_id").sum()
+    df_municipalities["population"] = df_population["population"]
 
-    for departement_id in context.progress(df_missing_commune["departement_id"].unique(), label = "Fixing missing communes ..."):
-        df_candidates = df_zones[
-            (df_zones["zone_level"] == "commune") &
-            ~df_zones["has_iris"] &
-            (df_zones["departement_id"] == departement_id)
-        ][["zone_id", "population", "commune_id"]].copy()
+    df_households["commune_id"].cat.add_categories(
+        set(df_municipalities.index.unique()) - set(df_households["commune_id"].cat.categories),
+        inplace = True)
+
+    departements = df_households[~f_has_commune]["departement_id"].unique()
+
+    for departement_id in context.progress(departements, label = "Fixing missing communes ..."):
+        df_candidates = df_municipalities[
+            ~df_municipalities["has_iris"] &
+            (df_municipalities["departement_id"].astype(str) == departement_id)]
+
+        df_target = df_households[
+            ~f_has_commune &
+            (df_households["departement_id"] == departement_id)].copy()
 
         weights = df_candidates["population"].values
         weights /= np.sum(weights)
 
-        f = df_missing_commune["departement_id"] == departement_id
-        indices = np.repeat(np.arange(weights.shape[0]), random.multinomial(np.count_nonzero(f), weights))
+        indices = np.repeat(np.arange(weights.shape[0]), random.multinomial(len(df_target), weights))
+        df_target["commune_id"] = df_candidates.reset_index()["commune_id"].iloc[indices].values
 
-        df_missing_commune.loc[f, "zone_id"] = df_candidates.iloc[indices]["zone_id"].values
-        df_missing_commune.loc[f, "commune_id"] = df_candidates.iloc[indices]["commune_id"].values
-
-    assert not df_missing_commune["zone_id"].isna().any()
+        df_households.loc[df_target.index, "commune_id"] = df_target["commune_id"]
 
     # Fix missing IRIS (we select from those with <200 inhabitants)
-    f_missing_iris = ~df_households["has_iris"] & df_households["has_commune"]
-    df_missing_iris = df_households[f_missing_iris].copy()
+    df_iris = context.stage("data.spatial.iris").set_index("iris_id")
+    df_population = context.stage("data.spatial.population").set_index("iris_id")
+    df_iris["population"] = df_population["population"]
 
-    for commune_id in context.progress(np.unique(df_missing_iris["commune_id"]), label = "Fixing missing IRIS ..."):
-        df_candidates = df_zones[
-            (df_zones["zone_level"] == "iris") &
-            (df_zones["population"] <= 200) &
-            (df_zones["commune_id"] == commune_id)
-        ][["zone_id", "population", "commune_id"]].copy()
+    df_households["iris_id"].cat.add_categories(
+        set(df_iris.index.unique()) - set(df_households["iris_id"].cat.categories),
+        inplace = True)
+
+    communes = df_households[~f_has_iris & f_has_commune]["commune_id"].unique()
+
+    for commune_id in context.progress(communes, label = "Fixing missing IRIS ..."):
+        df_candidates = df_iris[
+            (df_iris["population"] <= 200) &
+            (df_iris["commune_id"].astype(str) == commune_id)]
+
+        df_target = df_households[
+            f_has_commune & ~f_has_iris &
+            (df_households["commune_id"] == commune_id)].copy()
 
         weights = df_candidates["population"].values
         if (weights == 0.0).all(): weights += 1.0
         weights /= np.sum(weights)
 
-        f = df_missing_iris["commune_id"] == commune_id
-        indices = np.repeat(np.arange(weights.shape[0]), random.multinomial(np.count_nonzero(f), weights))
+        indices = np.repeat(np.arange(weights.shape[0]), random.multinomial(len(df_target), weights))
+        df_target["iris_id"] = df_candidates.reset_index()["iris_id"].iloc[indices].values
 
-        df_missing_iris.loc[f, "zone_id"] = df_candidates.iloc[indices]["zone_id"].values
-        df_missing_iris.loc[f, "commune_id"] = df_candidates.iloc[indices]["commune_id"].values
+        df_households.loc[df_target.index, "iris_id"] = df_target["iris_id"]
 
-    assert len(df_missing_iris) == 0 or not df_missing_iris["zone_id"].isna().any()
+    # Check that everybody has a commune now
+    assert np.count_nonzero(df_households["commune_id"] == "undefined") == 0
 
-    # Finally, we can attach the zone ID to the valid ones
-    df_valid = df_households[df_households["has_iris"] & df_households["has_commune"]]
-    df_valid = pd.merge(df_valid, df_zones[["iris_id", "zone_id"]])
+    # Now there are some people left who don't have an IRIS, because the commune
+    # is not covered in IRIS. Hence, we drive the commune-based IRIS for them.
+    f = df_households["iris_id"] == "undefined"
+    df_households.loc[f, "iris_id"] = df_households.loc[f, "commune_id"].astype(str) + "0000"
 
-    # Merge everything together and test consistency
-    df_result = pd.concat([df_missing_commune, df_missing_iris, df_valid])
-    df_result["zone_id"] = df_result["zone_id"].astype(np.int)
+    # Finally, make sure that we have no invalid codes
+    invalid_communes = set(df_households["commune_id"].unique()) - set(df_municipalities.index.unique())
+    invalid_iris = set(df_households["iris_id"].unique()) - set(df_iris.index.unique())
 
-    assert len(df_result) == len(df_households)
-    assert (df_result["commune_id"] >= 0).all()
-    assert (df_result["zone_id"] >= 0).all()
+    assert len(invalid_communes) == 0
+    assert len(invalid_iris) == 0
+    assert np.count_nonzero(df_households["iris_id"] == "undefined") == 0
 
-    return df_result[["household_id", "zone_id", "departement_id", "commune_id", "has_iris", "has_commune"]]
+    return df_households.reset_index()[["household_id", "departement_id", "commune_id", "iris_id"]]

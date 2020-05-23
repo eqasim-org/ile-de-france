@@ -6,12 +6,11 @@ import palettable
 
 def configure(context):
     context.stage("data.income.municipality")
-    context.stage("data.spatial.zones")
+    context.stage("data.spatial.municipalities")
     context.stage("data.bpe.cleaned")
 
 def execute(context):
-    df_zones = context.stage("data.spatial.zones")
-    df_communes = df_zones[df_zones["zone_level"] == "commune"][["commune_id", "geometry"]]
+    df_communes = context.stage("data.spatial.municipalities")
 
     # Spatial income distribution
     df_income = context.stage("data.income.municipality")

@@ -7,7 +7,7 @@ def configure(context):
     context.stage("data.census.cleaned")
     context.stage("data.od.cleaned")
     context.stage("data.bpe.cleaned")
-    context.stage("data.spatial.zones")
+    context.stage("data.spatial.codes")
     context.stage("data.income.municipality")
     context.stage("data.income.region")
     context.stage("data.census.filtered")
@@ -54,11 +54,11 @@ def execute(context):
     }
 
     # Zones
-    df_zones = context.stage("data.spatial.zones")
+    df_codes = context.stage("data.spatial.codes")
 
     info["zones"] = {
-        "number_of_municipalities": len(df_zones["commune_id"].unique()),
-        "number_of_iris": len(df_zones["iris_id"].unique())
+        "number_of_municipalities": len(df_codes["commune_id"].unique()),
+        "number_of_iris": len(df_codes["iris_id"].unique())
     }
 
     with open("%s/zones.json" % context.cache_path, "w+") as f:

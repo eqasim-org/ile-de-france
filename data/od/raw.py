@@ -9,9 +9,13 @@ Loads raw OD data from French census data.
 """
 
 def configure(context):
+    context.stage("data.spatial.codes")
     context.config("data_path")
 
 def execute(context):
+    df_codes = context.stage("data.spatial.codes")
+    requested_communes = df_codes["commune_id"].unique()
+
     # First, load work
 
     table = simpledbf.Dbf5("%s/rp_2015/FD_MOBPRO_2015.dbf" % context.config("data_path"))
@@ -20,8 +24,11 @@ def execute(context):
     with context.progress(label = "Reading work flows ...", total = 7943392) as progress:
         for df_chunk in table.to_dataframe(chunksize = 10240):
             progress.update(len(df_chunk))
-            f = df_chunk["REGION"] == "11"
-            f |= df_chunk["REGLT"] == "11"
+
+            f = df_chunk["COMMUNE"].isin(requested_communes)
+            f |= df_chunk["ARM"].isin(requested_communes)
+            f &= df_chunk["DCLT"].isin(requested_communes)
+
             df_chunk = df_chunk[f]
             df_chunk = df_chunk[["COMMUNE", "ARM", "TRANS", "IPONDI", "DCLT", "REGLT"]]
 
@@ -38,8 +45,11 @@ def execute(context):
     with context.progress(label = "Reading education flows ...", total = 4782736) as progress:
         for df_chunk in table.to_dataframe(chunksize = 10240):
             progress.update(len(df_chunk))
-            f = df_chunk["REGION"] == "11"
-            f |= df_chunk["REGETUD"] == "11"
+
+            f = df_chunk["COMMUNE"].isin(requested_communes)
+            f |= df_chunk["ARM"].isin(requested_communes)
+            f &= df_chunk["DCETUF"].isin(requested_communes)
+
             df_chunk = df_chunk[f]
             df_chunk = df_chunk[["COMMUNE", "ARM", "IPONDI", "DCETUF", "REGETUD"]]
 

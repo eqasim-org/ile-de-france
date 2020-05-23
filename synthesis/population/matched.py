@@ -22,14 +22,13 @@ INCOME_CLASS = {
 def configure(context):
     context.config("processes")
     context.config("random_seed")
+    context.config("matching_minimum_observations", 20)
 
     context.stage("synthesis.population.sampled")
     context.stage("synthesis.population.income")
 
     hts = context.config("hts")
     context.stage("data.hts.selected", alias = "hts")
-
-    context.config("v2", "123")
 
 @numba.jit(nopython = True, parallel = True)
 def sample_indices(uniform, cdf, selected_indices):
@@ -195,7 +194,7 @@ def execute(context):
         df_source, "hts_id", "person_weight",
         df_target, "person_id",
         columns,
-        minimum_observations = 20)
+        minimum_observations = context.config("matching_minimum_observations"))
 
     df_target = pd.merge(df_target, df_assignment, on = "person_id")
     assert len(df_target) == len(df_assignment)

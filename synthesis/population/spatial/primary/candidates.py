@@ -62,6 +62,7 @@ def process(context, purpose, random, df_persons, df_od, df_destinations):
     df_demand = df_persons.groupby("commune_id").size().reset_index(name = "count")
     df_demand["random_seed"] = random.randint(0, int(1e6), len(df_demand))
     df_demand = df_demand[["commune_id", "count", "random_seed"]]
+    df_demand = df_demand[df_demand["count"] > 0]
 
     df_flow = []
 

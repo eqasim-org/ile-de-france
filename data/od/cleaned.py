@@ -10,17 +10,11 @@ and education.
 
 def configure(context):
     context.stage("data.od.raw")
-    context.stage("data.spatial.zones")
+    context.stage("data.spatial.codes")
 
 RENAME = { "COMMUNE" : "origin_id", "DCLT" : "destination_id", "IPONDI" : "weight", "DCETUF" : "destination_id" }
 
 def execute(context):
-    df_zones = context.stage("data.spatial.zones")
-    df_zones = df_zones[df_zones["zone_level"] == "commune"][[
-        "zone_id", "commune_id"
-    ]]
-    commune_ids = set(np.unique(df_zones["commune_id"]))
-
     # Load data
     df_work = pd.read_hdf("%s/work.hdf" % context.path("data.od.raw"))
     df_education = pd.read_hdf("%s/education.hdf" % context.path("data.od.raw"))
@@ -30,36 +24,28 @@ def execute(context):
     df_education = df_education.rename(RENAME, axis = 1)
 
     # Fix arrondissements
-    df_work.loc[df_work["origin_id"] == "75056", "origin_id"] = df_work["ARM"]
-    df_education.loc[df_education["origin_id"] == "75056", "origin_id"] = df_education["ARM"]
+    df_work.loc[~df_work["ARM"].str.contains("Z"), "origin_id"] = df_work["ARM"]
+    df_education.loc[~df_education["ARM"].str.contains("Z"), "origin_id"] = df_education["ARM"]
 
-    # Clear invalid data
-    df_work["origin_id"] = pd.to_numeric(df_work["origin_id"], errors = "coerce")
-    df_work["destination_id"] = pd.to_numeric(df_work["destination_id"], errors = "coerce")
-    df_work = df_work[["origin_id", "destination_id", "weight", "TRANS"]].dropna()
+    # Verify spatial data for work
+    df_codes = context.stage("data.spatial.codes")
 
-    df_education["origin_id"] = pd.to_numeric(df_education["origin_id"], errors = "coerce")
-    df_education["destination_id"] = pd.to_numeric(df_education["destination_id"], errors = "coerce")
-    df_education = df_education[["origin_id", "destination_id", "weight"]].dropna()
+    df_work["origin_id"] = df_work["origin_id"].astype("category")
+    df_work["destination_id"] = df_work["destination_id"].astype("category")
 
-    # Remove 99999
-    df_work = df_work[df_work["origin_id"] != 99999]
-    df_work = df_work[df_work["destination_id"] != 99999]
+    excess_communes = (set(df_work["origin_id"].unique()) | set(df_work["destination_id"].unique())) - set(df_codes["commune_id"].unique())
+    if len(excess_communes) > 0:
+        raise RuntimeError("Found additional communes: %s" % excess_communes)
 
-    df_education = df_education[df_education["origin_id"] != 99999]
-    df_education = df_education[df_education["destination_id"] != 99999]
+    # Verify spatial data for education
+    df_codes = context.stage("data.spatial.codes")
 
-    # Remove uninteresting communes
-    df_work = df_work[df_work["origin_id"].isin(commune_ids)]
-    df_work = df_work[df_work["destination_id"].isin(commune_ids)]
-    df_education = df_education[df_education["origin_id"].isin(commune_ids)]
-    df_education = df_education[df_education["destination_id"].isin(commune_ids)]
+    df_education["origin_id"] = df_education["origin_id"].astype("category")
+    df_education["destination_id"] = df_education["destination_id"].astype("category")
 
-    # Convert communes to integer
-    df_work["origin_id"] = df_work["origin_id"].astype(np.int)
-    df_work["destination_id"] = df_work["destination_id"].astype(np.int)
-    df_education["origin_id"] = df_education["origin_id"].astype(np.int)
-    df_education["destination_id"] = df_education["destination_id"].astype(np.int)
+    excess_communes = (set(df_education["origin_id"].unique()) | set(df_education["destination_id"].unique())) - set(df_codes["commune_id"].unique())
+    if len(excess_communes) > 0:
+        raise RuntimeError("Found additional communes: %s" % excess_communes)
 
     # Clean commute mode for work
     df_work["commute_mode"] = np.nan
@@ -71,7 +57,10 @@ def execute(context):
     df_work["commute_mode"] = df_work["commute_mode"].astype("category")
 
     # Aggregate the flows
+    print("Aggregating work ...")
     df_work = df_work.groupby(["origin_id", "destination_id", "commute_mode"]).sum().reset_index()
+
+    print("Aggregating education ...")
     df_education = df_education.groupby(["origin_id", "destination_id"]).sum().reset_index()
 
     df_work["weight"] = df_work["weight"].fillna(0.0)

@@ -11,6 +11,7 @@ This stage cleans the French population census:
 
 def configure(context):
     context.stage("data.census.raw")
+    context.stage("data.spatial.codes")
 
 def execute(context):
     df = pd.read_hdf("%s/census.hdf" % context.path("data.census.raw"))
@@ -35,13 +36,28 @@ def execute(context):
     df = df.sort_values(by = ["household_id", "person_id"])
 
     # Spatial information
-    df["iris_id"] = pd.to_numeric(df["IRIS"], errors = "coerce").fillna(-1).astype(np.int)
-    df["triris_id"] = pd.to_numeric(df["TRIRIS"], errors = "coerce").fillna(-1).astype(np.int)
-    df["commune_id"] = pd.to_numeric(df["IRIS"].str[:5], errors = "coerce").fillna(-1).astype(np.int)
-    df["departement_id"] = df["DEPT"].astype(np.int)
+    df["departement_id"] = df["DEPT"].astype("category")
 
-    df["has_iris"] = df["iris_id"] != -1
-    df["has_commune"] = df["commune_id"] != -1
+    df["commune_id"] = df["IRIS"].str[:5]
+    f_undefined = df["commune_id"].str.contains("Z")
+    df.loc[f_undefined, "commune_id"] = "undefined"
+    df["commune_id"] = df["commune_id"].astype("category")
+
+    df["iris_id"] = df["IRIS"]
+    f_undefined = df["iris_id"].str.contains("Z") | df["iris_id"].str.contains("X")
+    df.loc[f_undefined, "iris_id"] = "undefined"
+    df["iris_id"] = df["iris_id"].astype("category")
+
+    # Verify with requested codes
+    df_codes = context.stage("data.spatial.codes")
+
+    excess_communes = set(df["commune_id"].unique()) - set(df_codes["commune_id"].unique())
+    if not excess_communes == {"undefined"}:
+        raise RuntimeError("Found additional communes: %s" % excess_communes)
+
+    excess_iris = set(df["iris_id"].unique()) - set(df_codes["iris_id"].unique())
+    if not excess_iris == {"undefined"}:
+        raise RuntimeError("Found additional IRIS: %s" % excess_iris)
 
     # Age
     df["age"] = df["AGED"].apply(lambda x: "0" if x == "000" else x.lstrip("0")).astype(np.int)
@@ -89,18 +105,18 @@ def execute(context):
     df["socioprofessional_class"] = df["CS1"].astype(np.int)
 
     # Place of work or education
-    df["work_outside_idf"] = df["ILT"].isin(("4", "5", "6"))
-    df["education_outside_idf"] = df["ILETUD"].isin(("4", "5", "6"))
+    df["work_outside_region"] = df["ILT"].isin(("4", "5", "6"))
+    df["education_outside_region"] = df["ILETUD"].isin(("4", "5", "6"))
 
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
     return df[[
         "person_id", "household_id", "weight",
-        "iris_id", "triris_id", "departement_id",
+        "iris_id", "commune_id", "departement_id",
         "age", "sex", "couple",
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
-        "commune_id", "work_outside_idf", "education_outside_idf",
-        "has_commune", "has_iris", "consumption_units", "socioprofessional_class"
+        "work_outside_region", "education_outside_region",
+        "consumption_units", "socioprofessional_class"
     ]]
