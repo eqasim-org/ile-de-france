@@ -28,8 +28,8 @@ def execute(context):
         "number_of_persons": len(df_census),
         "weighted_number_of_households": df_census[["household_id", "weight"]].drop_duplicates("household_id")["weight"].sum(),
         "weighted_number_of_persons": df_census["weight"].sum(),
-        "share_of_households_without_iris": np.sum(df_households[~df_households["has_iris"] & df_households["has_commune"]]["weight"]) / np.sum(df_households["weight"]),
-        "share_of_households_without_commune": np.sum(df_households[~df_households["has_iris"] & ~df_households["has_commune"]]["weight"]) / np.sum(df_households["weight"]),
+        "share_of_households_without_iris": np.sum(df_households[~(df_households["iris_id"] != "undefined") & (df_households["commune_id"] != "undefined")]["weight"]) / np.sum(df_households["weight"]),
+        "share_of_households_without_commune": np.sum(df_households[~(df_households["iris_id"] != "undefined") & ~(df_households["commune_id"] != "undefined")]["weight"]) / np.sum(df_households["weight"]),
         "filtered_households_share": context.get_info("data.census.filtered", "filtered_households_share"),
         "filtered_persons_share": context.get_info("data.census.filtered", "filtered_persons_share"),
     }
