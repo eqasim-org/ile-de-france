@@ -12,7 +12,7 @@ Potential TODO: Do this by mode of transport!
 
 def configure(context):
     context.stage("data.od.cleaned")
-    context.stage("data.spatial.zones")
+    context.stage("data.spatial.codes")
 
 def fix_origins(df, commune_ids, purpose):
     existing_ids = set(np.unique(df["origin_id"]))
@@ -30,11 +30,8 @@ def fix_origins(df, commune_ids, purpose):
     )])
 
 def execute(context):
-    df_zones = context.stage("data.spatial.zones")
-    df_zones = df_zones[df_zones["zone_level"] == "commune"][[
-        "zone_id", "commune_id"
-    ]]
-    commune_ids = set(np.unique(df_zones["commune_id"]))
+    df_codes = context.stage("data.spatial.codes")
+    commune_ids = set(df_codes["commune_id"].unique())
 
     # Load data
     df_work, df_education = context.stage("data.od.cleaned")

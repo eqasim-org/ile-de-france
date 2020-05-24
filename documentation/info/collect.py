@@ -7,7 +7,7 @@ def configure(context):
     context.stage("data.census.cleaned")
     context.stage("data.od.cleaned")
     context.stage("data.bpe.cleaned")
-    context.stage("data.spatial.zones")
+    context.stage("data.spatial.codes")
     context.stage("data.income.municipality")
     context.stage("data.income.region")
     context.stage("data.census.filtered")
@@ -28,8 +28,8 @@ def execute(context):
         "number_of_persons": len(df_census),
         "weighted_number_of_households": df_census[["household_id", "weight"]].drop_duplicates("household_id")["weight"].sum(),
         "weighted_number_of_persons": df_census["weight"].sum(),
-        "share_of_households_without_iris": np.sum(df_households[~df_households["has_iris"] & df_households["has_commune"]]["weight"]) / np.sum(df_households["weight"]),
-        "share_of_households_without_commune": np.sum(df_households[~df_households["has_iris"] & ~df_households["has_commune"]]["weight"]) / np.sum(df_households["weight"]),
+        "share_of_households_without_iris": np.sum(df_households[~(df_households["iris_id"] != "undefined") & (df_households["commune_id"] != "undefined")]["weight"]) / np.sum(df_households["weight"]),
+        "share_of_households_without_commune": np.sum(df_households[~(df_households["iris_id"] != "undefined") & ~(df_households["commune_id"] != "undefined")]["weight"]) / np.sum(df_households["weight"]),
         "filtered_households_share": context.get_info("data.census.filtered", "filtered_households_share"),
         "filtered_persons_share": context.get_info("data.census.filtered", "filtered_persons_share"),
     }
@@ -54,11 +54,11 @@ def execute(context):
     }
 
     # Zones
-    df_zones = context.stage("data.spatial.zones")
+    df_codes = context.stage("data.spatial.codes")
 
     info["zones"] = {
-        "number_of_municipalities": len(df_zones["commune_id"].unique()),
-        "number_of_iris": len(df_zones["iris_id"].unique())
+        "number_of_municipalities": len(df_codes["commune_id"].unique()),
+        "number_of_iris": len(df_codes["iris_id"].unique())
     }
 
     with open("%s/zones.json" % context.cache_path, "w+") as f:

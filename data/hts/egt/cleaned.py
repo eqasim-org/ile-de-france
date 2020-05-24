@@ -93,10 +93,10 @@ def execute(context):
     df_households["household_size"] = df_households["MNP"].astype(np.int)
 
     # Clean departement
-    df_persons["departement_id"] = df_persons["RESDEP"].astype(np.int)
-    df_households["departement_id"] = df_households["RESDEP"].astype(np.int)
-    df_trips["origin_departement_id"] = df_trips["ORDEP"].astype(np.int)
-    df_trips["destination_departement_id"] = df_trips["DESTDEP"].astype(np.int)
+    df_persons["departement_id"] = df_persons["RESDEP"].astype(str).astype("category")
+    df_households["departement_id"] = df_households["RESDEP"].astype(str).astype("category")
+    df_trips["origin_departement_id"] = df_trips["ORDEP"].astype(str).astype("category")
+    df_trips["destination_departement_id"] = df_trips["DESTDEP"].astype(str).astype("category")
 
     # Clean employment
     df_persons["employed"] = df_persons["OCCP"].isin([1.0, 2.0])

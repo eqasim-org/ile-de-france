@@ -25,7 +25,7 @@ def filter_commune(marginals, commune_id, levels = ["person", "household"]):
 
         for attributes, df_marginal in marginals[level].items():
             if "commune_id" in attributes:
-                f = df_marginal["commune_id"] == commune_id
+                f = df_marginal["commune_id"] == str(commune_id)
                 df_marginal = df_marginal[f].drop(columns = ["commune_id"])
 
                 attributes = list(attributes)

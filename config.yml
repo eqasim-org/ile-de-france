@@ -22,7 +22,7 @@ config:
   random_seed: 1234
 
   # Paths to the input data and where the output should be stored
-  data_path: /home/shoerl/scenarios/testing/my_data
+  data_path: /path/to/my/data
   output_path: output
 
   # Only interesting if you run the simulation

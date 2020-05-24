@@ -8,23 +8,28 @@ This stage filters out EGT observations which live or work outside of
 
 def configure(context):
     context.stage("data.hts.egt.cleaned")
+    context.stage("data.spatial.codes")
 
 def execute(context):
+    df_codes = context.stage("data.spatial.codes")
+    assert (df_codes["region_id"] == 11).all() # Otherwise EGT doesn't make sense
+
     df_households, df_persons, df_trips = context.stage("data.hts.egt.cleaned")
 
     # Filter for non-residents
-    f = df_persons["departement_id"].isin(hts.FILTER_DEPARTEMENTS)
+    requested_departments = df_codes["departement_id"].unique()
+    f = df_persons["departement_id"].astype(str).isin(requested_departments) # pandas bug!
     df_persons = df_persons[f]
 
     # Filter for people going outside of the area (because they have NaN distances)
     remove_ids = set()
 
     remove_ids |= set(df_trips[
-        ~df_trips["origin_departement_id"].isin(hts.FILTER_DEPARTEMENTS) | ~df_trips["destination_departement_id"].isin(hts.FILTER_DEPARTEMENTS)
+        ~df_trips["origin_departement_id"].astype(str).isin(requested_departments) | ~df_trips["destination_departement_id"].astype(str).isin(requested_departments)
     ]["person_id"].unique())
 
     remove_ids |= set(df_persons[
-        ~df_persons["departement_id"].isin(hts.FILTER_DEPARTEMENTS)
+        ~df_persons["departement_id"].isin(requested_departments)
     ])
 
     df_persons = df_persons[~df_persons["person_id"].isin(remove_ids)]

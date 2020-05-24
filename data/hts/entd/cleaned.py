@@ -109,21 +109,11 @@ def execute(context):
     df_households["household_size"] = df_households["NPERS"]
 
     # Clean departement
-    df_households["departement_id"] = pd.to_numeric(
-        df_households["DEP"], errors = "coerce"
-    ).fillna(-1).astype(np.int)
+    df_households["departement_id"] = df_households["DEP"].fillna("undefined").astype("category")
+    df_persons["departement_id"] = df_persons["DEP"].fillna("undefined").astype("category")
 
-    df_persons["departement_id"] = pd.to_numeric(
-        df_persons["DEP"], errors = "coerce"
-    ).fillna(-1).astype(np.int)
-
-    df_trips["origin_departement_id"] = pd.to_numeric(
-        df_trips["V2_MORIDEP"], errors = "coerce"
-    ).fillna(-1).astype(np.int)
-
-    df_trips["destination_departement_id"] = pd.to_numeric(
-        df_trips["V2_MDESDEP"], errors = "coerce"
-    ).fillna(-1).astype(np.int)
+    df_trips["origin_departement_id"] = df_trips["V2_MORIDEP"].fillna("undefined").astype("category")
+    df_trips["destination_departement_id"] = df_trips["V2_MDESDEP"].fillna("undefined").astype("category")
 
     # Clean employment
     df_persons["employed"] = df_persons["SITUA"].isin([1, 2])

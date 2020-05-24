@@ -5,12 +5,12 @@ import geopandas as gpd
 
 def configure(context):
     context.stage("data.bpe.cleaned")
-    context.stage("data.spatial.zones")
+    context.stage("data.spatial.municipalities")
 
 def execute(context):
     # Load destinations
     df_destinations = context.stage("data.bpe.cleaned")[[
-        "enterprise_id", "activity_type", "geometry", "commune_id"
+        "enterprise_id", "activity_type", "commune_id", "geometry"
     ]].copy()
     df_destinations["destination_id"] = np.arange(len(df_destinations))
 
@@ -25,8 +25,7 @@ def execute(context):
     df_destinations["imputed"] = False
 
     # Add work and education destinations to the centroid of zones that have no other destinations
-    df_zones = context.stage("data.spatial.zones")
-    df_zones = df_zones[df_zones["zone_level"] == "commune"]
+    df_zones = context.stage("data.spatial.municipalities")
 
     all_communes = set(df_zones["commune_id"].unique())
     work_communes = set(df_destinations[df_destinations["offers_work"]]["commune_id"].unique())
@@ -57,7 +56,6 @@ def execute(context):
     df_imputed["offers_other"] = True
     df_imputed["destination_id"] = df_destinations["destination_id"].max() + np.arange(len(df_imputed)) + 1
     df_imputed["enterprise_id"] = -1
-    df_imputed = gpd.GeoDataFrame(df_imputed, crs = df_destinations.crs)
 
     # Merge both frames togehter
     columns = [
