@@ -45,7 +45,7 @@ def convert_time(x):
     return np.dot(np.array(x.split(":"), dtype = np.float), [3600.0, 60.0, 1.0])
 
 def execute(context):
-    df_individu, df_tcm_individu, df_menage, df_tcm_menage, df_deploc, df_comm = context.stage("data.hts.entd.raw")
+    df_individu, df_tcm_individu, df_menage, df_tcm_menage, df_deploc = context.stage("data.hts.entd.raw")
 
     # Make copies
     df_persons = pd.DataFrame(df_tcm_individu, copy = True)
@@ -127,8 +127,6 @@ def execute(context):
     df_households["number_of_vehicles"] += df_households["V1_JNBVEH"].fillna(0)
     df_households["number_of_vehicles"] += df_households["V1_JNBMOTO"].fillna(0)
     df_households["number_of_vehicles"] += df_households["V1_JNBCYCLO"].fillna(0)
-    #df_households["number_of_vehicles"] += df_households["V1_JNBAUTVEH"]
-    #df_households["number_of_vehicles"] += df_households["V1_JNBCCVUL"]
     df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(np.int)
 
     df_households["number_of_bikes"] = df_households["V1_JNBVELOADT"].fillna(0).astype(np.int)

@@ -51,7 +51,7 @@ def execute(context):
             ~f_has_commune &
             (df_households["departement_id"] == departement_id)].copy()
 
-        weights = df_candidates["population"].values
+        weights = df_candidates["population"].values.astype(float)
         weights /= np.sum(weights)
 
         indices = np.repeat(np.arange(weights.shape[0]), random.multinomial(len(df_target), weights))
@@ -79,7 +79,7 @@ def execute(context):
             f_has_commune & ~f_has_iris &
             (df_households["commune_id"] == commune_id)].copy()
 
-        weights = df_candidates["population"].values
+        weights = df_candidates["population"].values.astype(float)
         if (weights == 0.0).all(): weights += 1.0
         weights /= np.sum(weights)
 

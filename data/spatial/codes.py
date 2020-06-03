@@ -44,6 +44,10 @@ def execute(context):
     if len(requested_departments) > 0:
         df_codes = df_codes[df_codes["departement_id"].isin(requested_departments)]
 
+    df_codes["iris_id"] = df_codes["iris_id"].cat.remove_unused_categories()
+    df_codes["commune_id"] = df_codes["commune_id"].cat.remove_unused_categories()
+    df_codes["departement_id"] = df_codes["departement_id"].cat.remove_unused_categories()
+
     return df_codes
 
 def validate(context):
