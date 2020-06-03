@@ -93,6 +93,10 @@ def execute(context):
     f_undefined = df["iris_id"] == "undefined"
     f_missing = df["x"].isna()
 
+    print("Found %d/%d (%.2f%%) observations without coordinate" % (
+        ((f_missing & ~f_undefined).sum(), len(df), 100 * (f_missing & ~f_undefined).mean()
+    )))
+
     df.update(spatial_utils.sample_from_zones(
         context, df_iris, df[f_missing & ~f_undefined], "iris_id", random, label = "Imputing IRIS coordinates ..."))
 
@@ -113,13 +117,14 @@ def execute(context):
             for partial in parallel.imap(find_outside, df["commune_id"].unique()):
                 outside_indices += partial
 
-    df.loc[outside_indices, "x"] = np.nan
-    df.loc[outside_indices, "y"] = np.nan
+    if len(outside_indices) > 0:
+        df.loc[outside_indices, "x"] = np.nan
+        df.loc[outside_indices, "y"] = np.nan
 
-    df.update(spatial_utils.sample_from_zones(
-        context, df_municipalities, df.loc[outside_indices], "commune_id", random, label = "Fixing outside locations ..."))
+        df.update(spatial_utils.sample_from_zones(
+            context, df_municipalities, df.loc[outside_indices], "commune_id", random, label = "Fixing outside locations ..."))
 
-    df.loc[outside_indices, "imputed"] = True
+        df.loc[outside_indices, "imputed"] = True
 
     # Package up data set
     df = df[["enterprise_id", "activity_type", "commune_id", "imputed", "x", "y"]]

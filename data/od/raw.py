@@ -30,7 +30,7 @@ def execute(context):
             f &= df_chunk["DCLT"].isin(requested_communes)
 
             df_chunk = df_chunk[f]
-            df_chunk = df_chunk[["COMMUNE", "ARM", "TRANS", "IPONDI", "DCLT", "REGLT"]]
+            df_chunk = df_chunk[["COMMUNE", "ARM", "TRANS", "IPONDI", "DCLT"]]
 
             if len(df_chunk) > 0:
                 records.append(df_chunk)
@@ -51,7 +51,7 @@ def execute(context):
             f &= df_chunk["DCETUF"].isin(requested_communes)
 
             df_chunk = df_chunk[f]
-            df_chunk = df_chunk[["COMMUNE", "ARM", "IPONDI", "DCETUF", "REGETUD"]]
+            df_chunk = df_chunk[["COMMUNE", "ARM", "IPONDI", "DCETUF"]]
 
             if len(df_chunk) > 0:
                 records.append(df_chunk)

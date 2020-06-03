@@ -9,18 +9,18 @@ This stage loads the raw data of the Île-de-France HTS (EGT).
 
 MENAGES_COLUMNS = [
     "RESDEP", "NQUEST", "POIDSM", "NB_VELO", "NB_VD", "REVENU", "RESCOMM",
-    "NB_VEH", "NB_2RM", "MNP"
-] # Region missing compared to ENTD -> Assume EGT
+    "NB_2RM", "MNP"
+]
 
 PERSONNES_COLUMNS = [
     "RESDEP", "NP", "POIDSP", "NQUEST", "SEXE", "AGE", "PERMVP",
-    "ABONTC", "OCCP", "PERM2RM", "TYPEP", "NBDEPL", "CS8"
+    "ABONTC", "OCCP", "PERM2RM", "NBDEPL", "CS8"
 ]
 
 DEPLACEMENTS_COLUMNS = [
     "NQUEST", "NP", "ND",
     "ORDEP", "DESTDEP", "ORH", "DESTH", "ORM", "DESTM", "ORCOMM", "DESTCOMM",
-    "DPORTEE", "MODP_H7", "DESTMOT_H9", "ORMOT_H9", "JDEP", "DUREE"
+    "DPORTEE", "MODP_H7", "DESTMOT_H9", "ORMOT_H9"
 ]
 
 def configure(context):

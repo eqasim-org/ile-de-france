@@ -15,13 +15,12 @@ def configure(context):
 
 COLUMNS = [
     "CANTVILLE", "NUMMI", "AGED",
-    "APAF", "ARM", "COUPLE", "CS1",
-    "DEPT", "DIPL_15", "ETUD", "ILETUD",
-    "ILT", "INATC", "INPER", "INPERF",
-    "IPONDI", "IRIS", "LIENF", "MOCO",
-    "MODV", "REGION", "SEXE", "SFM",
-    "STAT_CONJ", "TACT", "TRANS", "TRIRIS",
-    "TYPFC", "TYPMC", "TYPMR", "VOIT", "DEROU"
+    "COUPLE", "CS1",
+    "DEPT", "ETUD", "ILETUD",
+    "ILT", "IPONDI", "IRIS",
+    "REGION", "SEXE",
+    "TACT", "TRANS",
+    "VOIT", "DEROU"
 ]
 
 def execute(context):
