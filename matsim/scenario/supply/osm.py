@@ -10,6 +10,8 @@ def configure(context):
     context.config("osm_path", "osm/ile-de-france-latest.osm.gz")
 
 def execute(context):
+    osm_path = os.path.realpath("%s/%s" % (context.config("data_path"), context.config("osm_path")))
+
     pt2matsim.run(context, "org.matsim.pt2matsim.run.CreateDefaultOsmConfig", [
         "config_template.xml"
     ])
@@ -19,7 +21,7 @@ def execute(context):
 
         content = content.replace(
             '<param name="osmFile" value="null" />',
-            '<param name="osmFile" value="%s/%s" />' % (context.config("data_path"), context.config("osm_path"))
+            '<param name="osmFile" value="%s" />' % osm_path
         )
 
         content = content.replace(
