@@ -1,6 +1,6 @@
 import synpp
 import os
-import hashlib
+import hashlib, gzip
 from . import testdata
 
 def test_determinism(tmpdir):
@@ -9,7 +9,7 @@ def test_determinism(tmpdir):
 
     md5sums = []
 
-    for index in range(3):
+    for index in range(2):
         cache_path = str(tmpdir.mkdir("cache_%d" % index))
         output_path = str(tmpdir.mkdir("output_%d" % index))
         config = dict(
@@ -20,6 +20,7 @@ def test_determinism(tmpdir):
 
         stages = [
             dict(descriptor = "synthesis.output"),
+            dict(descriptor = "matsim.output"),
         ]
 
         synpp.run(stages, config, working_directory = cache_path)
@@ -31,14 +32,29 @@ def test_determinism(tmpdir):
             #"%s/activities.gpkg" % output_path,
             #"%s/trips.gpkg" % output_path,
             #"%s/meta.json" % output_path
+            "%s/ile_de_france_population.xml.gz" % output_path,
+            "%s/ile_de_france_network.xml.gz" % output_path,
+            "%s/ile_de_france_transit_schedule.xml.gz" % output_path,
+            "%s/ile_de_france_transit_vehicles.xml.gz" % output_path,
+            "%s/ile_de_france_households.xml.gz" % output_path,
+            "%s/ile_de_france_facilities.xml.gz" % output_path,
+            "%s/ile_de_france_config.xml" % output_path
         ]
 
         hash = hashlib.md5()
 
         for file in files:
-            with open(file, "rb") as f:
+            # Gzip saves time stamps, so the gzipped files are NOT the same!
+            opener = lambda: open(file, "rb")
+
+            if file.endswith(".gz"):
+                opener = lambda: gzip.open(file)
+
+            with opener() as f:
                 for chunk in iter(lambda: f.read(4096), b""):
                     hash.update(chunk)
+
+            f.close()
 
         md5sums.append(hash.hexdigest())
 

@@ -1,5 +1,6 @@
 language: python
 install:
+  # Anaconda
   - wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
   - bash miniconda.sh -b -p $HOME/miniconda
   - source "$HOME/miniconda/etc/profile.d/conda.sh"
@@ -8,5 +9,17 @@ install:
   - conda env create -f environment.yml
   - conda activate ile-de-france
 
+  # Java
+  - wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u252b09.tar.gz -O java.tar.gz
+  - tar xf java.tar.gz
+  - export PATH=$PATH:$HOME/jdk8u252-b09/bin
+
+  # Maven
+  - wget http://mirror.easyname.ch/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -O maven.tar.gz
+  - tar xf maven.tar.gz
+  - export PATH=$PATH:$HOME/apache-maven-3.6.3/bin
+
 script:
+  - java -version
+  - mvn -version
   - pytest tests/
