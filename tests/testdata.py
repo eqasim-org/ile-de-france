@@ -302,12 +302,13 @@ def create(output_path):
                 work_department = random.choice(df["department"].unique())
 
                 purpose = "1.11" if studies else "9"
+                mode = random.choice(["1", "2", "2.20", "2.23", "4"])
 
                 data["K_DEPLOC"].append(dict(
                     IDENT_IND = person_id, V2_MMOTIFDES = purpose, V2_MMOTIFORI = 1,
                     V2_TYPJOUR = 1, V2_MORIHDEP = "08:00:00", V2_MDESHARR = "09:00:00",
                     V2_MDISTTOT = 3, # km
-                    IDENT_JOUR = 1, V2_MTP = 2,
+                    IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = work_department,
                     V2_MORIDEP = home_department,
                     NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
@@ -317,7 +318,7 @@ def create(output_path):
                     IDENT_IND = person_id, V2_MMOTIFDES = 2, V2_MMOTIFORI = purpose,
                     V2_TYPJOUR = 1, V2_MORIHDEP = "17:00:00", V2_MDESHARR = "17:30:00",
                     V2_MDISTTOT = 3, # km
-                    IDENT_JOUR = 1, V2_MTP = 2,
+                    IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = home_department,
                     V2_MORIDEP = work_department,
                     NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
@@ -327,7 +328,7 @@ def create(output_path):
                     IDENT_IND = person_id, V2_MMOTIFDES = 1, V2_MMOTIFORI = 2,
                     V2_TYPJOUR = 1, V2_MORIHDEP = "18:00:00", V2_MDESHARR = "19:00:00",
                     V2_MDISTTOT = 3, # km
-                    IDENT_JOUR = 1, V2_MTP = 2,
+                    IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = home_department,
                     V2_MORIDEP = home_department,
                     NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
@@ -383,6 +384,7 @@ def create(output_path):
             work_department = df[df["municipality"] == work_municipality]["department"].values[0]
 
             purpose = 21 if studies else 11
+            mode = random.choice([1, 2, 3, 5, 7])
 
             data["trips"].append(dict(
                 NQUEST = household_id, NP = person_id,
