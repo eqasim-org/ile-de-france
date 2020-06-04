@@ -21,7 +21,7 @@ def execute(context):
 
         content = content.replace(
             '<param name="osmFile" value="null" />',
-            '<param name="osmFile" value="%" />' % osm_path
+            '<param name="osmFile" value="%s" />' % osm_path
         )
 
         content = content.replace(
