@@ -1,5 +1,5 @@
 import subprocess as sp
-import os
+import os, shutil
 
 def configure(context):
     context.config("java_binary", "java")
@@ -37,7 +37,7 @@ def run(context, entry_point, arguments = [], class_path = None, vm_arguments = 
 
     # Prepare command line
     command_line = [
-        context.config("java_binary"),
+        shutil.which(context.config("java_binary")),
         "-cp", class_path
     ] + vm_arguments + [
         entry_point
@@ -60,8 +60,11 @@ def run(context, entry_point, arguments = [], class_path = None, vm_arguments = 
         raise RuntimeError("Mode is expected to be one of 'raise', 'return_code' or 'output'")
 
 def validate(context):
+    if shutil.which(context.config("java_binary")) == "":
+        raise RuntimeError("Cannot find Java")
+
     if not b"11" in sp.check_output([
-        context.config("java_binary"),
+        shutil.which(context.config("java_binary")),
         "-version"
     ], stderr = sp.STDOUT):
         raise RuntimeError("A Java JDK 11 is required for this pipeline.")
