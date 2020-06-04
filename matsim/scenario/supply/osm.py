@@ -33,8 +33,14 @@ def execute(context):
         )
 
         content = content.replace(
-            '<param name="allowedTransportModes" value="car" />',
-            '<param name="allowedTransportModes" value="car,car_passenger" />'
+            '</module>',
+            """
+                <parameterset type="routableSubnetwork">
+                    <param name="allowedTransportModes" value="car" />
+                    <param name="subnetworkMode" value="car_passenger" />
+                </parameterset>
+            </module>
+            """
         )
 
         with open("%s/config.xml" % context.path(), "w+") as f_write:

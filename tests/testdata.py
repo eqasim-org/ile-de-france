@@ -301,24 +301,37 @@ def create(output_path):
                 home_department = department
                 work_department = random.choice(df["department"].unique())
 
+                purpose = "1.11" if studies else "9"
+                mode = random.choice(["1", "2", "2.20", "2.23", "4"])
+
                 data["K_DEPLOC"].append(dict(
-                    IDENT_IND = person_id, V2_MMOTIFDES = "1.11" if studies else "9", V2_MMOTIFORI = 1,
+                    IDENT_IND = person_id, V2_MMOTIFDES = purpose, V2_MMOTIFORI = 1,
                     V2_TYPJOUR = 1, V2_MORIHDEP = "08:00:00", V2_MDESHARR = "09:00:00",
                     V2_MDISTTOT = 3, # km
-                    IDENT_JOUR = 1, V2_MTP = 2,
+                    IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = work_department,
                     V2_MORIDEP = home_department,
-                    NDEP = 2, V2_MOBILREF = 1, PONDKI = 3.0
+                    NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
                 ))
 
                 data["K_DEPLOC"].append(dict(
-                    IDENT_IND = person_id, V2_MMOTIFDES = 1, V2_MMOTIFORI = "1.11" if studies else "9",
-                    V2_TYPJOUR = 1, V2_MORIHDEP = "17:00:00", V2_MDESHARR = "18:00:00",
+                    IDENT_IND = person_id, V2_MMOTIFDES = 2, V2_MMOTIFORI = purpose,
+                    V2_TYPJOUR = 1, V2_MORIHDEP = "17:00:00", V2_MDESHARR = "17:30:00",
                     V2_MDISTTOT = 3, # km
-                    IDENT_JOUR = 1, V2_MTP = 2,
+                    IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = home_department,
                     V2_MORIDEP = work_department,
-                    NDEP = 2, V2_MOBILREF = 1, PONDKI = 3.0
+                    NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
+                ))
+
+                data["K_DEPLOC"].append(dict(
+                    IDENT_IND = person_id, V2_MMOTIFDES = 1, V2_MMOTIFORI = 2,
+                    V2_TYPJOUR = 1, V2_MORIHDEP = "18:00:00", V2_MDESHARR = "19:00:00",
+                    V2_MDISTTOT = 3, # km
+                    IDENT_JOUR = 1, V2_MTP = mode,
+                    V2_MDESDEP = home_department,
+                    V2_MORIDEP = home_department,
+                    NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
                 ))
 
     os.mkdir("%s/entd_2008" % output_path)
@@ -370,20 +383,31 @@ def create(output_path):
             work_region = df[df["municipality"] == work_municipality]["region"].values[0]
             work_department = df[df["municipality"] == work_municipality]["department"].values[0]
 
+            purpose = 21 if studies else 11
+            mode = random.choice([1, 2, 3, 5, 7])
+
             data["trips"].append(dict(
                 NQUEST = household_id, NP = person_id,
                 ND = 1, ORDEP = home_department, DESTDEP = work_department,
                 ORH = 8, ORM = 0, DESTH = 9, DESTM = 0, ORCOMM = home_municipality,
                 DESTCOMM = work_municipality, DPORTEE = 3, MODP_H7 = 2,
-                DESTMOT_H9 = 21 if studies else 11, ORMOT_H9 = 1
+                DESTMOT_H9 = purpose, ORMOT_H9 = 1
             ))
 
             data["trips"].append(dict(
                 NQUEST = household_id, NP = person_id,
-                ND = 2, ORDEP = work_department, DESTDEP = home_department,
-                ORH = 17, ORM = 0, DESTH = 18, DESTM = 0, ORCOMM = work_municipality,
+                ND = 1, ORDEP = work_department, DESTDEP = home_department,
+                ORH = 8, ORM = 0, DESTH = 9, DESTM = 0, ORCOMM = work_municipality,
                 DESTCOMM = home_municipality, DPORTEE = 3, MODP_H7 = 2,
-                DESTMOT_H9 = 1, ORMOT_H9 = 21 if studies else 11
+                DESTMOT_H9 = 31, ORMOT_H9 = purpose
+            ))
+
+            data["trips"].append(dict(
+                NQUEST = household_id, NP = person_id,
+                ND = 2, ORDEP = home_department, DESTDEP = home_department,
+                ORH = 17, ORM = 0, DESTH = 18, DESTM = 0, ORCOMM = home_municipality,
+                DESTCOMM = home_municipality, DPORTEE = 3, MODP_H7 = 2,
+                DESTMOT_H9 = 1, ORMOT_H9 = 31
             ))
 
     os.mkdir("%s/egt_2010" % output_path)
@@ -498,3 +522,126 @@ def create(output_path):
     for index, row in df_education[columns].iterrows():
         db.write(row)
     db.close()
+
+    # Data set: OSM
+    # We add add a road grid of 500m
+    import itertools
+
+    osm = []
+    osm.append('<?xml version="1.0" encoding="UTF-8"?>')
+    osm.append('<osm version="0.6">')
+
+    df_nodes = []
+    links = []
+
+    node_index = 1
+
+    lengthx = 200
+    lengthy = 100
+
+    for i in range(lengthx):
+        for j in range(lengthy):
+            df_nodes.append(dict(
+                id = node_index,
+                geometry = geo.Point(anchor_x + 500 * i + 250, anchor_y - 500 * j - 250)
+            ))
+
+            if j < lengthy - 1:
+                links.append([node_index, node_index + 1])
+
+            if i < lengthx - 1:
+                links.append([node_index, node_index + lengthx])
+
+            node_index += 1
+
+    df_nodes = gpd.GeoDataFrame(df_nodes, crs = dict(init = "EPSG:2154"))
+    df_nodes = df_nodes.to_crs(dict(init = "EPSG:4326"))
+
+    for row in df_nodes.itertuples():
+        osm.append('<node id="%d" lat="%f" lon="%f" version="3" />' % (
+            row[1], row[2].y, row[2].x
+        ))
+
+    for index, link in enumerate(links):
+        osm.append('<way id="%d" version="3">' % (index + 1))
+        osm.append('<nd ref="%d" />' % link[0])
+        osm.append('<nd ref="%d" />' % link[1])
+        osm.append('<tag k="highway" v="primary" />')
+        osm.append('</way>')
+
+    osm.append('</osm>')
+
+    import gzip
+    os.mkdir("%s/osm" % output_path)
+    with gzip.open("%s/osm/ile-de-france-latest.osm.gz" % output_path, "wb+") as f:
+        f.write(bytes("\n".join(osm), "utf-8"))
+
+    # Data set: GTFS
+
+    os.mkdir("%s/gtfs" % output_path)
+
+    pd.DataFrame.from_records([dict(
+        agency_id = 1, agency_name = "eqasim", agency_timezone = "Europe/Paris",
+        agency_url = "https://eqasim.org"
+    )]).to_csv("%s/gtfs/agency.txt" % output_path, index = False)
+
+    pd.DataFrame.from_records([dict(
+        service_id = 1, monday = 1, tuesday = 1, wednesday = 1,
+        thursday = 1, friday = 1, saturday = 1, sunday = 1, start_date = "20100101",
+        end_date = "20500101"
+    )]).to_csv("%s/gtfs/calendar.txt" % output_path, index = False)
+
+    pd.DataFrame.from_records([dict(
+        route_id = 1, agency_id = 1, route_short_name = "EQ",
+        route_long_name = "The eqasim train", route_desc = "",
+        route_type = 2
+    )]).to_csv("%s/gtfs/routes.txt" % output_path, index = False)
+
+    stops = []
+
+    df_stops = df[df["municipality"].isin(["1B019", "2D007"])].copy()
+    df_stops = df_stops.to_crs(dict(init = "EPSG:4326"))
+
+    pd.DataFrame.from_records([dict(
+        stop_id = "A", stop_code = "A", stop_name = "A",
+        stop_desc = "",
+        stop_lat = df_stops["geometry"].iloc[0].centroid.y,
+        stop_lon = df_stops["geometry"].iloc[0].centroid.x,
+        location_type = 0, parent_station = None
+    ), dict(
+        stop_id = "B", stop_code = "B", stop_name = "B",
+        stop_desc = "",
+        stop_lat = df_stops["geometry"].iloc[1].centroid.y,
+        stop_lon = df_stops["geometry"].iloc[1].centroid.x,
+        location_type = 0, parent_station = None
+    )]).to_csv("%s/gtfs/stops.txt" % output_path, index = False)
+
+    trips = []
+    times = []
+
+    trip_id = 1
+
+    for origin, destination in [("A", "B"), ("B", "A")]:
+        for hour in np.arange(1, 24):
+            trips.append(dict(
+                route_id = 1, service_id = 1, trip_id = trip_id
+            ))
+
+            times.append(dict(
+                trip_id = trip_id, arrival_time = "%02d:00:00" % hour,
+                departure_time = "%02d:00:00" % hour, stop_id = origin, stop_sequence = 1
+            ))
+
+            times.append(dict(
+                trip_id = trip_id, arrival_time = "%02d:00:00" % (hour + 1),
+                departure_time = "%02d:00:00" % (hour + 1), stop_id = destination, stop_sequence = 2
+            ))
+
+            trip_id += 1
+
+    pd.DataFrame.from_records(trips).to_csv("%s/gtfs/trips.txt" % output_path, index = False)
+    pd.DataFrame.from_records(times).to_csv("%s/gtfs/stop_times.txt" % output_path, index = False)
+
+if __name__ == "__main__":
+    import sys
+    create(sys.argv[1])
