@@ -1,5 +1,5 @@
 import subprocess as sp
-import os
+import os, shutil
 
 def configure(context):
     context.config("maven_binary", "mvn")
@@ -24,7 +24,7 @@ def run(context, arguments = [], cwd = None):
     ]
 
     command_line = [
-        context.config("maven_binary")
+        shutil.which(context.config("maven_binary"))
     ] + vm_arguments + arguments
 
     return_code = sp.check_call(command_line, cwd = cwd)
@@ -33,8 +33,11 @@ def run(context, arguments = [], cwd = None):
         raise RuntimeError("Maven return code: %d" % return_code)
 
 def validate(context):
+    if shutil.which(context.config("maven_binary")) == "":
+        raise RuntimeError("Cannot find Maven")
+
     if not b"3." in sp.check_output([
-        context.config("maven_binary"),
+        shutil.which(context.config("maven_binary")),
         "-version"
     ], stderr = sp.STDOUT):
         raise RuntimeError("Maven 3.x.x is required for this pipeline.")
