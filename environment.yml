@@ -20,7 +20,7 @@ dependencies:
 
   - pip:
     - simpledbf==0.2.6
-    - synpp==1.2.1
+    - synpp==1.2.2
 
   # For testing
   - pytest==5.4.2
