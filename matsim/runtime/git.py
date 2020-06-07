@@ -23,11 +23,14 @@ def run(context, arguments = [], cwd = None):
         raise RuntimeError("Git return code: %d" % return_code)
 
 def validate(context):
+    if shutil.which(context.config("git_binary")) == "":
+        raise RuntimeError("Cannot find git binary at: %s" % context.config("git_binary"))
+
     if not b"2." in sp.check_output([
         context.config("git_binary"),
         "--version"
     ], stderr = sp.STDOUT):
-        raise RuntimeError("Git 2.x.x is required for this pipeline.")
+        print("WARNING! Git of at least version 2.x.x is recommended!")
 
 def execute(context):
     pass
