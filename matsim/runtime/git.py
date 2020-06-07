@@ -1,4 +1,5 @@
 import subprocess as sp
+import shutil
 
 def configure(context):
     context.config("git_binary", "git")
