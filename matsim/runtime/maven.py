@@ -34,13 +34,13 @@ def run(context, arguments = [], cwd = None):
 
 def validate(context):
     if shutil.which(context.config("maven_binary")) == "":
-        raise RuntimeError("Cannot find Maven")
+        raise RuntimeError("Cannot find Maven binary at: %s" % context.config("maven_binary"))
 
     if not b"3." in sp.check_output([
         shutil.which(context.config("maven_binary")),
         "-version"
     ], stderr = sp.STDOUT):
-        raise RuntimeError("Maven 3.x.x is required for this pipeline.")
+        print("WARNING! Maven of at least version 3.x.x is recommended!")
 
 def execute(context):
     pass

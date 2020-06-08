@@ -34,8 +34,8 @@ def test_determinism(tmpdir):
             #"%s/meta.json" % output_path
             "%s/ile_de_france_population.xml.gz" % output_path,
             "%s/ile_de_france_network.xml.gz" % output_path,
-            "%s/ile_de_france_transit_schedule.xml.gz" % output_path,
-            "%s/ile_de_france_transit_vehicles.xml.gz" % output_path,
+            #"%s/ile_de_france_transit_schedule.xml.gz" % output_path,
+            #"%s/ile_de_france_transit_vehicles.xml.gz" % output_path,
             "%s/ile_de_france_households.xml.gz" % output_path,
             "%s/ile_de_france_facilities.xml.gz" % output_path,
             "%s/ile_de_france_config.xml" % output_path
