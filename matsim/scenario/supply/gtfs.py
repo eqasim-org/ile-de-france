@@ -8,13 +8,14 @@ def configure(context):
 
     context.config("data_path")
     context.config("gtfs_path", "gtfs")
+    context.config("gtfs_date", "dayWithMostServices")
 
 def execute(context):
     gtfs_path = os.path.realpath("%s/%s" % (context.config("data_path"), context.config("gtfs_path")))
 
     pt2matsim.run(context, "org.matsim.pt2matsim.run.Gtfs2TransitSchedule", [
         gtfs_path,
-        "dayWithMostServices", "EPSG:2154", # TODO: dayWithMostServices should be made explicit and configurable!
+        context.config("gtfs_date"), "EPSG:2154",
         "%s/transit_schedule.xml.gz" % context.path(),
         "%s/transit_vehicles.xml.gz" % context.path()
     ])

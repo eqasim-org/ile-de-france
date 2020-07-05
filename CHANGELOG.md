@@ -2,6 +2,7 @@
 
 **1.0.0-dev**
 
+- Make GTFS date configurable
 - Use synpp 1.2.2 to fix Windows directory regeneration issue
 - Make pipeline configurable for other departments and regions, add documentation
 - BC: Make use of INSEE zone summary data (`codes_2017`)
