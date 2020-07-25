@@ -15,6 +15,7 @@ def configure(context):
     context.stage("matsim.runtime.eqasim")
 
     context.stage("data.spatial.departments")
+    context.stage("data.spatial.codes")
 
     context.config("sampling_rate")
     context.config("processes")
@@ -88,31 +89,35 @@ def execute(context):
     assert os.path.exists("%s/ile_de_france_config.xml" % context.path())
 
     # Add urban attributes to population and network
-    df_shape = context.stage("data.spatial.departments")[["departement_id", "geometry"]].rename(
-        columns = dict(departement_id = "id")
-    )
-    df_shape["id"] = df_shape["id"].astype(str)
-    df_shape.to_file("%s/departments.shp" % context.path())
+    # (but only if Paris is included in the scenario!)
+    df_codes = context.stage("data.spatial.codes")
 
-    eqasim.run(context, "org.eqasim.core.scenario.spatial.RunImputeSpatialAttribute", [
-        "--input-population-path", "prepared_population.xml.gz",
-        "--output-population-path", "prepared_population.xml.gz",
-        "--input-network-path", "ile_de_france_network.xml.gz",
-        "--output-network-path", "ile_de_france_network.xml.gz",
-        "--shape-path", "departments.shp",
-        "--shape-attribute", "id",
-        "--shape-value", "75",
-        "--attribute", "isUrban"
-    ])
+    if "75" in df_codes["departement_id"].unique().astype(str):
+        df_shape = context.stage("data.spatial.departments")[["departement_id", "geometry"]].rename(
+            columns = dict(departement_id = "id")
+        )
+        df_shape["id"] = df_shape["id"].astype(str)
+        df_shape.to_file("%s/departments.shp" % context.path())
 
-    eqasim.run(context, "org.eqasim.core.scenario.spatial.RunAdjustCapacity", [
-        "--input-path", "ile_de_france_network.xml.gz",
-        "--output-path", "ile_de_france_network.xml.gz",
-        "--shape-path", "departments.shp",
-        "--shape-attribute", "id",
-        "--shape-value", "75",
-        "--factor", str(0.8)
-    ])
+        eqasim.run(context, "org.eqasim.core.scenario.spatial.RunImputeSpatialAttribute", [
+            "--input-population-path", "prepared_population.xml.gz",
+            "--output-population-path", "prepared_population.xml.gz",
+            "--input-network-path", "ile_de_france_network.xml.gz",
+            "--output-network-path", "ile_de_france_network.xml.gz",
+            "--shape-path", "departments.shp",
+            "--shape-attribute", "id",
+            "--shape-value", "75",
+            "--attribute", "isUrban"
+        ])
+
+        eqasim.run(context, "org.eqasim.core.scenario.spatial.RunAdjustCapacity", [
+            "--input-path", "ile_de_france_network.xml.gz",
+            "--output-path", "ile_de_france_network.xml.gz",
+            "--shape-path", "departments.shp",
+            "--shape-attribute", "id",
+            "--shape-value", "75",
+            "--factor", str(0.8)
+        ])
 
     # Route population
     eqasim.run(context, "org.eqasim.core.scenario.routing.RunPopulationRouting", [
