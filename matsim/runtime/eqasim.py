@@ -10,7 +10,7 @@ def configure(context):
     context.stage("matsim.runtime.java")
     context.stage("matsim.runtime.maven")
 
-    context.config("eqasim_version", "1.0.5")
+    context.config("eqasim_version", "1.0.6")
 
 def run(context, command, arguments):
     version = context.config("eqasim_version")
@@ -29,7 +29,7 @@ def execute(context):
     # Clone repository and checkout version
     git.run(context, [
         "clone", "https://github.com/eqasim-org/eqasim-java.git",
-        "--branch", "paris-update", #"v%s" % version,
+        "--branch", "v%s" % version,
         "--single-branch", "eqasim-java",
         "--depth", "1"
     ])
