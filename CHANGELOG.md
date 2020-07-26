@@ -2,6 +2,9 @@
 
 **1.0.0-dev**
 
+- Provide calibrated Île-de-France/Paris eqasim simulation for 5% sample
+- Make use of `isUrban` attribute from eqasim `1.0.6`
+- Update to eqasim `1.0.6`
 - Make GTFS date configurable
 - Use synpp 1.2.2 to fix Windows directory regeneration issue
 - Make pipeline configurable for other departments and regions, add documentation
