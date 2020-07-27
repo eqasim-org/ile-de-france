@@ -330,3 +330,5 @@ java -Xmx14G -cp ile_de_france-1.0.5.jar org.eqasim.ile_de_france.RunSimulation 
 
 This will create a `simulation_output` folder (as defined in the `ile_de_france_config.xml`)
 where all simulation is written.
+
+As of version `1.0.6` of the Île-de-France pipeline, simulations of a 5% population sample use calibrated values for the mode choice model. This means after running for 60 or more iterations, the correct mode shares and network speeds are achieved, compared to the EGT reference data. 
