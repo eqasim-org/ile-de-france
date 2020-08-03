@@ -4,7 +4,7 @@ import pandas as pd
 import os
 
 """
-This stage loads the raw data from the French enterprise census.
+This stage loads the raw data from the French service registry.
 """
 
 def configure(context):

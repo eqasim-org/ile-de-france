@@ -2,6 +2,9 @@
 
 **1.0.0-dev**
 
+- Use addresses for home locations (from BD-TOPO)
+- Use enterprise addresses for work locations (from SIRENE + BD-TOPO)
+- Add SIRENE and BD-TOPO data sets
 - Provide calibrated Île-de-France/Paris eqasim simulation for 5% sample
 - Make use of `isUrban` attribute from eqasim `1.0.6`
 - Update to eqasim `1.0.6`
