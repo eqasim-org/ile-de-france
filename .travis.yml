@@ -24,6 +24,11 @@ install:
   - mkdir osmosis
   - tar xf osmosis.tgz -C osmosis
   - export PATH=$HOME/osmosis/bin:$PATH
+  - osmosis/bin/osmosis
+  - osmosis
+  - export PATH=$PATH:$HOME/osmosis/bin
+  - osmosis/bin/osmosis
+  - osmosis
 
 script:
   - java -version
