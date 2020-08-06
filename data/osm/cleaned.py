@@ -21,6 +21,9 @@ def configure(context):
     context.config("data_path")
     context.config("osm_path", "osm/ile-de-france-latest.osm.pbf")
 
+    context.config("osm_highways", "*")
+    context.config("osm_railways", "*")
+
     context.stage("data.osm.osmosis")
     context.stage("data.spatial.municipalities")
 
@@ -57,10 +60,14 @@ def execute(context):
 
         mode = "pbf" if path.endswith("pbf") else "xml"
 
+        highway_tags = context.config("osm_highways")
+        railway_tags = context.config("osm_railways")
+
         data.osm.osmosis.run(context, [
             "--read-%s" % mode, "%s/%s" % (context.config("data_path"), path),
             "--bounding-polygon", "file=%s/boundary.poly" % context.path(), "completeWays=yes",
-            "--tag-filter", "accept-ways", "highway=*", "railway=*",
+            "--tag-filter", "accept-ways", "highway=%s" % highway_tags, "railway=%s" % railway_tags,
+            #"--tag-filter", "accept-ways", "highway=motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,sceondary_link,tertiary,tertiary_link",
             "--write-pbf", "filtered_%d.osm.pbf" % index
         ])
 
