@@ -117,20 +117,7 @@ creating the synthetic population in itself), you need to download OpenStreetMap
 data. A cut-out for Île-de-France is available from Geofabrik:
 
 - [Île-de-France OSM](https://download.geofabrik.de/europe/france/ile-de-france.html)
-- Download *ile-de-france-latest.osm.bz2* under *Other Formats and Auxiliary Files*.
-- Put the *bz2* file (do not unpack!) into the folder `data/osm`.
-
-Unfortunately, the converter ([pt2matsim](https://github.com/matsim-org/pt2matsim))
-used in the current version of the pipeline does
-not understand the *bz2* format yet (but it will in the near future when MATSim 12.0 is
-considered). For now, the file must be converted manually from *bz2* to *gzip*. To
-do so, the *gzip* and *bzip2* command line tools must be available. Then, the following
-commands comvert the file:
-
-- `bunzip2 ile-de-france-latest.osm.bz2`
-- `gzip ile-de-france-latest.osm`
-
-At the end, the `ile-de-france-latest.osm.gz` should be located in the folder.
+- Download *ile-de-france-latest.osm.pbf* and put it into the folder `data/osm`.
 
 ### 10) *(Optional)* Public transit schedule (GTFS)
 
@@ -192,7 +179,7 @@ Your folder structure should now have at least the following files:
 
 If you want to run the simulation, there should be also the following files:
 
-- `data/osm/ile-de-france-latest.osm.gz`
+- `data/osm/ile-de-france-latest.osm.pbf`
 - `data/gtfs/agency.txt`
 - `data/gtfs/calendar.txt`
 - `data/gtfs/calendar_dates.txt`
@@ -302,6 +289,10 @@ you are not sure, you can download the open [AdoptJDK](https://adoptopenjdk.net/
 up the scenario (such as pt2matsim) and running the simulation. Maven can be
 downloaded [here](https://maven.apache.org/) if it does not already exist on
 your system.
+- **Osmosis** needs to be accessible from the command line to convert and filter
+to convert, filter and merge OSM data sets. Alternatively, you can set the path
+to the binary using the `osmosis_binary` option in the confiuration file. Osmosis
+can be downloaded [here](https://wiki.openstreetmap.org/wiki/Osmosis).
 - **git** is used to clone the repositories containing the simulation code. In
 case you clone the pipeline repository previously, you should be all set.
 
@@ -331,4 +322,4 @@ java -Xmx14G -cp ile_de_france-1.0.5.jar org.eqasim.ile_de_france.RunSimulation 
 This will create a `simulation_output` folder (as defined in the `ile_de_france_config.xml`)
 where all simulation is written.
 
-As of version `1.0.6` of the Île-de-France pipeline, simulations of a 5% population sample use calibrated values for the mode choice model. This means after running for 60 or more iterations, the correct mode shares and network speeds are achieved, compared to the EGT reference data. 
+As of version `1.0.6` of the Île-de-France pipeline, simulations of a 5% population sample use calibrated values for the mode choice model. This means after running for 60 or more iterations, the correct mode shares and network speeds are achieved, compared to the EGT reference data.
