@@ -23,7 +23,9 @@ install:
   - wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
   - mkdir osmosis
   - tar xf osmosis.tgz -C osmosis
-  - export PATH=$PATH:$HOME/osmosis/bin
+  - export PATH=$HOME/osmosis/bin:$PATH:$HOME/osmosis/bin
+  - osmosis/bin/osmosis -v
+  - osmosis -v
 
 script:
   - java -version
