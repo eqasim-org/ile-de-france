@@ -1,5 +1,6 @@
 import data.osm.osmosis
 import os, os.path, gzip
+import shapely.geometry as geo
 
 """
 This file reads the OSM data in PBF format specified by the "osm_path"
@@ -12,6 +13,8 @@ from Geofabrik to create a continuous file for the new Occitanie region.
 This stage furthermore filters the file such that only highway elmenets and
 railway elements of the OSM data remain. This makes it easier for the downstream
 MATSim converter to work with the data.
+
+Additionally, the stage cuts the OSM data to the requested region of the pipeline.
 """
 
 def configure(context):
@@ -19,9 +22,34 @@ def configure(context):
     context.config("osm_path", "osm/ile-de-france-latest.osm.pbf")
 
     context.stage("data.osm.osmosis")
+    context.stage("data.spatial.municipalities")
+
+def write_poly(df, path, geometry_column = "geometry"):
+    df = df.to_crs(dict(init = "EPSG:4326"))
+
+    area = geo.MultiPolygon([
+        item.convex_hull for item in df[geometry_column].values
+    ]).convex_hull
+
+    data = []
+    data.append("polyfile")
+    data.append("polygon")
+
+    for coordinate in area.exterior.coords:
+        data.append("    %e    %e" % coordinate)
+
+    data.append("END")
+    data.append("END")
+
+    with open(path, "w+") as f:
+        f.write("\n".join(data))
 
 def execute(context):
     input_files = context.config("osm_path").split(";")
+
+    # Prepare bounding area
+    df_area = context.stage("data.spatial.municipalities")
+    write_poly(df_area, "%s/boundary.poly" % context.path())
 
     # Filter input files for quicker processing
     for index, path in enumerate(input_files):
@@ -31,6 +59,7 @@ def execute(context):
 
         data.osm.osmosis.run(context, [
             "--read-%s" % mode, "%s/%s" % (context.config("data_path"), path),
+            "--bounding-polygon", "file=%s/boundary.poly" % context.path(), "completeWays=yes",
             "--tag-filter", "accept-ways", "highway=*", "railway=*",
             "--write-pbf", "filtered_%d.osm.pbf" % index
         ])
@@ -48,10 +77,6 @@ def execute(context):
     command += ["--write-xml", "compressionMethod=gzip", "output.osm.gz"]
 
     data.osm.osmosis.run(context, command)
-
-    # Pipe output to file and write using gzip
-    #with gzip.open("%s/output.osm.gz" % context.path(), "wb+") as f:
-    #    data.osm.osmosis.run(context, command, f = f)
 
     # Remove temporary files
     for index, path in enumerate(input_files):
