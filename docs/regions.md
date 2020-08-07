@@ -59,7 +59,7 @@ as for [Île-de-France](howto.md). To make use of the resulting file, the
 coniguration needs to be adjusted (as for the census before) with:
 
 ```yaml
-osm_path: osm/corse-latest.osm.gz
+osm_path: osm/corse-latest.osm.pbf
 ```
 
 For Corsica, two GTFS schedules are available, one for [trains](https://www.data.gouv.fr/fr/datasets/donnees-gtfs-transport-trains-des-chemins-de-fer-corse-horaires/) and one for
