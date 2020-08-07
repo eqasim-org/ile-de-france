@@ -127,7 +127,7 @@ public transit schedule. It is available from Île-de-France mobilités:
 - [Île-de-France GTFS](https://data.iledefrance-mobilites.fr/explore/dataset/offre-horaires-tc-gtfs-idf/information/)
 - Go to *Export*, then download the *csv* file. Open the file, for instance in Excel,
 and obtain the URL for *IDFM_gtfs*. Download the *zip* file at this address.
-- Copy the contents of the *zip* file into the folder `data/gtfs`.
+- Copy the `IDFM_gtfs.zip` into the folder `data/gtfs`.
 
 Note that this schedule is updated regularly and only valid for the next three
 weeks. It is therefore a bit tricky to work with it, because the schedule varies
@@ -135,23 +135,7 @@ strongly with external factors such as the collective strike during fall 2019
 or the Covid-19 outbreak which is currently going on at the time of writing
 this documentation. Historical data sets are available from [data.gouv.fr](https://transport.data.gouv.fr/datasets/horaires-prevus-sur-les-lignes-de-transport-en-commun-dile-de-france-gtfs/) but
 we did not assess yet how long they are kept and if it is the same data set as
-the one from Île-de-France mobilités. Currently, the pipeline will examine the
-schedule provided and take the day as a reference on which *most* services are
-active. In a future version, we will require that the user explicitly defines
-this date.
-
-**Note:** In the current IDFm GTFS data (27 Apr 2020), there is a formatting error
-in `routes.txt`, which can be easily fixed. Replace the line
-
-```
-014014090:TBUS3,339,"T\\\\\\\\\","T\\\\\\\\\\\\\\\'Bus 3","",3,,0EACE3,ffffff
-```
-
-by
-
-```
-014014090:TBUS3,339,"T'Bus 3","T'Bus 3","",3,,0EACE3,ffffff
-```
+the one from Île-de-France mobilités.
 
 ### Overview
 
@@ -180,15 +164,7 @@ Your folder structure should now have at least the following files:
 If you want to run the simulation, there should be also the following files:
 
 - `data/osm/ile-de-france-latest.osm.pbf`
-- `data/gtfs/agency.txt`
-- `data/gtfs/calendar.txt`
-- `data/gtfs/calendar_dates.txt`
-- `data/gtfs/routes.txt`
-- `data/gtfs/stop_extensions.txt`
-- `data/gtfs/stops.txt`
-- `data/gtfs/stop_times.txt`
-- `data/gtfs/transfers.txt`
-- `data/gtfs/trips.txt`
+- `data/gtfs/IDFM_gtfs.zip`
 
 In case you are using the regional household travel survey (EGT), the following
 files should be also in place:
@@ -310,13 +286,13 @@ folder:
 - `ile_de_france_households.xml.gz` containing additional household information
 - `ile_de_france_transit_schedule.xml.gz` and `ile_de_france_transit_vehicles.xml.gz` containing public transport data
 - `ile_de_france_config.xml` containing the MATSim configuration values
-- `ile_de_france-1.0.5.jar` containing a fully packaged version of the simulation code including MATSim and all other dependencies
+- `ile_de_france-1.0.6.jar` containing a fully packaged version of the simulation code including MATSim and all other dependencies
 
 If you want to run the simulation again (in the pipeline it is only run for
 two iterations to test that everything works), you can now call the following:
 
 ```bash
-java -Xmx14G -cp ile_de_france-1.0.5.jar org.eqasim.ile_de_france.RunSimulation --config-path ile_de_france_config.xml
+java -Xmx14G -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.RunSimulation --config-path ile_de_france_config.xml
 ```
 
 This will create a `simulation_output` folder (as defined in the `ile_de_france_config.xml`)

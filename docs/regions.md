@@ -63,15 +63,12 @@ osm_path: osm/corse-latest.osm.pbf
 ```
 
 For Corsica, two GTFS schedules are available, one for [trains](https://www.data.gouv.fr/fr/datasets/donnees-gtfs-transport-trains-des-chemins-de-fer-corse-horaires/) and one for
-[busses](https://www.data.gouv.fr/fr/datasets/donnees-gtfs-transport-cars-de-haute-corse/). We haven't found a straight-forward way to combine them without additional
-steps of cleaning, so for the sake of brevity, we will only work with the
-ones for trains in this example. Download the *zip* file an unpack it either
-to data `your_data/gtfs` folder, or in another one next to it. You can specify
-the location of the `gtfs` folder to the pipeline using the configuration
-file:
+[busses](https://www.data.gouv.fr/fr/datasets/donnees-gtfs-transport-cars-de-haute-corse/). Download the *zip* file and place them in the `your_data/gtfs` folder. You then need to
+specifiy the files in the configuration files. Note that you can provide a
+list separated by semicolon for multiple files:
 
 ```yaml
-osm_path: corsica_gtfs
+gtfs_path: gtfs/chemin-de-fer-corse-ligne-ferroviaire-horaires.zip;gtfs/autocars- HC-export_gtfs_16724.zip
 ```
 
 Finally, you should now be able to run the `matsim.output` stage and perform
