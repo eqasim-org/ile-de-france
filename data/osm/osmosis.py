@@ -1,8 +1,11 @@
 import subprocess as sp
-import shutil
+import shutil, os
 
 def configure(context):
     context.config("osmosis_binary", "osmosis")
+
+    context.config("java_binary", "java")
+    context.config("java_memory", "50G")
 
 def run(context, arguments = [], cwd = None):
     """
@@ -14,11 +17,18 @@ def run(context, arguments = [], cwd = None):
     if cwd is None:
         cwd = context.path()
 
+    # Prepare command line
     command_line = [
-        context.config("osmosis_binary")
+        shutil.which(context.config("osmosis_binary"))
     ] + arguments
 
-    return_code = sp.check_call(command_line, cwd = cwd)
+    # Prepare environment
+    environment = os.environ.copy()
+    environment["JAVACMD"] = shutil.which(context.config("java_binary"))
+    environment["JAVACMD_OPTIONS"] = "-Xmx%s" % context.config("java_memory")
+
+    # Run Osmosis
+    return_code = sp.check_call(command_line, cwd = cwd, env = environment)
 
     if not return_code == 0:
         raise RuntimeError("Osmosis return code: %d" % return_code)

@@ -30,9 +30,12 @@ def configure(context):
 def write_poly(df, path, geometry_column = "geometry"):
     df = df.to_crs(dict(init = "EPSG:4326"))
 
-    area = geo.MultiPolygon([
-        item.convex_hull for item in df[geometry_column].values
-    ]).convex_hull
+    df["aggregate"] = 0
+    area = df.dissolve(by = "aggregate")[geometry_column].values[0]
+
+    if not hasattr(area, "exterior"):
+        print("Selected area is not connected -> Using convex hull.")
+        area = area.convex_hull
 
     data = []
     data.append("polyfile")
@@ -57,6 +60,7 @@ def execute(context):
     # Filter input files for quicker processing
     for index, path in enumerate(input_files):
         print("Filtering %s ..." % path)
+        print("Depending on the amount of OSM data, this may take quite some time!")
 
         mode = "pbf" if path.endswith("pbf") else "xml"
 
@@ -65,9 +69,8 @@ def execute(context):
 
         data.osm.osmosis.run(context, [
             "--read-%s" % mode, "%s/%s" % (context.config("data_path"), path),
-            "--bounding-polygon", "file=%s/boundary.poly" % context.path(), "completeWays=yes",
             "--tag-filter", "accept-ways", "highway=%s" % highway_tags, "railway=%s" % railway_tags,
-            #"--tag-filter", "accept-ways", "highway=motorway,motorway_link,trunk,trunk_link,primary,primary_link,secondary,sceondary_link,tertiary,tertiary_link",
+            "--bounding-polygon", "file=%s/boundary.poly" % context.path(), "completeWays=yes",
             "--write-pbf", "filtered_%d.osm.pbf" % index
         ])
 
