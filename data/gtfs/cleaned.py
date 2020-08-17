@@ -23,6 +23,10 @@ def execute(context):
     for path in input_files:
         feed = gtfs.read_feed("%s/%s" % (context.config("data_path"), path))
         feed = gtfs.cut_feed(feed, df_area)
+
+        # This was fixed in pt2matsim, so we can remove one a new release (> 20.7) is available.
+        feed = gtfs.despace_stop_ids(feed) # Necessary as MATSim does not like stops/links with spaces
+
         feeds.append(feed)
 
     # Merge feeds

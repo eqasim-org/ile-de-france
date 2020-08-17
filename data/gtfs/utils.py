@@ -35,7 +35,7 @@ def read_feed(path):
                 print("  Loading %s.txt ..." % slot)
 
                 with zip.open("%s.txt" % slot) as f:
-                    feed[slot] = pd.read_csv(f)
+                    feed[slot] = pd.read_csv(f, skipinitialspace = True)
             else:
                 print("  Not loading %s.txt" % slot)
 
@@ -116,12 +116,13 @@ def cut_feed(feed, df_area, crs = None):
     feed["stop_times"] = df_times.copy()
 
     # 3) Remove transfers
-    df_transfers = feed["transfers"]
-    df_transfers = df_transfers[
-        df_transfers["from_stop_id"].isin(remaining_stops) &
-        df_transfers["to_stop_id"].isin(remaining_stops)
-    ]
-    feed["transfers"] = df_transfers.copy()
+    if "transfers" in feed:
+        df_transfers = feed["transfers"]
+        df_transfers = df_transfers[
+            df_transfers["from_stop_id"].isin(remaining_stops) &
+            df_transfers["to_stop_id"].isin(remaining_stops)
+        ]
+        feed["transfers"] = df_transfers.copy()
 
     # 4) Remove pathways
     if "pathways" in feed:
@@ -174,7 +175,7 @@ SLOT_COLLISIONS = [
     { "slot": "calendar", "identifier": "service_id", "references": [
         ("calendar_dates", "service_id"), ("trips", "service_id")] },
     { "slot": "calendar_dates", "identifier": "service_id", "references": [
-        ("trips", "service_id")] },
+        ("trips", "service_id"), ("calendar", "service_id")] },
     { "slot": "fare_attributes", "identifier": "fare_id", "references": [
         ("fare_rules", "fare_id")] },
     { "slot": "shapes", "identifier": "shape_id", "references": [
@@ -244,5 +245,30 @@ def merge_two_feeds(first, second, suffix = "_merged"):
             feed[slot] = first[slot].copy()
         elif slot in second:
             feed[slot] = second[slot].copy()
+
+    return feed
+
+def despace_stop_ids(feed, replacement = ":::"):
+    feed = copy_feed(feed)
+
+    references = None
+
+    for item in SLOT_COLLISIONS:
+        if item["slot"] == "stops":
+            references = item["references"]
+
+    df_stops = feed["stops"]
+    df_stops["stop_id"] = df_stops["stop_id"].astype(str)
+
+    search_ids = list(df_stops[df_stops["stop_id"].str.contains(" ")]["stop_id"].unique())
+    replacement_ids = [item.replace(" ", replacement) for item in search_ids]
+
+    df_stops["stop_id"] = df_stops["stop_id"].replace(search_ids, replacement_ids)
+
+    for reference_slot, reference_field in references:
+        if reference_slot in feed:
+            feed[reference_slot][reference_field] = feed[reference_slot][reference_field].astype(str).replace(search_ids, replacement_ids)
+
+    print("De-spaced %d/%d stops" % (len(search_ids), len(df_stops)))
 
     return feed
