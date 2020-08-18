@@ -2,6 +2,7 @@
 
 **1.0.0-dev**
 
+- Make prefix of MATSim output files configurable
 - Cut GTFS schedules to the scenario area automatically
 - Make possible to merge multiple GTFS files automatically
 - Automatically convert, filter and merge OSM data before using it in pt2matsim. This requires that `osmosis` is available in the run environment.
