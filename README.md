@@ -3,12 +3,7 @@
 ![Via Île-de-France](docs/via.png "Via Île-de-France")
 
 This repository contains the code to create an open data synthetic population
-of the Île-de-France region around in Paris. However, it can also be used to
-create scenarios for other regions in France.
-
-- [How to use this pipeline to create your own scenario](docs/howto.md)
-- [How to run a MATSim transport simulation for Île-de-France](docs/howto.md)
-- [How to create scenarios of *other regions* in France](docs/regions.md)
+of the Île-de-France region around in Paris and other regions in France.
 
 ## Main reference
 
@@ -45,6 +40,24 @@ This pipeline has been adapted to many other regions and cities around the world
 and is under constant development. It is released under the GPL license, so feel free
 to make adaptations, contributions or forks as long as you keep your code open
 as well!
+
+## Documentation
+
+This pipeline fulfils to purposes: First, to create synthetic populations
+of French regions in *CSV* and *GLPK* format including households, persons
+and their daily localized activities. Second, the pipeline makes use of
+infrastructure data to generate the inputs to agent-based transport simulations.
+These steps are described in the following documents:
+
+- [How to create a synthetic population of Île-de-France](docs/population.md)
+- [How to run a MATSim simulation of Île-de-France](docs/simulation.md)
+
+Furthermore, we provide documentation on how to make use of the code to create
+popuations and run simulations of other places in France. While these are
+examples, the code can adapted to any other scenarios as well:
+
+- [Toulouse and Occitanie region](docs/cases/toulouse.md)
+- [Lyon and neighboring departements](docs/cases/lyon.md)
 
 ## Publications
 
