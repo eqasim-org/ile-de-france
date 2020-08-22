@@ -13,7 +13,7 @@ The main research reference for the synthetic population of Île-de-France is:
 ## What is this?
 
 This repository contains the code to create an open data synthetic population
-of the Île-de-France region around in Paris.
+of the Île-de-France region around in Paris and other regions in France.
 It takes as input several publicly
 available data sources to create a data set that closely represents the
 socio-demographic attributes of persons and households in the region, as well
@@ -29,8 +29,8 @@ on a spatially and temporally detailed scale. Moreover, such data has been used
 to study the **spreading of diseases**, or the **placement of services** and facilities.
 
 The synthetic population for Île-de-France can be generated from scratch by
-everybody who has basic knowledge in using Python. Detailed [instructions
-on how to generate a synthetic population with this repository](docs/howto.md) are available.
+everybody who has basic knowledge in using Python. Detailed instructions
+on how to generate a synthetic population with this repository are available below.
 
 Although the synthetic population is independent of the downstream application
 or simulation tool, we provide the means to create an input population for the
@@ -62,6 +62,6 @@ examples, the code can adapted to any other scenarios as well:
 ## Publications
 
 - Hörl, S. and M. Balac (2020) [Reproducible scenarios for agent-based transport simulation: A case study for Paris and Île-de-France](https://www.researchgate.net/publication/341131284_Reproducible_scenarios_for_agent-based_transport_simulation_A_case_study_for_Paris_and_Ile-de-France), Preprint, IVT, ETH Zurich, Zurich.
-- Hörl, S., Balac, M. and Axhausen, K.W. (2019) [Dynamic demand estimation for an AMoD system in Paris](https://ieeexplore.ieee.org/document/8814051),
+- Hörl, S., M. Balac and K.W. Axhausen (2019) [Dynamic demand estimation for an AMoD system in Paris](https://ieeexplore.ieee.org/document/8814051),
 paper presented at the 30th IEEE Intelligent Vehicles Symposium, Paris, June 2019.
 - Hörl, S. (2019) [An agent-based model of Île-de-France: Overview and first results](https://slides.com/sebastianhorl/matsim-paris), presentation at Institut Paris Region, September 2019.
