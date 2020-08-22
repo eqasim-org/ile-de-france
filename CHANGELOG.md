@@ -2,6 +2,7 @@
 
 **1.0.0-dev**
 
+- Add documentation for Lyon and Toulouse
 - Define stage to output HTS reference data
 - Make prefix of MATSim output files configurable
 - Cut GTFS schedules to the scenario area automatically

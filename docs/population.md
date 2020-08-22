@@ -1,14 +1,17 @@
-# How to create a scenario
+# Generating the Île-de-France population
 
-The following sections describe three steps of using the pipeline. To generate
-the synthetic population, first all necessary data must be gathered. Afterwards,
-the pipeline can be run to create a synthetic population in *CSV* and *GPKG*
-format. Optionally, the pipeline can then prepare a [MATSim](https://matsim.org/)
-simulation and run it in a third step:
+The following sections describe how to generate a synthetic population for
+Île-de-France using the pipeline. First all necessary data must be gathered.
+Afterwards, the pipeline can be run to create a synthetic population in *CSV*
+and *GPKG* format. These outputs can be used for analysis, or serve as input
+to [run a transport simulation in MATSim](simulation.md). Also, this guide
+is the basis for creating populations and simulations of other regions and
+cities such as [Toulouse](cases/toulouse.md) or [Lyon](cases/lyon.md).
+
+This guide will cover the following steps:
 
 - [Gathering the data](#section-data)
-- [Running the pipeline](#section-data)
-- *(Optional)* [Running the simulation](#section-simulation)
+- [Running the pipeline](#section-population)
 
 ## <a name="section-data"></a>Gathering the data
 
@@ -110,33 +113,6 @@ the identifiers of IRIS, municipalities, departments and regions:
 - Download the **2017** edition as a *zip* file.
 - Open the *zip* and copy the file `reference_IRIS_geo2017.xls` into `data/codes_2017`.
 
-### 9) *(Optional)* Road network (OpenStreetMap)
-
-Only in case you want to run a full simulation of the scenario (rather than
-creating the synthetic population in itself), you need to download OpenStreetMap
-data. A cut-out for Île-de-France is available from Geofabrik:
-
-- [Île-de-France OSM](https://download.geofabrik.de/europe/france/ile-de-france.html)
-- Download *ile-de-france-latest.osm.pbf* and put it into the folder `data/osm`.
-
-### 10) *(Optional)* Public transit schedule (GTFS)
-
-Again, only if you want to run a full simulation, you need to download the
-public transit schedule. It is available from Île-de-France mobilités:
-
-- [Île-de-France GTFS](https://data.iledefrance-mobilites.fr/explore/dataset/offre-horaires-tc-gtfs-idf/information/)
-- Go to *Export*, then download the *csv* file. Open the file, for instance in Excel,
-and obtain the URL for *IDFM_gtfs*. Download the *zip* file at this address.
-- Copy the `IDFM_gtfs.zip` into the folder `data/gtfs`.
-
-Note that this schedule is updated regularly and only valid for the next three
-weeks. It is therefore a bit tricky to work with it, because the schedule varies
-strongly with external factors such as the collective strike during fall 2019
-or the Covid-19 outbreak which is currently going on at the time of writing
-this documentation. Historical data sets are available from [data.gouv.fr](https://transport.data.gouv.fr/datasets/horaires-prevus-sur-les-lignes-de-transport-en-commun-dile-de-france-gtfs/) but
-we did not assess yet how long they are kept and if it is the same data set as
-the one from Île-de-France mobilités.
-
 ### Overview
 
 Your folder structure should now have at least the following files:
@@ -161,13 +137,8 @@ Your folder structure should now have at least the following files:
 - `data/iris_2017/CONTOURS-IRIS.shx`
 - `data/codes_2017/reference_IRIS_geo2017.xls`
 
-If you want to run the simulation, there should be also the following files:
-
-- `data/osm/ile-de-france-latest.osm.pbf`
-- `data/gtfs/IDFM_gtfs.zip`
-
 In case you are using the regional household travel survey (EGT), the following
-files should be also in place:
+files should also be in place:
 
 - `data/egt_2010/Menages_semaine.csv`
 - `data/egt_2010/Personnes_semaine.csv`
@@ -202,8 +173,8 @@ To activate the environment, run:
 conda activate ile-de-france
 ```
 
-Now have a look at `config.yml` which is the configuration of the pipeline.
-Check out [synpp](https://github.com/eqasim-org/synpp) to get a more general
+Now have a look at `config.yml` which is the configuration of the pipeline code.
+Have a look at [synpp](https://github.com/eqasim-org/synpp) in case you want to get a more general
 understanding of what it does. For the moment, it is important to adjust
 two configuration values inside of `config.yml`:
 
@@ -251,51 +222,3 @@ of activities or transport modes for the trips.
 activities, but in the spatial *GPKG* format. Activities contain point
 geometries to indicate where they happen and the trips file contains line
 geometries to indicate origin and destination of each trip.
-
-## <a name="section-simulation">Running the simulation
-
-The pipeline can be used to generate a full runnable [MATSim](https://matsim.org/)
-scenario and run it for a couple of iterations to test it. For that, you need
-to make sure that the following tools are installed on your system (you can just
-try to run the pipeline, it will complain if this is not the case):
-
-- **Java** needs to be installed, with a minimum version of Java 8. In case
-you are not sure, you can download the open [AdoptJDK](https://adoptopenjdk.net/).
-- **Maven** needs to be installed to build the necessary Java packages for setting
-up the scenario (such as pt2matsim) and running the simulation. Maven can be
-downloaded [here](https://maven.apache.org/) if it does not already exist on
-your system.
-- **Osmosis** needs to be accessible from the command line to convert and filter
-to convert, filter and merge OSM data sets. Alternatively, you can set the path
-to the binary using the `osmosis_binary` option in the confiuration file. Osmosis
-can be downloaded [here](https://wiki.openstreetmap.org/wiki/Osmosis).
-- **git** is used to clone the repositories containing the simulation code. In
-case you clone the pipeline repository previously, you should be all set.
-
-Then, open again `config.yml` and uncomment the `matsim.output` stage in the
-`run` section. If you call `python3 -m synpp` again, the pipeline will know
-already which stages have been running before, so it will only run additional
-stages that are needed to set up and test the simulation.
-
-After running, you should find the MATSim scenario files in the `output`
-folder:
-
-- `ile_de_france_population.xml.gz` containing the agents and their daily plans.
-- `ile_de_france_facilities.xml.gz` containing all businesses, services, etc.
-- `ile_de_france_network.xml.gz` containing the road and transit network
-- `ile_de_france_households.xml.gz` containing additional household information
-- `ile_de_france_transit_schedule.xml.gz` and `ile_de_france_transit_vehicles.xml.gz` containing public transport data
-- `ile_de_france_config.xml` containing the MATSim configuration values
-- `ile_de_france-1.0.6.jar` containing a fully packaged version of the simulation code including MATSim and all other dependencies
-
-If you want to run the simulation again (in the pipeline it is only run for
-two iterations to test that everything works), you can now call the following:
-
-```bash
-java -Xmx14G -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.RunSimulation --config-path ile_de_france_config.xml
-```
-
-This will create a `simulation_output` folder (as defined in the `ile_de_france_config.xml`)
-where all simulation is written.
-
-As of version `1.0.6` of the Île-de-France pipeline, simulations of a 5% population sample use calibrated values for the mode choice model. This means after running for 60 or more iterations, the correct mode shares and network speeds are achieved, compared to the EGT reference data.
