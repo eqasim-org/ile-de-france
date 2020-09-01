@@ -2,6 +2,7 @@
 
 **1.0.0-dev**
 
+- Bugfix: Fixing bug where stop times where discarded in GTFS cutting
 - Add documentation for Lyon and Toulouse
 - Define stage to output HTS reference data
 - Make prefix of MATSim output files configurable
