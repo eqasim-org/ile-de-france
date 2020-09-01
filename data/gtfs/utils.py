@@ -112,7 +112,7 @@ def cut_feed(feed, df_area, crs = None):
 
     # 2) Remove stop times
     df_times = feed["stop_times"]
-    df_times = df_times[df_times["stop_id"].isin(remaining_stops)]
+    df_times = df_times[df_times["stop_id"].astype(str).isin(remaining_stops.astype(str))]
     feed["stop_times"] = df_times.copy()
 
     # 3) Remove transfers
@@ -134,8 +134,6 @@ def cut_feed(feed, df_area, crs = None):
         feed["pathways"] = df_pathways.copy()
 
     # 5) Remove trips
-    import tqdm
-
     trip_counts = feed["stop_times"]["trip_id"].value_counts()
     remaining_trips = trip_counts[trip_counts > 1].index.values
 
