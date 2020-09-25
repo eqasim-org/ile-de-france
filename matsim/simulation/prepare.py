@@ -21,6 +21,8 @@ def configure(context):
     context.config("processes")
     context.config("random_seed")
 
+    context.config("output_prefix", "ile_de_france_")
+
 def execute(context):
     # Prepare input files
     facilities_path = "%s/%s" % (
@@ -40,42 +42,42 @@ def execute(context):
 
     eqasim.run(context, "org.eqasim.core.scenario.preparation.RunPreparation", [
         "--input-facilities-path", facilities_path,
-        "--output-facilities-path", "ile_de_france_facilities.xml.gz",
+        "--output-facilities-path", "%sfacilities.xml.gz" % context.config("output_prefix"),
         "--input-population-path", population_path,
         "--output-population-path", "prepared_population.xml.gz",
         "--input-network-path", network_path,
-        "--output-network-path", "ile_de_france_network.xml.gz",
+        "--output-network-path", "%snetwork.xml.gz" % context.config("output_prefix"),
         "--threads", context.config("processes")
     ])
 
-    assert os.path.exists("%s/ile_de_france_facilities.xml.gz" % context.path())
+    assert os.path.exists("%s/%sfacilities.xml.gz" % (context.path(), context.config("output_prefix")))
     assert os.path.exists("%s/prepared_population.xml.gz" % context.path())
-    assert os.path.exists("%s/ile_de_france_network.xml.gz" % context.path())
+    assert os.path.exists("%s/%snetwork.xml.gz" % (context.path(), context.config("output_prefix")))
 
     # Copy remaining input files
     households_path = "%s/%s" % (
         context.path("matsim.scenario.households"),
         context.stage("matsim.scenario.households")
     )
-    shutil.copy(households_path, "%s/ile_de_france_households.xml.gz" % context.cache_path)
+    shutil.copy(households_path, "%s/%shouseholds.xml.gz" % (context.cache_path, context.config("output_prefix")))
 
     transit_schedule_path = "%s/%s" % (
         context.path("matsim.scenario.supply.processed"),
         context.stage("matsim.scenario.supply.processed")["schedule_path"]
     )
-    shutil.copy(transit_schedule_path, "%s/ile_de_france_transit_schedule.xml.gz" % context.cache_path)
+    shutil.copy(transit_schedule_path, "%s/%stransit_schedule.xml.gz" % (context.cache_path, context.config("output_prefix")))
 
     transit_vehicles_path = "%s/%s" % (
         context.path("matsim.scenario.supply.gtfs"),
         context.stage("matsim.scenario.supply.gtfs")["vehicles_path"]
     )
-    shutil.copy(transit_vehicles_path, "%s/ile_de_france_transit_vehicles.xml.gz" % context.cache_path)
+    shutil.copy(transit_vehicles_path, "%s/%stransit_vehicles.xml.gz" % (context.cache_path, context.config("output_prefix")))
 
     # Generate base configuration
     eqasim.run(context, "org.eqasim.core.scenario.config.RunGenerateConfig", [
         "--sample-size", context.config("sampling_rate"),
         "--threads", context.config("processes"),
-        "--prefix", "ile_de_france_",
+        "--prefix", context.config("output_prefix"),
         "--random-seed", context.config("random_seed"),
         "--output-path", "generic_config.xml"
     ])
@@ -84,9 +86,40 @@ def execute(context):
     # Adapt config for Île-de-France
     eqasim.run(context, "org.eqasim.ile_de_france.scenario.RunAdaptConfig", [
         "--input-path", "generic_config.xml",
-        "--output-path", "ile_de_france_config.xml"
+        "--output-path", "%sconfig.xml" % context.config("output_prefix")
     ])
-    assert os.path.exists("%s/ile_de_france_config.xml" % context.path())
+    assert os.path.exists("%s/%sconfig.xml" % (context.path(), context.config("output_prefix")))
+
+    # Add urban attributes to population and network
+    # (but only if Paris is included in the scenario!)
+    df_codes = context.stage("data.spatial.codes")
+
+    if "75" in df_codes["departement_id"].unique().astype(str):
+        df_shape = context.stage("data.spatial.departments")[["departement_id", "geometry"]].rename(
+            columns = dict(departement_id = "id")
+        )
+        df_shape["id"] = df_shape["id"].astype(str)
+        df_shape.to_file("%s/departments.shp" % context.path())
+
+        eqasim.run(context, "org.eqasim.core.scenario.spatial.RunImputeSpatialAttribute", [
+            "--input-population-path", "prepared_population.xml.gz",
+            "--output-population-path", "prepared_population.xml.gz",
+            "--input-network-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+            "--output-network-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+            "--shape-path", "departments.shp",
+            "--shape-attribute", "id",
+            "--shape-value", "75",
+            "--attribute", "isUrban"
+        ])
+
+        eqasim.run(context, "org.eqasim.core.scenario.spatial.RunAdjustCapacity", [
+            "--input-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+            "--output-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+            "--shape-path", "departments.shp",
+            "--shape-attribute", "id",
+            "--shape-value", "75",
+            "--factor", str(0.8)
+        ])
 
     # Add urban attributes to population and network
     # (but only if Paris is included in the scenario!)
@@ -121,19 +154,19 @@ def execute(context):
 
     # Route population
     eqasim.run(context, "org.eqasim.core.scenario.routing.RunPopulationRouting", [
-        "--config-path", "ile_de_france_config.xml",
-        "--output-path", "ile_de_france_population.xml.gz",
+        "--config-path", "%sconfig.xml" % context.config("output_prefix"),
+        "--output-path", "%spopulation.xml.gz" % context.config("output_prefix"),
         "--threads", context.config("processes"),
         "--config:plans.inputPlansFile", "prepared_population.xml.gz"
     ])
-    assert os.path.exists("%s/ile_de_france_population.xml.gz" % context.path())
+    assert os.path.exists("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
 
     # Validate scenario
     eqasim.run(context, "org.eqasim.core.scenario.validation.RunScenarioValidator", [
-        "--config-path", "ile_de_france_config.xml"
+        "--config-path", "%sconfig.xml" % context.config("output_prefix")
     ])
 
     # Cleanup
     os.remove("%s/prepared_population.xml.gz" % context.path())
 
-    return "ile_de_france_config.xml"
+    return "%sconfig.xml" % context.config("output_prefix")

@@ -558,12 +558,12 @@ def create(output_path):
     df_nodes = df_nodes.to_crs(dict(init = "EPSG:4326"))
 
     for row in df_nodes.itertuples():
-        osm.append('<node id="%d" lat="%f" lon="%f" version="3" />' % (
+        osm.append('<node id="%d" lat="%f" lon="%f" version="3" timestamp="2010-12-05T17:00:00" />' % (
             row[1], row[2].y, row[2].x
         ))
 
     for index, link in enumerate(links):
-        osm.append('<way id="%d" version="3">' % (index + 1))
+        osm.append('<way id="%d" version="3" timestamp="2010-12-05T17:00:00">' % (index + 1))
         osm.append('<nd ref="%d" />' % link[0])
         osm.append('<nd ref="%d" />' % link[1])
         osm.append('<tag k="highway" v="primary" />')
@@ -576,45 +576,51 @@ def create(output_path):
     with gzip.open("%s/osm/ile-de-france-latest.osm.gz" % output_path, "wb+") as f:
         f.write(bytes("\n".join(osm), "utf-8"))
 
+    import subprocess
+    subprocess.check_call([
+        "osmosis", "--read-xml", "%s/osm/ile-de-france-latest.osm.gz" % output_path,
+        "--write-pbf", "%s/osm/ile-de-france-latest.osm.pbf" % output_path
+    ])
+
     # Data set: GTFS
 
-    os.mkdir("%s/gtfs" % output_path)
+    feed = {}
 
-    pd.DataFrame.from_records([dict(
+    feed["agency"] = pd.DataFrame.from_records([dict(
         agency_id = 1, agency_name = "eqasim", agency_timezone = "Europe/Paris",
         agency_url = "https://eqasim.org"
-    )]).to_csv("%s/gtfs/agency.txt" % output_path, index = False)
+    )])
 
-    pd.DataFrame.from_records([dict(
+    feed["calendar"] = pd.DataFrame.from_records([dict(
         service_id = 1, monday = 1, tuesday = 1, wednesday = 1,
         thursday = 1, friday = 1, saturday = 1, sunday = 1, start_date = "20100101",
         end_date = "20500101"
-    )]).to_csv("%s/gtfs/calendar.txt" % output_path, index = False)
+    )])
 
-    pd.DataFrame.from_records([dict(
+    feed["routes"] = pd.DataFrame.from_records([dict(
         route_id = 1, agency_id = 1, route_short_name = "EQ",
         route_long_name = "The eqasim train", route_desc = "",
         route_type = 2
-    )]).to_csv("%s/gtfs/routes.txt" % output_path, index = False)
+    )])
 
     stops = []
 
     df_stops = df[df["municipality"].isin(["1B019", "2D007"])].copy()
     df_stops = df_stops.to_crs(dict(init = "EPSG:4326"))
 
-    pd.DataFrame.from_records([dict(
+    feed["stops"] = pd.DataFrame.from_records([dict(
         stop_id = "A", stop_code = "A", stop_name = "A",
         stop_desc = "",
         stop_lat = df_stops["geometry"].iloc[0].centroid.y,
         stop_lon = df_stops["geometry"].iloc[0].centroid.x,
-        location_type = 0, parent_station = None
+        location_type = 1, parent_station = None
     ), dict(
         stop_id = "B", stop_code = "B", stop_name = "B",
         stop_desc = "",
         stop_lat = df_stops["geometry"].iloc[1].centroid.y,
         stop_lon = df_stops["geometry"].iloc[1].centroid.x,
-        location_type = 0, parent_station = None
-    )]).to_csv("%s/gtfs/stops.txt" % output_path, index = False)
+        location_type = 1, parent_station = None
+    )])
 
     trips = []
     times = []
@@ -639,8 +645,18 @@ def create(output_path):
 
             trip_id += 1
 
-    pd.DataFrame.from_records(trips).to_csv("%s/gtfs/trips.txt" % output_path, index = False)
-    pd.DataFrame.from_records(times).to_csv("%s/gtfs/stop_times.txt" % output_path, index = False)
+    feed["trips"] = pd.DataFrame.from_records(trips)
+    feed["stop_times"] = pd.DataFrame.from_records(times)
+
+    # Transfers
+    feed["transfers"] = pd.DataFrame(dict(
+        from_stop_id = [], to_stop_id = [], transfer_type = []
+    ))
+
+    os.mkdir("%s/gtfs" % output_path)
+
+    import data.gtfs.utils
+    data.gtfs.utils.write_feed(feed, "%s/gtfs/IDFM_gtfs.zip" % output_path)
 
 if __name__ == "__main__":
     import sys

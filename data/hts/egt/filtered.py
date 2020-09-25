@@ -39,9 +39,10 @@ def execute(context):
     df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
 
     # Finish up
-    df_households = df_households[hts.HOUSEHOLD_COLUMNS]
-    df_persons = df_persons[hts.PERSON_COLUMNS]
-    df_trips = df_trips[hts.TRIP_COLUMNS + ["euclidean_distance"]]
+    df_households = df_households[hts.HOUSEHOLD_COLUMNS + ["egt_household_id"]]
+    df_persons = df_persons[hts.PERSON_COLUMNS + ["egt_household_id", "egt_person_id"]]
+    df_trips = df_trips[hts.TRIP_COLUMNS + ["euclidean_distance"] + ["egt_household_id", "egt_person_id", "egt_trip_id"]]
 
     hts.check(df_households, df_persons, df_trips)
+
     return df_households, df_persons, df_trips
