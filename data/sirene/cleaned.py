@@ -33,6 +33,9 @@ def execute(context):
     # ... and filter thme if nobody is working
     df_sirene = df_sirene[df_sirene["employees"] > 0].copy()
 
+    # Add activity classification
+    df_sirene["ape"] = df_sirene["activitePrincipaleEtablissement"]
+
     # Check communes
     df_sirene["commune_id"] = df_sirene["codeCommuneEtablissement"].astype("category")
 
@@ -67,7 +70,7 @@ def execute(context):
 
     df_sirene["number"] = pd.to_numeric(df_sirene["numeroVoieEtablissement"], errors = "coerce")
 
-    df_sirene = df_sirene[["commune_id", "employees", "street", "number"]]
+    df_sirene = df_sirene[["commune_id", "employees", "street", "number", "ape"]]
 
     # Filter out if the information of invalid
     initial_count = len(df_sirene)

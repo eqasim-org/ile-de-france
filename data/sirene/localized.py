@@ -20,10 +20,17 @@ name in question and the available ones.
 Finally, some SIRENE observations must be filtered out, because they cannot be
 matched to a coordinate.
 
-Note that matching only is performed on "[NUMBER] [STREET NAME]", while additional
+Note that matching only is performed on "[NUMBER] [STREET NAME] [COMMUNE]", while additional
 information would be available, such as an addendum to the number, like "5bis".
 However, this introduces additional discrepancies between the data set while not
 heavily affecting the quality of the location of the enterprises.
+
+TOOD: Can / should we match by post code?
+TODO: Should we match by departement instead of commune?
+
+We have the problem here that the commune noted down in SIRENE may not be in
+line with our IRIS system. We could also limit the time of the SIRET observations
+with their last update to one that fits with our IRIS system.
 """
 
 def configure(context):
@@ -38,7 +45,7 @@ def execute(context):
 
     # First, perform the exact matching
     df_matched = pd.merge(
-        df_sirene[["street", "number", "commune_id", "employees"]],
+        df_sirene[["street", "number", "commune_id", "employees", "ape"]],
         df_bdtopo[["street", "number", "commune_id", "geometry"]],
         how = "left", on = ["street", "number", "commune_id"]
     )
@@ -64,23 +71,24 @@ def execute(context):
     for commune_id in context.progress(commune_ids, total = len(commune_ids), label = "Fixing missing addresses by Levenshtein distance ..."):
         df_local_bdtopo = df_bdtopo[df_bdtopo["commune_id"] == commune_id]
 
-        f_commune = df_missing["commune_id"] == commune_id
-        df_local_sirene = df_missing[f_commune]
+        if len(df_local_bdtopo) > 0:
+            f_commune = df_missing["commune_id"] == commune_id
+            df_local_sirene = df_missing[f_commune]
 
-        candidate_streets = set(df_local_bdtopo["street"].unique())
-        missing_streets = set(df_local_sirene["street"].unique())
-        candidate_streets = list(candidate_streets)
+            candidate_streets = set(df_local_bdtopo["street"].unique())
+            missing_streets = set(df_local_sirene["street"].unique())
+            candidate_streets = list(candidate_streets)
 
-        missing_count += len(missing_streets)
+            missing_count += len(missing_streets)
 
-        for missing_street in missing_streets:
-            distances = np.array([Levenshtein.distance(missing_street, c) for c in candidate_streets])
-            index = np.argmin(distances)
+            for missing_street in missing_streets:
+                distances = np.array([Levenshtein.distance(missing_street, c) for c in candidate_streets])
+                index = np.argmin(distances)
 
-            if distances[index] <= LEVENSHTEIN_THRESHOLD:
-                f = f_commune & (df_missing["street"] == missing_street)
-                df_missing.loc[f, "street"] = candidate_streets[index]
-                fixed_count += 1
+                if distances[index] <= LEVENSHTEIN_THRESHOLD:
+                    f = f_commune & (df_missing["street"] == missing_street)
+                    df_missing.loc[f, "street"] = candidate_streets[index]
+                    fixed_count += 1
 
     print("Fixed %d/%d (%.2f%%) missing streets by Levenshtein distance" % (
         fixed_count, missing_count, 100 * fixed_count / missing_count
@@ -89,7 +97,7 @@ def execute(context):
     print("Finding addresses with fixed street names ...")
 
     df_fixed = pd.merge(
-        df_missing[["street", "number", "commune_id", "employees"]],
+        df_missing[["street", "number", "commune_id", "employees", "ape"]],
         df_bdtopo[["street", "number", "commune_id", "geometry"]],
         how = "left", on = ["street", "number", "commune_id"]
     )
