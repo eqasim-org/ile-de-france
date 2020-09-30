@@ -1,0 +1,40 @@
+## Synthetic population pipeline for Corsica
+## based on the synpp package, which is used
+## as unit tests for the eqasim-java package.
+
+# This is the path to a directory where the pipeline can store temporary data
+working_directory: /home/shoerl/scenarios/cache/corsica
+
+# This section defines which parts of the pipeline should be run
+run:
+  - matsim.output
+
+# Here the configuraiton of the pipeline starts
+config:
+  # Some general configuration
+  processes: 4
+
+  # Define whether to use ENTD or EGT as the household travel survey (HTS)
+  hts: entd
+
+  # Define sampling rate and random seed for the output population
+  sampling_rate: 0.01
+  random_seed: 1234
+
+  # Paths to the input data and where the output should be stored
+  data_path: /home/shoerl/scenarios/data/corsica
+  output_prefix: corsica_
+
+  # Only interesting if you run the simulation
+  java_memory: 14G
+
+  # Specific for Corsica
+  regions: [94]
+  census_path: rp_2015/FD_INDCVIZE_2015.dbf
+  gtfs_path: gtfs/cars2a-gtfs.zip;gtfs/cars2b-gtfs.zip;gtfs/cfc-gtfs.zip
+  osm_path: osm/corse-latest.osm.pbf
+  matching_minimum_observations: 5
+
+  write_jar: false
+  output_path: /home/shoerl/eqasim/eqasim-java/ile_de_france/src/test/resources/corsica
+  eqasim_path: /home/shoerl/eqasim/eqasim-java/ile_de_france/target/ile_de_france-1.1.0.jar

@@ -7,6 +7,7 @@ def configure(context):
 
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
+    context.config("write_jar", True)
 
 def execute(context):
     config_path = "%s/%s" % (
@@ -28,7 +29,8 @@ def execute(context):
             "%s/%s" % (context.config("output_path"), name)
         )
 
-    shutil.copy(
-        "%s/%s" % (context.path("matsim.runtime.eqasim"), context.stage("matsim.runtime.eqasim")),
-        context.config("output_path")
-    )
+    if context.config("write_jar"):
+        shutil.copy(
+            "%s/%s" % (context.path("matsim.runtime.eqasim"), context.stage("matsim.runtime.eqasim")),
+            "%s/%srun.jar" % (context.config("output_path"), context.config("output_prefix"))
+        )

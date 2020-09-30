@@ -20,24 +20,50 @@ def read_feed(path):
 
     with zipfile.ZipFile(path, "r") as zip:
         available_slots = zip.namelist()
+        prefix = None
+
+        if "agency.txt" in available_slots:
+            prefix = ""
+        else:
+            for slot in available_slots:
+                if slot.endswith("agency.txt"):
+                    prefix = slot.replace("agency.txt", "")
+                    print("Warning: GTFS files seem to be located in: %s" % prefix)
+                    break
+
+            if prefix is None:
+                raise RuntimeError("No GTFS data found in archive")
 
         for slot in REQUIRED_SLOTS:
-            if not "%s.txt" % slot in available_slots:
+            if not "%s%s.txt" % (prefix, slot) in available_slots:
                 raise RuntimeError("Missing GTFS information: %s" % slot)
 
-        if not "calendar.txt" in available_slots and not "calendar_dates.txt" in available_slots:
+        if not "%scalendar.txt" % prefix in available_slots and not "%scalendar_dates.txt" % prefix in available_slots:
             raise RuntimeError("At least calendar.txt or calendar_dates.txt must be specified.")
 
         print("Loading GTFS data from %s ..." % path)
 
         for slot in REQUIRED_SLOTS + OPTIONAL_SLOTS:
-            if "%s.txt" % slot in available_slots:
+            if "%s%s.txt" % (prefix, slot) in available_slots:
                 print("  Loading %s.txt ..." % slot)
 
-                with zip.open("%s.txt" % slot) as f:
+                with zip.open("%s%s.txt" % (prefix, slot)) as f:
                     feed[slot] = pd.read_csv(f, skipinitialspace = True)
             else:
                 print("  Not loading %s.txt" % slot)
+
+    # Some cleanup
+
+    for slot in ("calendar", "calendar_dates", "trips"):
+        if slot in feed and "service_id" in feed[slot] and pd.api.types.is_string_dtype(feed[slot]["service_id"]):
+            initial_count = len(feed[slot])
+            feed[slot] = feed[slot][feed[slot]["service_id"].str.len() > 0]
+            final_count = len(feed[slot])
+
+            if final_count != initial_count:
+                print("WARNING Removed %d/%d entries from %s with empty service_id" % (
+                    initial_count - final_count, initial_count, slot
+                ))
 
     return feed
 
@@ -71,7 +97,12 @@ def cut_feed(feed, df_area, crs = None):
     feed = copy_feed(feed)
 
     df_stops = feed["stops"]
-    df_stations = df_stops[df_stops["location_type"] == 1].copy()
+
+    if np.count_nonzero(df_stops["location_type"] == 1) == 0:
+        print("Warning! Location types seem to be malformatted. Keeping all stops.")
+        df_stations = df_stops.copy()
+    else:
+        df_stations = df_stops[df_stops["location_type"] == 1].copy()
 
     df_stations["geometry"] = [
         geo.Point(*xy)
