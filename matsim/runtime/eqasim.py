@@ -1,5 +1,5 @@
 import subprocess as sp
-import os, os.path
+import os, os.path, shutil
 
 import matsim.runtime.git as git
 import matsim.runtime.java as java
@@ -10,7 +10,10 @@ def configure(context):
     context.stage("matsim.runtime.java")
     context.stage("matsim.runtime.maven")
 
-    context.config("eqasim_version", "1.0.6")
+    context.config("eqasim_version", "1.1.0")
+    context.config("eqasim_branch", "v1.1.0")
+    context.config("eqasim_repository", "https://github.com/eqasim-org/eqasim-java.git")
+    context.config("eqasim_path", "")
 
 def run(context, command, arguments):
     version = context.config("eqasim_version")
@@ -26,16 +29,36 @@ def run(context, command, arguments):
 def execute(context):
     version = context.config("eqasim_version")
 
-    # Clone repository and checkout version
-    git.run(context, [
-        "clone", "https://github.com/eqasim-org/eqasim-java.git",
-        "--branch", "v%s" % version,
-        "--single-branch", "eqasim-java",
-        "--depth", "1"
-    ])
+    # Normal case: we clone eqasim
+    if context.config("eqasim_path") == "":
+        # Clone repository and checkout version
+        git.run(context, [
+            "clone", context.config("eqasim_repository"),
+            "--branch", context.config("eqasim_branch"),
+            "--single-branch", "eqasim-java",
+            "--depth", "1"
+        ])
 
-    # Build eqasim
-    maven.run(context, ["-Pstandalone", "package"], cwd = "%s/eqasim-java" % context.path())
-    jar_path = "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version)
+        # Build eqasim
+        maven.run(context, ["-Pstandalone", "package"], cwd = "%s/eqasim-java" % context.path())
+        jar_path = "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version)
+
+    # Special case: We provide the jar directly. This is mainly used for
+    # creating input to unit tests of the eqasim-java package.
+    else:
+        os.makedirs("%s/eqasim-java/ile_de_france/target" % context.path())
+        shutil.copy(context.config("eqasim_path"),
+            "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version))
 
     return "eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % version
+
+def validate(context):
+    path = context.config("eqasim_path")
+
+    if path == "":
+        return True
+
+    if not os.path.exists(path):
+        raise RuntimeError("Cannot find eqasim at: %s" % path)
+
+    return os.path.getmtime(path)
