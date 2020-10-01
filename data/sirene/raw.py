@@ -14,11 +14,11 @@ def configure(context):
 
 def execute(context):
     df_sirene = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("sirene_path")), usecols = [
-            "codeCommuneEtablissement", "activitePrincipaleEtablissement",
+            "siret", "codeCommuneEtablissement", "activitePrincipaleEtablissement",
             "trancheEffectifsEtablissement", "libelleVoieEtablissement", "numeroVoieEtablissement",
             "typeVoieEtablissement"
         ],
-        dtype = dict(siren = int, codeCommuneEtablissement = str, trancheEffectifsEtablissement = str)
+        dtype = dict(siret = int, codeCommuneEtablissement = str, trancheEffectifsEtablissement = str, typeVoieEtablissement = str)
     )
 
     # Filter by departement

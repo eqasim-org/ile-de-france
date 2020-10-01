@@ -18,30 +18,50 @@ in line with each other (i.e. communes have been merged, IRIS have been re-arran
 
 def configure(context):
     context.stage("data.bdtopo.cleaned")
-    context.stage("synthesis.population.sampled")
+    context.stage("data.spatial.iris")
 
 def execute(context):
-    df_population = context.stage("synthesis.population.sampled")
+    # Find required IRIS
+    df_iris = context.stage("data.spatial.iris")
+    required_iris = set(df_iris["iris_id"].unique())
 
-    required_iris = set(df_population["iris_id"].unique())
-    required_communes = set([i[:5] for i in required_iris])
+    # Load all addresses and add IRIS information
+    df_addresses = context.stage("data.bdtopo.cleaned")[["geometry"]]
 
-    df_home = context.stage("data.bdtopo.cleaned")[[
-        "commune_id", "geometry"
-    ]]
+    print("Imputing IRIS into addresses ...")
+    df_addresses = gpd.sjoin(df_addresses,
+        df_iris[["iris_id", "commune_id", "geometry"]], op = "within")
+    del df_addresses["index_right"]
 
-    df_home = df_home[df_home["commune_id"].isin(required_communes)].copy()
+    df_addresses.loc[df_addresses["iris_id"].isna(), "iris_id"] = "unknown"
+    df_addresses["iris_id"] = df_addresses["iris_id"].astype("category")
 
-    # Find missing communes
-    missing_communes = required_communes - set(df_home["commune_id"].unique())
+    # Add fake homes for IRIS without addresses
+    missing_iris = required_iris - set(df_addresses["iris_id"].unique())
 
-    if len(missing_communes) > 0:
-        print(missing_communes)
-        raise RuntimeError("Some communes are required by the population, but they are not present in address data (BDTOPO)")
+    print("Adding homes at the centroid of %d/%d IRIS without BD-TOPO observations" % (
+        len(missing_iris), len(required_iris)))
 
-    # Assign location IDs
+    df_added = []
 
-    df_home["location_id"] = np.arange(len(df_home))
-    df_home["location_id"] = "home_" + df_home["location_id"].astype(str)
+    for iris_id in missing_iris:
+        centroid = df_iris[df_iris["iris_id"] == iris_id]["geometry"].centroid.iloc[0]
 
-    return df_home
+        df_added.append({
+            "iris_id": iris_id, "geometry": centroid,
+            "commune_id": iris_id[:5]
+        })
+
+    df_added = pd.DataFrame.from_records(df_added)
+
+    # Merge together
+    df_addresses["fake"] = False
+    df_added["fake"] = True
+
+    df_addresses = pd.concat([df_addresses, df_added])
+
+    # Add work identifier
+    df_addresses["location_id"] = np.arange(len(df_addresses))
+    df_addresses["location_id"] = "home_" + df_addresses["location_id"].astype(str)
+
+    return df_addresses[["location_id", "iris_id", "commune_id", "fake", "geometry"]]

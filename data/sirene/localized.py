@@ -36,29 +36,63 @@ with their last update to one that fits with our IRIS system.
 def configure(context):
     context.stage("data.sirene.cleaned")
     context.stage("data.bdtopo.cleaned")
+    context.stage("data.spatial.municipalities")
 
 def execute(context):
     df_sirene = context.stage("data.sirene.cleaned")
     df_bdtopo = context.stage("data.bdtopo.cleaned")
 
-    print("Finding addresses by exact match ...")
+    print("Finding addresses by exact match with street, number and commune ...")
 
     # First, perform the exact matching
     df_matched = pd.merge(
-        df_sirene[["street", "number", "commune_id", "employees", "ape"]],
+        df_sirene[["street", "number", "commune_id", "employees", "ape", "siret"]],
         df_bdtopo[["street", "number", "commune_id", "geometry"]],
         how = "left", on = ["street", "number", "commune_id"]
-    )
+    ).drop_duplicates("siret")
 
     f_missing = df_matched["geometry"].isna()
     df_valid = df_matched[~f_missing].copy()
+    df_valid["status"] = 0
 
     matched_count = np.count_nonzero(~f_missing)
     print("   ... matched %d/%d (%.2f%%)." % (
         matched_count, len(df_sirene), 100 * matched_count / len(df_sirene)
     ))
 
-    # Second, perform matching by Levenshtein distance
+    # Second, try name matching (without commune) for the ones that could not
+    # be matched. This can happen if communes have merged or separated. We
+    # need to find the correct commune for them afterwards.
+
+    print("Finding addresses by exact match with street, number without commune ...")
+
+    df_missing = df_matched[f_missing].copy()
+
+    df_matched = pd.merge(
+        df_missing[["street", "number", "commune_id", "employees", "ape", "siret"]],
+        df_bdtopo[["street", "number", "geometry"]],
+        how = "left", on = ["street", "number"]
+    ).drop_duplicates("siret")
+
+    f_missing = df_matched["geometry"].isna()
+
+    df_partial = df_matched[~f_missing].copy()
+    df_partial["status"] = 1
+    df_partial["commune"] = "undefined"
+    df_partial["commune"] = df_partial["commune"].astype("category")
+
+    matched_count = np.count_nonzero(~f_missing)
+    print("   ... matched %d/%d (%.2f%%)." % (
+        matched_count, len(df_missing), 100 * matched_count / len(df_missing)
+    ))
+
+    # Merge data sets
+    df_valid = pd.concat([df_valid, df_partial])
+    del df_partial
+
+    # Third, perform matching by Levenshtein distance
+    print("Finding addresses by commune and Levenshtein distance ...")
+
     df_missing = df_matched[f_missing].copy()
     del df_matched
 
@@ -94,13 +128,11 @@ def execute(context):
         fixed_count, missing_count, 100 * fixed_count / missing_count
     ))
 
-    print("Finding addresses with fixed street names ...")
-
     df_fixed = pd.merge(
-        df_missing[["street", "number", "commune_id", "employees", "ape"]],
+        df_missing[["street", "number", "commune_id", "employees", "ape", "siret"]],
         df_bdtopo[["street", "number", "commune_id", "geometry"]],
         how = "left", on = ["street", "number", "commune_id"]
-    )
+    ).drop_duplicates("siret")
 
     f_missing = df_fixed["geometry"].isna()
 
@@ -109,17 +141,27 @@ def execute(context):
         matched_count, len(df_fixed), 100 * matched_count / len(df_fixed)
     ))
 
-    df_fixed = df_fixed[~f_missing]
+    df_fixed = df_fixed[~f_missing].copy()
+    df_fixed["status"] = 2
 
     # Merge data sets
-    df_valid["exact_address"] = True
-    df_fixed["exact_address"] = False
-
     df_valid = pd.concat([df_valid, df_fixed])
+    del df_fixed
+
     df_valid = gpd.GeoDataFrame(df_valid, crs = dict(init = "EPSG:2154"))
 
     print("In summary, %d/%d (%.2f%%) SIRENE observations were matched to an address" % (
         len(df_valid), len(df_sirene), 100 * len(df_valid) / len(df_sirene)
     ))
+
+    # Re-assigning commune for all observations
+    print("Re-assigning commune for all observations ...")
+    df_municipalities = context.stage("data.spatial.municipalities")
+
+    del df_valid["commune_id"]
+    df_valid = gpd.sjoin(df_valid, df_municipalities[["geometry", "commune_id"]], op = "within")
+    del df_valid["index_right"]
+
+    assert (~df_valid["commune_id"].isna()).all()
 
     return df_valid

@@ -24,7 +24,7 @@ PERSON_FIELDS = [
 ]
 
 ACTIVITY_FIELDS = [
-    "person_id", "start_time", "end_time", "purpose", "geometry", "destination_id"
+    "person_id", "start_time", "end_time", "purpose", "geometry", "location_id"
 ]
 
 TRIP_FIELDS = [
@@ -63,15 +63,15 @@ def add_person(writer, person, activities, trips):
     for activity, trip in itertools.zip_longest(activities, trips):
         start_time = activity[ACTIVITY_FIELDS.index("start_time")]
         end_time = activity[ACTIVITY_FIELDS.index("end_time")]
-        destination_id = activity[ACTIVITY_FIELDS.index("destination_id")]
+        location_id = activity[ACTIVITY_FIELDS.index("location_id")]
         geometry = activity[ACTIVITY_FIELDS.index("geometry")]
 
         if activity[ACTIVITY_FIELDS.index("purpose")] == "home":
-            destination_id = "home_%s" % person[PERSON_FIELDS.index("household_id")]
+            location_id = "home_%s" % person[PERSON_FIELDS.index("household_id")]
 
         location = writer.location(
             geometry.x, geometry.y,
-            None if destination_id == -1 else destination_id
+            None if location_id == -1 else location_id
         )
 
         writer.add_activity(
@@ -100,10 +100,10 @@ def execute(context):
 
     df_activities = context.stage("synthesis.population.activities").sort_values(by = ["person_id", "activity_index"])
     df_locations = context.stage("synthesis.population.spatial.locations")[[
-        "person_id", "activity_index", "geometry", "destination_id"]].sort_values(by = ["person_id", "activity_index"])
+        "person_id", "activity_index", "geometry", "location_id"]].sort_values(by = ["person_id", "activity_index"])
 
     df_activities = pd.merge(df_activities, df_locations, how = "left", on = ["person_id", "activity_index"])
-    df_activities["destination_id"] = df_activities["destination_id"].fillna(-1).astype(int)
+    #df_activities["location_id"] = df_activities["location_id"].fillna(-1).astype(int)
 
     df_trips = context.stage("synthesis.population.trips")
     df_trips["travel_time"] = df_trips["arrival_time"] - df_trips["departure_time"]

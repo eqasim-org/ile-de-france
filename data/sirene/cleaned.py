@@ -70,14 +70,16 @@ def execute(context):
 
     df_sirene["number"] = pd.to_numeric(df_sirene["numeroVoieEtablissement"], errors = "coerce")
 
-    df_sirene = df_sirene[["commune_id", "employees", "street", "number", "ape"]]
+    df_sirene = df_sirene[["commune_id", "employees", "street", "number", "ape", "siret"]]
 
     # Filter out if the information of invalid
     initial_count = len(df_sirene)
+
     df_sirene = df_sirene.dropna()
 
     final_count = len(df_sirene)
-    print("Filtered out %.2f%% of enterprises because address is invalid" % (
+    print("Filtered out %d/%d (%.2f%%) of enterprises because address is invalid" % (
+        initial_count - final_count, initial_count,
         100 * (initial_count - final_count) / initial_count
     ))
 

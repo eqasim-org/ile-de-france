@@ -6,20 +6,20 @@ import pandas as pd
 import matsim.writers as writers
 
 def configure(context):
-    context.stage("synthesis.locations.home")
-    context.stage("synthesis.locations.work")
-    context.stage("synthesis.locations.education")
     context.stage("synthesis.locations.secondary")
-
     context.stage("synthesis.population.spatial.home.locations")
+    context.stage("synthesis.population.spatial.primary.locations")
 
-FIELDS = [
-    "location_id", "geometry",
-    "offers_work", "offers_education",
+HOME_FIELDS = [
+    "household_id", "geometry"
 ]
 
-SECONDARY_FIELDS = FIELDS + [
-    "offers_shop", "offers_leisure", "offers_other"
+PRIMARY_FIELDS = [
+    "location_id", "geometry", "is_work"
+]
+
+SECONDARY_FIELDS = [
+    "location_id", "geometry", "offers_leisure", "offers_shop", "offers_other"
 ]
 
 def execute(context):
@@ -30,33 +30,69 @@ def execute(context):
             writer = writers.FacilitiesWriter(writer)
             writer.start_facilities()
 
-            slots = ["home", "work", "education", "secondary"]
+            # Write home
 
-            for slot in slots:
-                df = context.stage("synthesis.locations.%s" % slot)[FIELDS]
+            df_homes = context.stage("synthesis.population.spatial.home.locations")
+            df_homes = df_homes[HOME_FIELDS]
 
-                if slot == "home":
-                    df_homes = context.stage("synthesis.population.spatial.home.locations")
-                    df = df[df["location_id"].isin(df_homes["location_id"].unique())]
+            with context.progress(total = len(df_homes), label = "Writing home facilities ...") as progress:
+                for item in df_homes.itertuples(index = False):
+                    geometry = item[HOME_FIELDS.index("geometry")]
 
-                with context.progress(total = len(df), label = "Writing %s facilities ..." % slot) as progress:
-                    for item in df.itertuples(index = False):
-                        geometry = item[FIELDS.index("geometry")]
+                    writer.start_facility(
+                        "home_%s" % item[HOME_FIELDS.index("household_id")],
+                        geometry.x, geometry.y
+                    )
 
-                        writer.start_facility(
-                            item[FIELDS.index("location_id")],
-                            geometry.x, geometry.y
-                        )
+                    writer.add_activity("home")
+                    writer.end_facility()
 
-                        if slot == "secondary":
-                            for purpose in ("shop", "leisure", "other"):
-                                if item[SECONDARY_FIELDS.index("offers_%s" % purpose)]:
-                                    writer.add_activity(purpose)
-                        else:
-                            writer.add_activity(slot)
+            # Write primary
 
-                        writer.add_activity(slot)
-                        writer.end_facility()
-                        progress.update()
+            df_work, df_education = context.stage("synthesis.population.spatial.primary.locations")
+
+            df_work = df_work.drop_duplicates("location_id").copy()
+            df_education = df_education.drop_duplicates("location_id").copy()
+
+            df_work["is_work"] = True
+            df_education["is_work"] = False
+
+            df_locations = pd.concat([df_work, df_education])
+            df_locations = df_locations[PRIMARY_FIELDS]
+
+            with context.progress(total = len(df_locations), label = "Writing primary facilities ...") as progress:
+                for item in df_locations.itertuples(index = False):
+                    geometry = item[PRIMARY_FIELDS.index("geometry")]
+
+                    writer.start_facility(
+                        str(item[PRIMARY_FIELDS.index("location_id")]),
+                        geometry.x, geometry.y
+                    )
+
+                    writer.add_activity("work" if item[PRIMARY_FIELDS.index("is_work")] else "education")
+                    writer.end_facility()
+
+            # Write secondary
+
+            df_locations = context.stage("synthesis.locations.secondary")
+            df_locations = df_locations[SECONDARY_FIELDS]
+
+            with context.progress(total = len(df_locations), label = "Writing secondary facilities ...") as progress:
+                for item in df_locations.itertuples(index = False):
+                    geometry = item[SECONDARY_FIELDS.index("geometry")]
+
+                    writer.start_facility(
+                        item[SECONDARY_FIELDS.index("location_id")],
+                        geometry.x, geometry.y
+                    )
+
+                    for purpose in ("shop", "leisure", "other"):
+                        if item[SECONDARY_FIELDS.index("offers_%s" % purpose)]:
+                            writer.add_activity(purpose)
+
+                    writer.end_facility()
+                    progress.update()
+
+            writer.end_facilities()
 
     return "facilities.xml.gz"

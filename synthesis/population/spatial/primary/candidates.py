@@ -3,7 +3,9 @@ import numpy as np
 
 def configure(context):
     context.stage("data.od.weighted")
-    context.stage("synthesis.destinations")
+
+    context.stage("synthesis.locations.education")
+    context.stage("synthesis.locations.work")
 
     context.stage("synthesis.population.spatial.home.zones")
     context.stage("synthesis.population.enriched")
@@ -30,32 +32,38 @@ def sample_destination_municipalities(context, arguments):
 def sample_locations(context, arguments):
     # Load data
     destination_id, random_seed = arguments
-    df_destinations, df_flow = context.data("df_destinations"), context.data("df_flow")
+    df_locations, df_flow = context.data("df_locations"), context.data("df_flow")
 
     # Prepare state
     random = np.random.RandomState(random_seed)
-    df_destinations = df_destinations[df_destinations["commune_id"] == destination_id]
+    df_locations = df_locations[df_locations["commune_id"] == destination_id]
 
     # Determine demand
     df_flow = df_flow[df_flow["destination_id"] == destination_id]
     count = df_flow["count"].sum()
 
     # Sample destinations
-    indices = random.randint(len(df_destinations), size = count)
+    weight = np.ones((len(df_locations),)) / len(df_locations)
+
+    if "weight" in df_locations:
+        weight = df_locations["weight"].values / df_locations["weight"].sum()
+
+    location_counts = random.multinomial(count, weight)
+    location_ids = df_locations["location_id"].values
+    location_ids = np.repeat(location_ids, location_counts)
 
     # Construct a data set for all commutes to this zone
     origin_id = np.repeat(df_flow["origin_id"].values, df_flow["count"].values)
-    destination_ids = df_destinations.iloc[indices]["destination_id"].values
 
     df_result = pd.DataFrame.from_records(dict(
-        origin_commune_id = origin_id,
-        destination_id = destination_ids
+        origin_id = origin_id,
+        location_id = location_ids
     ))
-    df_result["destination_commune_id"] = destination_id
+    df_result["destination_id"] = destination_id
 
     return df_result
 
-def process(context, purpose, random, df_persons, df_od, df_destinations):
+def process(context, purpose, random, df_persons, df_od, df_locations):
     df_persons = df_persons[df_persons["has_%s_trip" % purpose]]
 
     # Sample commute flows based on population
@@ -80,13 +88,13 @@ def process(context, purpose, random, df_persons, df_od, df_destinations):
     df_result = []
 
     with context.progress(label = "Sampling %s destinations" % purpose, total = len(df_demand)) as progress:
-        with context.parallel(dict(df_destinations = df_destinations, df_flow = df_flow)) as parallel:
+        with context.parallel(dict(df_locations = df_locations, df_flow = df_flow)) as parallel:
             for df_partial in parallel.imap_unordered(sample_locations, zip(unique_ids, random_seeds)):
                 df_result.append(df_partial)
 
     df_result = pd.concat(df_result)
 
-    return df_result[["origin_commune_id", "destination_commune_id", "destination_id"]]
+    return df_result[["origin_id", "destination_id", "location_id"]]
 
 def execute(context):
     # Prepare population data
@@ -101,17 +109,19 @@ def execute(context):
 
     # Prepare spatial data
     df_work_od, df_education_od = context.stage("data.od.weighted")
-    df_destinations = context.stage("synthesis.destinations")
 
     # Sampling
     random = np.random.RandomState(context.config("random_seed"))
 
+    df_locations = context.stage("synthesis.locations.work")
+    df_locations["weight"] = df_locations["employees"]
     df_work = process(context, "work", random, df_persons,
-        df_work_od, df_destinations[df_destinations["offers_work"]]
+        df_work_od, df_locations
     )
 
+    df_locations = context.stage("synthesis.locations.education")
     df_education = process(context, "education", random, df_persons,
-        df_education_od, df_destinations[df_destinations["offers_education"]]
+        df_education_od, df_locations
     )
 
     return dict(

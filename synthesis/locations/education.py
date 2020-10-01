@@ -19,7 +19,11 @@ def execute(context):
     df_zones = context.stage("data.spatial.municipalities")
 
     required_communes = set(df_zones["commune_id"].unique())
-    missing_communes = set(df_locations["commune_id"].unique()) - required_communes
+    missing_communes = required_communes - set(df_locations["commune_id"].unique())
+
+    print("Adding fake education locations for %d/%d municipalities" % (
+        len(missing_communes), len(required_communes)
+    ))
 
     df_added = []
 
@@ -42,4 +46,4 @@ def execute(context):
     df_locations["location_id"] = np.arange(len(df_locations))
     df_locations["location_id"] = "edu_" + df_locations["location_id"].astype(str)
 
-    return df_locations[["location_id", "commune_id", "geometry"]]
+    return df_locations[["location_id", "commune_id", "fake", "geometry"]]

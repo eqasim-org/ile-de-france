@@ -10,17 +10,6 @@ work activities. It is derived from the SIRENE enterprise database.
 
 Municipalities which do not have any registered enterprise receive a fake work
 place at their centroid to be in line with INSEE OD data.
-
-TODO: We may distribute work places randomly in those municipalities.
-
-TODO: Attention! SIRENE data and the other data sets may not always be in
-synch, especially if municipalities have merged in the meantime. Then it can
-happen that some municipalities are detected as "not having any enterprise"
-while they actually (looking at the coordinates) do have enterprises. We could
-re-assign enterprises to the correct municipality. Then agian, it would be
-important to check if the OD data is in line with the municipality system
-that we are using here. In any case, such mergers only happen for very small
-municipalities and should not have a large impact for now.
 """
 
 def configure(context):
@@ -37,7 +26,8 @@ def execute(context):
     required_communes = set(df_zones["commune_id"].unique())
     missing_communes = required_communes - set(df_sirene["commune_id"].unique())
 
-    print("Adding work places at the centroid of %d communes without SIRENE observations" % len(missing_communes))
+    print("Adding work places at the centroid of %d/%d communes without SIRENE observations" % (
+        len(missing_communes), len(required_communes)))
 
     df_added = []
 
@@ -60,4 +50,4 @@ def execute(context):
     df_workplaces["location_id"] = np.arange(len(df_workplaces))
     df_workplaces["location_id"] = "work_" + df_workplaces["location_id"].astype(str)
 
-    return df_workplaces[["location_id", "commune_id", "employees", "geometry"]]
+    return df_workplaces[["location_id", "commune_id", "employees", "fake", "geometry"]]
