@@ -82,7 +82,7 @@ def execute(context):
 
     # Resampling for calibration
     resample_distributions(distance_distributions, dict(
-        car = 0.0, car_passenger = 0.1, pt = 0.5, bike = -0.5, walk = -0.5
+        car = 0.0, car_passenger = 0.1, pt = 0.5, bike = 0.0, walk = -0.5
     ))
 
     # Segment into subsamples
