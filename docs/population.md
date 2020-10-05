@@ -113,6 +113,25 @@ the identifiers of IRIS, municipalities, departments and regions:
 - Download the **2017** edition as a *zip* file.
 - Open the *zip* and copy the file `reference_IRIS_geo2017.xls` into `data/codes_2017`.
 
+### 9) Enterprise census (SIRENE)
+
+The enterprise census of France is available on data.gouv.fr:
+
+- [Enterprise census](https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/)
+- Scroll down and click on **Sirene : Fichier StockEtablissement**. Behind the name you will see a month as the file is updated monthly.
+- In the popping up window, click on **Telecharger** to download the file (it is rather large, at least one GB)
+- Open the downloaded *zip* file and copy the file `StockEtablissement_utf8.csv` into `data/sirene`. Unpacked it has a size of around 5GB.
+
+### 10) Address database (BD-TOPO)
+
+The French address database is available from IGN:
+
+- [Address database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo)
+- After opening the link, scroll down past all the *Département X* entries until you see *BD TOPO® Adresse par territoire édition Juin 2020*
+- Click on the download link under *France métropolitaine*
+- Open the downloaded archive and copy the files `ADRESSE.*` in *shape file* format
+into `data/bdtopo`. The unpacked files have a size of around 30GB!
+
 ### Overview
 
 Your folder structure should now have at least the following files:
@@ -136,6 +155,12 @@ Your folder structure should now have at least the following files:
 - `data/iris_2017/CONTOURS-IRIS.shp`
 - `data/iris_2017/CONTOURS-IRIS.shx`
 - `data/codes_2017/reference_IRIS_geo2017.xls`
+- `data/sirene/StockEtablissement_utf8.csv`
+- `data/bdtopo/ADRESSE.shp`
+- `data/bdtopo/ADRESSE.cpg`
+- `data/bdtopo/ADRESSE.dbf`
+- `data/bdtopo/ADRESSE.prj`
+- `data/bdtopo/ADRESSE.shx`
 
 In case you are using the regional household travel survey (EGT), the following
 files should also be in place:
@@ -203,7 +228,7 @@ To run the pipeline, call the [synpp](https://github.com/eqasim-org/synpp) runne
 python3 -m synpp
 ```
 
-It will automatically detect the `config.yml`, process all the pipeline code
+It will automatically deshptect the `config.yml`, process all the pipeline code
 and eventually create the synthetic population. You should see a couple of
 stages running one after another. Most notably, first, the pipeline will read all
 the raw data sets to filter them and put them into the correct internal formats.

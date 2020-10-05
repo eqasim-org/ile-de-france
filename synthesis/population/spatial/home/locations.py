@@ -1,25 +1,52 @@
 import data.spatial.utils as spatial_utils
 import numpy as np
+import pandas as pd
+import geopandas as gpd
 
 def configure(context):
     context.stage("synthesis.population.spatial.home.zones")
-    context.stage("data.spatial.iris")
+    context.stage("synthesis.locations.home")
 
     context.config("random_seed")
+
+def _sample_locations(context, args):
+    iris_id, random_seed = args
+    df_locations = context.data("df_locations")
+    df_homes = context.data("df_homes")
+
+    random = np.random.RandomState(random_seed)
+
+    df_homes = df_homes[df_homes["iris_id"] == iris_id].copy()
+    df_locations = df_locations[df_locations["iris_id"] == iris_id].copy()
+
+    home_count = len(df_homes)
+    location_count = len(df_locations)
+
+    assert location_count > 0
+    assert home_count > 0
+
+    indices = random.randint(location_count, size = home_count)
+    df_homes["geometry"] = df_locations.iloc[indices]["geometry"].values
+
+    context.progress.update()
+    return df_homes
 
 def execute(context):
     random = np.random.RandomState(context.config("random_seed"))
 
     df_homes = context.stage("synthesis.population.spatial.home.zones")
-    df_iris = context.stage("data.spatial.iris")
+    df_locations = context.stage("synthesis.locations.home")
 
-    # Sample destinations for home
+    # Sample locations for home
 
-    df_homes[["x", "y"]] = spatial_utils.sample_from_zones(
-        context, df_iris, df_homes, "iris_id", random, label = "Imputing IRIS coordinates ...")
+    unique_iris_ids = set(df_homes["iris_id"].unique())
 
-    assert not df_homes["x"].isna().any()
-    assert not df_homes["y"].isna().any()
+    with context.progress(label = "Sampling home locations ...", total = len(unique_iris_ids)) as progress:
+        with context.parallel(dict(
+            df_locations = df_locations, df_homes = df_homes
+        )) as parallel:
+            seeds = random.randint(10000, size = len(unique_iris_ids))
+            df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
 
-    df_homes = spatial_utils.to_gpd(context, df_homes)
+    df_homes = gpd.GeoDataFrame(df_homes, crs = dict(init = "epsg:2154"))
     return df_homes[["household_id", "commune_id", "geometry"]]

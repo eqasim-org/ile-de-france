@@ -14,7 +14,7 @@ def configure(context):
     context.stage("synthesis.population.spatial.primary.locations")
 
     context.stage("synthesis.population.spatial.secondary.distance_distributions")
-    context.stage("synthesis.destinations")
+    context.stage("synthesis.locations.secondary")
 
     context.config("random_seed")
     context.config("processes")
@@ -36,15 +36,15 @@ def prepare_locations(context):
     return df_locations[["person_id", "home", "work", "education"]].sort_values(by = "person_id")
 
 def prepare_destinations(context):
-    df_destinations = context.stage("synthesis.destinations")
+    df_locations = context.stage("synthesis.locations.secondary")
 
-    identifiers = df_destinations["destination_id"].values
-    locations = np.vstack(df_destinations["geometry"].apply(lambda x: np.array([x.x, x.y])).values)
+    identifiers = df_locations["location_id"].values
+    locations = np.vstack(df_locations["geometry"].apply(lambda x: np.array([x.x, x.y])).values)
 
     data = {}
 
     for purpose in ("shop", "leisure", "other"):
-        f = df_destinations["offers_%s" % purpose].values
+        f = df_locations["offers_%s" % purpose].values
 
         data[purpose] = dict(
             identifiers = identifiers[f],
@@ -82,7 +82,7 @@ def execute(context):
 
     # Resampling for calibration
     resample_distributions(distance_distributions, dict(
-        car = 0.0, car_passenger = 0.1, pt = 0.5, bike = -0.5, walk = -0.5
+        car = 0.0, car_passenger = 0.1, pt = 0.5, bike = 0.0, walk = -0.5
     ))
 
     # Segment into subsamples
@@ -184,7 +184,7 @@ def process(context, arguments):
           last_person_id = problem["person_id"]
           context.progress.update()
 
-  df_locations = pd.DataFrame.from_records(df_locations, columns = ["person_id", "trip_index", "destination_id", "geometry"])
+  df_locations = pd.DataFrame.from_records(df_locations, columns = ["person_id", "trip_index", "location_id", "geometry"])
   df_locations = gpd.GeoDataFrame(df_locations, crs = dict(init = "epsg:2154"))
 
   df_convergence = pd.DataFrame.from_records(df_convergence, columns = ["valid", "size"])

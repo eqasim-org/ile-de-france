@@ -21,6 +21,7 @@ dependencies:
   - pip:
     - simpledbf==0.2.6
     - synpp==1.2.2
+    - python-Levenshtein==0.12.0
 
   # For testing
   - pytest==5.4.2

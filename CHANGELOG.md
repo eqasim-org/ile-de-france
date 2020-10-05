@@ -2,6 +2,9 @@
 
 **1.0.0-dev**
 
+- Use addresses for home locations (from BD-TOPO)
+- Use enterprise addresses for work locations (from SIRENE + BD-TOPO)
+- Add SIRENE and BD-TOPO data sets
 - Update to `eqasim-java:1.1.0` and MATSim 12
 - Preparation to use Corisca scenario (see config_corsica.yml) as unit test input in `eqasim-java`
 - Several auto-fixes for malformatted GTFS schedules (mainly Corsica)

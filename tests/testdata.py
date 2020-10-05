@@ -523,6 +523,59 @@ def create(output_path):
         db.write(row)
     db.close()
 
+    # Data set: BD-TOPO
+
+    observations = 2000
+
+    streets = np.array([
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+    ])[random.randint(0, 26, observations)]
+
+    numbers = random.randint(0, 20, observations)
+
+    x = random.random_sample(size = (observations,)) * 100
+    y = random.random_sample(size = (observations,)) * 50
+
+    df_bdtopo = gpd.GeoDataFrame({
+        "CODE_INSEE": municipalities[random.randint(0, len(municipalities), observations)],
+        "NUMERO": numbers,
+        "NOM_1": streets,
+        "geometry": [
+            geo.Point(x, y) for x, y in zip(x, y)
+        ]
+    }, crs = dict(init = "epsg:2154"))
+
+    df_bdtopo["NOM_1"] = "R " + df_bdtopo["NOM_1"]
+
+    os.mkdir("%s/bdtopo" % output_path)
+    df_bdtopo.to_file("%s/bdtopo/ADRESSE.shp" % output_path)
+
+    # Data set: SIRENE
+
+    observations = 2000
+
+    streets = np.array([
+        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
+    ])[random.randint(0, 26, observations)]
+
+    numbers = random.randint(0, 20, observations)
+
+    df_sirene = pd.DataFrame({
+        "siret": random.randint(0, 99999999, observations),
+        "libelleVoieEtablissement": streets,
+        "numeroVoieEtablissement": numbers,
+        "codeCommuneEtablissement": municipalities[random.randint(0, len(municipalities), observations)]
+    })
+
+    df_sirene["activitePrincipaleEtablissement"] = "52.1"
+    df_sirene["trancheEffectifsEtablissement"] = "03"
+    df_sirene["typeVoieEtablissement"] = "RUE"
+
+    os.mkdir("%s/sirene" % output_path)
+    df_sirene.to_csv("%s/sirene/StockEtablissement_utf8.csv" % output_path, index = False)
+
     # Data set: OSM
     # We add add a road grid of 500m
     import itertools
