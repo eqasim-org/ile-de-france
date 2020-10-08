@@ -2,8 +2,8 @@ import itertools
 import numpy as np
 import pandas as pd
 
-AGE_CLASS_BOUNDS = [14, 20, 44, 59, 74, np.inf]
-AGE_CLASS_LABELS = ["<15", "15-20", "21-44", "45-59", "60-74", "75+"]
+AGE_CLASS_BOUNDS = [14, 29, 44, 59, 74, np.inf]
+AGE_CLASS_LABELS = ["<15", "15-29", "30-44", "45-59", "60-74", "75+"]
 
 HOUSEHOLD_SIZE_BOUNDS = [1, 3, np.inf]
 HOUSEHOLD_SIZE_LABELS = ["1", "2-3", "4+"]

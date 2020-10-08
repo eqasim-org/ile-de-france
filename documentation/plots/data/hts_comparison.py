@@ -62,7 +62,7 @@ def execute(context):
     plt.gca().xaxis.set_major_locator(tck.FixedLocator(np.arange(1000) + 0.75 / 2))
     plt.gca().xaxis.set_major_formatter(tck.FixedFormatter(["%d0s" % d for d in np.arange(1, 10, 2)]))
 
-    AGE_BOUNDS = ["<14", "15-29", "30-44", "45-59", "60-74", ">75"]
+    AGE_BOUNDS = ["<15", "15-29", "30-44", "45-59", "60-74", ">75"]
     plt.gca().xaxis.set_major_formatter(tck.FixedFormatter(AGE_BOUNDS))
 
     plt.gca().annotate(
