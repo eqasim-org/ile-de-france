@@ -26,6 +26,24 @@ def execute(context):
 
         "infoCensusFilteredHouseholds": "{:.2f}\\%".format(1e2 * info["census"]["filtered_households_share"]),
         "infoCensusFilteredPersons": "{:.2f}\\%".format(1e2 * info["census"]["filtered_persons_share"]),
+
+        "infoInitialNumberOfAddresses": "{:,.0f}".format(info["bdtopo"]["initial_count"]),
+        "infoFinalNumberOfAddresses": "{:,.0f}".format(info["bdtopo"]["final_count"]),
+
+        "infoNumberOfSireneObservations": "{:,.0f}".format(info["sirene"]["initial_count"]),
+        "infoMatchedSireneExact": "{:,.0f}".format(info["sirene"]["exact_count"]),
+        "infoMatchedSireneWithoutCommune": "{:,.0f}".format(info["sirene"]["no_municipality_count"]),
+        "infoMatchedSireneLevenshtein": "{:,.0f}".format(info["sirene"]["levenshtein_count"]),
+        "infoMatchedSirene": "{:,.0f}".format(
+            info["sirene"]["exact_count"] +
+            info["sirene"]["no_municipality_count"] +
+            info["sirene"]["levenshtein_count"]
+        ),
+        "infoMatchedSireneRelative": "{:.2f}\\%".format(100 * (
+            info["sirene"]["exact_count"] +
+            info["sirene"]["no_municipality_count"] +
+            info["sirene"]["levenshtein_count"]
+        ) / info["sirene"]["initial_count"]),
     }
 
     latex = []

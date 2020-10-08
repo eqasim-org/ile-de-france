@@ -41,6 +41,7 @@ def configure(context):
 def execute(context):
     df_sirene = context.stage("data.sirene.cleaned")
     df_bdtopo = context.stage("data.bdtopo.cleaned")
+    context.set_info("initial_count", len(df_sirene))
 
     print("Finding addresses by exact match with street, number and commune ...")
 
@@ -59,6 +60,7 @@ def execute(context):
     print("   ... matched %d/%d (%.2f%%)." % (
         matched_count, len(df_sirene), 100 * matched_count / len(df_sirene)
     ))
+    context.set_info("exact_count", matched_count)
 
     # Second, try name matching (without commune) for the ones that could not
     # be matched. This can happen if communes have merged or separated. We
@@ -85,6 +87,7 @@ def execute(context):
     print("   ... matched %d/%d (%.2f%%)." % (
         matched_count, len(df_missing), 100 * matched_count / len(df_missing)
     ))
+    context.set_info("no_municipality_count", matched_count)
 
     # Merge data sets
     df_valid = pd.concat([df_valid, df_partial])
@@ -127,6 +130,7 @@ def execute(context):
     print("Fixed %d/%d (%.2f%%) missing streets by Levenshtein distance" % (
         fixed_count, missing_count, 100 * fixed_count / missing_count
     ))
+    context.set_info("levenshtein_count", fixed_count)
 
     df_fixed = pd.merge(
         df_missing[["street", "number", "commune_id", "employees", "ape", "siret"]],
