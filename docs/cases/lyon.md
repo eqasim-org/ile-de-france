@@ -104,18 +104,5 @@ config:
 Note that the pipeline will automatically cut GTFS and OpenStreetMap data
 to the relevant area (defined by the filter above) if you run the simulation.
 
-For a region as large as the one in this example, we recommend to futhermore
-reduce the complexity of the road network. You can define the smallest possible
-road level like this:
-
-```yaml
-config:
-  # ...
-  osm_road_level: tertiary
-  # ...
-```
-
-The pipeline will filter out automatically roads with a lower classification.
-
 To test the simulation and generate the relevant MATSim files, run the pipeline
 with the `matsim.output` stage enabled.
