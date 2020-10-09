@@ -1,7 +1,12 @@
 # Changelog
 
-**1.0.0-dev**
+**Under development**
 
+- No changes yet
+
+**1.1.0**
+
+- Update to `synpp:1.3.1`
 - Use addresses for home locations (from BD-TOPO)
 - Use enterprise addresses for work locations (from SIRENE + BD-TOPO)
 - Add SIRENE and BD-TOPO data sets
