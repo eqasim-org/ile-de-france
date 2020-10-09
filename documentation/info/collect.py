@@ -11,6 +11,8 @@ def configure(context):
     context.stage("data.income.municipality")
     context.stage("data.income.region")
     context.stage("data.census.filtered")
+    context.stage("data.bdtopo.cleaned")
+    context.stage("data.sirene.localized")
 
 def execute(context):
     info = {}
@@ -74,6 +76,20 @@ def execute(context):
         "median_region": df_income_region[4],
         "number_of_incomplete_distributions": int(np.sum(~df_income_municipality["is_missing"] & df_income_municipality["is_imputed"])),
         "number_of_missing_distributions": int(np.sum(df_income_municipality["is_missing"]))
+    }
+
+    # BDTOPO
+    info["bdtopo"] = {
+        "initial_count": context.get_info("data.bdtopo.cleaned", "initial_count"),
+        "final_count": context.get_info("data.bdtopo.cleaned", "final_count"),
+    }
+
+    # SIRENE
+    info["sirene"] = {
+        "initial_count": context.get_info("data.sirene.localized", "initial_count"),
+        "exact_count": context.get_info("data.sirene.localized", "exact_count"),
+        "no_municipality_count": context.get_info("data.sirene.localized", "no_municipality_count"),
+        "levenshtein_count": context.get_info("data.sirene.localized", "levenshtein_count"),
     }
 
     # Output

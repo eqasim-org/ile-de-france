@@ -47,4 +47,7 @@ def execute(context):
         100 * (initial_count - final_count) / initial_count
     ))
 
+    context.set_info("initial_count", initial_count)
+    context.set_info("final_count", final_count)
+
     return df_bdtopo
