@@ -4,7 +4,7 @@ import shutil
 def configure(context):
     context.config("git_binary", "git")
 
-def run(context, arguments = [], cwd = None):
+def run(context, arguments = [], cwd = None, catch_output = False):
     """
         This function calls git.
     """
@@ -15,20 +15,24 @@ def run(context, arguments = [], cwd = None):
         cwd = context.path()
 
     command_line = [
-        context.config("git_binary")
+        shutil.which(context.config("git_binary"))
     ] + arguments
 
-    return_code = sp.check_call(command_line, cwd = cwd)
+    if catch_output:
+        return sp.check_output(command_line, cwd = cwd).decode("utf-8").strip()
 
-    if not return_code == 0:
-        raise RuntimeError("Git return code: %d" % return_code)
+    else:
+        return_code = sp.check_call(command_line, cwd = cwd)
+
+        if not return_code == 0:
+            raise RuntimeError("Git return code: %d" % return_code)
 
 def validate(context):
     if shutil.which(context.config("git_binary")) == "":
         raise RuntimeError("Cannot find git binary at: %s" % context.config("git_binary"))
 
     if not b"2." in sp.check_output([
-        context.config("git_binary"),
+        shutil.which(context.config("git_binary")),
         "--version"
     ], stderr = sp.STDOUT):
         print("WARNING! Git of at least version 2.x.x is recommended!")

@@ -11,8 +11,7 @@ def configure(context):
 
     context.stage("synthesis.population.spatial.locations")
 
-    for option in ("output_path", "sampling_rate", "hts", "random_seed"):
-        context.config(option)
+    context.stage("documentation.meta_output")
 
 def validate(context):
     output_path = context.config("output_path")
@@ -131,14 +130,3 @@ def execute(context):
     df_spatial["preceding_purpose"] = df_spatial["preceding_purpose"].astype(str)
     df_spatial["mode"] = df_spatial["mode"].astype(str)
     df_spatial.to_file("%s/trips.gpkg" % output_path, driver = "GPKG")
-
-    # Write meta information
-    information = dict(
-        sampling_rate = context.config("sampling_rate"),
-        hts = context.config("hts"),
-        random_seed = context.config("random_seed"),
-        created = datetime.datetime.now(datetime.timezone.utc).isoformat()
-    )
-
-    with open("%s/meta.json" % output_path, "w+") as f:
-        json.dump(information, f, indent = 4)

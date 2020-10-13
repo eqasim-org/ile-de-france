@@ -9,6 +9,8 @@ def configure(context):
     context.config("output_prefix", "ile_de_france_")
     context.config("write_jar", True)
 
+    context.stage("documentation.meta_output")
+
 def execute(context):
     config_path = "%s/%s" % (
         context.path("matsim.simulation.prepare"),

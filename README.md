@@ -65,3 +65,14 @@ examples, the code can adapted to any other scenarios as well:
 - Hörl, S., M. Balac and K.W. Axhausen (2019) [Dynamic demand estimation for an AMoD system in Paris](https://ieeexplore.ieee.org/document/8814051),
 paper presented at the 30th IEEE Intelligent Vehicles Symposium, Paris, June 2019.
 - Hörl, S. (2019) [An agent-based model of Île-de-France: Overview and first results](https://slides.com/sebastianhorl/matsim-paris), presentation at Institut Paris Region, September 2019.
+
+## Versioning
+
+The current version of the pipeline is `v1.1.0`. You can obtain it by cloning
+the `v1.1.0` tag of this repository. Alternatively, you can also clone the
+`develop` branch to make use of the latest developments. The version number
+will be kept in the `develop` branch until a new version is officially released.
+
+Note that whenever you create a population with this pipeline, the `meta.json`
+in the output will let you know the exact `git` commit with which the
+population was created.
