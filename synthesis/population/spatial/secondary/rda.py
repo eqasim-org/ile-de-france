@@ -65,20 +65,32 @@ class AssignmentSolver:
 
         return best_result
 
-class ChainTailRelaxationSolver(RelaxationSolver):
-    def __init__(self, chain_solver, tail_solver):
+class GeneralRelaxationSolver(RelaxationSolver):
+    def __init__(self, chain_solver, tail_solver = None, free_solver = None):
         self.chain_solver = chain_solver
         self.tail_solver = tail_solver
+        self.free_solver = free_solver
 
     def solve(self, problem, distances):
         if problem["origin"] is None and problem["destination"] is None:
-            raise RuntimeError("Both origin and destination are not available")
+            return self.free_solver.solve(problem, distances)
 
         elif problem["origin"] is None or problem["destination"] is None:
             return self.tail_solver.solve(problem, distances)
 
         else:
             return self.chain_solver.solve(problem, distances)
+
+def sample_tail(random, anchor, distances):
+    angles = random.random_sample(len(distances)) * 2.0 * np.pi
+    offsets = np.vstack([np.cos(angles), np.sin(angles)]).T * distances[:, np.newaxis]
+
+    locations = [anchor]
+
+    for k in range(len(distances)):
+        locations.append(locations[-1] + offsets[k])
+
+    return np.vstack(locations[1:])
 
 class AngularTailSolver(RelaxationSolver):
     def __init__(self, random):
@@ -98,17 +110,10 @@ class AngularTailSolver(RelaxationSolver):
         else:
             raise RuntimeError("Invalid chain for AngularTailSolver")
 
-        angles = self.random.random_sample(len(distances)) * 2.0 * np.pi
-        offsets = np.vstack([np.cos(angles), np.sin(angles)]).T * distances[:, np.newaxis]
-
-        locations = [anchor]
-
-        for k in range(len(reference)):
-            locations.append(locations[-1] + offsets[k])
-
-        locations = np.vstack(locations[1:])
+        locations = sample_tail(self.random, anchor, distances)
         if reverse: locations = locations[::-1,:]
 
+        assert len(locations) == len(distances)
         return dict(valid = True, locations = locations)
 
 class GravityChainSolver:
@@ -259,10 +264,15 @@ class FeasibleDistanceSampler(DistanceSampler):
     def sample(self, problem):
         origin, destination = problem["origin"], problem["destination"]
 
-        if origin is None and destination is None:
-            raise RuntimeError("Invalid chain for FeasibleDistanceSampler")
+        if origin is None and destination is None: # This is a free chain
+            distances = self.sample_distances(problem)
+            return dict(valid = True, distances = distances, iterations = None)
 
-        elif origin is None or destination is None: # This is a tail
+        elif origin is None: # This is a left tail
+            distances = self.sample_distances(problem)
+            return dict(valid = True, distances = distances, iterations = None)
+
+        elif destination is None: # This is a right tail
             distances = self.sample_distances(problem)
             return dict(valid = True, distances = distances, iterations = None)
 
@@ -303,11 +313,13 @@ class DiscretizationErrorObjective(AssignmentObjective):
     def evaluate(self, problem, distance_result, relaxation_result, discretization_result):
         sampled_distances = distance_result["distances"]
 
-        discretized_locations = np.vstack((
-            problem["origin"], discretization_result["locations"], problem["destination"]
-        ))
-        discretized_distances = la.norm(discretized_locations[:-1] - discretized_locations[1:], axis = 1)
+        discretized_locations = []
+        if not problem["origin"] is None: discretized_locations.append(problem["origin"])
+        discretized_locations.append(discretization_result["locations"])
+        if not problem["destination"] is None: discretized_locations.append(problem["destination"])
+        discretized_locations = np.vstack(discretized_locations)
 
+        discretized_distances = la.norm(discretized_locations[:-1] - discretized_locations[1:], axis = 1)
         discretization_error = np.abs(sampled_distances - discretized_distances)
 
         objective = 0.0

@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Allow for activity chains that do not start and end at home
 - Improve handling of education attribute in ENTD
 
 **1.1.0**

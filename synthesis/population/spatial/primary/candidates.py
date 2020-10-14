@@ -101,8 +101,13 @@ def execute(context):
     df_persons = context.stage("synthesis.population.enriched")[["person_id", "household_id"]].copy()
     df_trips = context.stage("synthesis.population.trips")
 
-    df_persons["has_work_trip"] = df_persons["person_id"].isin(df_trips[df_trips["following_purpose"] == "work"]["person_id"])
-    df_persons["has_education_trip"] = df_persons["person_id"].isin(df_trips[df_trips["following_purpose"] == "education"]["person_id"])
+    df_persons["has_work_trip"] = df_persons["person_id"].isin(df_trips[
+        (df_trips["following_purpose"] == "work") | (df_trips["preceding_purpose"] == "work")
+    ]["person_id"])
+    
+    df_persons["has_education_trip"] = df_persons["person_id"].isin(df_trips[
+        (df_trips["following_purpose"] == "education") | (df_trips["preceding_purpose"] == "education")
+    ]["person_id"])
 
     df_homes = context.stage("synthesis.population.spatial.home.zones")
     df_persons = pd.merge(df_persons, df_homes, on = "household_id")
