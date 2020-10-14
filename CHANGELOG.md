@@ -2,7 +2,7 @@
 
 **Under development**
 
-- No changes yet
+- Improve handling of education attribute in ENTD
 
 **1.1.0**
 
