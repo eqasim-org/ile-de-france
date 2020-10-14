@@ -2,7 +2,7 @@
 
 **Under development**
 
-- No changes yet
+- Improve analysis output for ENTD
 
 **1.1.0**
 
