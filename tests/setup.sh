@@ -3,7 +3,7 @@ cd env
 
 # Anaconda
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-bash miniconda.sh -b -p $HOME/miniconda
+bash miniconda.sh -b -p $HOME/env/miniconda
 source "$HOME/env/miniconda/etc/profile.d/conda.sh"
 conda config --set always_yes yes --set changeps1 no
 conda update -q conda
@@ -19,5 +19,5 @@ tar xf maven.tar.gz
 
 # Osmosis
 wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
-mkdir $HOME/osmosis
-tar xf osmosis.tgz -C $HOME/osmosis
+mkdir $HOME/env/osmosis
+tar xf osmosis.tgz -C $HOME/env/osmosis
