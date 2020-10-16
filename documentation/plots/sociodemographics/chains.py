@@ -52,7 +52,7 @@ def execute(context):
         if hts_name == "egt":
             plt.ylim([0, 3.5e5])
         else:
-            plt.ylim([0, 4.5e5])
+            plt.ylim([0, 5e5])
 
         plt.plot([np.nan], color = "k", linewidth = 1, label = "90% Conf.")
 
