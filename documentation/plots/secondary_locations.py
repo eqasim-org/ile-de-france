@@ -9,8 +9,11 @@ def configure(context):
     context.stage("analysis.synthesis.mode_distances")
     context.stage("analysis.reference.hts.mode_distances")
 
+    context.config("hts")
+
 def execute(context):
     plotting.setup()
+    hts_name = context.config("hts")
 
     # PLOT: Input distributions
     distributions = context.stage("synthesis.population.spatial.secondary.distance_distributions")
@@ -23,10 +26,11 @@ def execute(context):
     for index, mode in enumerate(modes):
         mode_distribution = distributions[mode]
         bounds = mode_distribution["bounds"]
+        bounds[~np.isfinite(bounds)] = 6 * 3600
 
-        means = []
-        q10 = []
-        q90 = []
+        means = [0.0]
+        q10 = [0.0]
+        q90 = [0.0]
 
         for distribution in mode_distribution["distributions"]:
             weights = distribution["weights"] / np.sum(distribution["weights"])
@@ -36,9 +40,9 @@ def execute(context):
             q90.append(distribution["values"][np.count_nonzero(distribution["cdf"] < 0.9)])
 
         if mode in ("car", "pt"):
-            plt.fill_between(bounds, q10, q90, color = plotting.COLORSET5[index], alpha = 0.25, linewidth = 0.0)
+            plt.fill_between([0.0] + list(bounds), q10, q90, color = plotting.COLORSET5[index], alpha = 0.25, linewidth = 0.0)
 
-        plt.plot(bounds, means, label = "%s (%d)" % (plotting.MODE_LABELS[mode], len(bounds)), linewidth = 1.0, marker = ".", markersize = 3, color = plotting.COLORSET5[index])
+        plt.plot([0.0] + list(bounds), means, label = "%s (%d)" % (plotting.MODE_LABELS[mode], len(bounds)), linewidth = 1.0, marker = ".", markersize = 3, color = plotting.COLORSET5[index])
 
     plt.gca().xaxis.set_major_locator(tck.FixedLocator(np.arange(100) * 60 * 20))
     plt.gca().xaxis.set_major_formatter(tck.FuncFormatter(lambda x,p: str(x // 60)))
@@ -47,8 +51,8 @@ def execute(context):
     plt.gca().yaxis.set_major_formatter(tck.FuncFormatter(lambda x,p: str(x // 1000)))
 
     plt.legend(loc = "upper left")
-    plt.xlim([0, 90 * 60])
-    plt.ylim([0, 45 * 1000])
+    plt.xlim([0, 90 * 60 if hts_name == "egt" else 50 * 60])
+    plt.ylim([0, 45 * 1000 if hts_name == "egt" else 25 * 1000])
 
     plt.grid()
 
@@ -76,11 +80,11 @@ def execute(context):
         plt.subplot(1, 2, index + 1)
 
         mode_reference = reference_data[mode]
-        plt.plot(mode_reference["values"] * 1e-3, mode_reference["cdf"], linestyle = '--', color = "k", linewidth = 1.0, label = "EGT")
+        plt.plot(mode_reference["values"] * 1e-3, mode_reference["cdf"], linestyle = '--', color = "k", linewidth = 1.0, label = "HTS")
 
         df_mode = df_synthetic[df_synthetic["mode"] == mode]
-        plt.fill_betweenx(df_mode["cdf"], df_mode["q5"]* 1e-3, df_mode["q95"] * 1e-3, linewidth = 0.0, color = plotting.COLORS["egt"], alpha = 0.25, label = "90% Conf.")
-        plt.plot(df_mode["mean"] * 1e-3, df_mode["cdf"], color = plotting.COLORS["egt"], linewidth = 1.0, label = "Synthetic")
+        plt.fill_betweenx(df_mode["cdf"], df_mode["q5"]* 1e-3, df_mode["q95"] * 1e-3, linewidth = 0.0, color = plotting.COLORS[hts_name], alpha = 0.25, label = "90% Conf.")
+        plt.plot(df_mode["mean"] * 1e-3, df_mode["cdf"], color = plotting.COLORS[hts_name], linewidth = 1.0, label = "Synthetic")
 
         plt.xlim([0, limits[mode] * 1e-3])
         plt.ylim([0, 1])

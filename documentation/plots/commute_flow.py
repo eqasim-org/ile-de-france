@@ -74,7 +74,7 @@ def execute(context):
 
     parts = [
         { "slot": "work", "title": "Work", "marker": ".", "color": "k" },
-        { "slot": "education", "title": "Education", "factor": 0.7, "marker": ".", "color": plotting.COLORS["egt"] }
+        { "slot": "education", "title": "Education", "factor": 0.7, "marker": ".", "color": plotting.COLORS[hts_name] }
     ]
 
     minimum = np.inf

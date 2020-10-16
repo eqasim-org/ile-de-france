@@ -15,6 +15,8 @@ def configure(context):
         dict(sampling_rate = SAMPLING_RATE), alias = "data"
     )
 
+    context.config("hts")
+
 def execute(context):
     plotting.setup()
 
@@ -47,7 +49,11 @@ def execute(context):
         plt.gca().set_axisbelow(True)
         plt.gca().xaxis.grid(alpha = 0.0)
 
-        plt.ylim([0, 3.5e5])
+        if hts_name == "egt":
+            plt.ylim([0, 3.5e5])
+        else:
+            plt.ylim([0, 5e5])
+
         plt.plot([np.nan], color = "k", linewidth = 1, label = "90% Conf.")
 
         plt.gca().yaxis.set_major_locator(tck.FixedLocator(np.arange(100) * 1e5))
