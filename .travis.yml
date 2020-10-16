@@ -1,6 +1,6 @@
 language: python
 install:
-  - if [ ! -d "env" ]; then sh tests/setup.sh; fi
+  - if [ ! -f "$HOME/env/done" ]; then sh tests/setup.sh; fi
   - source "$HOME/env/miniconda/etc/profile.d/conda.sh"
   - conda activate ile-de-france
   - export PATH=$HOME/env/jdk8u252-b09/bin:$PATH
