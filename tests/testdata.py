@@ -42,6 +42,17 @@ def create(output_path):
     - 2D007, 2D008, 2D012, 2D013
     """
 
+    BPE_OBSERVATIONS = 500
+    HTS_HOUSEHOLDS = 300
+    HTS_HOUSEHOLD_MEMBERS = 3
+
+    CENSUS_HOUSEHOLDS = 300
+    CENSUS_HOUSEHOLD_MEMBERS = 3
+
+    COMMUTE_FLOW_OBSERVATIONS = 500
+    ADDRESS_OBSERVATIONS = 2000
+    SIRENE_OBSERVATIONS = 2000
+
     import geopandas as gpd
     import pandas as pd
     import shapely.geometry as geo
@@ -59,6 +70,7 @@ def create(output_path):
     anchor_y = 6861081
 
     # Define internal zoing system
+    print("Creating zoning system ...")
     df = []
 
     WITH_IRIS = set([
@@ -139,6 +151,7 @@ def create(output_path):
 
     # Dataset: IRIS zones
     # Required attributes: CODE_IRIS, INSEE_COM, geometry
+    print("Creating IRIS zones ...")
 
     df_iris = df.copy()
     df_iris = df_iris[["iris", "municipality", "geometry"]].rename(columns = dict(
@@ -150,6 +163,7 @@ def create(output_path):
 
     # Dataset: Codes
     # Required attributes: CODE_IRIS, DEPCOM, DEP, REG
+    print("Creating codes ...")
 
     df_codes = df.copy()
     df_codes = df_codes[["iris", "municipality", "department", "region"]].rename(columns = dict(
@@ -165,6 +179,7 @@ def create(output_path):
 
     # Dataset: Aggregate census
     # Required attributes: IRIS, COM, DEP, REG, P15_POP
+    print("Creating aggregate census ...")
 
     df_population = df.copy()
     df_population = df_population[["iris", "municipality", "department", "region"]].rename(columns = dict(
@@ -182,9 +197,10 @@ def create(output_path):
 
     # Dataset: BPE
     # Required attributes: DCIRIS, LAMBERT_X, LAMBERT_Y, TYPEQU, DEPCOM, DEP
+    print("Creating BPE ...")
 
     # We put enterprises at the centroid of the shapes
-    observations = 500
+    observations = BPE_OBSERVATIONS
     categories = np.array(["A", "B", "C", "D", "E", "F", "G"])
 
     df_selection = df.iloc[random.randint(0, len(df), size = observations)].copy()
@@ -217,6 +233,7 @@ def create(output_path):
 
     # Dataset: Tax data
     # Required attributes: CODGEO, D115, ..., D915
+    print("Creating FILOSOFI ...")
 
     df_income = df.drop_duplicates("municipality")[["municipality"]].rename(columns = dict(municipality = "CODGEO"))
     df_income["D115"] = 9122.0
@@ -245,6 +262,7 @@ def create(output_path):
     )
 
     # Data set: ENTD
+    print("Creating ENTD ...")
 
     data = dict(
         Q_MENAGE = [],
@@ -254,7 +272,7 @@ def create(output_path):
         K_DEPLOC = [],
     )
 
-    for household_index in range(300): # 300 households
+    for household_index in range(HTS_HOUSEHOLDS):
         household_id = household_index
 
         region = random.choice([10, 20])
@@ -278,7 +296,7 @@ def create(output_path):
             ])
         ))
 
-        for person_index in range(3):
+        for person_index in range(HTS_HOUSEHOLD_MEMBERS):
             person_id = household_id * 1000 + person_index
             studies = random.random_sample() < 0.3
 
@@ -343,6 +361,7 @@ def create(output_path):
 
 
     # Data set: EGT
+    print("Creating EGT ...")
 
     data = dict(
         households = [],
@@ -350,7 +369,7 @@ def create(output_path):
         trips = []
     )
 
-    for household_index in range(300): # 300 households
+    for household_index in range(HTS_HOUSEHOLDS):
         household_id = household_index
 
         municipality = random.choice(df["municipality"].unique())
@@ -364,7 +383,7 @@ def create(output_path):
             MNP = 3, REVENU = random.randint(12)
         ))
 
-        for person_index in range(3):
+        for person_index in range(HTS_HOUSEHOLD_MEMBERS):
             person_id = household_id * 1000 + person_index
             studies = random.random_sample() < 0.3
 
@@ -416,10 +435,11 @@ def create(output_path):
     pd.DataFrame.from_records(data["trips"]).to_csv("%s/egt_2010/Deplacements_semaine.csv" % output_path, index = False, sep = ",")
 
     # Data set: Census
+    print("Creating census ...")
 
     persons = []
 
-    for household_index in range(300): # 300 households
+    for household_index in range(CENSUS_HOUSEHOLDS):
         household_id = household_index
 
         iris = df["iris"].iloc[random.randint(len(df))]
@@ -433,7 +453,7 @@ def create(output_path):
         destination_region = df[df["municipality"] == destination_municipality]["region"].values[0]
         destination_department = df[df["municipality"] == destination_municipality]["department"].values[0]
 
-        for person_index in range(3):
+        for person_index in range(CENSUS_HOUSEHOLD_MEMBERS):
             persons.append(dict(
                 CANTVILLE = "ABCE", NUMMI = household_id,
                 AGED = "%03d" % random.randint(90), COUPLE = random.choice([1, 2]),
@@ -483,9 +503,10 @@ def create(output_path):
     db.close()
 
     # Data set: commute flows
+    print("Creating commute flows ...")
 
     municipalities = df["municipality"].unique()
-    observations = 500
+    observations = COMMUTE_FLOW_OBSERVATIONS
 
     # ... work
     df_work = pd.DataFrame(dict(
@@ -524,8 +545,9 @@ def create(output_path):
     db.close()
 
     # Data set: BD-TOPO
+    print("Creating BD-TOPO ...")
 
-    observations = 2000
+    observations = ADDRESS_OBSERVATIONS
 
     streets = np.array([
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -552,8 +574,9 @@ def create(output_path):
     df_bdtopo.to_file("%s/bdtopo/ADRESSE.shp" % output_path)
 
     # Data set: SIRENE
+    print("Creating SIRENE ...")
 
-    observations = 2000
+    observations = SIRENE_OBSERVATIONS
 
     streets = np.array([
         "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -578,6 +601,7 @@ def create(output_path):
 
     # Data set: OSM
     # We add add a road grid of 500m
+    print("Creating OSM ...")
     import itertools
 
     osm = []
@@ -636,6 +660,7 @@ def create(output_path):
     ])
 
     # Data set: GTFS
+    print("Creating GTFS ...")
 
     feed = {}
 

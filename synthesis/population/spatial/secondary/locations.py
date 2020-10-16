@@ -19,6 +19,8 @@ def configure(context):
     context.config("random_seed")
     context.config("processes")
 
+    context.config("secloc_maximum_iterations", np.inf)
+
 def prepare_locations(context):
     # Load persons and their primary locations
     df_home = context.stage("synthesis.population.spatial.home.locations")
@@ -129,6 +131,7 @@ def process(context, arguments):
 
   # Set up RNG
   random = np.random.RandomState(context.config("random_seed"))
+  maximum_iterations = context.config("secloc_maximum_iterations")
 
   # Set up discretization solver
   destinations = context.data("destinations")
@@ -138,13 +141,14 @@ def process(context, arguments):
   # Set up distance sampler
   distance_distributions = context.data("distance_distributions")
   distance_sampler = CustomDistanceSampler(
-        maximum_iterations = 1000,
+        maximum_iterations = min(1000, maximum_iterations),
         random = random,
         distributions = distance_distributions)
 
   # Set up relaxation solver; currently, we do not consider tail problems.
   chain_solver = GravityChainSolver(
-    random = random, eps = 10.0, lateral_deviation = 10.0, alpha = 0.1
+    random = random, eps = 10.0, lateral_deviation = 10.0, alpha = 0.1,
+    maximum_iterations = min(1000, maximum_iterations)
     )
 
   tail_solver = AngularTailSolver(random = random)
@@ -164,7 +168,7 @@ def process(context, arguments):
       relaxation_solver = relaxation_solver,
       discretization_solver = discretization_solver,
       objective = assignment_objective,
-      maximum_iterations = 20
+      maximum_iterations = min(20, maximum_iterations)
       )
 
   df_locations = []

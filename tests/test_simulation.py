@@ -13,7 +13,8 @@ def test_simulation(tmpdir):
     config = dict(
         data_path = data_path, output_path = output_path,
         regions = [10, 11], sampling_rate = 1.0, hts = "entd",
-        random_seed = 1000, processes = 1
+        random_seed = 1000, processes = 1,
+        secloc_maximum_iterations = 10
     )
 
     stages = [
