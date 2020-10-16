@@ -31,3 +31,7 @@ script:
   - mvn -version
   - osmosis -v
   - pytest tests/
+
+cache:
+  directories:
+    - $HOME/.m2
