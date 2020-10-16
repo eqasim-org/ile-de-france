@@ -30,4 +30,4 @@ script:
   - java -version
   - mvn -version
   - osmosis -v
-  - pytest tests/
+  - pytest -s tests/
