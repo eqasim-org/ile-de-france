@@ -18,11 +18,6 @@ def execute(context):
     counts = df_activities.groupby("person_id").size().reset_index(name = "trip_count")["trip_count"].values
     df_activities["trip_count"] = np.hstack([[count] * count for count in counts])
 
-    # Make sure that days start and end at home. May be handled more flexible
-    # in the future.
-    assert not np.any(df_activities["is_first_trip"] & (df_activities["preceding_purpose"] != "home"))
-    assert not np.any(df_activities["is_last_trip"] & (df_activities["following_purpose"] != "home"))
-
     # Shift times and types of trips to arrive at activities
     df_activities["purpose"] = df_activities["preceding_purpose"]
     df_activities["end_time"] = df_activities["departure_time"]

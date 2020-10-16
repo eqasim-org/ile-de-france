@@ -69,8 +69,8 @@ def resample_distributions(distributions, factors):
         for distribution in mode_distributions["distributions"]:
             distribution["cdf"] = resample_cdf(distribution["cdf"], factors[mode])
 
-from synthesis.population.spatial.secondary.rda import AssignmentSolver, DiscretizationErrorObjective, GravityChainSolver
-from synthesis.population.spatial.secondary.components import CustomDistanceSampler, CustomDiscretizationSolver
+from synthesis.population.spatial.secondary.rda import AssignmentSolver, DiscretizationErrorObjective, GravityChainSolver, AngularTailSolver, GeneralRelaxationSolver
+from synthesis.population.spatial.secondary.components import CustomDistanceSampler, CustomDiscretizationSolver, CandidateIndex, CustomFreeChainSolver
 
 def execute(context):
     # Load trips and primary locations
@@ -119,7 +119,7 @@ def execute(context):
                 df_locations.append(df_locations_item)
                 df_convergence.append(df_convergence_item)
 
-    df_locations = pd.concat(df_locations).sort_values(by = ["person_id", "trip_index"])
+    df_locations = pd.concat(df_locations).sort_values(by = ["person_id", "activity_index"])
     df_convergence = pd.concat(df_convergence)
 
     print("Success rate:", df_convergence["valid"].mean())
@@ -133,6 +133,11 @@ def process(context, arguments):
   random = np.random.RandomState(context.config("random_seed"))
   maximum_iterations = context.config("secloc_maximum_iterations")
 
+  # Set up discretization solver
+  destinations = context.data("destinations")
+  candidate_index = CandidateIndex(destinations)
+  discretization_solver = CustomDiscretizationSolver(candidate_index)
+
   # Set up distance sampler
   distance_distributions = context.data("distance_distributions")
   distance_sampler = CustomDistanceSampler(
@@ -141,14 +146,15 @@ def process(context, arguments):
         distributions = distance_distributions)
 
   # Set up relaxation solver; currently, we do not consider tail problems.
-  relaxation_solver = GravityChainSolver(
+  chain_solver = GravityChainSolver(
     random = random, eps = 10.0, lateral_deviation = 10.0, alpha = 0.1,
     maximum_iterations = min(1000, maximum_iterations)
     )
 
-  # Set up discretization solver
-  destinations = context.data("destinations")
-  discretization_solver = CustomDiscretizationSolver(destinations)
+  tail_solver = AngularTailSolver(random = random)
+  free_solver = CustomFreeChainSolver(random, candidate_index)
+
+  relaxation_solver = GeneralRelaxationSolver(chain_solver, tail_solver, free_solver)
 
   # Set up assignment solver
   thresholds = dict(
@@ -173,11 +179,11 @@ def process(context, arguments):
   for problem in find_assignment_problems(df_trips, df_primary):
       result = assignment_solver.solve(problem)
 
-      starting_trip_index = problem["trip_index"]
+      starting_activity_index = problem["activity_index"]
 
       for index, (identifier, location) in enumerate(zip(result["discretization"]["identifiers"], result["discretization"]["locations"])):
           df_locations.append((
-              problem["person_id"], starting_trip_index + index, identifier, geo.Point(location)
+              problem["person_id"], starting_activity_index + index, identifier, geo.Point(location)
           ))
 
       df_convergence.append((
@@ -188,8 +194,9 @@ def process(context, arguments):
           last_person_id = problem["person_id"]
           context.progress.update()
 
-  df_locations = pd.DataFrame.from_records(df_locations, columns = ["person_id", "trip_index", "location_id", "geometry"])
+  df_locations = pd.DataFrame.from_records(df_locations, columns = ["person_id", "activity_index", "location_id", "geometry"])
   df_locations = gpd.GeoDataFrame(df_locations, crs = dict(init = "epsg:2154"))
+  assert not df_locations["geometry"].isna().any()
 
   df_convergence = pd.DataFrame.from_records(df_convergence, columns = ["valid", "size"])
   return df_locations, df_convergence

@@ -165,12 +165,6 @@ def execute(context):
 
     df_target = context.stage("synthesis.population.sampled")
 
-    # Filter for chains that start and end at home
-    f_invalid_start = df_source_trips["is_first_trip"] & (df_source_trips["preceding_purpose"] != "home")
-    f_invalid_end = df_source_trips["is_last_trip"] & (df_source_trips["following_purpose"] != "home")
-    invalid_person_ids = set(df_source_trips[f_invalid_start | f_invalid_end]["person_id"].unique())
-    df_source = df_source[~df_source["person_id"].isin(invalid_person_ids)]
-
     # Define matching attributes
     AGE_BOUNDARIES = [14, 29, 44, 59, 74, 1000]
     df_target["age_class"] = np.digitize(df_target["age"], AGE_BOUNDARIES, right = True)
