@@ -121,6 +121,7 @@ def execute(context):
     # Studies
     # Many < 14 year old have NaN
     df_persons["studies"] = df_persons["ETUDES"].fillna(1) == 1
+    df_persons.loc[df_persons["age"] < 5, "studies"] = False
 
     # Number of vehicles
     df_households["number_of_vehicles"] = 0

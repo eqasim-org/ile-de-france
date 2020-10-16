@@ -3,6 +3,9 @@
 **Under development**
 
 - Improve analysis output for ENTD
+- Update to `eqasim-java:1.2.0` to support tails and "free" activity chains
+- Allow for activity chains that do not start and end at home
+- Improve handling of education attribute in ENTD
 
 **1.1.0**
 

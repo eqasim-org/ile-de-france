@@ -10,12 +10,15 @@ def test_determinism(tmpdir):
     md5sums = []
 
     for index in range(2):
+        print("Running sample %d" % index)
+
         cache_path = str(tmpdir.mkdir("cache_%d" % index))
         output_path = str(tmpdir.mkdir("output_%d" % index))
         config = dict(
             data_path = data_path, output_path = output_path,
             regions = [10, 11], sampling_rate = 1.0, hts = "entd",
-            random_seed = 1000, processes = 1
+            random_seed = 1000, processes = 1,
+            secloc_maximum_iterations = 10
         )
 
         stages = [

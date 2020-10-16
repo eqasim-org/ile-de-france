@@ -29,19 +29,21 @@ def execute(context):
     df_work_locations = df_locations[df_locations["purpose"] == "work"]
     df_work_locations = pd.merge(df_work_locations, df_work[["person_id", "location_id", "geometry"]], on = "person_id")
     df_work_locations = df_work_locations[["person_id", "activity_index", "location_id", "geometry"]]
+    assert not df_work_locations["geometry"].isna().any()
 
     # Education locations
     df_education_locations = df_locations[df_locations["purpose"] == "education"]
     df_education_locations = pd.merge(df_education_locations, df_education[["person_id", "location_id", "geometry"]], on = "person_id")
     df_education_locations = df_education_locations[["person_id", "activity_index", "location_id", "geometry"]]
+    assert not df_education_locations["geometry"].isna().any()
 
     # Secondary locations
     df_secondary_locations = df_locations[~df_locations["purpose"].isin(("home", "work", "education"))].copy()
-    df_secondary["activity_index"] = df_secondary["trip_index"] + 1
     df_secondary_locations = pd.merge(df_secondary_locations, df_secondary[[
         "person_id", "activity_index", "location_id", "geometry"
     ]], on = ["person_id", "activity_index"], how = "left")
     df_secondary_locations = df_secondary_locations[["person_id", "activity_index", "location_id", "geometry"]]
+    assert not df_secondary_locations["geometry"].isna().any()
 
     # Validation
     initial_count = len(df_locations)
@@ -52,6 +54,7 @@ def execute(context):
 
     assert initial_count == final_count
 
+    assert not df_locations["geometry"].isna().any()
     df_locations = gpd.GeoDataFrame(df_locations, crs = dict(init = "epsg:2154"))
 
     return df_locations
