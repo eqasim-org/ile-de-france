@@ -30,7 +30,11 @@ script:
   - java -version
   - mvn -version
   - osmosis -v
-  - pytest tests/
+  - MKL_CBWR=AUTO pytest tests/
+
+# Note the initial environment variable before running pytest. It makes sure
+# that numpy etc. run in "conditional numerical reproducibility mode". Otherwise
+# generated results will be different on different machines!
 
 cache:
   directories:
