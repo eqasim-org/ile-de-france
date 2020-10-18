@@ -24,7 +24,8 @@ def run(context, entry_point, arguments = [], class_path = None, vm_arguments = 
     memory = context.config("java_memory") if memory is None else memory
     vm_arguments = [
         "-Xmx" + memory,
-        "-Djava.io.tmpdir=%s" % temp_path
+        "-Djava.io.tmpdir=%s" % temp_path,
+        "-Dmatsim.useLocalDtds=true"
     ] + vm_arguments
 
     # Prepare classpath

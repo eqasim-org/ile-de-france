@@ -40,7 +40,7 @@ def execute(context):
         ])
 
         # Build eqasim
-        maven.run(context, ["-Pstandalone", "package"], cwd = "%s/eqasim-java" % context.path())
+        maven.run(context, ["-Pstandalone", "--projects", "ile_de_france", "--also-make", "package"], cwd = "%s/eqasim-java" % context.path())
         jar_path = "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version)
 
     # Special case: We provide the jar directly. This is mainly used for

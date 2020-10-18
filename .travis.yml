@@ -30,7 +30,7 @@ script:
   - java -version
   - mvn -version
   - osmosis -v
-  - travis_wait 30 pytest tests/
+  - pytest tests/
 
 cache:
   directories:
