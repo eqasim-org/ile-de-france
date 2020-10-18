@@ -31,6 +31,9 @@ def find_bare_assignment_problems(df):
             yield problem
             problem = None
 
+    if not problem is None:
+        yield problem
+
 LOCATION_FIELDS = ["person_id", "home", "work", "education"]
 
 def find_assignment_problems(df, df_locations):

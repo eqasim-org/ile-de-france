@@ -329,7 +329,7 @@ def create(output_path):
                     IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = work_department,
                     V2_MORIDEP = home_department,
-                    NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
+                    NDEP = 4, V2_MOBILREF = 1, PONDKI = 3.0
                 ))
 
                 data["K_DEPLOC"].append(dict(
@@ -339,7 +339,7 @@ def create(output_path):
                     IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = home_department,
                     V2_MORIDEP = work_department,
-                    NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
+                    NDEP = 4, V2_MOBILREF = 1, PONDKI = 3.0
                 ))
 
                 data["K_DEPLOC"].append(dict(
@@ -349,7 +349,18 @@ def create(output_path):
                     IDENT_JOUR = 1, V2_MTP = mode,
                     V2_MDESDEP = home_department,
                     V2_MORIDEP = home_department,
-                    NDEP = 3, V2_MOBILREF = 1, PONDKI = 3.0
+                    NDEP = 4, V2_MOBILREF = 1, PONDKI = 3.0
+                ))
+
+                # Add a tail
+                data["K_DEPLOC"].append(dict(
+                    IDENT_IND = person_id, V2_MMOTIFDES = 2, V2_MMOTIFORI = 1,
+                    V2_TYPJOUR = 1, V2_MORIHDEP = "21:00:00", V2_MDESHARR = "22:00:00",
+                    V2_MDISTTOT = 3, # km
+                    IDENT_JOUR = 1, V2_MTP = mode,
+                    V2_MDESDEP = home_department,
+                    V2_MORIDEP = home_department,
+                    NDEP = 4, V2_MOBILREF = 1, PONDKI = 3.0
                 ))
 
     os.mkdir("%s/entd_2008" % output_path)
