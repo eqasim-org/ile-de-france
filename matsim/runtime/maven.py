@@ -3,6 +3,7 @@ import os, shutil
 
 def configure(context):
     context.config("maven_binary", "mvn")
+    context.config("maven_skip_tests", False)
 
 def run(context, arguments = [], cwd = None):
     """
@@ -22,6 +23,9 @@ def run(context, arguments = [], cwd = None):
     vm_arguments = [
         "-Djava.io.tmpdir=%s" % temp_path
     ]
+
+    if context.config("maven_skip_tests"):
+        vm_arguments.append("-DskipTests=true")
 
     command_line = [
         shutil.which(context.config("maven_binary"))

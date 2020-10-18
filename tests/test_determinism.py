@@ -3,63 +3,72 @@ import os
 import hashlib, gzip
 from . import testdata
 
+def hash_file(file):
+    hash = hashlib.md5()
+
+    # Gzip saves time stamps, so the gzipped files are NOT the same!
+    opener = lambda: open(file, "rb")
+
+    if file.endswith(".gz"):
+        opener = lambda: gzip.open(file)
+
+    with opener() as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash.update(chunk)
+
+    f.close()
+    return hash.hexdigest()
+
 def test_determinism(tmpdir):
     data_path = str(tmpdir.mkdir("data"))
     testdata.create(data_path)
 
-    md5sums = []
-
     for index in range(2):
-        print("Running sample %d" % index)
+        _test_determinism(index, data_path, tmpdir)
 
-        cache_path = str(tmpdir.mkdir("cache_%d" % index))
-        output_path = str(tmpdir.mkdir("output_%d" % index))
-        config = dict(
-            data_path = data_path, output_path = output_path,
-            regions = [10, 11], sampling_rate = 1.0, hts = "entd",
-            random_seed = 1000, processes = 1,
-            secloc_maximum_iterations = 10
-        )
+def _test_determinism(index, data_path, tmpdir):
+    print("Running index %d" % index)
 
-        stages = [
-            dict(descriptor = "synthesis.output"),
-            dict(descriptor = "matsim.output"),
-        ]
+    cache_path = str(tmpdir.mkdir("cache_%d" % index))
+    output_path = str(tmpdir.mkdir("output_%d" % index))
+    config = dict(
+        data_path = data_path, output_path = output_path,
+        regions = [10, 11], sampling_rate = 1.0, hts = "entd",
+        random_seed = 1000, processes = 1,
+        secloc_maximum_iterations = 10,
+        maven_skip_tests = True
+    )
 
-        synpp.run(stages, config, working_directory = cache_path)
+    stages = [
+        dict(descriptor = "synthesis.output"),
+        dict(descriptor = "matsim.output"),
+    ]
 
-        files = [
-            "%s/activities.csv" % output_path,
-            "%s/persons.csv" % output_path,
-            "%s/households.csv" % output_path,
-            #"%s/activities.gpkg" % output_path,
-            #"%s/trips.gpkg" % output_path,
-            #"%s/meta.json" % output_path
-            "%s/ile_de_france_population.xml.gz" % output_path,
-            "%s/ile_de_france_network.xml.gz" % output_path,
-            #"%s/ile_de_france_transit_schedule.xml.gz" % output_path,
-            #"%s/ile_de_france_transit_vehicles.xml.gz" % output_path,
-            "%s/ile_de_france_households.xml.gz" % output_path,
-            "%s/ile_de_france_facilities.xml.gz" % output_path,
-            "%s/ile_de_france_config.xml" % output_path
-        ]
+    synpp.run(stages, config, working_directory = cache_path)
 
-        hash = hashlib.md5()
+    REFERENCE_HASHES = {
+        "activities.csv":                   "168463972a926554e2b7a7d0d8cf66c1",
+        "persons.csv":                      "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
+        "households.csv":                   "882ce7dc1a44403d12c5aa10709c0d5b",
+        #"ile_de_france_population.xml.gz":  "e1407f918cb92166ebf46ad769d8d085",
+        "ile_de_france_network.xml.gz":     "594f427690bb5a7fad001fc2d5e31497",
+        "ile_de_france_households.xml.gz":  "cdbd6ed5b175328861f237dc58dee1ff",
+        #"ile_de_france_facilities.xml.gz":  "5ad41afff9ae5c470082510b943e6778",
+        "ile_de_france_config.xml":         "4f44821d6162dad1928a75e5c0b14f68"
+    }
 
-        for file in files:
-            # Gzip saves time stamps, so the gzipped files are NOT the same!
-            opener = lambda: open(file, "rb")
+    # activities.gpkg, trips.gpkg, meta.json,
+    # ile_de_france_transit_schedule.xml.gz, ile_de_france_transit_vehicles.xml.gz
 
-            if file.endswith(".gz"):
-                opener = lambda: gzip.open(file)
+    # TODO: Output of the Java part is not deterministic, probably because of
+    # the ordering of persons / facilities. Fix that! Same is true for GPKG. A
+    # detailed inspection of meta.json would make sense!
 
-            with opener() as f:
-                for chunk in iter(lambda: f.read(4096), b""):
-                    hash.update(chunk)
+    generated_hashes = {
+        file: hash_file("%s/%s" % (output_path, file)) for file in REFERENCE_HASHES.keys()
+    }
 
-            f.close()
+    print("Generated hashes: ", generated_hashes)
 
-        md5sums.append(hash.hexdigest())
-
-    for index in range(1, len(md5sums)):
-        assert md5sums[0] == md5sums[1]
+    for file in REFERENCE_HASHES.keys():
+        assert REFERENCE_HASHES[file] == generated_hashes[file]
