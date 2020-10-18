@@ -2,6 +2,8 @@
 
 **Under development**
 
+- Bugfix: Handle case if very last activity chain in population ends with tail
+- Speed up and improve testing
 - Improve analysis output for ENTD
 - Update to `eqasim-java:1.2.0` to support tails and "free" activity chains
 - Allow for activity chains that do not start and end at home
