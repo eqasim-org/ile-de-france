@@ -109,7 +109,7 @@ def cut_feed(feed, df_area, crs = None):
         for xy in zip(df_stations["stop_lon"], df_stops["stop_lat"])
     ]
 
-    df_stations = gpd.GeoDataFrame(df_stations, crs = dict(init = "EPSG:4326"))
+    df_stations = gpd.GeoDataFrame(df_stations, crs = "EPSG:4326")
 
     if not crs is None:
         print("Converting stops to custom CRS", crs)

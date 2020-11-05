@@ -152,7 +152,7 @@ def execute(context):
     df_valid = pd.concat([df_valid, df_fixed])
     del df_fixed
 
-    df_valid = gpd.GeoDataFrame(df_valid, crs = dict(init = "EPSG:2154"))
+    df_valid = gpd.GeoDataFrame(df_valid, crs = "EPSG:2154")
 
     print("In summary, %d/%d (%.2f%%) SIRENE observations were matched to an address" % (
         len(df_valid), len(df_sirene), 100 * len(df_valid) / len(df_sirene)

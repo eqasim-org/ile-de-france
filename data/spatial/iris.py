@@ -24,7 +24,7 @@ def execute(context):
         "INSEE_COM": "commune_id"
     })
 
-    df_iris.crs = dict(init = "EPSG:2154")
+    df_iris.crs = "EPSG:2154"
 
     df_iris["iris_id"] = df_iris["iris_id"].astype("category")
     df_iris["commune_id"] = df_iris["commune_id"].astype("category")

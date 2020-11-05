@@ -48,5 +48,5 @@ def execute(context):
             seeds = random.randint(10000, size = len(unique_iris_ids))
             df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
 
-    df_homes = gpd.GeoDataFrame(df_homes, crs = dict(init = "epsg:2154"))
+    df_homes = gpd.GeoDataFrame(df_homes, crs = "EPSG:2154")
     return df_homes[["household_id", "commune_id", "geometry"]]

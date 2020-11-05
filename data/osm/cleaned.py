@@ -28,7 +28,7 @@ def configure(context):
     context.stage("data.spatial.municipalities")
 
 def write_poly(df, path, geometry_column = "geometry"):
-    df = df.to_crs(dict(init = "EPSG:4326"))
+    df = df.to_crs("EPSG:4326")
 
     df["aggregate"] = 0
     area = df.dissolve(by = "aggregate")[geometry_column].values[0]

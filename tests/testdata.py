@@ -147,7 +147,7 @@ def create(output_path):
                         ))
 
     df = pd.DataFrame.from_records(df)
-    df = gpd.GeoDataFrame(df, crs = dict(init = "EPSG:2154"))
+    df = gpd.GeoDataFrame(df, crs = "EPSG:2154")
 
     # Dataset: IRIS zones
     # Required attributes: CODE_IRIS, INSEE_COM, geometry
@@ -577,7 +577,7 @@ def create(output_path):
         "geometry": [
             geo.Point(x, y) for x, y in zip(x, y)
         ]
-    }, crs = dict(init = "epsg:2154"))
+    }, crs = "EPSG:2154")
 
     df_bdtopo["NOM_1"] = "R " + df_bdtopo["NOM_1"]
 
@@ -642,8 +642,8 @@ def create(output_path):
 
             node_index += 1
 
-    df_nodes = gpd.GeoDataFrame(df_nodes, crs = dict(init = "EPSG:2154"))
-    df_nodes = df_nodes.to_crs(dict(init = "EPSG:4326"))
+    df_nodes = gpd.GeoDataFrame(df_nodes, crs = "EPSG:2154")
+    df_nodes = df_nodes.to_crs("EPSG:4326")
 
     for row in df_nodes.itertuples():
         osm.append('<node id="%d" lat="%f" lon="%f" version="3" timestamp="2010-12-05T17:00:00" />' % (
@@ -695,7 +695,7 @@ def create(output_path):
     stops = []
 
     df_stops = df[df["municipality"].isin(["1B019", "2D007"])].copy()
-    df_stops = df_stops.to_crs(dict(init = "EPSG:4326"))
+    df_stops = df_stops.to_crs("EPSG:4326")
 
     feed["stops"] = pd.DataFrame.from_records([dict(
         stop_id = "A", stop_code = "A", stop_name = "A",

@@ -55,6 +55,6 @@ def execute(context):
     assert initial_count == final_count
 
     assert not df_locations["geometry"].isna().any()
-    df_locations = gpd.GeoDataFrame(df_locations, crs = dict(init = "epsg:2154"))
+    df_locations = gpd.GeoDataFrame(df_locations, crs = "EPSG:2154")
 
     return df_locations
