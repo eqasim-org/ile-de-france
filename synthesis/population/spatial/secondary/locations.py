@@ -195,7 +195,7 @@ def process(context, arguments):
           context.progress.update()
 
   df_locations = pd.DataFrame.from_records(df_locations, columns = ["person_id", "activity_index", "location_id", "geometry"])
-  df_locations = gpd.GeoDataFrame(df_locations, crs = dict(init = "epsg:2154"))
+  df_locations = gpd.GeoDataFrame(df_locations, crs = "EPSG:2154")
   assert not df_locations["geometry"].isna().any()
 
   df_convergence = pd.DataFrame.from_records(df_convergence, columns = ["valid", "size"])

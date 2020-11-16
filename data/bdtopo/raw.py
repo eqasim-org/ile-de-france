@@ -36,7 +36,7 @@ def execute(context):
                 progress.update()
 
     df_bdtopo = pd.DataFrame.from_records(df_bdtopo)
-    df_bdtopo = gpd.GeoDataFrame(df_bdtopo, crs = dict(init = "EPSG:2154"))
+    df_bdtopo = gpd.GeoDataFrame(df_bdtopo, crs = "EPSG:2154")
 
     return df_bdtopo
 
