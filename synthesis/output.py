@@ -99,7 +99,7 @@ def execute(context):
     ]], how = "left", on = ["person_id", "activity_index"])
 
     # Write spatial activities
-    df_spatial = gpd.GeoDataFrame(df_activities, crs = "EPSG:2154)
+    df_spatial = gpd.GeoDataFrame(df_activities, crs = "EPSG:2154")
     df_spatial["purpose"] = df_spatial["purpose"].astype(str)
     df_spatial.to_file("%s/activities.gpkg" % output_path, driver = "GPKG")
 

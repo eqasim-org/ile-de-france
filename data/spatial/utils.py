@@ -3,7 +3,7 @@ import numpy as np
 import geopandas as gpd
 import pandas as pd
 
-def to_gpd(context, df, x = "x", y = "y", crs = "EPSG:2154, column = "geometry"):
+def to_gpd(context, df, x = "x", y = "y", crs = "EPSG:2154", column = "geometry"):
     df[column] = [
         geo.Point(*coord) for coord in context.progress(
             zip(df[x], df[y]), total = len(df),
