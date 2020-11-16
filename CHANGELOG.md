@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Remove CRS warnings
 - Bugfix: Handle case if very last activity chain in population ends with tail
 - Speed up and improve testing
 - Improve analysis output for ENTD
