@@ -7,8 +7,6 @@ import analysis.marginals as marginals
 
 from analysis.chains import aggregate_chains, CHAIN_MARGINALS, CHAIN_LENGTH_LIMIT, CHAIN_TOP_K
 
-ESTIMATION_SAMPLE_SIZE = 1000
-
 def configure(context):
     acquisition_sample_size = context.config("acquisition_sample_size")
 
@@ -38,7 +36,7 @@ def execute_parallel(context, data):
 
 def execute(context):
     acquisition_sample_size = context.config("acquisition_sample_size")
-    
+
     data = []
 
     feeder = zip(
@@ -50,7 +48,7 @@ def execute(context):
         with context.parallel() as parallel:
             data = list(parallel.imap_unordered(execute_parallel, feeder))
 
-    data = stats.collect_marginalized_sample(data)
-    data = stats.bootstrap_sampled_marginals(data, ESTIMATION_SAMPLE_SIZE)
+    data = stats.combine_marginals(data)
+    data = stats.apply_per_marginal(data, stats.analyze_sample_and_flatten)
 
     return data

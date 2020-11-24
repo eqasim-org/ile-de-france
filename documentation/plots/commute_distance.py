@@ -34,7 +34,7 @@ def execute(context):
         #plt.plot(census_data[slot]["centroid_distance"] * 1e-3, census_data[slot]["cdf"], color = plotting.COLORS["census"], linestyle = part["linestyle"], linewidth = 1.0)
 
         plt.plot(data[slot]["mean"], data[slot]["cdf"], color = "k", linestyle = part["linestyle"], linewidth = 1.0)
-        plt.fill_betweenx(data[slot]["cdf"], data[slot]["q5"], data[slot]["q95"], color = "k", linewidth = 0.0, alpha = 0.25)
+        plt.fill_betweenx(data[slot]["cdf"], data[slot]["min"], data[slot]["max"], color = "k", linewidth = 0.0, alpha = 0.25)
 
         plt.plot(hts_data[slot]["euclidean_distance"] * 1e-3, hts_data[slot]["cdf"], color = plotting.COLORS[hts_name], linestyle = part["linestyle"], linewidth = 1.0)
 

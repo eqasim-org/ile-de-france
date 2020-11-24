@@ -2,12 +2,9 @@ import shutil
 
 def configure(context):
     context.stage("documentation.plots.data.hts_comparison")
-    context.stage("documentation.plots.theory.sampling_error")
-    context.stage("documentation.plots.sampling.sample_count")
-    context.stage("documentation.plots.sampling.error_probability")
+    #context.stage("documentation.plots.theory.sampling_error")
+    context.stage("documentation.plots.monte_carlo")
     context.stage("documentation.plots.income")
-
-    context.stage("documentation.tables.sampling")
 
     context.stage("documentation.plots.sociodemographics.general")
     context.stage("documentation.plots.sociodemographics.local")
@@ -31,10 +28,12 @@ def execute(context):
         "hts_comparison_distance.pdf": ("documentation.plots.data.hts_comparison", "distance_distribution.pdf"),
         "hts_comparison_age.pdf": ("documentation.plots.data.hts_comparison", "age_distribution.pdf"),
 
-        "theory_sampling_error.pdf": ("documentation.plots.theory.sampling_error", "sampling_error.pdf"),
+        #"theory_sampling_error.pdf": ("documentation.plots.theory.sampling_error", "sampling_error.pdf"),
 
-        "sampling_sample_count.pdf": ("documentation.plots.sampling.sample_count", "sample_count.pdf"),
-        "sampling_error_probability.pdf": ("documentation.plots.sampling.error_probability", "error_probability.pdf"),
+        #"sampling_sample_count.pdf": ("documentation.plots.sampling.sample_count", "sample_count.pdf"),
+        #"sampling_error_probability.pdf": ("documentation.plots.sampling.error_probability", "error_probability.pdf"),
+        "monte_carlo.pdf": ("documentation.plots.monte_carlo", "monte_carlo.pdf"),
+        "monte_carlo_table.tex": ("documentation.plots.monte_carlo", "monte_carlo_table.tex"),
 
         "income_distributions.pdf": ("documentation.plots.income", "income_distributions.pdf"),
 
@@ -49,8 +48,6 @@ def execute(context):
 
         "secloc_distributions.pdf": ("documentation.plots.secondary_locations", "input_distributions.pdf"),
         "secloc_output.pdf": ("documentation.plots.secondary_locations", "distance_distributions.pdf"),
-
-        "sampling_table.tex": ("documentation.tables.sampling", "sampling_table.tex"),
 
         "income.geojson": ("documentation.shapes", "income.geojson"),
         "info.tex": ("documentation.info.tex", "info.tex"),

@@ -4,8 +4,6 @@ import analysis.marginals as marginals
 
 import pandas as pd
 
-ESTIMATION_SAMPLE_SIZE = 1000
-
 def configure(context):
     acquisition_sample_size = context.config("acquisition_sample_size")
 
@@ -30,10 +28,10 @@ def execute(context):
         person_marginals.append(stats.marginalize(df, marginals.SPATIAL_PERSON_MARGINALS, weight_column = None))
         household_marginals.append(stats.marginalize(df.drop_duplicates("household_id"), marginals.SPATIAL_HOUSEHOLD_MARGINALS, weight_column = None))
 
-    person_marginals = stats.collect_marginalized_sample(person_marginals)
-    household_marginals = stats.collect_marginalized_sample(household_marginals)
+    person_marginals = stats.combine_marginals(person_marginals)
+    household_marginals = stats.combine_marginals(household_marginals)
 
-    person_marginals = stats.bootstrap_sampled_marginals(person_marginals, ESTIMATION_SAMPLE_SIZE)
-    household_marginals = stats.bootstrap_sampled_marginals(household_marginals, ESTIMATION_SAMPLE_SIZE)
+    person_marginals = stats.apply_per_marginal(person_marginals, stats.analyze_sample_and_flatten)
+    household_marginals = stats.apply_per_marginal(household_marginals, stats.analyze_sample_and_flatten)
 
     return dict(person = person_marginals, household = household_marginals)

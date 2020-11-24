@@ -45,9 +45,9 @@ def execute(context):
         plt.bar(np.arange(count), df["scaled_reference"], width = 0.4, label = "Census", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS["census"])
         plt.bar(np.arange(count) + 0.4, df["mean"] / SAMPLING_RATE, width = 0.4, label = "Synthetic", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS["synthetic"])
 
-        for index, (q5, q95) in enumerate(zip(df["q5"].values, df["q95"].values)):
+        for index, (min, max) in enumerate(zip(df["min"].values, df["max"].values)):
             index += 0.4 + 0.2
-            plt.plot([index, index], [q5 / SAMPLING_RATE, q95 / SAMPLING_RATE], color = 'k', linewidth = 1.0)
+            plt.plot([index, index], [min / SAMPLING_RATE, max / SAMPLING_RATE], color = 'k', linewidth = 1.0)
 
         plt.grid()
         plt.gca().set_axisbelow(True)
@@ -90,8 +90,8 @@ def execute(context):
 
         plt.loglog(df["scaled_reference"], df["mean"] / SAMPLING_RATE, markersize = 2, marker = part["marker"], color = part["color"], linestyle = "none", label = part["title"])
 
-        minimum = min(minimum, df["scaled_reference"].min() * 0.9)
-        maximum = max(maximum, df["scaled_reference"].max() * 1.1)
+        minimum = np.minimum(minimum, df["scaled_reference"].min() * 0.9)
+        maximum = np.maximum(maximum, df["scaled_reference"].max() * 1.1)
 
     x = np.linspace(minimum, maximum, 100)
     plt.fill_between(x, x * 0.8, x * 1.2, color = "k", alpha = 0.2, linewidth = 0.0, label = r"20% Error")
@@ -128,18 +128,18 @@ def execute(context):
 
         df["difference"] = 100 * (df["mean"] / SAMPLING_RATE - df["scaled_reference"]) / df["scaled_reference"]
 
-        q5 = df["difference"].quantile(0.05)
-        q95 = df["difference"].quantile(0.95)
+        min = df["difference"].min()
+        max = df["difference"].max()
         mean = df["difference"].mean()
 
         values = df["difference"].values
-        outliers = values # values[(values < q5) | (values > q95)]
+        outliers = values # values[(values < min) | (values > max)]
 
-        plt.plot([index - 0.2, index + 0.2], [q5, q5], color = "k", linewidth = 1.0)
-        plt.plot([index - 0.2, index + 0.2], [q95, q95], color = "k", linewidth = 1.0)
+        plt.plot([index - 0.2, index + 0.2], [min, min], color = "k", linewidth = 1.0)
+        plt.plot([index - 0.2, index + 0.2], [max, max], color = "k", linewidth = 1.0)
         plt.plot([index - 0.2, index + 0.2], [mean, mean], color = "k", linewidth = 1.0, linestyle = ":")
-        plt.plot([index - 0.2, index - 0.2], [q5, q95], color = "k", linewidth = 1.0)
-        plt.plot([index + 0.2, index + 0.2], [q5, q95], color = "k", linewidth = 1.0)
+        plt.plot([index - 0.2, index - 0.2], [min, max], color = "k", linewidth = 1.0)
+        plt.plot([index + 0.2, index + 0.2], [min, max], color = "k", linewidth = 1.0)
 
         plt.plot([index] * len(outliers), outliers, color = "k", marker = ".", markersize = 2, linestyle = "none")
 
