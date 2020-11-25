@@ -135,12 +135,12 @@ def execute(context):
 
         f = (df_figure["reference_source"] == "hts").values
         hts_name = context.config("hts")
-        plt.barh(locations[f], df_figure["reference"].values[f], height = 0.4, label = lang.get_source(hts_name), align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS[hts_name])
+        plt.barh(locations[f], df_figure["reference"].values[f], height = 0.4, label = "HTS", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS[hts_name])
         plt.barh(locations[f] + 0.4, df_figure["mean"].values[f], height = 0.4, label = None, align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS["synthetic"])
 
         for index, (min, max) in enumerate(zip(df_figure["min"].values, df_figure["max"].values)):
             location = index + 0.4 + 0.2
-            plt.plot([min, max], [location, location], "k", linewidth = 1, label = "90% Conf.")
+            plt.plot([min, max], [location, location], "k", linewidth = 1, label = "Range")
 
         plt.gca().yaxis.set_major_locator(tck.FixedLocator(locations + 0.4))
         plt.gca().yaxis.set_major_formatter(tck.FixedFormatter(df_figure["label"].values))

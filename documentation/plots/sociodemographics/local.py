@@ -72,7 +72,7 @@ def execute(context):
 
         for index, (min, max) in enumerate(zip(df_case["min"].values, df_case["max"].values)):
             location = index + 0.4 + 0.2
-            plt.plot([min, max], [location, location], "k", linewidth = 1, label = "90% Conf.")
+            plt.plot([min, max], [location, location], "k", linewidth = 1, label = "Range")
 
         plt.gca().yaxis.set_major_locator(tck.FixedLocator(locations + 0.4))
 

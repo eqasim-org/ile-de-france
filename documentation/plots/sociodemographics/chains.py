@@ -54,7 +54,7 @@ def execute(context):
         else:
             plt.ylim([0, 5e5])
 
-        plt.plot([np.nan], color = "k", linewidth = 1, label = "90% Conf.")
+        plt.plot([np.nan], color = "k", linewidth = 1, label = "Range")
 
         plt.gca().yaxis.set_major_locator(tck.FixedLocator(np.arange(100) * 1e5))
         plt.gca().yaxis.set_major_formatter(tck.FuncFormatter(lambda x,p: "%d" % (x * 1e-3,)))

@@ -94,7 +94,7 @@ def execute(context):
         df_rate = df_rate.sort_values(by = "samples")
         plt.fill_between(df_rate["samples"], df_rate[("weight", "q5")], df_rate[("weight", "q95")], alpha = 0.25 + index * 0.2, color = plotting.COLORSET[0], linewidth = 0.0)
 
-    plt.plot([1, ACQUISITION_SAMPLE_SIZE], [reference_value] * 2, 'k--', label = "Ref. $w$", linewidth = 1.0)
+    plt.plot([1, ACQUISITION_SAMPLE_SIZE], [reference_value] * 2, 'k--', label = "Ref. $y$", linewidth = 1.0)
     plt.plot([1, ACQUISITION_SAMPLE_SIZE], [reference_value * 0.99] * 2, 'k:', label = "1% Err.", linewidth = 1.0)
     plt.plot([1, ACQUISITION_SAMPLE_SIZE], [reference_value * 1.01] * 2, 'k:', linewidth = 1.0)
 
@@ -112,7 +112,7 @@ def execute(context):
 
     # ... subplot on nominal stratum values
     plt.subplot(1, 2, 2)
-    plt.title("(b) Error probability $\pi_{0.01}$", fontsize = plotting.FONT_SIZE)
+    plt.title("(b) Error probability", fontsize = plotting.FONT_SIZE)
 
     for index, values in enumerate(ADDITIONAL_VALUES):
         df_marginal, reference_value = select(reference, data, SELECTED_MARGINAL, values)
