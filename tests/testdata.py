@@ -600,7 +600,8 @@ def create(output_path):
         "siret": random.randint(0, 99999999, observations),
         "libelleVoieEtablissement": streets,
         "numeroVoieEtablissement": numbers,
-        "codeCommuneEtablissement": municipalities[random.randint(0, len(municipalities), observations)]
+        "codeCommuneEtablissement": municipalities[random.randint(0, len(municipalities), observations)],
+        "etatAdministratifEtablissement": "A"
     })
 
     df_sirene["activitePrincipaleEtablissement"] = "52.1"
