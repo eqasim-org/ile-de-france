@@ -3,8 +3,8 @@ import analysis.statistics as stats
 import analysis.marginals as marginals
 
 def configure(context):
-    population_samples = context.config("analysis_populations")
-    random_seeds = (np.arange(population_samples) * 1000 + 1000).astype(int)
+    acquisition_sample_size = context.config("acquisition_sample_size")
+    random_seeds = (np.arange(acquisition_sample_size) * 1000 + 1000).astype(int)
 
     for index, random_seed in enumerate(random_seeds):
         context.stage("synthesis.population.matched", {
@@ -13,11 +13,11 @@ def configure(context):
         }, alias = "seed_%d" % index)
 
 def execute(context):
-    population_samples = context.config("analysis_populations")
+    acquisition_sample_size = context.config("acquisition_sample_size")
 
     aggregated = {}
 
-    for index in range(population_samples):
+    for index in range(acquisition_sample_size):
         info = context.get_info("seed_%d" % index, "matched_counts")
 
         for key, value in info.items():

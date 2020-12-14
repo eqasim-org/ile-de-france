@@ -41,9 +41,9 @@ def execute(context):
         plt.bar(np.arange(10), df["reference"], width = 0.4, label = "HTS", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS[hts_name])
         plt.bar(np.arange(10) + 0.4, df["mean"] / SAMPLING_RATE, width = 0.4, label = "Synthetic", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS["synthetic"])
 
-        for location, (q5, q95) in enumerate(zip(df["q5"].values, df["q95"].values)):
+        for location, (min, max) in enumerate(zip(df["min"].values, df["max"].values)):
             location += 0.4 + 0.2
-            plt.plot([location, location], [q5 / SAMPLING_RATE, q95 / SAMPLING_RATE], "k", linewidth = 1)
+            plt.plot([location, location], [min / SAMPLING_RATE, max / SAMPLING_RATE], "k", linewidth = 1)
 
         plt.grid()
         plt.gca().set_axisbelow(True)
@@ -54,7 +54,7 @@ def execute(context):
         else:
             plt.ylim([0, 5e5])
 
-        plt.plot([np.nan], color = "k", linewidth = 1, label = "90% Conf.")
+        plt.plot([np.nan], color = "k", linewidth = 1, label = "Range")
 
         plt.gca().yaxis.set_major_locator(tck.FixedLocator(np.arange(100) * 1e5))
         plt.gca().yaxis.set_major_formatter(tck.FuncFormatter(lambda x,p: "%d" % (x * 1e-3,)))

@@ -6,8 +6,6 @@ import analysis.bootstrapping as bs
 import analysis.statistics as stats
 import analysis.marginals as marginals
 
-ESTIMATION_SAMPLE_SIZE = 1000
-
 def configure(context):
     acquisition_sample_size = context.config("acquisition_sample_size")
 
@@ -52,17 +50,15 @@ def execute(context):
             progress.update()
 
     result = {}
-    random = np.random.RandomState(0)
 
     for name in ("work", "education"):
         data = np.array(quantiles[name])
-        indices = np.random.randint(acquisition_sample_size, size = ESTIMATION_SAMPLE_SIZE)
 
-        mean = np.mean(data[indices,:], axis = 0)
-        q5 = np.percentile(data[indices,:], 5, axis = 0)
-        q95 = np.percentile(data[indices,:], 95, axis = 0)
+        mean = np.mean(data, axis = 0)
+        min = np.min(data, axis = 0)
+        max = np.max(data, axis = 0)
 
-        df = pd.DataFrame(dict(mean = mean, q5 = q5, q95 = q95, cdf = probabilities))
+        df = pd.DataFrame(dict(mean = mean, min = min, max = max, cdf = probabilities))
         result[name] = df
 
     return result

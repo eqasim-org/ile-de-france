@@ -5,8 +5,6 @@ import analysis.bootstrapping as bs
 import analysis.statistics as stats
 import analysis.marginals as marginals
 
-ESTIMATION_SAMPLE_SIZE = 1000
-
 def configure(context):
     acquisition_sample_size = context.config("acquisition_sample_size")
 
@@ -57,17 +55,17 @@ def execute(context):
     for mode in modes:
         quantiles[mode] = np.array(quantiles[mode])
 
-    random = np.random.RandomState(0)
     df_data = []
 
     for mode in modes:
-        indices = np.random.randint(acquisition_sample_size, size = ESTIMATION_SAMPLE_SIZE)
+        mean = np.mean(quantiles[mode], axis = 0)
+        #min = np.percentile(quantiles[mode], 5, axis = 0)
+        #max = np.percentile(quantiles[mode], 95, axis = 0)
 
-        mean = np.mean(quantiles[mode][indices,:], axis = 0)
-        q5 = np.percentile(quantiles[mode][indices,:], 5, axis = 0)
-        q95 = np.percentile(quantiles[mode][indices,:], 95, axis = 0)
+        min = np.min(quantiles[mode], axis = 0)
+        max = np.max(quantiles[mode], axis = 0)
 
-        df_data.append(pd.DataFrame(dict(mean = mean, q5 = q5, q95 = q95, cdf = probabilities)))
+        df_data.append(pd.DataFrame(dict(mean = mean, min = min, max = max, cdf = probabilities)))
         df_data[-1]["mode"] = mode
 
     return pd.concat(df_data)

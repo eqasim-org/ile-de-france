@@ -70,9 +70,9 @@ def execute(context):
         plt.barh(locations, df_case["reference"].values, height = 0.4, label = "Census", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS["census"])
         plt.barh(locations + 0.4, df_case["mean"].values, height = 0.4, label = "Synthetic", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS["synthetic"])
 
-        for index, (q5, q95) in enumerate(zip(df_case["q5"].values, df_case["q95"].values)):
+        for index, (min, max) in enumerate(zip(df_case["min"].values, df_case["max"].values)):
             location = index + 0.4 + 0.2
-            plt.plot([q5, q95], [location, location], "k", linewidth = 1, label = "90% Conf.")
+            plt.plot([min, max], [location, location], "k", linewidth = 1, label = "Range")
 
         plt.gca().yaxis.set_major_locator(tck.FixedLocator(locations + 0.4))
 

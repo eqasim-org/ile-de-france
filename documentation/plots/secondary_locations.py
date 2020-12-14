@@ -83,7 +83,7 @@ def execute(context):
         plt.plot(mode_reference["values"] * 1e-3, mode_reference["cdf"], linestyle = '--', color = "k", linewidth = 1.0, label = "HTS")
 
         df_mode = df_synthetic[df_synthetic["mode"] == mode]
-        plt.fill_betweenx(df_mode["cdf"], df_mode["q5"]* 1e-3, df_mode["q95"] * 1e-3, linewidth = 0.0, color = plotting.COLORS[hts_name], alpha = 0.25, label = "90% Conf.")
+        plt.fill_betweenx(df_mode["cdf"], df_mode["min"]* 1e-3, df_mode["max"] * 1e-3, linewidth = 0.0, color = plotting.COLORS[hts_name], alpha = 0.25, label = "Range")
         plt.plot(df_mode["mean"] * 1e-3, df_mode["cdf"], color = plotting.COLORS[hts_name], linewidth = 1.0, label = "Synthetic")
 
         plt.xlim([0, limits[mode] * 1e-3])
