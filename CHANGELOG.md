@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Bugfix: Do not consider *inactive* enterprises from SIRENE
 - Update analysis scripts
 - Remove CRS warnings
 - Bugfix: Handle case if very last activity chain in population ends with tail

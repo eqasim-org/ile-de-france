@@ -12,6 +12,11 @@ def configure(context):
 def execute(context):
     df_sirene = context.stage("data.sirene.raw")
 
+    # Remove inactive enterprises
+    df_sirene = df_sirene[
+        df_sirene["etatAdministratifEtablissement"] == "A"
+    ]
+
     # Define work place weights by person under salary ....
     df_sirene["employees"] = 0.0
 

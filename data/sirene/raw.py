@@ -16,7 +16,7 @@ def execute(context):
     df_sirene = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("sirene_path")), usecols = [
             "siret", "codeCommuneEtablissement", "activitePrincipaleEtablissement",
             "trancheEffectifsEtablissement", "libelleVoieEtablissement", "numeroVoieEtablissement",
-            "typeVoieEtablissement"
+            "typeVoieEtablissement", "etatAdministratifEtablissement"
         ],
         dtype = dict(siret = int, codeCommuneEtablissement = str, trancheEffectifsEtablissement = str, typeVoieEtablissement = str)
     )
