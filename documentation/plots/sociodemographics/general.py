@@ -43,12 +43,12 @@ def prepare_reference(hts_marginals, census_marginals, level, marginal):
 def prepare_marginal(data_marginals, hts_marginals, census_marginals, level, marginal, sampling_rate):
     df = data_marginals[level][(marginal,)].copy().rename(columns = { marginal: "value" })
     df["attribute"] = marginal
-    df = df[["attribute", "value", "mean", "q5", "q95"]]
+    df = df[["attribute", "value", "mean", "min", "max"]]
     df = df.sort_values(by = "value")
 
     df["mean"] /= sampling_rate
-    df["q5"] /= sampling_rate
-    df["q95"] /= sampling_rate
+    df["min"] /= sampling_rate
+    df["max"] /= sampling_rate
 
     df = pd.merge(df, prepare_reference(hts_marginals, census_marginals, level, marginal), on = "value")
 
@@ -135,12 +135,12 @@ def execute(context):
 
         f = (df_figure["reference_source"] == "hts").values
         hts_name = context.config("hts")
-        plt.barh(locations[f], df_figure["reference"].values[f], height = 0.4, label = lang.get_source(hts_name), align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS[hts_name])
+        plt.barh(locations[f], df_figure["reference"].values[f], height = 0.4, label = "HTS", align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS[hts_name])
         plt.barh(locations[f] + 0.4, df_figure["mean"].values[f], height = 0.4, label = None, align = "edge", linewidth = 0.5, edgecolor = "white", color = plotting.COLORS["synthetic"])
 
-        for index, (q5, q95) in enumerate(zip(df_figure["q5"].values, df_figure["q95"].values)):
+        for index, (min, max) in enumerate(zip(df_figure["min"].values, df_figure["max"].values)):
             location = index + 0.4 + 0.2
-            plt.plot([q5, q95], [location, location], "k", linewidth = 1, label = "90% Conf.")
+            plt.plot([min, max], [location, location], "k", linewidth = 1, label = "Range")
 
         plt.gca().yaxis.set_major_locator(tck.FixedLocator(locations + 0.4))
         plt.gca().yaxis.set_major_formatter(tck.FixedFormatter(df_figure["label"].values))

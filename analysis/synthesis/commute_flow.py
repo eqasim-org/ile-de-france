@@ -5,8 +5,6 @@ import analysis.bootstrapping as bs
 import analysis.statistics as stats
 import analysis.marginals as marginals
 
-ESTIMATION_SAMPLE_SIZE = 1000
-
 def configure(context):
     acquisition_sample_size = context.config("acquisition_sample_size")
 
@@ -33,7 +31,7 @@ def execute(context):
     education_flows = []
 
     with context.progress(label = "Processing commute data ...", total = acquisition_sample_size) as progress:
-        for sample, (df_home, df_spatial, df_persons) in enumerate(feeder):
+        for realization, (df_home, df_spatial, df_persons) in enumerate(feeder):
             # Prepare home
             df_home = pd.merge(df_persons[["person_id", "household_id"]], df_home, on = "household_id")
             df_home = df_home[["person_id", "departement_id"]].rename(columns = { "departement_id": "home" })
@@ -46,7 +44,7 @@ def execute(context):
 
             # Calculate work
             df_work = pd.merge(df_home, df_work, on = "person_id").groupby(["home", "work"]).size().reset_index(name = "weight")
-            df_work["sample"] = sample
+            df_work["realization"] = realization
             work_flows.append(df_work)
 
             # Prepare work
@@ -57,7 +55,7 @@ def execute(context):
 
             # Calculate education
             df_education = pd.merge(df_home, df_education, on = "person_id").groupby(["home", "education"]).size().reset_index(name = "weight")
-            df_education["sample"] = sample
+            df_education["realization"] = realization
             education_flows.append(df_education)
 
             progress.update()
@@ -65,7 +63,7 @@ def execute(context):
     df_work = pd.concat(work_flows)
     df_education = pd.concat(education_flows)
 
-    df_work = stats.bootstrap(df_work, ESTIMATION_SAMPLE_SIZE)
-    df_education = stats.bootstrap(df_education, ESTIMATION_SAMPLE_SIZE)
+    df_work = stats.analyze_sample_and_flatten(df_work)
+    df_education = stats.analyze_sample_and_flatten(df_education)
 
     return dict(work = df_work, education = df_education)
