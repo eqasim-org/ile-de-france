@@ -18,6 +18,9 @@ def execute(context):
     # Load data
     df_trips = context.stage("hts")[2]
 
+    # Make sure trips are properly sorted to avoid possible issues
+    df_trips = df_trips.sort_values(by=["person_id", "trip_id"])
+
     # Duplicate with synthetic persons
     df_matching = context.stage("synthesis.population.matched")
     df_trips = df_trips.rename(columns = { "person_id": "hts_id" })
