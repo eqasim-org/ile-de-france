@@ -2,6 +2,7 @@
 
 **Under development**
 
+- By default, load SIRENE directly from `zip` file instead of `csv`
 - Bugfix: Do not execute "urban" attribute imputation twice
 - Bugfix: Do not consider *inactive* enterprises from SIRENE
 - Update analysis scripts

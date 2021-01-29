@@ -8,7 +8,7 @@ This stage loads the raw data from the French enterprise registry.
 
 def configure(context):
     context.config("data_path")
-    context.config("sirene_path", "sirene/StockEtablissement_utf8.csv")
+    context.config("sirene_path", "sirene/StockEtablissement_utf8.zip")
 
     context.stage("data.spatial.codes")
 
