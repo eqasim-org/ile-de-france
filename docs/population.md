@@ -120,7 +120,7 @@ The enterprise census of France is available on data.gouv.fr:
 - [Enterprise census](https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/)
 - Scroll down and click on **Sirene : Fichier StockEtablissement**. Behind the name you will see a month as the file is updated monthly.
 - In the popping up window, click on **Telecharger** to download the file (it is rather large, at least one GB)
-- Open the downloaded *zip* file and copy the file `StockEtablissement_utf8.csv` into `data/sirene`. Unpacked it has a size of around 5GB.
+- Move the downloaded *zip* file `StockEtablissement_utf8.csv` into `data/sirene`.
 
 ### 10) Address database (BD-TOPO)
 

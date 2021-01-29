@@ -609,7 +609,7 @@ def create(output_path):
     df_sirene["typeVoieEtablissement"] = "RUE"
 
     os.mkdir("%s/sirene" % output_path)
-    df_sirene.to_csv("%s/sirene/StockEtablissement_utf8.csv" % output_path, index = False)
+    df_sirene.to_csv("%s/sirene/StockEtablissement_utf8.zip" % output_path, index = False)
 
     # Data set: OSM
     # We add add a road grid of 500m
