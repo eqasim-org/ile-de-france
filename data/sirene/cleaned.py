@@ -15,7 +15,7 @@ def execute(context):
     # Remove inactive enterprises
     df_sirene = df_sirene[
         df_sirene["etatAdministratifEtablissement"] == "A"
-    ]
+    ].copy()
 
     # Define work place weights by person under salary ....
     df_sirene["employees"] = 0.0
