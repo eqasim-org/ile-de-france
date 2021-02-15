@@ -416,10 +416,18 @@ def create(output_path):
             purpose = 21 if studies else 11
             mode = random.choice([1, 2, 3, 5, 7])
 
+            origin_hour = 8
+            origin_minute = 0
+
+            if person_index % 100 == 0:
+                # Testing proper diffusion of plan times
+                orign_hour = 0
+                origin_minute = 12
+
             data["trips"].append(dict(
                 NQUEST = household_id, NP = person_id,
                 ND = 1, ORDEP = home_department, DESTDEP = work_department,
-                ORH = 8, ORM = 0, DESTH = 9, DESTM = 0, ORCOMM = home_municipality,
+                ORH = origin_hour, ORM = origin_minute, DESTH = 9, DESTM = 0, ORCOMM = home_municipality,
                 DESTCOMM = work_municipality, DPORTEE = 3, MODP_H7 = 2,
                 DESTMOT_H9 = purpose, ORMOT_H9 = 1
             ))
