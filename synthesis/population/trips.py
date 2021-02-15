@@ -18,17 +18,20 @@ def execute(context):
     # Load data
     df_trips = context.stage("hts")[2]
 
-    # Make sure trips are properly sorted to avoid possible issues
-    df_trips = df_trips.sort_values(by=["person_id", "trip_id"])
-
     # Duplicate with synthetic persons
     df_matching = context.stage("synthesis.population.matched")
     df_trips = df_trips.rename(columns = { "person_id": "hts_id" })
     df_trips = pd.merge(df_matching, df_trips, on = "hts_id")
+    df_trips = df_trips.sort_values(by = ["person_id", "trip_id"])
+
+    # Define trip index
+    df_count = df_trips.groupby("person_id").size().reset_index(name = "count")
+    df_trips["trip_index"] = np.hstack([np.arange(count) for count in df_count["count"].values])
+    df_trips = df_trips.sort_values(by = ["person_id", "trip_index"])
 
     # Diversify departure times
     random = np.random.RandomState(context.config("random_seed"))
-    counts = df_trips[["person_id", "trip_id"]].groupby("person_id").size().reset_index(name = "count")["count"].values
+    counts = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "count")["count"].values
 
     interval = df_trips[["person_id", "departure_time"]].groupby("person_id").min().reset_index()["departure_time"].values
     interval = np.minimum(1800.0, interval) # If first departure time is just 5min after midnight, we only add a deviation of 5min
@@ -41,10 +44,8 @@ def execute(context):
     df_trips["departure_time"] = np.round(df_trips["departure_time"])
     df_trips["arrival_time"] = np.round(df_trips["arrival_time"])
 
-    # Define trip index
-    df_trips = df_trips.sort_values(by = ["person_id", "trip_id"])
-    df_count = df_trips.groupby("person_id").size().reset_index(name = "count")
-    df_trips["trip_index"] = np.hstack([np.arange(count) for count in df_count["count"].values])
+    assert (df_trips["departure_time"] >= 0.0).all()
+    assert (df_trips["arrival_time"] >= 0.0).all()
 
     return df_trips[[
         "person_id", "trip_index",
