@@ -15,7 +15,12 @@ Toulouse is not included in the census data set that is uesd for Île-de-France
 (*Zone A*). Instead, *Zone D* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone D* and put the
 respective file (*FD_INDCVIZD_2015.dbf*) into the `data/rp_2015` folder.
 
-### B) OpenStreetMap data
+### B) Address database (BD-TOPO)
+
+You need to download the region-specific address database. Go to [IGN Open data database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo), scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*. Click on the download link under
+*Région Occitanie - R 76*. Open the downloaded archive and copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo` (overriding the data for Île-de-France if you had set up that scenario before).
+
+### C) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
@@ -23,7 +28,7 @@ Geofabrik does not provide a continuous cut-out for Occitanie. Instead, the
 former regions of [Midi-Pyrennées](https://download.geofabrik.de/europe/france/midi-pyrenees.html) and [Languedoc-Roussilon](https://download.geofabrik.de/europe/france/languedoc-roussillon.html) are available. Download both regions in *.osm.pbf* format and put the files into the
 folder `data/osm`.
 
-### C) GTFS data
+### D) GTFS data
 
 Again, only if you want to run simulations, the digital transit schedule is required.
 Unfortunately, there is no consolidated GTFS schedule avaiable for the Occitanie region. Hence,

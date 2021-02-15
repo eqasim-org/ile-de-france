@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Updated documentation for BD-TOPO
 - By default, load SIRENE directly from `zip` file instead of `csv`
 - Bugfix: Make sure df_trips are sorted properly in `synthesis.population.trips`
 - Bugfix: Do not execute "urban" attribute imputation twice

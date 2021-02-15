@@ -20,7 +20,7 @@ def execute(context):
 
     df_bdtopo = []
 
-    with context.progress(total = 26898716, label = "Loading BD TOPO address registry ...") as progress:
+    with context.progress(total = 2135942, label = "Loading BD TOPO address registry ...") as progress:
         with fiona.open("%s/%s" % (context.config("data_path"), context.config("bdtopo_path"))) as archive:
             for item in archive:
                 code = item["properties"]["CODE_INSEE"]
