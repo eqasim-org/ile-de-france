@@ -103,6 +103,14 @@ def check_trip_times(df_trips):
     any_errors = False
     df_next = df_trips.shift(-1)
 
+    f = df_trips["departure_time"] < 0.0
+    print("  Trips with negative departure time:", np.count_nonzero(f))
+    any_errors |= np.count_nonzero(f) > 0
+
+    f = df_trips["arrival_time"] < 0.0
+    print("  Trips with negative arrival time:", np.count_nonzero(f))
+    any_errors |= np.count_nonzero(f) > 0
+
     f = df_trips["departure_time"] > df_trips["arrival_time"]
     print("  Trips with negative duration:", np.count_nonzero(f))
     any_errors |= np.count_nonzero(f) > 0
