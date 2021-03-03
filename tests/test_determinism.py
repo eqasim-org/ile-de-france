@@ -47,7 +47,7 @@ def _test_determinism(index, data_path, tmpdir):
     synpp.run(stages, config, working_directory = cache_path)
 
     REFERENCE_HASHES = {
-        "activities.csv":                   "9ca52cd244966b287cbc2f0614960abd",
+        "activities.csv":                   "dcf8e08e9f238c90bff0298048251dac",
         "persons.csv":                      "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
         "households.csv":                   "882ce7dc1a44403d12c5aa10709c0d5b",
         #"ile_de_france_population.xml.gz":  "e1407f918cb92166ebf46ad769d8d085",

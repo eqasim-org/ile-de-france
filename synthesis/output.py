@@ -55,12 +55,15 @@ def execute(context):
         columns = { "trip_index": "following_trip_index" }
     )
 
+    df_activities = pd.merge(
+        df_activities, df_persons[["person_id", "household_id"]], on = "person_id")
+
     df_activities["preceding_trip_index"] = df_activities["following_trip_index"].shift(1)
     df_activities.loc[df_activities["is_first"], "preceding_trip_index"] = -1
     df_activities["preceding_trip_index"] = df_activities["preceding_trip_index"].astype(int)
 
     df_activities = df_activities[[
-        "person_id", "activity_index",
+        "person_id", "household_id", "activity_index",
         "preceding_trip_index", "following_trip_index",
         "purpose", "start_time", "end_time",
         "is_first", "is_last"
@@ -102,6 +105,27 @@ def execute(context):
     df_spatial = gpd.GeoDataFrame(df_activities, crs = "EPSG:2154")
     df_spatial["purpose"] = df_spatial["purpose"].astype(str)
     df_spatial.to_file("%s/activities.gpkg" % output_path, driver = "GPKG")
+
+    # Write spatial homes
+    df_spatial[
+        df_spatial["purpose"] == "home"
+    ].drop_duplicates("household_id")[[
+        "household_id", "geometry"
+    ]].to_file("%s/homes.gpkg" % output_path, driver = "GPKG")
+
+    # Write spatial commutes
+    df_spatial = pd.merge(
+        df_spatial[df_spatial["purpose"] == "home"].drop_duplicates("person_id")[["person_id", "geometry"]].rename(columns = { "geometry": "home_geometry" }),
+        df_spatial[df_spatial["purpose"] == "work"].drop_duplicates("person_id")[["person_id", "geometry"]].rename(columns = { "geometry": "work_geometry" })
+    )
+
+    df_spatial["geometry"] = [
+        geo.LineString(od)
+        for od in zip(df_spatial["home_geometry"], df_spatial["work_geometry"])
+    ]
+
+    df_spatial = df_spatial.drop(columns = ["home_geometry", "work_geometry"])
+    df_spatial.to_file("%s/commutes.gpkg" % output_path, driver = "GPKG")
 
     # Write spatial trips
     df_spatial = pd.merge(df_trips, df_locations[[
