@@ -57,14 +57,14 @@ The tax data set is available from INSEE:
 - Unpack the *zip* file, it contains more *zip* files.
 - Copy the content of *indic-struct-distrib-revenu-2015-REG.zip* into `data/filosofi_2015`
 
-### 5) Service and facility census (BPE 2018)
+### 5) Service and facility census (BPE 2019)
 
 The census of services and facilities in France is available from INSEE:
 
 - [Service and facility census](https://www.insee.fr/fr/statistiques/3568638)
 - Download the uppermost data set in **dbase** format. It contains all available
 services while the lower data sets only contain observations for specific sectors.
-- Copy the content of the *zip* file into the folder `data/bpe_2018`.
+- Copy the content of the *zip* file into the folder `data/bpe_2019`.
 
 ### 6a) National household travel survey (ENTD 2008)
 
@@ -142,7 +142,7 @@ Your folder structure should now have at least the following files:
 - `data/rp_2015/base-ic-evol-struct-pop-2015.xls`
 - `data/filosofi_2015/FILO_DISP_COM.xls`
 - `data/filosofi_2015/FILO_DISP_REG.xls`
-- `data/bpe_2018/bpe18_ensemble_xy.dbf`
+- `data/bpe_2019/bpe19_ensemble_xy.dbf`
 - `data/entd_2008/Q_individu.csv`
 - `data/entd_2008/Q_tcm_individu.csv`
 - `data/entd_2008/Q_menage.csv`

@@ -220,8 +220,8 @@ def create(output_path):
     types = [("C", 10, 0), ("C", 12, 0), ("C", 12, 0), ("C", 4, 0), ("C", 5, 0), ("C", 3, 0)]
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
-    os.mkdir("%s/bpe_2018" % output_path)
-    db = pysal.open("%s/bpe_2018/bpe18_ensemble_xy.dbf" % output_path, "w")
+    os.mkdir("%s/bpe_2019" % output_path)
+    db = pysal.open("%s/bpe_2019/bpe19_ensemble_xy.dbf" % output_path, "w")
 
     db.header = columns
     db.field_spec = types
