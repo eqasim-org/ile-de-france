@@ -104,6 +104,8 @@ The IRIS zoning system is available from IGN:
   - *CONTOURS-IRIS_2-1_SHP_LAMB93_FXX-2017*
 - Copy the contents of this folder (like *CONTOURS-IRIS.shp*) into the folder `data/iris_2017`.
 
+- ***Attention***: Currently, the data set is not avaialble at IGN. As a fallback, you can download the data [here](https://drive.google.com/file/d/1lv3LkxZMJj_W0pqZ2rOl6oepZ4ogtkbh/view?usp=sharing).
+
 ### 8) Zoning registry
 
 We make use of a zoning registry by INSEE that establishes a connection between
