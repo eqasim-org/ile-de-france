@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Update code and data to BPE 2019 (verison for 2018 is not available anymore)
 - Add additional spatial standard output: `homes.gpkg` and `commutes.gpkg`
 - Updated documentation for BD-TOPO
 - By default, load SIRENE directly from `zip` file instead of `csv`

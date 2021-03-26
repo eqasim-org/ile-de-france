@@ -9,7 +9,7 @@ This stage loads the raw data from the French service registry.
 
 def configure(context):
     context.config("data_path")
-    context.config("bpe_path", "bpe_2018/bpe18_ensemble_xy.dbf")
+    context.config("bpe_path", "bpe_2019/bpe19_ensemble_xy.dbf")
 
     context.stage("data.spatial.codes")
 
@@ -25,7 +25,7 @@ def execute(context):
     table = simpledbf.Dbf5("%s/%s" % (context.config("data_path"), context.config("bpe_path")), codec = "latin1")
     df_records = []
 
-    with context.progress(total = 2504782, label = "Reading enterprise census ...") as progress:
+    with context.progress(total = 2539520, label = "Reading enterprise census ...") as progress:
         for df_chunk in table.to_dataframe(chunksize = 10240):
             progress.update(len(df_chunk))
 
@@ -39,6 +39,6 @@ def execute(context):
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("bpe_path"))):
-        raise RuntimeError("BPE 2018 data is not available")
+        raise RuntimeError("BPE 2019 data is not available")
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("bpe_path")))
