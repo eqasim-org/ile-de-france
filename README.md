@@ -68,8 +68,8 @@ paper presented at the 30th IEEE Intelligent Vehicles Symposium, Paris, June 201
 
 ## Versioning
 
-The current version of the pipeline is `v1.1.0`. You can obtain it by cloning
-the `v1.1.0` tag of this repository. Alternatively, you can also clone the
+The current version of the pipeline is `v1.2.0`. You can obtain it by cloning
+the `v1.2.0` tag of this repository. Alternatively, you can also clone the
 `develop` branch to make use of the latest developments. The version number
 will be kept in the `develop` branch until a new version is officially released.
 
