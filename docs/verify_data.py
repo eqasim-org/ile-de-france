@@ -9,6 +9,7 @@ tests = [
     {
         "name": "Census 2015",
         "urls": [
+            "https://www.insee.fr/fr/statistiques/3625223",
             "https://www.insee.fr/fr/statistiques/fichier/3625223/RP2015_INDCVIZA_dbf.zip",
             "https://www.insee.fr/fr/statistiques/fichier/3625223/RP2015_INDCVIZE_dbf.zip",
             "https://www.insee.fr/fr/statistiques/fichier/3625223/RP2015_INDCVIZD_dbf.zip"
@@ -17,6 +18,8 @@ tests = [
     {
         "name": "OD Matrices 2015",
         "urls": [
+            "https://www.insee.fr/fr/statistiques/3566008",
+            "https://www.insee.fr/fr/statistiques/3565982",
             "https://www.insee.fr/fr/statistiques/fichier/3566008/rp2015_mobpro_dbase.zip",
             "https://www.insee.fr/fr/statistiques/fichier/3565982/rp2015_mobsco_dbase.zip"
         ]
@@ -24,12 +27,14 @@ tests = [
     {
         "name": "Population totals 2015",
         "urls": [
+            "https://www.insee.fr/fr/statistiques/3627376",
             "https://www.insee.fr/fr/statistiques/fichier/3627376/base-ic-evol-struct-pop-2015.zip"
         ]
     },
     {
         "name": "Filosofi 2015",
         "urls": [
+            "https://insee.fr/fr/statistiques/3560118",
             "https://www.insee.fr/fr/statistiques/fichier/3560118/indic-struct-distrib-revenu-2015-COMMUNES.zip",
             "https://www.insee.fr/fr/statistiques/fichier/3560118/indic-struct-distrib-revenu-2015-SUPRA.zip"
         ]
@@ -37,12 +42,14 @@ tests = [
     {
         "name": "BPE 2019",
         "urls": [
+            "https://www.insee.fr/fr/statistiques/3568638",
             "https://www.insee.fr/fr/statistiques/fichier/3568638/bpe19_ensemble_xy_dbase.zip"
         ]
     },
     {
         "name": "ENTD 2008",
         "urls": [
+            "https://www.statistiques.developpement-durable.gouv.fr/enquete-nationale-transports-et-deplacements-entd-2008",
             "https://www.statistiques.developpement-durable.gouv.fr/sites/default/files/2018-12/Q_tcm_menage_0.csv",
             "https://www.statistiques.developpement-durable.gouv.fr/sites/default/files/2019-01/Q_tcm_individu.csv",
             "https://www.statistiques.developpement-durable.gouv.fr/sites/default/files/2019-01/Q_menage.csv",
@@ -53,17 +60,23 @@ tests = [
     },
     {
         "name": "IRIS 2017",
-        "urls": [] # Temporary not checking
+        "urls": [
+            "https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#contoursiris",
+            "https://drive.google.com/file/d/1lv3LkxZMJj_W0pqZ2rOl6oepZ4ogtkbh/view?usp=sharing"
+            # Temporary provided in GDrive
+        ]
     },
     {
         "name": "Zoning 2017",
         "urls": [
+            "https://www.insee.fr/fr/information/2017499",
             "https://www.insee.fr/fr/statistiques/fichier/2017499/reference_IRIS_geo2017.zip"
         ]
     },
     {
         "name": "SIRENE",
         "urls": [
+            "https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/",
             "https://www.data.gouv.fr/fr/datasets/r/9e26138d-7938-4c1e-971b-d307489f12db"
         ]
     },
@@ -78,6 +91,8 @@ tests = [
     {
         "name": "OSM",
         "urls": [
+            "https://download.geofabrik.de/europe/france/ile-de-france.html",
+            "https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo",
             "https://download.geofabrik.de/europe/france/ile-de-france-latest.osm.pbf",
             "https://download.geofabrik.de/europe/france/rhone-alpes-latest.osm.pbf",
             "https://download.geofabrik.de/europe/france/languedoc-roussillon-latest.osm.pbf",
@@ -87,6 +102,7 @@ tests = [
     {
         "name": "GTFS",
         "urls": [
+            "https://data.iledefrance-mobilites.fr/explore/dataset/offre-horaires-tc-gtfs-idf/information/",
             "https://data.iledefrance-mobilites.fr/explore/dataset/offre-horaires-tc-gtfs-idf/files/736ca2f956a1b6cc102649ed6fd56d45/download/",
             "https://data.toulouse-metropole.fr/explore/dataset/tisseo-gtfs/files/bd1298f158bc39ed9065e0c17ebb773b/download/",
             "https://data.montpellier3m.fr/dataset/offre-de-transport-tam-en-gtfs/resource/7df23272-e7bd-4512-b8f1-e72aba9dee2c",
