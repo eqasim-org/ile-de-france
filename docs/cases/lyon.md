@@ -17,7 +17,7 @@ respective file (*FD_INDCVIZE_2015.dbf*) into the `data/rp_2015` folder.
 
 ### B) Address database (BD-TOPO)
 
-You need to download the region-specific address database. Go to [IGN Open data database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo), scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*. Click on the download link under 
+You need to download the region-specific address database. Go to [IGN Open data database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo), scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*. Click on the download link under
 *Région Auvergne-Rhône-Alpes - R 84*. Open the downloaded archive and copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo` (overriding the data for Île-de-France if you had set up that scenario before).
 
 ### C) OpenStreetMap data
@@ -42,11 +42,30 @@ it would be possible to add schedules for Saint Etienne or Grenoble)
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`.
 
+### E) *Optional*: Regional Household Travel Survey 2015
+
+For Lyon, a regional household travel survey (EDGT Lyon 2015) is available on request
+from the authorities. If you have the data available, you can use it in the pipeline.
+To do so, put the relevant files into `data/edgt_lyon_2015`. The following files
+should be present:
+
+- `data/edgt_lyon_2015/EDGT-AML-2015_Total_Dessin&Dictionnaire.xls`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.DAT`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.ID`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.IND`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.MAP`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TAB`
+- `EDGT_AML_DEPLA_DIST_2015-10-27.txt`
+- `EDGT_AML_MENAGE_FAF_TEL_2015-08-03.txt`
+- `EDGT_AML_PERSO_DIST_DT_2015-10-27.txt`
+- `EDGT_AML_TRAJET_DIST_2015-10-27.txt`
+
 ### Overview
 
 Afterwards, you should have the following additional files in your directory structure:
 
 - `data/rp_2015/FD_INDCVIZE_2015.dbf`
+- Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 
 *Only for simulation:*
 
@@ -89,6 +108,16 @@ This will make the pipeline filter all data sets for the departments noted
 in the list above, which is a set of the closest departments around Lyon.
 If you want to generate the whole (ancient) Rhône-Alpes region, add the commented out
 department identifiers to the list.
+
+In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
+is used, choose the updated HTS in the config:
+
+```yaml
+config:
+  # ...
+  hts: edgt_lyon
+  # ...
+```
 
 You can now enter your Anaconda environment and call the pipeline with the
 `synthesis.output` stage activated. This will generate a synthetic population
