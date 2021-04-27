@@ -80,7 +80,7 @@ def create(output_path):
 
     for region_column in np.arange(2):
         region_prefix = region_column + 1
-        region_number = region_prefix * 10
+        region_number = region_prefix * 10 # TODO: This means we will have 10 and 20, but the unit tests define 10 and 11 (so only 10 is used -> TODO)
 
         region_x = anchor_x + region_column * REGION_LENGTH
         region_y = anchor_y + 0

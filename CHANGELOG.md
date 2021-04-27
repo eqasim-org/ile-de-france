@@ -2,7 +2,7 @@
 
 **Under development**
 
-- No changes yet
+- Add stages to process EDGT for Lyon
 
 **1.2.0**
 
