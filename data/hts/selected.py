@@ -8,6 +8,8 @@ def configure(context):
         context.stage("data.hts.egt.filtered", alias = "hts")
     elif hts == "entd":
         context.stage("data.hts.entd.reweighted", alias = "hts")
+    elif hts == "edgt_lyon":
+        context.stage("data.hts.edgt_lyon.reweighted", alias = "hts")
     else:
         raise RuntimeError("Unknown HTS: %s" % hts)
 

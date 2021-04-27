@@ -170,15 +170,18 @@ def execute(context):
     df_target["age_class"] = np.digitize(df_target["age"], AGE_BOUNDARIES, right = True)
     df_source["age_class"] = np.digitize(df_source["age"], AGE_BOUNDARIES, right = True)
 
-    df_income = context.stage("synthesis.population.income")[["household_id", "household_income"]]
+    if "income_class" in df_source:
+        df_income = context.stage("synthesis.population.income")[["household_id", "household_income"]]
 
-    df_target = pd.merge(df_target, df_income)
-    df_target["income_class"] = INCOME_CLASS[hts](df_target)
+        df_target = pd.merge(df_target, df_income)
+        df_target["income_class"] = INCOME_CLASS[hts](df_target)
 
     df_target["any_cars"] = df_target["number_of_vehicles"] > 0
     df_source["any_cars"] = df_source["number_of_vehicles"] > 0
 
-    columns = ["sex", "any_cars", "age_class", "socioprofessional_class", "income_class", "departement_id"]
+    columns = ["sex", "any_cars", "age_class", "socioprofessional_class"]
+    if "income_class" in df_source: columns += ["income_class"]
+    columns += ["departement_id"]
 
     # Perform statistical matching
     df_source = df_source.rename(columns = { "person_id": "hts_id" })
