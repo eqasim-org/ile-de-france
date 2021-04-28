@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Improve handling of Osmosis on Windows
 - Add stages to process EDGT for Lyon
 
 **1.2.0**
