@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Make choice of branch and version of pt2matsim more flexible
 - Improve handling of Osmosis on Windows
 - Add stages to process EDGT for Lyon
 
