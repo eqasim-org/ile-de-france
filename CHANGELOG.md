@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Bugfix: Generate `meta.json` when code was not cloned but downloaded directly
 - Make choice of branch and version of pt2matsim more flexible
 - Improve handling of Osmosis on Windows
 - Add stages to process EDGT for Lyon
