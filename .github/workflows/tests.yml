@@ -47,6 +47,7 @@ jobs:
 
     - name: Test versions
       run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
         conda activate ile-de-france
         java -version
         mvn -v
@@ -56,5 +57,6 @@ jobs:
 
     - name: Run pipeline tests
       run: |
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
         conda activate ile-de-france
         MKL_CBWR=AUTO pytest tests/
