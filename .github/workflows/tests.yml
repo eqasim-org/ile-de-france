@@ -42,6 +42,7 @@ jobs:
         mkdir $HOME/osmosis
         tar xf osmosis.tgz -C $HOME/osmosis
         export PATH=$HOME/osmosis/bin:$PATH
+        osmosis -v
 
     - name: Test versions
       run: |
