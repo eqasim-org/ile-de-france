@@ -45,7 +45,7 @@ jobs:
 
     - name: Test versions
       run: |
-        java -v
+        java -version
         mvn -v
         python3 --version
         osmosis -v
