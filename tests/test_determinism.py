@@ -51,10 +51,10 @@ def _test_determinism(index, data_path, tmpdir):
         "persons.csv":                      "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
         "households.csv":                   "882ce7dc1a44403d12c5aa10709c0d5b",
         #"ile_de_france_population.xml.gz":  "e1407f918cb92166ebf46ad769d8d085",
-        "ile_de_france_network.xml.gz":     "b59fb5717e830d6d2952f43c5bbde043",
+        #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
         "ile_de_france_households.xml.gz":  "cdbd6ed5b175328861f237dc58dee1ff",
         #"ile_de_france_facilities.xml.gz":  "5ad41afff9ae5c470082510b943e6778",
-        "ile_de_france_config.xml":         "4f44821d6162dad1928a75e5c0b14f68"
+        "ile_de_france_config.xml":         "3a4fd53d874984fce347eadb32442cf2"
     }
 
     # activities.gpkg, trips.gpkg, meta.json,
