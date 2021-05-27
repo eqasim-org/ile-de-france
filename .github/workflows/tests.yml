@@ -14,31 +14,34 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Python 3.7.7
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.7.7
-
-    - name: Add conda to system path
+    - name: Set up Anaconda
       run: |
-        # $CONDA is an environment variable pointing to the root of the miniconda directory
-        echo $CONDA/bin >> $GITHUB_PATH
+        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
+        bash miniconda.sh -b -p $HOME/miniconda
+        source "$HOME/miniconda/etc/profile.d/conda.sh"
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda
+        conda env create -f environment.yml
+        conda activate ile-de-france
 
-    - name: Install conda dependencies
+    - name: Set up JAVA
       run: |
-        conda env update --file environment.yml --name base
+        wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u252b09.tar.gz -O java.tar.gz
+        tar xf java.tar.gz
+        export PATH=$HOME/jdk8u252-b09/bin:$PATH
 
-    # This comes with Maven
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.11
+    - name: Set up Maven
+      run: |
+        wget http://mirror.easyname.ch/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -O maven.tar.gz
+        tar xf maven.tar.gz
+        export PATH=$HOME/apache-maven-3.6.3/bin:$PATH
 
-    - name: Install Osmosis
+    - name: Osmosis
       run: |
         wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
+        mkdir $HOME/osmosis
         tar xf osmosis.tgz -C $HOME/osmosis
-        echo $HOME/osmosis >> $GITHUB_PATH
+        export PATH=$HOME/osmosis/bin:$PATH
 
     - name: Test versions
       run: |
