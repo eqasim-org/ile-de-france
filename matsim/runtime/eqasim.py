@@ -41,16 +41,16 @@ def execute(context):
 
         # Build eqasim
         maven.run(context, ["-Pstandalone", "--projects", "ile_de_france", "--also-make", "package"], cwd = "%s/eqasim-java" % context.path())
-        jar_path = "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version)
+        jar_path = "%s/eqasim-java/ile_de_france/target/ile_de_france-%s-shaded.jar" % (context.path(), version)
 
     # Special case: We provide the jar directly. This is mainly used for
     # creating input to unit tests of the eqasim-java package.
     else:
         os.makedirs("%s/eqasim-java/ile_de_france/target" % context.path())
         shutil.copy(context.config("eqasim_path"),
-            "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version))
+            "%s/eqasim-java/ile_de_france/target/ile_de_france-%s-shaded.jar" % (context.path(), version))
 
-    return "eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % version
+    return "eqasim-java/ile_de_france/target/ile_de_france-%s-shaded.jar" % version
 
 def validate(context):
     path = context.config("eqasim_path")
