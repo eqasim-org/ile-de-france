@@ -3,6 +3,8 @@ import pandas as pd
 import shapely.geometry as geo
 import os, datetime, json
 import matsim.runtime.git
+import subprocess as sp
+
 
 def configure(context):
     context.stage("matsim.runtime.git")
@@ -16,10 +18,14 @@ def get_version_path():
     return os.path.realpath("%s/../VERSION" % directory_path)
 
 def execute(context):
-    git = context.stage("matsim.runtime.git")
+    commit = "unknown"
 
-    path = os.path.dirname(os.path.realpath(__file__))
-    commit = matsim.runtime.git.run(context, ["rev-parse", "HEAD"], cwd = path, catch_output = True)
+    try:
+        git = context.stage("matsim.runtime.git")
+        path = os.path.dirname(os.path.realpath(__file__))
+        commit = matsim.runtime.git.run(context, ["rev-parse", "HEAD"], cwd = path, catch_output = True)
+    except sp.CalledProcessError:
+        pass # Probably code was not cloned, but downloaded as a ZIP
 
     with open(get_version_path()) as f:
         version = f.read().strip()
