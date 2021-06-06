@@ -128,8 +128,8 @@ The enterprise census of France is available on data.gouv.fr:
 The French address database is available from IGN:
 
 - [Address database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo)
-- After opening the link, scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*
-- Click on the download link under *Région Île-de-France - R 11*
+- After opening the link, scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Mars 2021 format shapefile*
+- Use a ftp client to download the *Région Île-de-France - R 11* . Most browsers will not be able to download the data. 
 - Open the downloaded archive and open/unpack it to to access the folder
   - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_2020-12-15`
   - `BDTOPO`
