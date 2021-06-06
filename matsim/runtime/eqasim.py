@@ -11,7 +11,7 @@ def configure(context):
     context.stage("matsim.runtime.maven")
 
     context.config("eqasim_version", "1.3.0")
-    context.config("eqasim_branch", "shade")
+    context.config("eqasim_branch", "v1.3.0")
     context.config("eqasim_repository", "https://github.com/eqasim-org/eqasim-java.git")
     context.config("eqasim_path", "")
 
