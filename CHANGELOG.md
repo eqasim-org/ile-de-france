@@ -3,6 +3,7 @@
 **Under development**
 
 - Bugfix: Generate `meta.json` when code was not cloned but downloaded directly
+- Use `eqasim-java:1.3.1`
 - Make choice of branch and version of pt2matsim more flexible
 - Improve handling of Osmosis on Windows
 - Add stages to process EDGT for Lyon
