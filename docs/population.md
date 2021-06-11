@@ -152,7 +152,7 @@ Your folder structure should now have at least the following files:
 - `data/entd_2008/Q_individu.csv`
 - `data/entd_2008/Q_tcm_individu.csv`
 - `data/entd_2008/Q_menage.csv`
-- `data/entd_2008/Q_tcm_menage.csv`
+- `data/entd_2008/Q_tcm_menage_0.csv`
 - `data/entd_2008/K_deploc.csv`
 - `data/entd_2008/Q_ind_lieu_teg.csv`
 - `data/iris_2017/CONTOURS-IRIS.cpg`
