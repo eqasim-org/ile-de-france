@@ -8,6 +8,7 @@ This stage cleans the national HTS.
 """
 
 def configure(context):
+    context.config("weekend", False)
     context.stage("data.hts.entd.raw")
 
 INCOME_CLASS_BOUNDS = [400, 600, 800, 1000, 1200, 1500, 1800, 2000, 2500, 3000, 4000, 6000, 10000, 1e6]
@@ -59,9 +60,10 @@ def execute(context):
 
     # Important: If someone did not have any trips on the reference day, ENTD asked
     # for another day. With this flag we make sure that we only cover "reference days".
-    f = df_trips["V2_MOBILREF"] == 1
-    df_trips = df_trips[f]
-    print("Filtering out %d non-reference day trips" % np.count_nonzero(~f))
+    if not context.config("weekend"):
+        f = df_trips["V2_MOBILREF"] == 1
+        df_trips = df_trips[f]
+        print("Filtering out %d non-reference day trips" % np.count_nonzero(~f))
 
     # Merge in additional information from ENTD
     df_households = pd.merge(df_households, df_menage[[
@@ -187,9 +189,14 @@ def execute(context):
     df_trips["routed_distance"] = df_trips["routed_distance"].fillna(0.0) # This should be just one within Île-de-France
 
     # Only leave weekday trips
-    f = df_trips["V2_TYPJOUR"] == 1
-    print("Removing %d trips on weekends" % np.count_nonzero(~f))
-    df_trips = df_trips[f]
+    if not context.config("weekend"):
+        f = df_trips["V2_TYPJOUR"] == 1
+        print("Removing %d trips on weekends" % np.count_nonzero(~f))
+        df_trips = df_trips[f]
+    else:
+        f = df_trips["V2_TYPJOUR"] != 1
+        print("Removing %d trips on week days" % np.count_nonzero(~f))
+        df_trips = df_trips[f]
 
     # Only leave one day per person
     initial_count = len(df_trips)
