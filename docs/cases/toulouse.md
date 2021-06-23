@@ -95,6 +95,15 @@ in the list above, which is a set of the closest departments around Toulouse.
 If you want to generate the whole Occitanie region, add the commented out
 department identifiers to the list.
 
+Finally, to not confuse output names, we can define a new prefix for the output files:
+
+```yaml
+config:
+  # ...
+  output_prefix: toulouse_
+  # ...
+```
+
 You can now enter your Anaconda environment and call the pipeline with the
 `synthesis.output` stage activated. This will generate a synthetic population
 for Toulouse and surroundings.
