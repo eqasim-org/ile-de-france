@@ -119,6 +119,15 @@ config:
   # ...
 ```
 
+Finally, to not confuse output names, we can define a new prefix for the output files:
+
+```yaml
+config:
+  # ...
+  output_prefix: lyon_
+  # ...
+```
+
 You can now enter your Anaconda environment and call the pipeline with the
 `synthesis.output` stage activated. This will generate a synthetic population
 for Lyon and surroundings.
