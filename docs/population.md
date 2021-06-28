@@ -129,7 +129,8 @@ The French address database is available from IGN:
 
 - [Address database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo)
 - After opening the link, scroll down until you see *BD TOPO® Mars 2021 Tous Thèmes par département format shapefile*
-- Use a ftp client to download the *Région Île-de-France - R 11* . Most browsers will not be able to download the data. 
+- Use a ftp client to download the *Région Île-de-France - R 11* . Most browsers will not be able to download the data.
+-  For Windows users: you might be able to download the file by doing the following: 1) paste the ftp server address into your file explorer. The address is written out in the "link" for the package you want to download, as is the username and password for logging into the server. The first part of the "link", between the "ftp://" and a ":" is the username. The second part is the password. The server address is the part that comes after the "@" and before the filename itself. 2) Hit enter after you've pased the server name into the address bar in your file explorer. A dialog asking for a username and password should pop up. Enter those. 3) Now you should see all the files and can select the one for *Région Île-de-France - R 11*. Note that the connection might time out and you might have to try several tiems before you suceed in signing in and downloading. 
 - Open the downloaded archive and open/unpack it to to access the folder
   - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_2020-12-15`
   - `BDTOPO`
