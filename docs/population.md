@@ -95,10 +95,10 @@ the following files are accessible in the folder `data/egt_2010`:
 
 The IRIS zoning system is available from IGN:
 
-- [IRIS data](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#contoursiris)
-- Download the **2017** edition. Don't worry about the 2018 in the file name, the naming is a bit confusing!)
+- [IRIS data](https://geoservices.ign.fr/contoursiris)
+- Download the **2017** edition. 
 - In the *zip* file, follow the following path:
-  - *CONTOURS-IRIS_2-1__SHP__FRA_2018-06-08*
+  - *CONTOURS-IRIS_2-1__SHP__FRA_2017-01-01*
   - *CONTOURS-IRIS*
   - *1_DONNEES_LIVRAISON_2018-06-00105*
   - *CONTOURS-IRIS_2-1_SHP_LAMB93_FXX-2017*
@@ -127,8 +127,7 @@ The enterprise census of France is available on data.gouv.fr:
 
 The French address database is available from IGN:
 
-- [Address database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo)
-- After opening the link, scroll down until you see *BD TOPO® Mars 2021 Tous Thèmes par département format shapefile*
+- [Address database](https://geoservices.ign.fr/bdtopo)
 - Use a ftp client to download the *Région Île-de-France - R 11* . Most browsers will not be able to download the data. 
 - Open the downloaded archive and open/unpack it to to access the folder
   - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_2020-12-15`
