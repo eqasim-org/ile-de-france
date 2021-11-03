@@ -58,20 +58,24 @@ def execute(context):
 
     # ... query tree for missing communes
     df_missing = df_municipalities[df_municipalities["commune_id"].astype(str).isin(missing_communes)] # pandas Bug
-    coordinates = np.vstack([df_missing["geometry"].centroid.x, df_missing["geometry"].centroid.y]).T
-    indices = kd_tree.query(coordinates)[1].flatten()
 
-    # ... build data frame of imputed communes
-    df_reconstructed = pd.concat([
-        df[df["commune_id"] == df_existing.iloc[index]["commune_id"]]
-        for index in indices
-    ])
-    df_reconstructed["commune_id"] = df_missing["commune_id"].values
-    df_reconstructed["is_imputed"] = True
-    df_reconstructed["is_missing"] = True
+    if len(df_missing) > 0:
+        coordinates = np.vstack([df_missing["geometry"].centroid.x, df_missing["geometry"].centroid.y]).T
+        indices = kd_tree.query(coordinates)[1].flatten()
 
-    # ... merge the data frames
-    df = pd.concat([df, df_reconstructed])
+        # ... build data frame of imputed communes
+        df_reconstructed = pd.concat([
+            df[df["commune_id"] == df_existing.iloc[index]["commune_id"]]
+            for index in indices
+        ])
+        df_reconstructed["commune_id"] = df_missing["commune_id"].values
+        df_reconstructed["is_imputed"] = True
+        df_reconstructed["is_missing"] = True
+
+        # ... merge the data frames
+        df = pd.concat([df, df_reconstructed])
+
+    # Validation
     assert len(df) == len(df["commune_id"].unique())
     assert len(requested_communes - set(df["commune_id"].unique())) == 0
 
