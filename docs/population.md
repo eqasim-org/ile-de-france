@@ -29,12 +29,12 @@ France is available at the website of INSEE:
 - Download the data for **Zone A** in **dbase** format by clicking the link under *Individus localisés au canton-ou-ville - Zone A*.
 - Copy the contents of the *zip* file into the folder `data/rp_2015`
 
-### 2) Origin-destiation data (RP-MOBPRO / RP-MOBSCO 2015)
+### 2) Origin-destination data (RP-MOBPRO / RP-MOBSCO 2015)
 
 Origin-destination data is also available from INSEE at two locations:
 
-- [Work origin-destiation data](https://www.insee.fr/fr/statistiques/3566008)
-- [Education origin-destiation data](https://www.insee.fr/fr/statistiques/3565982)
+- [Work origin-destination data](https://www.insee.fr/fr/statistiques/3566008)
+- [Education origin-destination data](https://www.insee.fr/fr/statistiques/3565982)
 - Download the data from the links, both in **dbase** format.
 - Copy the contents of both *zip* files into the folder `data/rp_2015`.
 
