@@ -57,7 +57,7 @@ popuations and run simulations of other places in France. While these are
 examples, the code can adapted to any other scenarios as well:
 
 - [Toulouse and Occitanie region](docs/cases/toulouse.md)
-- [Lyon and neighboring departements](docs/cases/lyon.md)
+- [Lyon and neighboring departments](docs/cases/lyon.md)
 
 ## Publications
 
