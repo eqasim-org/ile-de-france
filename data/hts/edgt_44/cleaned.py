@@ -75,8 +75,8 @@ def execute(context):
     df_households = pd.merge(df_households, df_size, on = "household_id")
 
     # Clean departement
-    df_trips["origin_departement_id"] = 44
-    df_trips["destination_departement_id"] = 44
+    df_trips["origin_departement_id"] = "44"
+    df_trips["destination_departement_id"] = "44"
 
     df_households["departement_id"] = df_households["departement_id"].astype("category")
     df_persons["departement_id"] = df_persons["departement_id"].astype("category")
