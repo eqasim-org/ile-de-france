@@ -58,6 +58,7 @@ examples, the code can adapted to any other scenarios as well:
 
 - [Toulouse and Occitanie region](docs/cases/toulouse.md)
 - [Lyon and neighboring departements](docs/cases/lyon.md)
+- [Nantes and Loire Atlantique](docs/cases/nantes.md)
 
 ## Publications
 

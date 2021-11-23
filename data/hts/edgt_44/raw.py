@@ -45,7 +45,7 @@ def execute(context):
     column_names = df_household_dictionary["variable"].values
 
     df_households = pd.read_fwf(
-        "%s/edgt_44/02a_EDGT_44_MENAGE_FAF_TEL_2015-08-07_modifZF.txt"
+        "%s/edgt_44_2015/02a_EDGT_44_MENAGE_FAF_TEL_2015-08-07_modifZF.txt"
         % context.config("data_path"), widths = column_widths, header = None,
         names = column_names, usecols = list(HOUSEHOLD_COLUMNS.keys()), dtype = HOUSEHOLD_COLUMNS
     )
@@ -59,7 +59,7 @@ def execute(context):
     column_names = df_person_dictionary["variable"].values
 
     df_persons = pd.read_fwf(
-        "%s/edgt_44/02b_EDGT_44_PERSO_FAF_TEL_ModifPCS_2016-04-14.txt"
+        "%s/edgt_44_2015/02b_EDGT_44_PERSO_FAF_TEL_ModifPCS_2016-04-14.txt"
         % context.config("data_path"), widths = column_widths, header = None,
         names = column_names, usecols = list(PERSON_COLUMNS.keys()), dtype = PERSON_COLUMNS
     )
@@ -73,7 +73,7 @@ def execute(context):
     column_names = df_trip_dictionary["variable"].values
 
     df_trips = pd.read_fwf(
-        "%s/edgt_44/02c_EDGT_44_DEPLA_FAF_TEL_DIST_2015-11-10.txt"
+        "%s/edgt_44_2015/02c_EDGT_44_DEPLA_FAF_TEL_DIST_2015-11-10.txt"
         % context.config("data_path"), widths = column_widths, header = None,
         names = column_names, usecols = list(TRIP_COLUMNS.keys()), dtype = TRIP_COLUMNS
     )
@@ -88,10 +88,10 @@ FILES = [
 
 def validate(context):
     for name in FILES:
-        if not os.path.exists("%s/edgt_44/%s" % (context.config("data_path"), name)):
+        if not os.path.exists("%s/edgt_44_2015/%s" % (context.config("data_path"), name)):
             raise RuntimeError("File missing from EDGT: %s" % name)
 
     return [
-        os.path.getsize("%s/edgt_44/%s" % (context.config("data_path"), name))
+        os.path.getsize("%s/edgt_44_2015/%s" % (context.config("data_path"), name))
         for name in FILES
     ]
