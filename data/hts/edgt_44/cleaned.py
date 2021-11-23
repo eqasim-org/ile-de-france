@@ -30,7 +30,7 @@ def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.edgt_44.raw")
 
     # Merge departement into households
-    df_households["departement_id"] = 44
+    df_households["departement_id"] = "44"
 
     # Transform original IDs to integer (they are hierarchichal)
     df_households["edgt_household_id"] = (df_households["ECH"] + df_households["MTIR"]).astype(int)
