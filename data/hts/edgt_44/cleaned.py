@@ -21,14 +21,13 @@ PURPOSE_MAP = {
 MODES_MAP = {
     "car": [13, 15, 21, 81],
     "car_passenger": [14, 16, 22, 82],
-    "pt": [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 51, 52, 53, 61, 71, 91, 92, 94, 95],
-    "bike": [11, 17, 12, 18, 93],
+    "pt": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 51, 52, 53, 61, 71, 72, 73, 91, 92, 94, 95],
+    "bike": [11, 17, 12, 18, 93, 19],
     "walk": [1, 2] # Actually, 2 is not really explained, but we assume it is walk
 }
 
 def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.edgt_44.raw")
-    print("INITIAL", len(df_households), len(df_persons), len(df_trips))
 
     # Merge departement into households
     df_households["departement_id"] = 44
@@ -116,10 +115,14 @@ def execute(context):
     df_trips["preceding_purpose"] = df_trips["preceding_purpose"].astype("category")
 
     # Trip mode
+    df_trips["mode"] = "invalid"
+
     for mode, values in MODES_MAP.items():
         df_trips.loc[df_trips["MODP"].isin(values), "mode"] = mode
 
-    assert np.count_nonzero(df_trips["following_purpose"] == "invalid") == 0
+    print(df_trips[df_trips["mode"] == "invalid"][["mode", "MODP"]])
+
+    assert np.count_nonzero(df_trips["mode"] == "invalid") == 0
     df_trips["mode"] = df_trips["mode"].astype("category")
 
     # Further trip attributes
