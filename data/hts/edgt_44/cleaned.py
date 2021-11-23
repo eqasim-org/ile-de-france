@@ -3,11 +3,11 @@ import numpy as np
 import data.hts.hts as hts
 
 """
-This stage cleans the Lyon EDGT.
+This stage cleans the Loire Atlantique EDGT.
 """
 
 def configure(context):
-    context.stage("data.hts.edgt_lyon.raw")
+    context.stage("data.hts.edgt_44.raw")
 
 PURPOSE_MAP = {
     "home": [1, 2],
@@ -15,7 +15,7 @@ PURPOSE_MAP = {
     "education": [21, 22, 23, 24, 25, 26, 27, 28, 29],
     "shop": [30, 31, 32, 33, 34, 35, 82],
     "leisure": [51, 52, 53, 54],
-    "other": [41, 42, 43, 61, 62, 63, 64, 71, 72, 73, 74, 91]
+    "other": [41, 42, 43, 44, 45, 61, 62, 63, 64, 71, 72, 73, 74, 91]
 }
 
 MODES_MAP = {
@@ -27,24 +27,18 @@ MODES_MAP = {
 }
 
 def execute(context):
-    df_households, df_persons, df_trips, df_spatial = context.stage("data.hts.edgt_lyon.raw")
+    df_households, df_persons, df_trips = context.stage("data.hts.edgt_44.raw")
+    print("INITIAL", len(df_households), len(df_persons), len(df_trips))
 
     # Merge departement into households
-    df_spatial = df_spatial[["ZF__2015", "DepCom"]].copy()
-    df_spatial["MP2"] = df_spatial["ZF__2015"].astype(str)
-    df_spatial["departement_id"] = df_spatial["DepCom"].str[:2]
-    df_spatial = df_spatial[["MP2", "departement_id"]]
-
-    # Attention, some households get lost here!
-    df_households = pd.merge(df_households, df_spatial, on = "MP2", how = "left")
-    df_households["departement_id"] = df_households["departement_id"].fillna("unknown")
+    df_households["departement_id"] = 44
 
     # Transform original IDs to integer (they are hierarchichal)
-    df_households["edgt_household_id"] = (df_households["ECH"] + df_households["MP2"]).astype(int)
+    df_households["edgt_household_id"] = (df_households["ECH"] + df_households["MTIR"]).astype(int)
     df_persons["edgt_person_id"] = df_persons["PER"].astype(np.int)
-    df_persons["edgt_household_id"] = (df_persons["ECH"] + df_persons["PP2"]).astype(int)
+    df_persons["edgt_household_id"] = (df_persons["ECH"] + df_persons["PTIR"]).astype(int)
     df_trips["edgt_person_id"] = df_trips["PER"].astype(np.int)
-    df_trips["edgt_household_id"] = (df_trips["ECH"] + df_trips["DP2"]).astype(int)
+    df_trips["edgt_household_id"] = (df_trips["ECH"] + df_trips["DTIR"]).astype(int)
     df_trips["edgt_trip_id"] = df_trips["NDEP"].astype(np.int)
 
     # Construct new IDs for households, persons and trips (which are unique globally)
@@ -82,16 +76,8 @@ def execute(context):
     df_households = pd.merge(df_households, df_size, on = "household_id")
 
     # Clean departement
-    df_trips = pd.merge(df_trips, df_spatial.rename(columns = {
-        "MP2": "D3", "departement_id": "origin_departement_id"
-    }), on = "D3", how = "left")
-
-    df_trips = pd.merge(df_trips, df_spatial.rename(columns = {
-        "MP2": "D7", "departement_id": "destination_departement_id"
-    }), on = "D7", how = "left")
-
-    df_trips["origin_departement_id"] = df_trips["origin_departement_id"].fillna("unknown")
-    df_trips["destination_departement_id"] = df_trips["destination_departement_id"].fillna("unknown")
+    df_trips["origin_departement_id"] = 44
+    df_trips["destination_departement_id"] = 44
 
     df_households["departement_id"] = df_households["departement_id"].astype("category")
     df_persons["departement_id"] = df_persons["departement_id"].astype("category")
@@ -112,8 +98,8 @@ def execute(context):
     # License
     df_persons["has_license"] = df_persons["P5"] == "1"
 
-    # Has subscription
-    df_persons["has_pt_subscription"] = df_persons["P10"].isin(["1", "2", "3"])
+    # Has subscription (not availabile in EDGT 44)
+    df_persons["has_pt_subscription"] = False
 
     # Trip purpose
     df_trips["following_purpose"] = "invalid"
@@ -141,11 +127,11 @@ def execute(context):
     df_trips["routed_distance"] = df_trips["DIST"]
 
     # Trip times
-    df_trips["departure_time"] = 3600.0 * (df_trips["D4"] // 100) # hour
-    df_trips["departure_time"] += 60.0 * (df_trips["D4"] % 100) # minute
+    df_trips["departure_time"] = 3600.0 * df_trips["D4A"] # hour
+    df_trips["departure_time"] += 60.0 * df_trips["D4B"] # minute
 
-    df_trips["arrival_time"] = 3600.0 * (df_trips["D8"] // 100) # hour
-    df_trips["arrival_time"] += 60.0 * (df_trips["D8"] % 100) # minute
+    df_trips["arrival_time"] = 3600.0 * df_trips["D8A"] # hour
+    df_trips["arrival_time"] += 60.0 * df_trips["D8B"] # minute
 
     df_trips = df_trips.sort_values(by = ["household_id", "person_id", "trip_id"])
     df_trips = hts.fix_trip_times(df_trips)
