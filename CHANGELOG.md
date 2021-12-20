@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Add code and documentation for Nantes use case
 - Bugfix: Generate `meta.json` when code was not cloned but downloaded directly
 - Use `eqasim-java:1.3.1`
 - Make choice of branch and version of pt2matsim more flexible
