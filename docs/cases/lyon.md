@@ -1,30 +1,30 @@
-# Nantes
+# Lyon
 
 The pipeline makes it easy to create synthetic populations and simulations
 for other regions than Île-de-France. In any case, we recommend to first
 follow instructions to set up a [synthetic population for Île-de-France](../population.md)
 and (if desired) the [respective simulation](../simulation.md). The following
 describes the steps and additional data sets necessary to create a population and
-simulation for **Nantes** and its surrounding department Loire Atlantique.
+simulation for **Lyon** and surroundings.
 
 ## Additional data
 
 ### A) Regional census data
 
-Nantes is not included in the census data set that is uesd for Île-de-France
-(*Zone A*). Instead, *Zone C* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone C* and put the
-respective file (*FD_INDCVIZC_2015.dbf*) into the `data/rp_2015` folder.
+Lyon is not included in the census data set that is uesd for Île-de-France
+(*Zone A*). Instead, *Zone E* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone E* and put the
+respective file (*FD_INDCVIZE_2015.dbf*) into the `data/rp_2015` folder.
 
 ### B) Address database (BD-TOPO)
 
 You need to download the region-specific address database. Go to [IGN Open data database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo), scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*. Click on the download link under
-*Pays de la Loire - R 52*. Open the downloaded archive and copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo` (overriding the data for Île-de-France if you had set up that scenario before).
+*Région Auvergne-Rhône-Alpes - R 84*. Open the downloaded archive and copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo` (overriding the data for Île-de-France if you had set up that scenario before).
 
 ### C) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
-Geofabrik provides a cut-out for the [Pays de la Loire](https://download.geofabrik.de/europe/france/pays-de-la-loire.html) region. Download the region file in *.osm.pbf* format and put the file into the
+Geofabrik provides a cut-out for the former [Rhône-Alpes](https://download.geofabrik.de/europe/france/rhone-alpes.html) region. Download the region file in *.osm.pbf* format and put the file into the
 folder `data/osm`.
 
 ### D) GTFS data
@@ -32,9 +32,10 @@ folder `data/osm`.
 Again, only if you want to run simulations, the digital transit schedule is required.
 Unfortunately, there is no consolidated GTFS schedule avaiable for the region of interest. Hence,
 it is necessary to collect all relevant GTFS schedules one by one. Here, we
-provide a selection of links, which is not necessarily exhaustive:
+provide a selection of links, which is not necessarily exhaustive (for instance,
+it would be possible to add schedules for Saint Etienne or Grenoble)
 
-- [TAN (Nantes)](https://transport.data.gouv.fr/datasets/tan-arrets-horaires-et-circuits/?locale=fr&slug=tan-arrets-horaires-et-circuits)
+- [TCL (Lyon)](https://transport.data.gouv.fr/datasets/horaires-theoriques-du-reseau-transports-en-commun-lyonnais-1/)
 - [SNCF TER](https://ressources.data.sncf.com/explore/dataset/sncf-ter-gtfs/information/)
 - [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
 - [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
@@ -43,24 +44,33 @@ Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`
 
 ### E) *Optional*: Regional Household Travel Survey 2015
 
-For Loire Atlantique, a regional household travel survey (EDGT Loire Atlantique 2015) is available as [open data](https://data.loire-atlantique.fr/explore/dataset/224400028_enquete-deplacements-en-loire-atlantique/information/). Download the raw data "données brutes" at bullet point 1 one the website. Put the relevant files into `data/edgt_44_2015`. The following files
+For Lyon, a regional household travel survey (EDGT Lyon 2015) is available on request
+from the authorities. If you have the data available, you can use it in the pipeline.
+To do so, put the relevant files into `data/edgt_lyon_2015`. The following files
 should be present:
 
-- `data/edgt_44_2015/02a_EDGT_44_MENAGE_FAF_TEL_2015-08-07_modifZF.txt`
-- `data/edgt_44_2015/02b_EDGT_44_PERSO_FAF_TEL_ModifPCS_2016-04-14.txt`
-- `data/edgt_44_2015/02c_EDGT_44_DEPLA_FAF_TEL_DIST_2015-11-10.txt`
+- `data/edgt_lyon_2015/EDGT-AML-2015_Total_Dessin&Dictionnaire.xls`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.DAT`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.ID`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.IND`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.MAP`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TAB`
+- `EDGT_AML_DEPLA_DIST_2015-10-27.txt`
+- `EDGT_AML_MENAGE_FAF_TEL_2015-08-03.txt`
+- `EDGT_AML_PERSO_DIST_DT_2015-10-27.txt`
+- `EDGT_AML_TRAJET_DIST_2015-10-27.txt`
 
 ### Overview
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2015/FD_INDCVIZCs_2015.dbf`
-- Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
+- `data/rp_2015/FD_INDCVIZE_2015.dbf`
+- Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 
 *Only for simulation:*
 
-- `osm/pays-de-la-loire-latest.osm.pbf`
-- `gtfs/gtfs-tan.zip`
+- `osm/rhone-alpes-latest.osm.pbf`
+- `gtfs/GTFS_TCL.ZIP`
 - `gtfs/export_gtfs_voyages.zip`
 - `gtfs/export-intercites-gtfs-last.zip`
 - `gtfs/export-ter-gtfs-last.zip`
@@ -72,13 +82,13 @@ updated continuously.
 
 To generate the synthetic population, the `config.yml` needs to be updated. While
 the relevant code points to the Île-de-France data sets by default, you can
-adjust the paths inidividually. To let the pipeline use the *Zone C* census
+adjust the paths inidividually. To let the pipeline use the *Zone E* census
 data set, add the following to `config.yml` in the `config` section:
 
 ```yaml
 config:
   # ...
-  census_path: rp_2015/FD_INDCVIZC_2015.dbf
+  census_path: rp_2015/FD_INDCVIZE_2015.dbf
   # ...
 ```
 
@@ -90,11 +100,14 @@ configuration as follows:
 config:
   # ...
   regions: []
-  departments: [44]
+  departments: ["01", 38, 42, 69, 69M] # 26 "07"
   # ...
 ```
 
-This will make the pipeline filter all data sets for the department Loire Atlantique (44).
+This will make the pipeline filter all data sets for the departments noted
+in the list above, which is a set of the closest departments around Lyon.
+If you want to generate the whole (ancient) Rhône-Alpes region, add the commented out
+department identifiers to the list.
 
 In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
 is used, choose the updated HTS in the config:
@@ -102,7 +115,7 @@ is used, choose the updated HTS in the config:
 ```yaml
 config:
   # ...
-  hts: edgt_44
+  hts: edgt_lyon
   # ...
 ```
 
@@ -111,23 +124,23 @@ Finally, to not confuse output names, we can define a new prefix for the output 
 ```yaml
 config:
   # ...
-  output_prefix: nantes_
+  output_prefix: lyon_
   # ...
 ```
 
 You can now enter your Anaconda environment and call the pipeline with the
 `synthesis.output` stage activated. This will generate a synthetic population
-for Nantes and surroundings.
+for Lyon and surroundings.
 
 ## Running the simulation
 
-To prepare the pipeline for a simulation of Nantes, the paths to the OSM data sets and to the GTFS schedule must be adjusted explicitly:
+To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets and to the GTFS schedule must be adjusted explicitly:
 
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/gtfs-tan.zip;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip
-  osm_path: osm/pays-de-la-loire-latest.osm.pbf
+  gtfs_path: gtfs/GTFS_TCL.ZIP;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip
+  osm_path: osm/rhone-alpes-latest.osm.pbf
   # ...
 ```
 
