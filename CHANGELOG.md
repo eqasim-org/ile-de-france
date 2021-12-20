@@ -3,6 +3,7 @@
 **Under development**
 
 - Add output prefix to non-MATSim output files as well
+- Add code and documentation for Nantes use case
 - Bugfix: Generate `meta.json` when code was not cloned but downloaded directly
 - Use `eqasim-java:1.3.1`
 - Make choice of branch and version of pt2matsim more flexible
