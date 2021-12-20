@@ -9,6 +9,7 @@ import subprocess as sp
 def configure(context):
     context.stage("matsim.runtime.git")
     context.config("output_path")
+    context.config("output_prefix", "ile_de_france_")
 
     for option in ("sampling_rate", "hts", "random_seed"):
         context.config(option)
@@ -40,7 +41,7 @@ def execute(context):
         commit = commit
     )
 
-    with open("%s/meta.json" % context.config("output_path"), "w+") as f:
+    with open("%s/%smeta.json" % (context.config("output_path"), context.config("output_prefix")), "w+") as f:
         json.dump(information, f, indent = 4)
 
 def validate(context):
