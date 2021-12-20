@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Add output stages for SIRENE and the selected HTS
 - Bugfix: Generate `meta.json` when code was not cloned but downloaded directly
 - Use `eqasim-java:1.3.1`
 - Make choice of branch and version of pt2matsim more flexible
