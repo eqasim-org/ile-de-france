@@ -13,6 +13,9 @@ def configure(context):
 
     context.stage("documentation.meta_output")
 
+    context.config("output_path")
+    context.config("output_prefix", "ile_de_france_")
+
 def validate(context):
     output_path = context.config("output_path")
 
@@ -21,6 +24,7 @@ def validate(context):
 
 def execute(context):
     output_path = context.config("output_path")
+    output_prefix = context.config("output_prefix")
 
     # Prepare households
     df_households = context.stage("synthesis.population.enriched").rename(
@@ -34,7 +38,7 @@ def execute(context):
         "census_household_id"
     ]]
 
-    df_households.to_csv("%s/households.csv" % output_path, sep = ";", index = None)
+    df_households.to_csv("%s/%shouseholds.csv" % (output_path, output_prefix), sep = ";", index = None)
 
     # Prepare persons
     df_persons = context.stage("synthesis.population.enriched").rename(
@@ -48,7 +52,7 @@ def execute(context):
         "census_person_id", "hts_id"
     ]]
 
-    df_persons.to_csv("%s/persons.csv" % output_path, sep = ";", index = None)
+    df_persons.to_csv("%s/%spersons.csv" % (output_path, output_prefix), sep = ";", index = None)
 
     # Prepare activities
     df_activities = context.stage("synthesis.population.activities").rename(
@@ -69,7 +73,7 @@ def execute(context):
         "is_first", "is_last"
     ]]
 
-    df_activities.to_csv("%s/activities.csv" % output_path, sep = ";", index = None)
+    df_activities.to_csv("%s/%sactivities.csv" % (output_path, output_prefix), sep = ";", index = None)
 
     # Prepare trips
     df_trips = context.stage("synthesis.population.trips").rename(
@@ -90,7 +94,7 @@ def execute(context):
         "is_first", "is_last"
     ]]
 
-    df_trips.to_csv("%s/trips.csv" % output_path, sep = ";", index = None)
+    df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None)
 
     # Prepare spatial data sets
     df_locations = context.stage("synthesis.population.spatial.locations")[[
@@ -104,14 +108,14 @@ def execute(context):
     # Write spatial activities
     df_spatial = gpd.GeoDataFrame(df_activities, crs = "EPSG:2154")
     df_spatial["purpose"] = df_spatial["purpose"].astype(str)
-    df_spatial.to_file("%s/activities.gpkg" % output_path, driver = "GPKG")
+    df_spatial.to_file("%s/%sactivities.gpkg" % (output_path, output_prefix), driver = "GPKG")
 
     # Write spatial homes
     df_spatial[
         df_spatial["purpose"] == "home"
     ].drop_duplicates("household_id")[[
         "household_id", "geometry"
-    ]].to_file("%s/homes.gpkg" % output_path, driver = "GPKG")
+    ]].to_file("%s/%shomes.gpkg" % (output_path, output_prefix), driver = "GPKG")
 
     # Write spatial commutes
     df_spatial = pd.merge(
@@ -125,7 +129,7 @@ def execute(context):
     ]
 
     df_spatial = df_spatial.drop(columns = ["home_geometry", "work_geometry"])
-    df_spatial.to_file("%s/commutes.gpkg" % output_path, driver = "GPKG")
+    df_spatial.to_file("%s/%scommutes.gpkg" % (output_path, output_prefix), driver = "GPKG")
 
     # Write spatial trips
     df_spatial = pd.merge(df_trips, df_locations[[
@@ -153,4 +157,4 @@ def execute(context):
     df_spatial["following_purpose"] = df_spatial["following_purpose"].astype(str)
     df_spatial["preceding_purpose"] = df_spatial["preceding_purpose"].astype(str)
     df_spatial["mode"] = df_spatial["mode"].astype(str)
-    df_spatial.to_file("%s/trips.gpkg" % output_path, driver = "GPKG")
+    df_spatial.to_file("%s/%strips.gpkg" % (output_path, output_prefix), driver = "GPKG")

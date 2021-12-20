@@ -44,12 +44,12 @@ def run_population(tmpdir, hts):
 
     synpp.run(stages, config, working_directory = cache_path)
 
-    assert os.path.isfile("%s/activities.csv" % output_path)
-    assert os.path.isfile("%s/persons.csv" % output_path)
-    assert os.path.isfile("%s/households.csv" % output_path)
-    assert os.path.isfile("%s/activities.gpkg" % output_path)
-    assert os.path.isfile("%s/trips.gpkg" % output_path)
-    assert os.path.isfile("%s/meta.json" % output_path)
+    assert os.path.isfile("%s/ile_de_france_activities.csv" % output_path)
+    assert os.path.isfile("%s/ile_de_france_persons.csv" % output_path)
+    assert os.path.isfile("%s/ile_de_france_households.csv" % output_path)
+    assert os.path.isfile("%s/ile_de_france_activities.gpkg" % output_path)
+    assert os.path.isfile("%s/ile_de_france_trips.gpkg" % output_path)
+    assert os.path.isfile("%s/ile_de_france_meta.json" % output_path)
 
 def test_population_with_entd(tmpdir):
     run_population(tmpdir, "entd")
