@@ -27,7 +27,7 @@ A cut-out for Île-de-France is available from Geofabrik:
 
 A digital public transport schedule for Île-de-France is available from Île-de-France mobilités:
 
-- [Île-de-France GTFS](https://data.iledefrance-mobilites.fr/explore/dataset/offre-horaires-tc-gtfs-idf/information/)
+- [Île-de-France GTFS](https://data.iledefrance-mobilites.fr/explore/dataset/offre-horaires-tc-gtfs-idfm/information/)
 - Go to *Export*, then download the *csv* file. Open the file, for instance in Excel,
 and obtain the URL for *IDFM_gtfs*. Download the *zip* file at this address.
 - Copy the `IDFM_gtfs.zip` into the folder `data/gtfs`.
