@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fixing output stages
 - Add output stages for SIRENE and the selected HTS
 - Add output prefix to non-MATSim output files as well
 - Add code and documentation for Nantes use case

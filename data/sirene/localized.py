@@ -162,10 +162,14 @@ def execute(context):
     print("Re-assigning commune for all observations ...")
     df_municipalities = context.stage("data.spatial.municipalities")
 
+    before_count = len(df_valid)
     del df_valid["commune_id"]
     df_valid = gpd.sjoin(df_valid, df_municipalities[["geometry", "commune_id"]], op = "within")
     del df_valid["index_right"]
+    after_count = len(df_valid)
+    print("... remaining %d/%d observations (%.2f%%)" % (after_count, before_count, 100.0 * after_count / before_count))
 
-    assert (~df_valid["commune_id"].isna()).all()
+    # Check that at least 90% got matched, otherwise something is wrong
+    assert after_count / before_count > 0.9
 
     return df_valid
