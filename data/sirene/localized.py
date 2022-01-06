@@ -167,6 +167,9 @@ def execute(context):
     df_valid = gpd.sjoin(df_valid, df_municipalities[["geometry", "commune_id"]], op = "within")
     del df_valid["index_right"]
     after_count = len(df_valid)
-    assert before_count == after_count
+    print("... remaining %d/%d observations (%.2f%%)" % (after_count, before_count, 100.0 * after_count / before_count))
+
+    # Check that at least 90% got matched, otherwise something is wrong
+    assert after_count / before_count > 0.9
 
     return df_valid
