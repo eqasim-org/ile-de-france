@@ -8,7 +8,10 @@ def test_data(tmpdir):
     testdata.create(data_path)
 
     cache_path = str(tmpdir.mkdir("cache"))
-    config = dict(data_path = data_path, regions = [10, 11])
+    output_path = str(tmpdir.mkdir("output"))
+    config = dict(
+        data_path = data_path, output_path = output_path,
+        regions = [10, 11], hts = "entd")
 
     stages = [
         dict(descriptor = "data.spatial.iris"),
@@ -19,10 +22,17 @@ def test_data(tmpdir):
         dict(descriptor = "data.hts.entd.cleaned"),
         dict(descriptor = "data.hts.egt.cleaned"),
         dict(descriptor = "data.census.cleaned"),
-        dict(descriptor = "data.od.cleaned")
+        dict(descriptor = "data.od.cleaned"),
+        dict(descriptor = "data.hts.output"),
+        dict(descriptor = "data.sirene.output"),
     ]
 
     synpp.run(stages, config, working_directory = cache_path)
+
+    assert os.path.isfile("%s/ile_de_france_sirene.gpkg" % output_path)
+    assert os.path.isfile("%s/ile_de_france_hts_households.csv" % output_path)
+    assert os.path.isfile("%s/ile_de_france_hts_persons.csv" % output_path)
+    assert os.path.isfile("%s/ile_de_france_hts_trips.csv" % output_path)
 
 def run_population(tmpdir, hts):
     data_path = str(tmpdir.mkdir("data"))

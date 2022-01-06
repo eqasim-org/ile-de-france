@@ -162,10 +162,11 @@ def execute(context):
     print("Re-assigning commune for all observations ...")
     df_municipalities = context.stage("data.spatial.municipalities")
 
+    before_count = len(df_valid)
     del df_valid["commune_id"]
     df_valid = gpd.sjoin(df_valid, df_municipalities[["geometry", "commune_id"]], op = "within")
     del df_valid["index_right"]
-
-    assert (~df_valid["commune_id"].isna()).all()
+    after_count = len(df_valid)
+    assert before_count == after_count
 
     return df_valid

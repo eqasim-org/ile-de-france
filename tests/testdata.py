@@ -575,11 +575,13 @@ def create(output_path):
 
     numbers = random.randint(0, 20, observations)
 
-    x = random.random_sample(size = (observations,)) * 100
-    y = random.random_sample(size = (observations,)) * 50
+    df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
+
+    x = df_selection["geometry"].centroid.x.values
+    y = df_selection["geometry"].centroid.y.values
 
     df_bdtopo = gpd.GeoDataFrame({
-        "CODE_INSEE": municipalities[random.randint(0, len(municipalities), observations)],
+        "CODE_INSEE": df_selection["INSEE_COM"].values,
         "NUMERO": numbers,
         "NOM_1": streets,
         "geometry": [

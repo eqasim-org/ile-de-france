@@ -12,21 +12,21 @@ pipeline.
 
 def configure(context):
     context.stage("data.hts.selected")
-    
+
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
 
 def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.selected")
 
-    df_households.to_file("%s/%shts_households.csv" % (
+    df_households.to_csv("%s/%shts_households.csv" % (
         context.config("output_path"), context.config("output_prefix")
     ), sep = ";")
 
-    df_persons.to_file("%s/%shts_persons.csv" % (
+    df_persons.to_csv("%s/%shts_persons.csv" % (
         context.config("output_path"), context.config("output_prefix")
     ), sep = ";")
 
-    df_trips.to_file("%s/%shts_trips.csv" % (
+    df_trips.to_csv("%s/%shts_trips.csv" % (
         context.config("output_path"), context.config("output_prefix")
     ), sep = ";")
