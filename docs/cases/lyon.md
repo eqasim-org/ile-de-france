@@ -39,6 +39,11 @@ it would be possible to add schedules for Saint Etienne or Grenoble)
 - [SNCF TER](https://ressources.data.sncf.com/explore/dataset/sncf-ter-gtfs/information/)
 - [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
 - [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
+- [TAG (Grenoble)](https://transport.data.gouv.fr/datasets/horaires-theoriques-du-reseau-tag/)
+- [Ruban (Porte d'Isère)](https://transport.data.gouv.fr/datasets/reseau-ruban-donnees-theoriques/)
+- [L'va (Vienne)](https://transport.data.gouv.fr/datasets/reseau-lva/?locale=en)
+- [STAS (St. Etienne)](https://transport.data.gouv.fr/datasets/donnees-horaires-theoriques-gtfs-du-reseau-de-transport-de-la-metropole-de-saint-etienne-stas/?locale=fr&slug=donnees-horaires-theoriques-gtfs-du-reseau-de-transport-de-la-metropole-de-saint-etienne-stas)
+- [Rhône Express](https://transport.data.gouv.fr/datasets/horaires-theoriques-du-service-rhonexpress-de-la-metropole-de-lyon-et-du-departement-du-rhone/)
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`.
 
@@ -139,7 +144,7 @@ To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/GTFS_TCL.ZIP;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip
+  gtfs_path: gtfs/GTFS_TCL.ZIP;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;CAPI.GTFS.zip;GTFS_RX.ZIP;SEM-GTFS.zip;stas.gtfs.zip;VIENNE.GTFS.zip
   osm_path: osm/rhone-alpes-latest.osm.pbf
   # ...
 ```
