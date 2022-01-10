@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Add euclidean distance to Nantes/Lyon GTFS output
 - Added stage to write out the full merged GTFS feed: `data.gtfs.output`
 - Bugfix: Sometimes bug in converting GTFS coordinates (esp. Lyon / Nantes)
 - Fixing output stages
