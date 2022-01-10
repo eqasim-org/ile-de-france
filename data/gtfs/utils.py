@@ -65,6 +65,13 @@ def read_feed(path):
                     initial_count - final_count, initial_count, slot
                 ))
 
+    if "stops" in feed:
+        df_stops = feed["stops"]
+
+        if not "parent_station" in df_stops:
+            print("WARNING Missing parent_station in stops, setting to NaN")
+            df_stops["parent_station"] = np.nan
+
     return feed
 
 def write_feed(feed, path):
@@ -106,7 +113,7 @@ def cut_feed(feed, df_area, crs = None):
 
     df_stations["geometry"] = [
         geo.Point(*xy)
-        for xy in zip(df_stations["stop_lon"], df_stops["stop_lat"])
+        for xy in zip(df_stations["stop_lon"], df_stations["stop_lat"])
     ]
 
     df_stations = gpd.GeoDataFrame(df_stations, crs = "EPSG:4326")
@@ -115,7 +122,7 @@ def cut_feed(feed, df_area, crs = None):
         print("Converting stops to custom CRS", crs)
         df_stations = df_stations.to_crs(crs)
     elif not df_area.crs is None:
-        print("Converting stops to area CRS", crs)
+        print("Converting stops to area CRS", df_area.crs)
         df_stations = df_stations.to_crs(df_area.crs)
 
     print("Filtering stations ...")

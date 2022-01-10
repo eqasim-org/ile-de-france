@@ -2,6 +2,8 @@
 
 **Under development**
 
+- Added stage to write out the full merged GTFS feed: `data.gtfs.output`
+- Bugfix: Sometimes bug in converting GTFS coordinates (esp. Lyon / Nantes)
 - Fixing output stages
 - Add output stages for SIRENE and the selected HTS
 - Add output prefix to non-MATSim output files as well
