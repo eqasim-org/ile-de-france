@@ -72,6 +72,10 @@ def read_feed(path):
             print("WARNING Missing parent_station in stops, setting to NaN")
             df_stops["parent_station"] = np.nan
 
+    if "transfers" in feed:
+        df_transfers = feed["transfers"]
+        df_transfers["min_transfer_time"] = df_transfers["min_transfer_time"].astype(int)
+
     return feed
 
 def write_feed(feed, path):
