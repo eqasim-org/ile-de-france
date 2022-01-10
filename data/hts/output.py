@@ -21,12 +21,12 @@ def execute(context):
 
     df_households.to_csv("%s/%shts_households.csv" % (
         context.config("output_path"), context.config("output_prefix")
-    ), sep = ";")
+    ), sep = ";", index = False)
 
     df_persons.to_csv("%s/%shts_persons.csv" % (
         context.config("output_path"), context.config("output_prefix")
-    ), sep = ";")
+    ), sep = ";", index = False)
 
     df_trips.to_csv("%s/%shts_trips.csv" % (
         context.config("output_path"), context.config("output_prefix")
-    ), sep = ";")
+    ), sep = ";", index = False)
