@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Add alternative source for EDGT Lyon (and set it as default/recommended source)
 - Added stage to write out the full merged GTFS feed: `data.gtfs.output`
 - Bugfix: Sometimes bug in converting GTFS coordinates (esp. Lyon / Nantes)
 - Fixing output stages
