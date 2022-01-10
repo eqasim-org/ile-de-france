@@ -75,6 +75,9 @@ def read_feed(path):
     if "transfers" in feed:
         df_transfers = feed["transfers"]
 
+        if not "min_transfer_time" in df_transfers:
+            df_transfers["min_transfer_time"] = 0
+
         f = df_transfers["min_transfer_time"].isna()
         if np.any(f):
             print("WARNING NaN numbers for min_transfer_time in transfers")
