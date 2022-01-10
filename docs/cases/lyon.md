@@ -76,6 +76,11 @@ Afterwards, you should have the following additional files in your directory str
 
 - `osm/rhone-alpes-latest.osm.pbf`
 - `gtfs/GTFS_TCL.ZIP`
+- `gtfs/CAPI.GTFS.zip`
+- `gtfs/GTFS_RX.ZIP`
+- `gtfs/SEM-GTFS.zip`
+- `gtfs/stas.gtfs.zip`
+- `gtfs/VIENNE.GTFS.zip`
 - `gtfs/export_gtfs_voyages.zip`
 - `gtfs/export-intercites-gtfs-last.zip`
 - `gtfs/export-ter-gtfs-last.zip`

@@ -34,8 +34,7 @@ Unfortunately, there is no consolidated GTFS schedule avaiable for the region of
 it is necessary to collect all relevant GTFS schedules one by one. Here, we
 provide a selection of links, which is not necessarily exhaustive:
 
-- [TAN (Nantes)](https://transport.data.gouv.fr/datasets/tan-arrets-horaires-et-circuits/?locale=fr&slug=tan-arrets-horaires-et-circuits)
-- [SNCF TER](https://ressources.data.sncf.com/explore/dataset/sncf-ter-gtfs/information/)
+- [Aggregated feed for Loire-Atlantique](https://transport.data.gouv.fr/datasets/arrets-horaires-et-circuits-des-lignes-de-transports-en-commun-en-pays-de-la-loire-gtfs)
 - [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
 - [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
 
@@ -60,10 +59,9 @@ Afterwards, you should have the following additional files in your directory str
 *Only for simulation:*
 
 - `osm/pays-de-la-loire-latest.osm.pbf`
-- `gtfs/gtfs-tan.zip`
+- `gtfs/pdl44.zip`
 - `gtfs/export_gtfs_voyages.zip`
 - `gtfs/export-intercites-gtfs-last.zip`
-- `gtfs/export-ter-gtfs-last.zip`
 
 Note that the file names may change slightly over time as GTFS schedule are
 updated continuously.
@@ -126,7 +124,7 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/gtfs-tan.zip;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip
+  gtfs_path: gtfs/pdl44.zip;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip
   osm_path: osm/pays-de-la-loire-latest.osm.pbf
   # ...
 ```
