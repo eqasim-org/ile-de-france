@@ -84,7 +84,7 @@ If you get the EDGT data from the ADISP portal, the following files should be pr
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.ID`
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.IND`
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.MAP`
-- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TA`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TAB`
 
 ### Overview
 
@@ -141,7 +141,9 @@ If you want to generate the whole (ancient) Rhône-Alpes region, add the comment
 department identifiers to the list.
 
 In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
-is used, choose the updated HTS in the config:
+is used, choose the updated HTS in the config file.
+
+**Important** : when using `edgt_lyon` you **must** set the `edgt_lyon_source` to either `adisp` or `cerema`, else an error will be raised. 
 
 ```yaml
 config:

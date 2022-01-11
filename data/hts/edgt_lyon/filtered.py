@@ -6,14 +6,16 @@ This stage filters out observations which live or work outside of the area.
 """
 
 def configure(context):
-    edgt_lyon_source = context.config("edgt_lyon_source", "adisp")
+    edgt_lyon_source = context.config("edgt_lyon_source", "unchosen")
 
-    if edgt_lyon_source == "adisp":
+    if edgt_lyon_source == "unchosen":
+        raise RuntimeError("Using 'hts: edgt_lyon' without specifying 'edgt_lyon_source' (either 'cerema' or 'adisp')")
+    elif edgt_lyon_source == "adisp":
         context.stage("data.hts.edgt_lyon.cleaned_adisp", alias="data.hts.edgt_lyon.cleaned")
     elif edgt_lyon_source == "cerema":
         context.stage("data.hts.edgt_lyon.cleaned_cerema", alias="data.hts.edgt_lyon.cleaned")
     else:
-        raise RuntimeError("Unknown Lyon EDGT source (only 'cerema' and 'adisp' are supported): %s" % hts)
+        raise RuntimeError("Unknown Lyon EDGT source (only 'cerema' and 'adisp' are supported): %s" % edgt_lyon_source)
     
     context.stage("data.spatial.codes")
 
