@@ -2,3 +2,7 @@ __pycache__
 env
 cache
 output
+
+data/nantes_2015
+data/lyon_2015
+.vscode
