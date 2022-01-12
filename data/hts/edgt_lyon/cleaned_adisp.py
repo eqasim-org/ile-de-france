@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import pandas as pd
 import numpy as np
 import data.hts.hts as hts
@@ -7,13 +8,13 @@ This stage cleans the Lyon EDGT.
 """
 
 def configure(context):
-    context.stage("data.hts.edgt_lyon.raw")
+    context.stage("data.hts.edgt_lyon.raw_adisp")
 
 PURPOSE_MAP = {
     "home": [1, 2],
-    "work": [11, 12, 13, 81],
-    "education": [21, 22, 23, 24, 25, 26, 27, 28, 29],
-    "shop": [30, 31, 32, 33, 34, 35, 82],
+    "work": [11, 12, 13, 14, 81],
+    "education": [21, 22, 23, 24, 25, 26, 27, 28, 29, 96, 97],
+    "shop": [30, 31, 32, 33, 34, 35, 82, 98],
     "leisure": [51, 52, 53, 54],
     "other": [41, 42, 43, 61, 62, 63, 64, 71, 72, 73, 74, 91]
 }
@@ -27,24 +28,24 @@ MODES_MAP = {
 }
 
 def execute(context):
-    df_households, df_persons, df_trips, df_spatial = context.stage("data.hts.edgt_lyon.raw")
+    df_households, df_persons, df_trips, df_spatial = context.stage("data.hts.edgt_lyon.raw_adisp")
 
     # Merge departement into households
     df_spatial = df_spatial[["ZF__2015", "DepCom"]].copy()
-    df_spatial["MP2"] = df_spatial["ZF__2015"].astype(str)
+    df_spatial["ZFM"] = df_spatial["ZF__2015"].astype(str).str.pad(width=8, side='left', fillchar='0')
     df_spatial["departement_id"] = df_spatial["DepCom"].str[:2]
-    df_spatial = df_spatial[["MP2", "departement_id"]]
+    df_spatial = df_spatial[["ZFM", "departement_id"]]
 
     # Attention, some households get lost here!
-    df_households = pd.merge(df_households, df_spatial, on = "MP2", how = "left")
+    df_households = pd.merge(df_households, df_spatial, on = "ZFM", how = "left")
     df_households["departement_id"] = df_households["departement_id"].fillna("unknown")
 
     # Transform original IDs to integer (they are hierarchichal)
-    df_households["edgt_household_id"] = (df_households["ECH"] + df_households["MP2"]).astype(int)
+    df_households["edgt_household_id"] = (df_households["ZFM"] + df_households["ECH"]).astype(int)
     df_persons["edgt_person_id"] = df_persons["PER"].astype(np.int)
-    df_persons["edgt_household_id"] = (df_persons["ECH"] + df_persons["PP2"]).astype(int)
+    df_persons["edgt_household_id"] = (df_persons["ZFP"] + df_persons["ECH"]).astype(int)
     df_trips["edgt_person_id"] = df_trips["PER"].astype(np.int)
-    df_trips["edgt_household_id"] = (df_trips["ECH"] + df_trips["DP2"]).astype(int)
+    df_trips["edgt_household_id"] = (df_trips["ZFD"] + df_trips["ECH"]).astype(int)
     df_trips["edgt_trip_id"] = df_trips["NDEP"].astype(np.int)
 
     # Construct new IDs for households, persons and trips (which are unique globally)
@@ -67,7 +68,7 @@ def execute(context):
 
     # Weight
     df_persons["person_weight"] = df_persons["COEP"].astype(np.float)
-    df_households["household_weight"] = df_households["COEM"].astype(np.float)
+    df_households["household_weight"] = df_households["COE0"].astype(np.float)
 
     # Clean age
     df_persons["age"] = df_persons["P4"].astype(np.int)
@@ -83,11 +84,11 @@ def execute(context):
 
     # Clean departement
     df_trips = pd.merge(df_trips, df_spatial.rename(columns = {
-        "MP2": "D3", "departement_id": "origin_departement_id"
+        "ZFM": "D3", "departement_id": "origin_departement_id"
     }), on = "D3", how = "left")
 
     df_trips = pd.merge(df_trips, df_spatial.rename(columns = {
-        "MP2": "D7", "departement_id": "destination_departement_id"
+        "ZFM": "D7", "departement_id": "destination_departement_id"
     }), on = "D7", how = "left")
 
     df_trips["origin_departement_id"] = df_trips["origin_departement_id"].fillna("unknown")
@@ -99,21 +100,21 @@ def execute(context):
     df_trips["destination_departement_id"] = df_trips["destination_departement_id"].astype("category")
 
     # Clean employment
-    df_persons["employed"] = df_persons["P7"].isin(["1", "2"])
+    df_persons["employed"] = df_persons["P9"].isin(["1", "2"])
 
     # Studies
-    df_persons["studies"] = df_persons["P7"].isin(["3", "4", "5"])
+    df_persons["studies"] = df_persons["P9"].isin(["3", "4", "5"])
 
     # Number of vehicles
-    df_households["number_of_vehicles"] = df_households["M6"] + df_households["M5"]
+    df_households["number_of_vehicles"] = df_households["M6"] + df_households["M14"]
     df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(np.int)
-    df_households["number_of_bikes"] = df_households["M7"].astype(np.int)
+    df_households["number_of_bikes"] = df_households["M21"].astype(np.int)
 
     # License
-    df_persons["has_license"] = df_persons["P5"] == "1"
+    df_persons["has_license"] = df_persons["P7"] == "1"
 
     # Has subscription
-    df_persons["has_pt_subscription"] = df_persons["P10"].isin(["1", "2", "3"])
+    df_persons["has_pt_subscription"] = df_persons["P12"].isin(["1", "2", "3", "5", "6"])
 
     # Trip purpose
     df_trips["following_purpose"] = "invalid"
@@ -137,8 +138,8 @@ def execute(context):
     df_trips["mode"] = df_trips["mode"].astype("category")
 
     # Further trip attributes
-    df_trips["euclidean_distance"] = df_trips["DOIB"]
-    df_trips["routed_distance"] = df_trips["DIST"]
+    df_trips["euclidean_distance"] = df_trips["D11"]
+    df_trips["routed_distance"] = df_trips["D12"]
 
     # Trip times
     df_trips["departure_time"] = 3600.0 * (df_trips["D4"] // 100) # hour
@@ -156,9 +157,9 @@ def execute(context):
 
     # Add weight to trips
     df_trips = pd.merge(
-        df_trips, df_persons[["person_id", "COEQ"]], on = "person_id", how = "left"
-    ).rename(columns = { "COEQ": "trip_weight" })
-    df_persons["trip_weight"] = df_persons["COEQ"]
+        df_trips, df_persons[["person_id", "COE1"]], on = "person_id", how = "left"
+    ).rename(columns = { "COE1": "trip_weight" })
+    df_persons["trip_weight"] = df_persons["COE1"]
 
     # Chain length
     df_count = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "number_of_trips")
@@ -175,7 +176,7 @@ def execute(context):
     df_households = pd.merge(df_households, hts.calculate_consumption_units(df_persons), on = "household_id")
 
     # Socioprofessional class
-    df_persons["socioprofessional_class"] = df_persons["P9"].fillna(8).astype(int)
+    df_persons["socioprofessional_class"] = df_persons["PCSC"].fillna(8).astype(int)
 
     # Check departure and arrival times
     assert np.count_nonzero(df_trips["departure_time"].isna()) == 0

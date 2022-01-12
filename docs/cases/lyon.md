@@ -51,8 +51,13 @@ Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`
 
 For Lyon, a regional household travel survey (EDGT Lyon 2015) is available on request
 from the authorities. If you have the data available, you can use it in the pipeline.
-To do so, put the relevant files into `data/edgt_lyon_2015`. The following files
-should be present:
+To do so, put the relevant files into `data/edgt_lyon_2015`.
+
+The data can be obtained either directly from the CEREMA or through the ADISP portal (http://www.progedo-adisp.fr/serie_emd.php).
+
+#### E.a) Data from CEREMA
+
+If you get the EDGT directly from the CEREMA, the following files should be present:
 
 - `data/edgt_lyon_2015/EDGT-AML-2015_Total_Dessin&Dictionnaire.xls`
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.DAT`
@@ -60,10 +65,26 @@ should be present:
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.IND`
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.MAP`
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TAB`
-- `EDGT_AML_DEPLA_DIST_2015-10-27.txt`
-- `EDGT_AML_MENAGE_FAF_TEL_2015-08-03.txt`
-- `EDGT_AML_PERSO_DIST_DT_2015-10-27.txt`
-- `EDGT_AML_TRAJET_DIST_2015-10-27.txt`
+- `data/edgt_lyon_2015/EDGT_AML_DEPLA_DIST_2015-10-27.txt`
+- `data/edgt_lyon_2015/EDGT_AML_MENAGE_FAF_TEL_2015-08-03.txt`
+- `data/edgt_lyon_2015/EDGT_AML_PERSO_DIST_DT_2015-10-27.txt`
+- `data/edgt_lyon_2015/EDGT_AML_TRAJET_DIST_2015-10-27.txt`
+
+#### E.a) Data from the ADISP portal
+
+If you get the EDGT data from the ADISP portal, the following files should be present:
+
+- `data/edgt_lyon_2015/lyon_2015_std_faf_men.csv`
+- `data/edgt_lyon_2015/lyon_2015_std_tel_men.csv`
+- `data/edgt_lyon_2015/lyon_2015_std_faf_pers.csv`
+- `data/edgt_lyon_2015/lyon_2015_std_tel_pers.csv`
+- `data/edgt_lyon_2015/lyon_2015_std_faf_traj.csv`
+- `data/edgt_lyon_2015/lyon_2015_std_tel_traj.csv`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.DAT`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.ID`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.IND`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.MAP`
+- `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TAB`
 
 ### Overview
 
@@ -120,12 +141,15 @@ If you want to generate the whole (ancient) Rhône-Alpes region, add the comment
 department identifiers to the list.
 
 In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
-is used, choose the updated HTS in the config:
+is used, choose the updated HTS in the config file.
+
+**Important** : when using `edgt_lyon` you **must** set the `edgt_lyon_source` to either `adisp` or `cerema`, else an error will be raised. 
 
 ```yaml
 config:
   # ...
   hts: edgt_lyon
+  edgt_lyon_source: adisp  # adisp/cerema 
   # ...
 ```
 

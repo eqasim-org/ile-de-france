@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Add alternative source for EDGT Lyon (and set it as default/recommended source)
 - Add euclidean distance to Nantes/Lyon GTFS output
 - Fix GTFS schedules without transfer times
 - Added stage to write out the full merged GTFS feed: `data.gtfs.output`
