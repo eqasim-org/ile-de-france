@@ -47,7 +47,7 @@ def execute(context):
 
     # First, perform the exact matching
     df_matched = pd.merge(
-        df_sirene[["street", "number", "commune_id", "employees", "ape", "siret"]],
+        df_sirene[["street", "number", "commune_id", "minimum_employees", "maximum_employees", "ape", "siret", "law_status"]],
         df_bdtopo[["street", "number", "commune_id", "geometry"]],
         how = "left", on = ["street", "number", "commune_id"]
     ).drop_duplicates("siret")
@@ -71,7 +71,7 @@ def execute(context):
     df_missing = df_matched[f_missing].copy()
 
     df_matched = pd.merge(
-        df_missing[["street", "number", "commune_id", "employees", "ape", "siret"]],
+        df_missing[["street", "number", "commune_id", "minimum_employees", "maximum_employees", "ape", "siret", "law_status"]],
         df_bdtopo[["street", "number", "geometry"]],
         how = "left", on = ["street", "number"]
     ).drop_duplicates("siret")
@@ -133,7 +133,7 @@ def execute(context):
     context.set_info("levenshtein_count", fixed_count)
 
     df_fixed = pd.merge(
-        df_missing[["street", "number", "commune_id", "employees", "ape", "siret"]],
+        df_missing[["street", "number", "commune_id", "minimum_employees", "maximum_employees", "ape", "siret", "law_status"]],
         df_bdtopo[["street", "number", "commune_id", "geometry"]],
         how = "left", on = ["street", "number", "commune_id"]
     ).drop_duplicates("siret")

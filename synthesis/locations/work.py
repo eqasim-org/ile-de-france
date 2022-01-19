@@ -12,14 +12,19 @@ Municipalities which do not have any registered enterprise receive a fake work
 place at their centroid to be in line with INSEE OD data.
 """
 
+MAXIMUM_EMPLOYEES = 20000
+
 def configure(context):
     context.stage("data.sirene.localized")
     context.stage("data.spatial.municipalities")
 
 def execute(context):
     df_sirene = context.stage("data.sirene.localized")[[
-        "commune_id", "employees", "geometry"
+        "commune_id", "minimum_employees", "maximum_employees", "geometry"
     ]].copy()
+
+    # Use minimum number of employees as weight
+    df_sirene["employees"] = df_sirene["minimum_employees"]
 
     ## Use centroids for municipalities where no work places exist
     df_zones = context.stage("data.spatial.municipalities")

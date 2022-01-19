@@ -605,9 +605,11 @@ def create(output_path):
     ])[random.randint(0, 26, observations)]
 
     numbers = random.randint(0, 20, observations)
+    identifiers = random.randint(0, 99999999, observations)
 
     df_sirene = pd.DataFrame({
-        "siret": random.randint(0, 99999999, observations),
+        "siren": identifiers,
+        "siret": identifiers,
         "libelleVoieEtablissement": streets,
         "numeroVoieEtablissement": numbers,
         "codeCommuneEtablissement": municipalities[random.randint(0, len(municipalities), observations)],
@@ -620,6 +622,10 @@ def create(output_path):
 
     os.mkdir("%s/sirene" % output_path)
     df_sirene.to_csv("%s/sirene/StockEtablissement_utf8.zip" % output_path, index = False)
+
+    df_sirene = df_sirene[["siren"]].copy()
+    df_sirene["categorieJuridiqueUniteLegale"] = 1000
+    df_sirene.to_csv("%s/sirene/StockUniteLegale_utf8.zip" % output_path, index = False)
 
     # Data set: OSM
     # We add add a road grid of 500m

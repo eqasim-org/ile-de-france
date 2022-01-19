@@ -96,7 +96,7 @@ the following files are accessible in the folder `data/egt_2010`:
 The IRIS zoning system is available from IGN:
 
 - [IRIS data](https://geoservices.ign.fr/contoursiris)
-- Download the **2017** edition. 
+- Download the **2017** edition.
 - In the *zip* file, follow the following path:
   - *CONTOURS-IRIS_2-1__SHP__FRA_2017-01-01*
   - *CONTOURS-IRIS*
@@ -119,16 +119,20 @@ the identifiers of IRIS, municipalities, departments and regions:
 The enterprise census of France is available on data.gouv.fr:
 
 - [Enterprise census](https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/)
-- Scroll down and click on **Sirene : Fichier StockEtablissement**. Behind the name you will see a month as the file is updated monthly.
-- In the popping up window, click on **Telecharger** to download the file (it is rather large, at least one GB)
-- Move the downloaded *zip* file `StockEtablissement_utf8.zip` into `data/sirene`.
+- Scroll down and click on the green download button on the right for the two following data sets:
+  - **Sirene : Fichier StockUniteLegale** (followed by a date), the database of enterprises
+  - **Sirene : Fichier StockEtablissement** (followed by a date), the database of enterprise facilities
+- The files are updated monthly and are rather large. After downloading, you should have two files:
+  - `StockEtablissement_utf8.zip`
+  - `StockUniteLegale_utf8.zip`
+- Move both *zip* files into `data/sirene`.
 
 ### 10) Address database (BD-TOPO)
 
 The French address database is available from IGN:
 
 - [Address database](https://geoservices.ign.fr/bdtopo)
-- Use a ftp client to download the *Région Île-de-France - R 11* . Most browsers will not be able to download the data. 
+- Use a ftp client to download the *Région Île-de-France - R 11* . Most browsers will not be able to download the data.
 - Open the downloaded archive and open/unpack it to to access the folder
   - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_2020-12-15`
   - `BDTOPO`

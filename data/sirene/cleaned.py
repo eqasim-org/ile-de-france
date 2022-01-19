@@ -1,16 +1,18 @@
 import pandas as pd
 import data.spatial.code_changes as cc
+import numpy as np
 
 """
 Clean the SIRENE enterprise census.
 """
 
 def configure(context):
-    context.stage("data.sirene.raw", ephemeral = True)
+    context.stage("data.sirene.raw_siren", ephemeral = True)
+    context.stage("data.sirene.raw_siret", ephemeral = True)
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df_sirene = context.stage("data.sirene.raw")
+    df_sirene = context.stage("data.sirene.raw_siret")
 
     # Remove inactive enterprises
     df_sirene = df_sirene[
@@ -18,25 +20,37 @@ def execute(context):
     ].copy()
 
     # Define work place weights by person under salary ....
-    df_sirene["employees"] = 0.0
+    df_sirene["minimum_employees"] = 1 # Includes "NN", "00", and NaN
+    df_sirene["maximum_employees"] = 1 # Includes "NN", "00", and NaN
 
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "01", "employees"] = 2
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "02", "employees"] = 5
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "03", "employees"] = 9
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "11", "employees"] = 19
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "12", "employees"] = 49
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "21", "employees"] = 99
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "22", "employees"] = 199
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "31", "employees"] = 249
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "32", "employees"] = 499
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "41", "employees"] = 999
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "42", "employees"] = 1999
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "51", "employees"] = 4999
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "52", "employees"] = 9999
-    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "53", "employees"] = 10000
-
-    # ... and filter thme if nobody is working
-    df_sirene = df_sirene[df_sirene["employees"] > 0].copy()
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "01", "minimum_employees"] = 1
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "01", "maximum_employees"] = 2
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "02", "minimum_employees"] = 3
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "02", "maximum_employees"] = 5
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "03", "minimum_employees"] = 6
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "03", "maximum_employees"] = 9
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "11", "minimum_employees"] = 10
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "11", "maximum_employees"] = 19
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "12", "minimum_employees"] = 20
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "12", "maximum_employees"] = 49
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "21", "minimum_employees"] = 50
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "21", "maximum_employees"] = 99
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "22", "minimum_employees"] = 100
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "22", "maximum_employees"] = 199
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "31", "minimum_employees"] = 200
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "31", "maximum_employees"] = 249
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "32", "minimum_employees"] = 250
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "32", "maximum_employees"] = 499
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "41", "minimum_employees"] = 500
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "41", "maximum_employees"] = 999
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "42", "minimum_employees"] = 1000
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "42", "maximum_employees"] = 1999
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "51", "minimum_employees"] = 2000
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "51", "maximum_employees"] = 4999
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "52", "minimum_employees"] = 5000
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "52", "maximum_employees"] = 9999
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "53", "minimum_employees"] = 10000
+    df_sirene.loc[df_sirene["trancheEffectifsEtablissement"] == "53", "maximum_employees"] = np.inf
 
     # Add activity classification
     df_sirene["ape"] = df_sirene["activitePrincipaleEtablissement"]
@@ -75,7 +89,7 @@ def execute(context):
 
     df_sirene["number"] = pd.to_numeric(df_sirene["numeroVoieEtablissement"], errors = "coerce")
 
-    df_sirene = df_sirene[["commune_id", "employees", "street", "number", "ape", "siret"]]
+    df_sirene = df_sirene[["siren", "commune_id", "minimum_employees", "maximum_employees", "street", "number", "ape", "siret"]]
 
     # Filter out if the information of invalid
     initial_count = len(df_sirene)
@@ -90,5 +104,19 @@ def execute(context):
 
     df_sirene["number"] = df_sirene["number"].astype(int)
     df_sirene["street"] = df_sirene["street"].astype(str)
+
+    # Add law status
+    initial_count = len(df_sirene)
+
+    df_sirene = pd.merge(
+        df_sirene, context.stage("data.sirene.raw_siren"),
+        on = "siren"
+    )
+
+    df_sirene["law_status"] = df_sirene["categorieJuridiqueUniteLegale"]
+    df_sirene = df_sirene.drop(columns =  ["categorieJuridiqueUniteLegale", "siren"])
+
+    final_count = len(df_sirene)
+    assert initial_count == final_count
 
     return df_sirene
