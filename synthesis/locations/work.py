@@ -12,8 +12,6 @@ Municipalities which do not have any registered enterprise receive a fake work
 place at their centroid to be in line with INSEE OD data.
 """
 
-MAXIMUM_EMPLOYEES = 20000
-
 def configure(context):
     context.stage("data.sirene.localized")
     context.stage("data.spatial.municipalities")

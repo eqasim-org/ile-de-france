@@ -63,8 +63,10 @@ def execute(context):
     excess_communes = set(df_sirene["commune_id"].unique()) - requested_communes
 
     if len(excess_communes) > 0:
-        print(excess_communes)
-        raise RuntimeError("Found excess municipalities in SIRENE data")
+        print("Found excess municipalities in SIRENE data: ", excess_communes)
+
+    if len(excess_communes) > 5:
+        raise RuntimeError("Found more than 5 excess municipalities in SIRENE data")
 
     # Clean up street information
     df_sirene["street_type"] = df_sirene["typeVoieEtablissement"]
