@@ -18,8 +18,11 @@ def configure(context):
 
 def execute(context):
     df_sirene = context.stage("data.sirene.localized")[[
-        "commune_id", "employees", "geometry"
+        "commune_id", "minimum_employees", "maximum_employees", "geometry"
     ]].copy()
+
+    # Use minimum number of employees as weight
+    df_sirene["employees"] = df_sirene["minimum_employees"]
 
     ## Use centroids for municipalities where no work places exist
     df_zones = context.stage("data.spatial.municipalities")
