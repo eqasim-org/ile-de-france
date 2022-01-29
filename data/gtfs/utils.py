@@ -86,6 +86,28 @@ def read_feed(path):
         df_transfers["min_transfer_time"] = df_transfers["min_transfer_time"].astype(int)
         feed["transfers"] = df_transfers
 
+    if "agency" in feed:
+        df_agency = feed["agency"]
+        df_agency.loc[df_agency["agency_id"].isna(), "agency_id"] = "generic"
+
+    if "routes" in feed:
+        df_routes = feed["routes"]
+        agency_id = feed["agency"]["agency_id"].values[0]
+
+        if not "agency_id" in df_routes:
+            df_routes["agency_id"] = agency_id
+
+        df_routes.loc[df_routes["agency_id"].isna(), "agency_id"] = agency_id
+
+    if "shapes" in feed: del feed["shapes"]
+    feed["trips"]["shape_id"] = np.nan
+
+    # Fixes for Nantes PDL
+    for item in feed.keys():
+        feed[item] = feed[item].drop(columns = [
+            c for c in feed[item].columns if c.startswith("ext_")
+        ])
+
     return feed
 
 def write_feed(feed, path):
@@ -244,8 +266,8 @@ def copy_feed(feed):
 def merge_feeds(feeds):
     result = {}
 
-    for feed in feeds:
-        result = merge_two_feeds(result, feed)
+    for k, feed in enumerate(feeds):
+        result = merge_two_feeds(result, feed, "_m{}".format(k + 1))
 
     return result
 
@@ -262,6 +284,9 @@ def merge_two_feeds(first, second, suffix = "_merged"):
             df_first = first[collision["slot"]]
             df_second = second[collision["slot"]]
 
+            df_first[collision["identifier"]] = df_first[collision["identifier"]].astype(str)
+            df_second[collision["identifier"]] = df_second[collision["identifier"]].astype(str)
+
             df_concat = pd.concat([df_first, df_second], sort = True).drop_duplicates()
             duplicate_ids = list(df_concat[df_concat[collision["identifier"]].duplicated()][
                 collision["identifier"]].astype(str).unique())
@@ -272,15 +297,12 @@ def merge_two_feeds(first, second, suffix = "_merged"):
 
                 replacement_ids = [str(id) + suffix for id in duplicate_ids]
 
-                df_first[collision["identifier"]] = df_first[collision["identifier"]].astype(str)
-                df_second[collision["identifier"]] = df_second[collision["identifier"]].astype(str)
-
                 df_second[collision["identifier"]] = df_second[collision["identifier"]].replace(
                     duplicate_ids, replacement_ids
                 )
 
                 for ref_slot, ref_identifier in collision["references"]:
-                    if ref_slot in second:
+                    if ref_slot in first and ref_slot in second:
                         first[ref_slot][ref_identifier] = first[ref_slot][ref_identifier].astype(str)
                         second[ref_slot][ref_identifier] = second[ref_slot][ref_identifier].astype(str)
 

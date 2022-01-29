@@ -34,7 +34,13 @@ Unfortunately, there is no consolidated GTFS schedule avaiable for the region of
 it is necessary to collect all relevant GTFS schedules one by one. Here, we
 provide a selection of links, which is not necessarily exhaustive:
 
-- [Aggregated feed for Loire-Atlantique](https://transport.data.gouv.fr/datasets/arrets-horaires-et-circuits-des-lignes-de-transports-en-commun-en-pays-de-la-loire-gtfs)
+- [TAN Nantes](https://transport.data.gouv.fr/datasets/tan-arrets-horaires-et-circuits/)
+- [Aléop Loire Atlantique](https://transport.data.gouv.fr/datasets/reseau-de-transport-regional-aleop-loire-atlantique)
+- [STRAN Saint-Nazaire](https://transport.data.gouv.fr/datasets/stran-arrets-horaires-et-circuits-urbains-et-scolaires-gtfs/)
+- [Brévibus](https://transport.data.gouv.fr/datasets/reseau-urbain-brevibus/) (save as `brevibus.gtfs.zip`)
+- [Guérande](https://transport.data.gouv.fr/datasets/lignes-arrets-et-horaires-de-transport-pour-cap-atlantique-lila-presquile-gtfs/)
+- [Zenbus](https://transport.data.gouv.fr/datasets/horaires-theoriques-et-temps-reel-de-la-navette-du-pont-de-saint-nazaire-gtfs-gtfs-rt/)
+- [SNCF TER](https://ressources.data.sncf.com/explore/dataset/sncf-ter-gtfs/information/)
 - [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
 - [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
 
@@ -59,7 +65,13 @@ Afterwards, you should have the following additional files in your directory str
 *Only for simulation:*
 
 - `osm/pays-de-la-loire-latest.osm.pbf`
+- `gtfs/gtfs-tan.zip`
 - `gtfs/pdl44.zip`
+- `gtfs/stran-merge.gtfs.zip`
+- `gtfs/brevibus.gtfs.zipp`
+- `gtfs/lilapresquile.gtfs.zip`
+- `gtfs/loire-atlantique915785.zip`
+- `gtfs/export-ter-gtfs-last.zip`
 - `gtfs/export_gtfs_voyages.zip`
 - `gtfs/export-intercites-gtfs-last.zip`
 
@@ -124,7 +136,7 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/pdl44.zip;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip
+  gtfs_path: gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/gtfs-20211210-01.zip;gtfs/gtfs-tan.zip;gtfs/lilapresquile.gtfs.zip;gtfs/loire-atlantique915785.zip;gtfs/pdl44.zip;gtfs/stran-merge.gtfs.zip
   osm_path: osm/pays-de-la-loire-latest.osm.pbf
   # ...
 ```
