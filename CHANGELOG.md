@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fix documentation and processing for Nantes GTFS
 - Add law status of the SIRENE enterprises for down-stream freight models (this requires both SIREN and SIRET data as input!)
 - Update handling of invalid values on the nubmer of employees in SIRENE
 - Add alternative source for EDGT Lyon (and set it as default/recommended source)
