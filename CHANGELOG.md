@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fixing socioprofessional category for Nantes and Lyon (Cerema)
 - Fix documentation and processing for Nantes GTFS
 - Add law status of the SIRENE enterprises for down-stream freight models (this requires both SIREN and SIRET data as input!)
 - Update handling of invalid values on the nubmer of employees in SIRENE

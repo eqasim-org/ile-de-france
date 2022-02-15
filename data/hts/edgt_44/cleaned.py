@@ -165,6 +165,8 @@ def execute(context):
 
     # Socioprofessional class
     df_persons["socioprofessional_class"] = df_persons["P9"].fillna(8).astype(int)
+    df_persons.loc[df_persons["socioprofessional_class"] > 6, "socioprofessional_class"] = 8
+    df_persons.loc[df_persons["P7"] == "7", "socioprofessional_class"] = 7
 
     # Check departure and arrival times
     assert np.count_nonzero(df_trips["departure_time"].isna()) == 0
