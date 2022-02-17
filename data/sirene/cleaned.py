@@ -12,7 +12,11 @@ def configure(context):
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df_sirene = context.stage("data.sirene.raw_siret")
+    df_sirene_establishments = context.stage("data.sirene.raw_siret")
+    df_sirene_headquarters = context.stage("data.sirene.raw_siren")
+
+    # Filter out establishments without a corresponding headquarter
+    df_sirene = df_sirene_establishments[df_sirene_establishments["siren"].isin(df_sirene_headquarters["siren"])].copy()
 
     # Remove inactive enterprises
     df_sirene = df_sirene[
@@ -110,10 +114,7 @@ def execute(context):
     # Add law status
     initial_count = len(df_sirene)
 
-    df_sirene = pd.merge(
-        df_sirene, context.stage("data.sirene.raw_siren"),
-        on = "siren"
-    )
+    df_sirene = pd.merge(df_sirene, df_sirene_headquarters, on = "siren")
 
     df_sirene["law_status"] = df_sirene["categorieJuridiqueUniteLegale"]
     df_sirene = df_sirene.drop(columns =  ["categorieJuridiqueUniteLegale", "siren"])
