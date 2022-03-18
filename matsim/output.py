@@ -8,6 +8,7 @@ def configure(context):
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
     context.config("write_jar", True)
+    context.config("generate_vehicles_file", False)
 
     context.stage("documentation.meta_output")
 
@@ -17,7 +18,7 @@ def execute(context):
         context.stage("matsim.simulation.prepare")
     )
 
-    for name in [
+    file_names = [
         "%shouseholds.xml.gz" % context.config("output_prefix"),
         "%spopulation.xml.gz" % context.config("output_prefix"),
         "%sfacilities.xml.gz" % context.config("output_prefix"),
@@ -25,7 +26,12 @@ def execute(context):
         "%stransit_schedule.xml.gz" % context.config("output_prefix"),
         "%stransit_vehicles.xml.gz" % context.config("output_prefix"),
         "%sconfig.xml" % context.config("output_prefix")
-    ]:
+    ]
+
+    if context.config("generate_vehicles_file"):
+        file_names.append("%svehicles.xml.gz" % context.config("output_prefix"))
+
+    for name in file_names:
         shutil.copy(
             "%s/%s" % (context.path("matsim.simulation.prepare"), name),
             "%s/%s" % (context.config("output_path"), name)

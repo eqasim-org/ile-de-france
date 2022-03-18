@@ -9,6 +9,9 @@ def configure(context):
     context.stage("synthesis.population.activities")
     context.stage("synthesis.population.trips")
 
+    if context.config("generate_vehicles_file", False):
+        context.stage("synthesis.vehicles.selected")
+
     context.stage("synthesis.population.spatial.locations")
 
     context.stage("documentation.meta_output")
@@ -95,6 +98,13 @@ def execute(context):
     ]]
 
     df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None)
+
+    if context.config("generate_vehicles_file"):
+        # Prepare vehicles
+        df_vehicle_types, df_vehicles = context.stage("synthesis.vehicles.selected")
+
+        df_vehicle_types.to_csv("%s/%svehicle_types.csv" % (output_path, output_prefix), sep = ";", index = None)
+        df_vehicles.to_csv("%s/%svehicles.csv" % (output_path, output_prefix), sep = ";", index = None)
 
     # Prepare spatial data sets
     df_locations = context.stage("synthesis.population.spatial.locations")[[

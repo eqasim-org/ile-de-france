@@ -7,6 +7,9 @@ def configure(context):
     context.stage("matsim.scenario.population")
     context.stage("matsim.scenario.households")
 
+    if context.config("generate_vehicles_file", False):
+        context.stage("matsim.scenario.vehicles")
+
     context.stage("matsim.scenario.facilities")
     context.stage("matsim.scenario.supply.processed")
     context.stage("matsim.scenario.supply.gtfs")
@@ -72,6 +75,13 @@ def execute(context):
         context.stage("matsim.scenario.supply.gtfs")["vehicles_path"]
     )
     shutil.copy(transit_vehicles_path, "%s/%stransit_vehicles.xml.gz" % (context.cache_path, context.config("output_prefix")))
+
+    if context.config("generate_vehicles_file"):
+        vehicles_path = "%s/%s" % (
+            context.path("matsim.scenario.vehicles"),
+            context.stage("matsim.scenario.vehicles")
+        )
+        shutil.copy(vehicles_path, "%s/%svehicles.xml.gz" % (context.cache_path, context.config("output_prefix")))
 
     # Generate base configuration
     eqasim.run(context, "org.eqasim.core.scenario.config.RunGenerateConfig", [
