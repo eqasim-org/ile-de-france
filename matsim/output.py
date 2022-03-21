@@ -29,7 +29,27 @@ def execute(context):
     ]
 
     if context.config("generate_vehicles_file"):
-        file_names.append("%svehicles.xml.gz" % context.config("output_prefix"))
+        vehicle_file = "%svehicles.xml.gz" % context.config("output_prefix")
+
+        # it would make more sense to modify this in the eqasim-java part (in org.eqasim.core.scenario.config)
+        # but it's not obvious how to preserve backward compatibility hence the following method :
+        config_file = "%sconfig.xml" % context.config("output_prefix")
+        with open( "%s/%s" % (context.path("matsim.simulation.prepare"), config_file)) as f_read:
+            content = f_read.read()
+            content = content.replace(
+                '<param name="vehiclesFile" value="null" />',
+                '<param name="vehiclesFile" value="%s" />' % vehicle_file
+            )
+            content = content.replace(
+                '<param name="vehiclesSource" value="defaultVehicle" />',
+                '<param name="vehiclesSource" value="fromVehiclesData" />'
+            )
+            with open("%s/%s" % (context.config("output_path"), config_file), "w+") as f_write:
+                f_write.write(content)
+        
+        file_names.append(vehicle_file)
+        # since we did a copy & modify, no need to copy it again
+        file_names.remove(config_file)
 
     for name in file_names:
         shutil.copy(
