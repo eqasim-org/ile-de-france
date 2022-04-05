@@ -60,9 +60,10 @@ def execute(context):
         # We copy from the source IRIS to the target IRIS such that we meet the reference value
         # By that we gain the correct population and sociodemographic distribution
 
-        df_target = df_local.copy()
+        df_target = df_source.copy()
         df_target["iris_id"] = target_iris
         df_target["weight_2030"] *= count_missing / df_target["weight"].sum()
+        print("Sum in 2030:", df_target["weight_2030"].sum())
 
         # Add back the new area
         df_census = pd.concat([df_census, df_target])
