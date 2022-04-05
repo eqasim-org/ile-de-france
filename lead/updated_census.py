@@ -80,6 +80,7 @@ def execute(context):
 
         # Choose weight
         df_census["weight"] = df_census["weight_2030"]
+        df_census["iris_id"] = df_census["iris_id"].astype("category")
 
     else:
         raise RuntimeError("Invalid year chosen")
