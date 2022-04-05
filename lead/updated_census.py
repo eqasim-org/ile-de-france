@@ -40,12 +40,14 @@ def execute(context):
         print("Growth to 2030 (region):")
         print(df_census[["departement_id", "weight_2015", "weight_2022", "weight_2030"]].groupby("departement_id").sum())
 
-        source_iris = [693820504, 693820502, 693820503]
-        target_iris = 693820501
+        source_iris = ["693820504", "693820502", "693820503"]
+        target_iris = "693820501"
 
         # Find the persons from Confluence and remove target from census
         df_census = df_census[~(df_census["iris_id"] == target_iris)].copy()
+        
         df_source = df_census[df_census["iris_id"].isin(source_iris)].copy()
+        assert len(df_source) == 3
 
         print("Growth to 2030 (Confluence):")
         print(df_source[["iris_id", "weight_2015", "weight_2022", "weight_2030"]].groupby("iris_id").sum())
