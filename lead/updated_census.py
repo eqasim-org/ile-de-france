@@ -62,7 +62,7 @@ def execute(context):
 
         df_target = df_source.copy()
         df_target["iris_id"] = target_iris
-        df_target["weight_2030"] *= count_missing / df_target["weight"].sum()
+        df_target["weight_2030"] *= count_missing / df_target["weight_2030"].sum()
         print("Sum in 2030:", df_target["weight_2030"].sum())
 
         # Add back the new area
