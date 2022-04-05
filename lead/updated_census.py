@@ -44,10 +44,8 @@ def execute(context):
         target_iris = "693820501"
 
         # Find the persons from Confluence and remove target from census
-        df_census = df_census[~(df_census["iris_id"] == target_iris)].copy()
-
-        print(df_census["iris_id"])
-        df_source = df_census[df_census["iris_id"].isin(source_iris)].copy()
+        df_census = df_census[~(df_census["iris_id"].astype(str) == target_iris)].copy()
+        df_source = df_census[df_census["iris_id"].astype(str).isin(source_iris)].copy()
         assert len(df_source) == 3
 
         print("Growth to 2030 (Confluence):")
