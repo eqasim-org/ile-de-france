@@ -63,6 +63,15 @@ def execute(context):
         df_target = df_source.copy()
         df_target["iris_id"] = target_iris
         df_target["weight_2030"] *= count_missing / df_target["weight_2030"].sum()
+
+        df_target["person_id"] = df_census["person_id"].max() + np.arange(len(df_target))
+
+        original_household_ids = df_target["household_id"].unique()
+        updated_household_ids = df_census["household_id"].max() + np.arange(len(original_household_ids))
+
+        for original_id, updated_id in zip(original_household_ids, updated_household_ids):
+            df_target.loc[df_target["household_id"] == original_id, "household_id"] = updated_id
+
         print("Sum in 2030:", df_target["weight_2030"].sum())
 
         # Add back the new area
