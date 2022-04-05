@@ -30,7 +30,7 @@ def execute(context):
     print(df_census[["departement_id", "weight_2015", "weight_2022"]].groupby("departement_id").sum())
 
     if context.config("lead_year") == 2022:
-        df_census["weight"] == df_census["weight_2022"]
+        df_census["weight"] = df_census["weight_2022"]
 
     elif context.config("lead_year") == 2030:
         # We select 2030, so we want to reconfigure Confluence
@@ -67,7 +67,7 @@ def execute(context):
         df_census = pd.concat([df_census, df_target])
 
         # Choose weight
-        df_census["weight"] == df_census["weight_2030"]
+        df_census["weight"] = df_census["weight_2030"]
 
     else:
         raise RuntimeError("Invalid year chosen")

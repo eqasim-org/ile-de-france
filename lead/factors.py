@@ -18,6 +18,4 @@ def execute(context):
     df_growth = df_growth.rename(columns = { "code_Departements": "departement_id" })
     df_growth = df_growth[["departement_id", "factor_2022", "factor_2030"]]
 
-    print(df_growth)
-
     return df_growth
