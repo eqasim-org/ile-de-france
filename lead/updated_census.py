@@ -75,6 +75,7 @@ def execute(context):
         print("Sum in 2030:", df_target["weight_2030"].sum())
 
         # Add back the new area
+        df_target["iris_id"] = df_target["iris_id"].astype("category")
         df_census = pd.concat([df_census, df_target])
 
         # Choose weight
