@@ -67,7 +67,7 @@ def execute(context):
         df_target["person_id"] = df_census["person_id"].max() + np.arange(len(df_target))
 
         original_household_ids = df_target["household_id"].unique()
-        updated_household_ids = df_census["household_id"].max() + np.arange(len(original_household_ids))
+        updated_household_ids = df_census["household_id"].max() + np.arange(len(original_household_ids)) + 1
 
         for original_id, updated_id in zip(original_household_ids, updated_household_ids):
             df_target.loc[df_target["household_id"] == original_id, "household_id"] = updated_id
