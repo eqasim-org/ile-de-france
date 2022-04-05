@@ -48,7 +48,7 @@ def execute(context):
         df_source = df_census[df_census["iris_id"].isin(source_iris)].copy()
 
         print("Growth to 2030 (Confluence):")
-        df_source["iris_id"].remove_unused_categories(inplace = True)
+        df_source["iris_id"] = df_source["iris_id"].astype(str)
         print(df_source[["iris_id", "weight_2015", "weight_2022", "weight_2030"]].groupby("iris_id").sum())
 
         count_reference_2030 = 17000
