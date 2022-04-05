@@ -9,7 +9,9 @@ def execute(context):
     df_codes = context.stage("data.spatial.codes")
 
     # Find growth factor for the requested year
-    df_growth = pd.read_excel("%s/projections_scenario_central.xls" % context.config("lead_path"))
+    df_growth = pd.read_excel("%s/projections_scenario_central.xls" % context.config("lead_path"),
+        skiprows = 6, sheetname = "Population_DEP")
+    
     df_growth = df_growth[df_growth["code_Departements"].isin(df_codes["departement_id"])]
     df_growth["factor_2022"] = df_growth["pop_2022"] / df_growth["pop_2015"]
     df_growth["factor_2030"] = df_growth["pop_2030"] / df_growth["pop_2022"]
