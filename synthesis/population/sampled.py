@@ -8,13 +8,13 @@ through the 'sampling_rate' configuration option.
 """
 
 def configure(context):
-    context.stage("data.census.filtered")
+    context.stage("data.census.updated")
 
     context.config("random_seed")
     context.config("sampling_rate")
 
 def execute(context):
-    df_census = context.stage("data.census.filtered").sort_values(by = "household_id").copy()
+    df_census = context.stage("data.census.updated").sort_values(by = "household_id").copy()
 
     sampling_rate = context.config("sampling_rate")
     random = np.random.RandomState(context.config("random_seed"))

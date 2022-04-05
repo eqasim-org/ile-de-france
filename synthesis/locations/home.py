@@ -20,6 +20,9 @@ def configure(context):
     context.stage("data.bdtopo.cleaned")
     context.stage("data.spatial.iris")
 
+    context.config("lead_path")
+    context.config("lead_year")
+
 def execute(context):
     # Find required IRIS
     df_iris = context.stage("data.spatial.iris")
@@ -27,6 +30,12 @@ def execute(context):
 
     # Load all addresses and add IRIS information
     df_addresses = context.stage("data.bdtopo.cleaned")[["geometry"]]
+
+    # LEAD: Add additional addresses for Confluence
+    if context.config("lead_year") >= 2030:
+        df_additional = gpd.read_file("%s/new_addresses.gpkg" % context.config("lead_path"))
+        df_additional = df_additional[["geometry"]]
+        df_addresses = pd.concat([df_addresses, df_additional])
 
     print("Imputing IRIS into addresses ...")
     df_addresses = gpd.sjoin(df_addresses,
