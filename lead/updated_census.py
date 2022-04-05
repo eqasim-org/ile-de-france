@@ -48,8 +48,9 @@ def execute(context):
         df_source = df_census[df_census["iris_id"].isin(source_iris)].copy()
 
         print("Growth to 2030 (Confluence):")
-        df_source["iris_id"] = df_source["iris_id"].astype(str)
-        print(df_source[["iris_id", "weight_2015", "weight_2022", "weight_2030"]].groupby("iris_id").sum())
+        df_view = df_source.copy()
+        df_view["iris_id"].cat.remove_unused_categories(inplace = True)
+        print(df_view[["iris_id", "weight_2015", "weight_2022", "weight_2030"]].groupby("iris_id").sum())
 
         count_reference_2030 = 17000
         count_growth_2030 = df_source["weight_2030"].sum()
@@ -75,7 +76,6 @@ def execute(context):
         print("Sum in 2030:", df_target["weight_2030"].sum())
 
         # Add back the new area
-        df_target["iris_id"] = df_target["iris_id"].astype("category")
         df_census = pd.concat([df_census, df_target])
 
         # Choose weight
