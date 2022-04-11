@@ -1,4 +1,5 @@
 import numpy as np
+from xml.sax.saxutils import escape
 
 class XmlWriter:
     def __init__(self, writer):
@@ -253,6 +254,89 @@ class FacilitiesWriter(XmlWriter):
     def add_activity(self, purpose):
         self._require_scope(self.FACILITY_SCOPE)
         self._write_line('<activity type="%s" />' % purpose)
+
+
+class VehiclesWriter(XmlWriter):
+    VEHICLES_SCOPE = 0
+    FINISHED_SCOPE = 1
+
+    def __init__(self, writer):
+        XmlWriter.__init__(self, writer)
+
+    def start_vehicles(self, attributes = {}):
+        self._require_scope(None)
+        self._write_line('<?xml version="1.0" encoding="utf-8"?>')
+        self._write_line('<vehicleDefinitions xmlns="http://www.matsim.org/files/dtd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.matsim.org/files/dtd http://www.matsim.org/files/dtd/vehicleDefinitions_v2.0.xsd">')
+
+        self.scope = self.VEHICLES_SCOPE
+        self.indent += 1
+
+        _write_preface_attributes(self, attributes)
+
+    def end_vehicles(self):
+        self._require_scope(self.VEHICLES_SCOPE)
+        self.indent -= 1
+        self._write_line('</vehicleDefinitions>')
+        self.scope = self.FINISHED_SCOPE
+
+    def add_type(self, vehicle_type_id, nb_seats = 4, length = 5.0, width = 1.0, pce = 1.0, mode = "car", attributes = {}, engine_attributes = {}):
+        self._require_scope(self.VEHICLES_SCOPE)
+        self._write_line('<vehicleType id="%s">' % str(vehicle_type_id))
+
+        self.indent += 1
+
+        if len(attributes) > 0:
+            self._write_line('<attributes>')
+            self.indent += 1
+            for key, item in attributes.items():
+                self._write_line('<attribute name="%s" class="java.lang.String">%s</attribute>' % (key, escape(item)))
+            self.indent -= 1
+            self._write_line('</attributes>')
+
+        if not np.isnan(nb_seats):
+            self._write_line('<capacity seats="%d" standingRoomInPersons="0" />' % nb_seats)
+
+        self._write_line('<length meter="%f"/>' % length)
+        self._write_line('<width meter="%f"/>' % width)
+
+        if len(engine_attributes) > 0:
+            self._write_line('<engineInformation>')
+            self.indent += 1
+            self._write_line('<attributes>')
+            self.indent += 1
+            for key, item in engine_attributes.items():
+                self._write_line('<attribute name="%s" class="java.lang.String">%s</attribute>' % (key, escape(item)))
+            self.indent -= 1
+            self._write_line('</attributes>')
+            self.indent -= 1
+            self._write_line('</engineInformation>')
+
+        if not np.isnan(pce):
+            self._write_line('<passengerCarEquivalents pce="%f"/>' % pce)
+
+        self._write_line('<networkMode networkMode="%s"/>' % mode)
+
+        self.indent -= 1
+        self._write_line('</vehicleType>')
+
+
+    def add_vehicle(self, vehicle_id, type_id, attributes = {}):
+        self._require_scope(self.VEHICLES_SCOPE)
+
+        if len(attributes) > 0:
+            self._write_line('<vehicle id="%s" type="%s">' % (str(vehicle_id), str(type_id)))
+            self.indent += 1
+            self._write_line('<attributes>')
+            self.indent += 1
+            for key, item in attributes.items():
+                self._write_line('<attribute name="%s" class="java.lang.String">%s</attribute>' % (str(key), str(item)))
+            self.indent -= 1
+            self._write_line('</attributes>')
+            self.indent -= 1
+            self._write_line('</vehicle>')
+        else:
+            self._write_line('<vehicle id="%s" type="%s" />' % (str(vehicle_id), str(type_id)))
+
 
 class backlog_iterator:
     def __init__(self, iterable, backlog = 1):

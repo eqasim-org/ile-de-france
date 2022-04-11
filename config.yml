@@ -27,3 +27,10 @@ config:
 
   # Only interesting if you run the simulation
   java_memory: 14G
+
+
+  # uncomment below to enable vehicle fleet generation
+  
+  # generate_vehicles_file: True
+  # generate_vehicles_method: fleet_sample
+  # vehicles_data_year: 2015

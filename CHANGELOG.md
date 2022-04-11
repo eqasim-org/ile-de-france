@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Add a basic sample based vehicle fleet generation tailored for use with the `emissions` matsim contrib
 - Fixing socioprofessional category for Nantes and Lyon (Cerema)
 - Fix documentation and processing for Nantes GTFS
 - Add law status of the SIRENE enterprises for down-stream freight models (this requires both SIREN and SIRET data as input!)
