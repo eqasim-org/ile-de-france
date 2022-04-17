@@ -134,7 +134,7 @@ def write_feed(feed, path):
             if slot in feed:
                 with open("%s/%s.txt" % (path, slot), "w+") as f:
                     print("  Writing %s.txt ..." % slot)
-                    feed[slot].to_csv(f, index = None)
+                    feed[slot].to_csv(f, index = None, line_terminator='\n')
 
 def cut_feed(feed, df_area, crs = None):
     feed = copy_feed(feed)
