@@ -30,7 +30,7 @@ def execute(context):
     table = simpledbf.Dbf5("%s/%s" % (context.config("data_path"), context.config("census_path")))
     records = []
 
-    with context.progress(total = 4320619, label = "Reading census ...") as progress:
+    with context.progress(total = table.numrec, label = "Reading census ...") as progress:
         for df_chunk in table.to_dataframe(chunksize = 10240):
             progress.update(len(df_chunk))
 

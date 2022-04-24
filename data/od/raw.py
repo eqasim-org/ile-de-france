@@ -21,7 +21,7 @@ def execute(context):
     table = simpledbf.Dbf5("%s/rp_2015/FD_MOBPRO_2015.dbf" % context.config("data_path"))
     records = []
 
-    with context.progress(label = "Reading work flows ...", total = 7943392) as progress:
+    with context.progress(label = "Reading work flows ...", total = table.numrec) as progress:
         for df_chunk in table.to_dataframe(chunksize = 10240):
             progress.update(len(df_chunk))
 
