@@ -13,28 +13,37 @@ def configure(context):
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df_siret = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siret_path")), usecols = [
-            "siren", "siret", "codeCommuneEtablissement", "activitePrincipaleEtablissement",
-            "trancheEffectifsEtablissement", "libelleVoieEtablissement", "numeroVoieEtablissement",
-            "typeVoieEtablissement", "etatAdministratifEtablissement"
-        ],
-        dtype = dict(siren = int, siret = int, codeCommuneEtablissement = str, trancheEffectifsEtablissement = str, typeVoieEtablissement = str)
-    )
-
     # Filter by departement
     df_codes = context.stage("data.spatial.codes")
     requested_departements = set(df_codes["departement_id"].unique())
 
-    f = df_siret["codeCommuneEtablissement"].isna() # Just to get a mask
+    df_siret = []
 
-    for departement in requested_departements:
-        print("Finding municipalities for departement %s" % departement)
-        f |= df_siret["codeCommuneEtablissement"].str.startswith(departement)
+    with context.progress(label = "Reading SIRET ...") as progress:
+        csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siret_path")), usecols = [
+                "siren", "siret", "codeCommuneEtablissement", "activitePrincipaleEtablissement",
+                "trancheEffectifsEtablissement", "libelleVoieEtablissement", "numeroVoieEtablissement",
+                "typeVoieEtablissement", "etatAdministratifEtablissement"
+            ],
+            dtype = dict(siren = int, siret = int, codeCommuneEtablissement = str, trancheEffectifsEtablissement = str, typeVoieEtablissement = str),
+            chunksize = 10240
+        )
 
-    f &= ~df_siret["codeCommuneEtablissement"].isna()
-    df_siret = df_siret[f]
+        for df_chunk in csv:
+            progress.update(len(df_chunk))
 
-    return df_siret
+            f = df_chunk["codeCommuneEtablissement"].isna() # Just to get a mask
+
+            for departement in requested_departements:
+                f |= df_chunk["codeCommuneEtablissement"].str.startswith(departement)
+
+            f &= ~df_chunk["codeCommuneEtablissement"].isna()
+            df_chunk = df_chunk[f]
+
+            if len(df_chunk) > 0:
+                df_siret.append(df_chunk)
+
+    return pd.concat(df_siret)
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("siret_path"))):
