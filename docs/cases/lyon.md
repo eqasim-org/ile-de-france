@@ -17,8 +17,17 @@ respective file (*FD_INDCVIZE_2015.dbf*) into the `data/rp_2015` folder.
 
 ### B) Address database (BD-TOPO)
 
-You need to download the region-specific address database. Go to [IGN Open data database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo), scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*. Click on the download link under
-*Région Auvergne-Rhône-Alpes - R 84*. Open the downloaded archive and copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo` (overriding the data for Île-de-France if you had set up that scenario before).
+You need to download the region-specific address database.
+
+- [Address database](https://geoservices.ign.fr/bdtopo)
+- Use a ftp client to download the *Région Auvergne-Rhône-Alpes - R 84* . Most browsers will not be able to download the data.
+- Open the downloaded archive and open/unpack it to to access the folder
+  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R84_2020-12-15`
+  - `BDTOPO`
+  - `1_DONNEES_LIVRAISON_2021-01-00120`
+  - `BDT_3-0_SHP_LAMB93_R84-ED2020-12-15`
+  - `ADRESSES`
+- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
 
 ### C) OpenStreetMap data
 
@@ -143,13 +152,13 @@ department identifiers to the list.
 In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
 is used, choose the updated HTS in the config file.
 
-**Important** : when using `edgt_lyon` you **must** set the `edgt_lyon_source` to either `adisp` or `cerema`, else an error will be raised. 
+**Important** : when using `edgt_lyon` you **must** set the `edgt_lyon_source` to either `adisp` or `cerema`, else an error will be raised.
 
 ```yaml
 config:
   # ...
   hts: edgt_lyon
-  edgt_lyon_source: adisp  # adisp/cerema 
+  edgt_lyon_source: adisp  # adisp/cerema
   # ...
 ```
 

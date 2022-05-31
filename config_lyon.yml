@@ -1,4 +1,4 @@
-## Synthetic population pipeline for Île-de-France
+## Synthetic population pipeline for Lyon
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
@@ -7,7 +7,7 @@ working_directory: cache
 # This section defines which parts of the pipeline should be run
 run:
   - synthesis.output # To create the output population in the output_path (see below)
-  #- matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
+  # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 # Here the configuraiton of the pipeline starts
 config:
@@ -24,11 +24,14 @@ config:
   # Paths to the input data and where the output should be stored
   data_path: /path/to/my/data
   output_path: output
+  output_prefix: lyon_
 
   # Only interesting if you run the simulation
   java_memory: 14G
 
-  # Uncommented below to enable vehicle fleet generation
-  # generate_vehicles_file: True
-  # generate_vehicles_method: fleet_sample
-  # vehicles_data_year: 2015
+  # Lyon settings
+  census_path: rp_2015/FD_INDCVIZE_2015.dbf
+  regions: []
+  departments: ["01", 38, 42, 69, 69M]
+  gtfs_path: gtfs/GTFS_TCL.ZIP;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/CAPI.GTFS.zip;gtfs/GTFS_RX.ZIP;gtfs/SEM-GTFS.zip;gtfs/stas.gtfs.zip;gtfs/VIENNE.GTFS.zip
+  osm_path: osm/rhone-alpes-latest.osm.pbf
