@@ -11,7 +11,7 @@ simulation for **Corsica**.
 
 ### A) Regional census data
 
-Lyon is not included in the census data set that is uesd for Île-de-France
+Corsica is not included in the census data set that is used for Île-de-France
 (*Zone A*). Instead, *Zone E* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone E* and put the
 respective file (*FD_INDCVIZE_2015.dbf*) into the `data/rp_2015` folder.
 
@@ -111,7 +111,7 @@ config:
 
 You can now enter your Anaconda environment and call the pipeline with the
 `synthesis.output` stage activated. This will generate a synthetic population
-for Lyon and surroundings.
+for Corsica.
 
 ## Running the simulation
 
@@ -124,9 +124,6 @@ config:
   osm_path: osm/corse-latest.osm.pbf
   # ...
 ```
-
-Note that the pipeline will automatically cut GTFS and OpenStreetMap data
-to the relevant area (defined by the filter above) if you run the simulation.
 
 To test the simulation and generate the relevant MATSim files, run the pipeline
 with the `matsim.output` stage enabled.

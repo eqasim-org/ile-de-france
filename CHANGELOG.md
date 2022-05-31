@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Update configuration files for Lyon, Nantes, Corsica
 - Add a basic sample based vehicle fleet generation tailored for use with the `emissions` matsim contrib
 - Fixing socioprofessional category for Nantes and Lyon (Cerema)
 - Fix documentation and processing for Nantes GTFS

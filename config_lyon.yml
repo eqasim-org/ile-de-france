@@ -1,4 +1,4 @@
-## Synthetic population pipeline for Île-de-France
+## Synthetic population pipeline for Lyon
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
@@ -7,7 +7,7 @@ working_directory: cache
 # This section defines which parts of the pipeline should be run
 run:
   - synthesis.output # To create the output population in the output_path (see below)
-  #- matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
+  # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 # Here the configuraiton of the pipeline starts
 config:
@@ -29,6 +29,7 @@ config:
   # Only interesting if you run the simulation
   java_memory: 14G
 
+  # Lyon settings
   census_path: rp_2015/FD_INDCVIZE_2015.dbf
   regions: []
   departments: ["01", 38, 42, 69, 69M]

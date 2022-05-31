@@ -2,12 +2,12 @@
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
-working_directory: /home/shoerl/lead/scenario_data/cache
+working_directory: cache
 
 # This section defines which parts of the pipeline should be run
 run:
   - synthesis.output # To create the output population in the output_path (see below)
-  - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
+  # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 # Here the configuraiton of the pipeline starts
 config:
@@ -18,12 +18,12 @@ config:
   hts: entd
 
   # Define sampling rate and random seed for the output population
-  sampling_rate: 0.1
+  sampling_rate: 0.001
   random_seed: 1234
 
   # Paths to the input data and where the output should be stored
-  data_path: /home/shoerl/lead/scenario_data
-  output_path: /home/shoerl/lead/scenario_data/output_corse
+  data_path: /path/to/my/data
+  output_path: output
   output_prefix: corsica_
 
   # Only interesting if you run the simulation
