@@ -33,11 +33,10 @@ config:
   census_path: rp_2015/FD_INDCVIZE_2015.dbf
   regions: [94]
   gtfs_path: gtfs/corse/cars2a-gtfs.zip;gtfs/corse/cars2b-gtfs.zip;gtfs/corse/GTFS été 2021.zip
-  bdtopo_path: bdtopo/bdtopo_corse
   osm_path: osm/corse-latest.osm.pbf
   matching_minimum_observations: 5
 
   # Uncomment to generate a scenario for eqasim-java unit testing
-  #write_jar: false
-  #output_path: /home/shoerl/eqasim/eqasim-java/ile_de_france/src/test/resources/corsica
-  #eqasim_path: /home/shoerl/eqasim/eqasim-java/ile_de_france/target/ile_de_france-1.1.0.jar
+  # write_jar: false
+  # output_path: /path/to/eqasim-java/ile_de_france/src/test/resources/corsica
+  # eqasim_path: /path/to/eqasim-java/ile_de_france/target/ile_de_france-1.1.0.jar
