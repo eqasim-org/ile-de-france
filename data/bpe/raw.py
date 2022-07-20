@@ -9,7 +9,7 @@ This stage loads the raw data from the French service registry.
 
 def configure(context):
     context.config("data_path")
-    context.config("bpe_path", "bpe_2019/bpe19_ensemble_xy.dbf")
+    context.config("bpe_path", "bpe_2019/bpe19_ensemble_xy.csv")
 
     context.stage("data.spatial.codes")
 
@@ -22,11 +22,13 @@ def execute(context):
     df_codes = context.stage("data.spatial.codes")
     requested_departements = df_codes["departement_id"].unique()
 
-    table = simpledbf.Dbf5("%s/%s" % (context.config("data_path"), context.config("bpe_path")), codec = "latin1")
+    #table = simpledbf.Dbf5("%s/%s" % (context.config("data_path"), context.config("bpe_path")), codec = "latin1")
+    csv_file = "%s/%s" % (context.config("data_path"), context.config("bpe_path"))
+
     df_records = []
 
-    with context.progress(total = table.numrec, label = "Reading enterprise census ...") as progress:
-        for df_chunk in table.to_dataframe(chunksize = 10240):
+    with context.progress(label = "Reading enterprise census ...") as progress:
+        for df_chunk in pd.read_csv(csv_file, encoding = "latin1", chunksize = 10240, sep=';'):
             progress.update(len(df_chunk))
 
             df_chunk = df_chunk[df_chunk["DEP"].isin(requested_departements)]
