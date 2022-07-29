@@ -4,6 +4,7 @@ name: ile-de-france
 
 channels:
   - defaults
+  - conda-forge
 
 dependencies:
   - python=3.9.12

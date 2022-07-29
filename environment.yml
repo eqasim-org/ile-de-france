@@ -2,6 +2,7 @@ name: ile-de-france
 
 channels:
   - defaults
+  - conda-forge
 
 dependencies:
   - python=3.9.12
@@ -14,7 +15,7 @@ dependencies:
   - numba=0.55.1
   - palettable=3.3.0
   - scikit-learn=1.1.1
-  - shapely1.8.2
+  - shapely=1.8.2
   - tqdm=4.64.0
   - pytables=3.6.1
   - xlrd=2.0.1
