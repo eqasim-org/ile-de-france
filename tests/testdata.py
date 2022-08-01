@@ -215,13 +215,13 @@ def create(output_path):
     df_selection["LAMBERT_X"].iloc[-10:] = np.nan
     df_selection["LAMBERT_Y"].iloc[-10:] = np.nan
 
-    import pysal
+    import pysal.lib
 
     types = [("C", 10, 0), ("C", 12, 0), ("C", 12, 0), ("C", 4, 0), ("C", 5, 0), ("C", 3, 0)]
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
     os.mkdir("%s/bpe_2019" % output_path)
-    db = pysal.open("%s/bpe_2019/bpe19_ensemble_xy.dbf" % output_path, "w")
+    db = pysal.lib.io.open("%s/bpe_2019/bpe19_ensemble_xy.dbf" % output_path, "w")
 
     db.header = columns
     db.field_spec = types
@@ -514,7 +514,7 @@ def create(output_path):
 
     df_persons = pd.DataFrame.from_records(persons)[columns]
 
-    db = pysal.open("%s/rp_2015/FD_INDCVIZA_2015.dbf" % output_path, "w")
+    db = pysal.lib.io.open("%s/rp_2015/FD_INDCVIZA_2015.dbf" % output_path, "w")
     db.header = columns
     db.field_spec = types
     for index, row in df_persons.iterrows():
@@ -539,7 +539,7 @@ def create(output_path):
 
     columns = ["COMMUNE", "DCLT", "TRANS", "ARM", "IPONDI"]
     types = [("C", 5, 0), ("C", 5, 0), ("C", 1, 0), ("C", 5, 0), ("N", 10, 7)]
-    db = pysal.open("%s/rp_2015/FD_MOBPRO_2015.dbf" % output_path, "w")
+    db = pysal.lib.io.open("%s/rp_2015/FD_MOBPRO_2015.dbf" % output_path, "w")
     db.header = columns
     db.field_spec = types
     for index, row in df_work[columns].iterrows():
@@ -556,7 +556,7 @@ def create(output_path):
 
     columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI"]
     types = [("C", 5, 0), ("C", 5, 0), ("C", 5, 0), ("N", 10, 7)]
-    db = pysal.open("%s/rp_2015/FD_MOBSCO_2015.dbf" % output_path, "w")
+    db = pysal.lib.io.open("%s/rp_2015/FD_MOBSCO_2015.dbf" % output_path, "w")
     db.header = columns
     db.field_spec = types
     for index, row in df_education[columns].iterrows():
@@ -683,7 +683,7 @@ def create(output_path):
 
     import subprocess
     subprocess.check_call([
-        "osmosis", "--read-xml", "%s/osm/ile-de-france-latest.osm.gz" % output_path,
+        "osmosis.bat", "--read-xml", "%s/osm/ile-de-france-latest.osm.gz" % output_path,
         "--write-pbf", "%s/osm/ile-de-france-latest.osm.pbf" % output_path
     ])
 
