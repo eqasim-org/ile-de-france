@@ -100,6 +100,20 @@ simulation code provided at https://github.com/eqasim-org/eqasim-java. The gener
 `ile-de-france-*.jar` from this pipeline is an automatically compiled version of
 this code.
 
+## <a name="section-data"></a>Optionnaly export detailed link geometries
+
+When creating the matsim network from the OSM data, the `pt2matsim` project simplifies link geometries.
+You can export a `detailed_network.csv` file containing the detailed geometries of every network link by the following in the`config.yml` file :
+
+```yaml
+# ...
+
+config:
+  export_detailed_network: True
+
+# ...
+```
+
 ## <a name="section-data"></a>Using MATSim's emissions contrib
 
 You can calculate air pollution emissions using matsim by using some additional data.

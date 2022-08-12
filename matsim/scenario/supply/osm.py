@@ -7,12 +7,14 @@ def configure(context):
     context.stage("matsim.runtime.pt2matsim")
     context.stage("data.osm.cleaned")
 
+    context.config("export_detailed_network", False)
+
 def execute(context):
     osm_path = "%s/output.osm.gz" % context.path("data.osm.cleaned")
 
-    pt2matsim.run(context, "org.matsim.pt2matsim.run.CreateDefaultOsmConfig", [
-        "config_template.xml"
-    ])
+    pt2matsim.run(context, "org.matsim.pt2matsim.run.CreateDefaultOsmConfig", 
+        arguments=["config_template.xml"]
+    )
 
     with open("%s/config_template.xml" % context.path()) as f_read:
         content = f_read.read()
@@ -32,6 +34,12 @@ def execute(context):
             '<param name="outputNetworkFile" value="network.xml.gz" />'
         )
 
+        if context.config("export_detailed_network"):
+            content = content.replace(
+                '<param name="outputDetailedLinkGeometryFile" value="null" />',
+                '<param name="outputDetailedLinkGeometryFile" value="detailed_network.csv" />',
+            )
+
         content = content.replace(
             '</module>',
             """
@@ -46,9 +54,11 @@ def execute(context):
         with open("%s/config.xml" % context.path(), "w+") as f_write:
             f_write.write(content)
 
-    pt2matsim.run(context, "org.matsim.pt2matsim.run.Osm2MultimodalNetwork", [
-        "config.xml"
-    ])
+    # force en_US local is needed for the detailed_geometry file, see https://github.com/matsim-org/pt2matsim/pull/168
+    # fixed in pt2matsim version 22.4
+    pt2matsim.run(context, "org.matsim.pt2matsim.run.Osm2MultimodalNetwork", 
+        arguments=["config.xml"] #, vm_arguments=["-Duser.language=en", "-Duser.region=US", "-Duser.country=US", "-Duser.variant=US"]
+    )
 
     assert(os.path.exists("%s/network.xml.gz" % context.path()))
     return "network.xml.gz"

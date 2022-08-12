@@ -9,6 +9,10 @@ def configure(context):
     context.config("output_prefix", "ile_de_france_")
     context.config("write_jar", True)
     context.config("generate_vehicles_file", False)
+    need_osm = context.config("export_detailed_network", False)
+    if need_osm:
+        context.stage("matsim.scenario.supply.osm")
+    
 
     context.stage("documentation.meta_output")
 
@@ -57,6 +61,12 @@ def execute(context):
             "%s/%s" % (context.config("output_path"), name)
         )
 
+    if context.config("export_detailed_network"):
+        shutil.copy(
+            "%s/%s" % (context.path("matsim.scenario.supply.osm"), "detailed_network.csv"),
+            "%s/%s" % (context.config("output_path"), "%sdetailed_network.csv" % context.config("output_prefix"))
+        )
+    
     if context.config("write_jar"):
         shutil.copy(
             "%s/%s" % (context.path("matsim.runtime.eqasim"), context.stage("matsim.runtime.eqasim")),
