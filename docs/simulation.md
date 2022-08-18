@@ -21,7 +21,8 @@ The road network in the pipeline is based on OpenStreetMap data.
 A cut-out for Île-de-France is available from Geofabrik:
 
 - [Île-de-France OSM](https://download.geofabrik.de/europe/france/ile-de-france.html)
-- Download *ile-de-france-latest.osm.pbf* and put it into the folder `data/osm`.
+- We recommend to use the fixed snapshot from 01/01/2022: [ile-de-france-220101.osm.pbf](https://download.geofabrik.de/europe/france/ile-de-france-220101.osm.pbf)
+- Download *ile-de-france-220101.osm.pbf* and put it into the folder `data/osm`.
 
 ### II) Public transit schedule (GTFS)
 
@@ -114,7 +115,7 @@ You should download both files :
 
 Inside the zip you'll find one data file per year, you can extract the files concerning the year you're intereseted in (let's use `2015` for this exemple). Then unzip and place them in a `data/vehicles_2015/`.
 
-Then, in the `config.yml`, you must enable the vehicle fleet generation : 
+Then, in the `config.yml`, you must enable the vehicle fleet generation :
 
 ```yaml
 # ...
@@ -131,7 +132,7 @@ You should end up, at the end of the `matsim.output` stage, with a vechicles.xml
 
 After you run the full simulation, you'll be able to use some classes defined in `eqasim-java` to analyse and compute emissions based on the MATSim outputs.
 
-for exemple : 
+for exemple :
 
 ```bash
 java -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.emissions.RunComputeEmissionsEvents --config-path config.xml --hbefa-cold-avg ./EFA_ColdStart_Vehcat_2015_Cold_Average.csv --hbefa-hot-avg ./EFA_HOT_Vehcat_2015_Hot_Average.csv --hbefa-cold-detailed ./EFA_ColdStart_Subsegm_2015_Cold_Detailed.csv --hbefa-hot-detailed ./EFA_HOT_Subsegm_2015_Hot_Detailed.csv
