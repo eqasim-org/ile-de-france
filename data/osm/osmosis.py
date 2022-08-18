@@ -34,7 +34,7 @@ def run(context, arguments = [], cwd = None):
         raise RuntimeError("Osmosis return code: %d" % return_code)
 
 def validate(context):
-    if shutil.which(context.config("osmosis_binary")) == "":
+    if shutil.which(context.config("osmosis_binary")) in ["", None]:
         raise RuntimeError("Cannot find Osmosis binary at: %s" % context.config("osmosis_binary"))
 
     if not b"0.48." in sp.check_output([
