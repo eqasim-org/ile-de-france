@@ -678,13 +678,13 @@ def create(output_path):
 
     import gzip
     os.mkdir("%s/osm" % output_path)
-    with gzip.open("%s/osm/ile-de-france-latest.osm.gz" % output_path, "wb+") as f:
+    with gzip.open("%s/osm/ile-de-france-220101.osm.gz" % output_path, "wb+") as f:
         f.write(bytes("\n".join(osm), "utf-8"))
 
     import subprocess
     subprocess.check_call([
-        "osmosis", "--read-xml", "%s/osm/ile-de-france-latest.osm.gz" % output_path,
-        "--write-pbf", "%s/osm/ile-de-france-latest.osm.pbf" % output_path
+        "osmosis", "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
+        "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
     ])
 
     # Data set: GTFS
