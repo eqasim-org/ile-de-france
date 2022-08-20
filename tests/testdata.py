@@ -221,7 +221,7 @@ def create(output_path):
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
     os.mkdir("%s/bpe_2021" % output_path)
-    db = pysal.open("%s/bpe_2021/bpe21_ensemble_xy.dbf" % output_path, "w")
+    db = pysal.open("%s/bpe_2021/bpe21_ensemble_xy.csv" % output_path, "w")
 
     db.header = columns
     db.field_spec = types
