@@ -64,8 +64,9 @@ def execute(context):
 
     # Clean IRIS and commune
     df["iris_id"] = df["DCIRIS"].str.replace("_", "")
-    df.loc[df["DEPCOM"] == df["DCIRIS"], "iris_id"] = "undefined"
-    df.loc[df["DCIRIS"].str.endswith("0000"), "iris_id"] = "undefined"
+    df["iris_id"] = df["iris_id"].str.replace("IND", "")
+
+    df.loc[df["DEPCOM"] == df["iris_id"], "iris_id"] = "undefined"
 
     df["iris_id"] = df["iris_id"].astype("category")
     df["commune_id"] = df["DEPCOM"].astype("category")
@@ -97,12 +98,15 @@ def execute(context):
         ((f_missing & ~f_undefined).sum(), len(df), 100 * (f_missing & ~f_undefined).mean()
     )))
 
-    df.update(spatial_utils.sample_from_zones(
-        context, df_iris, df[f_missing & ~f_undefined], "iris_id", random, label = "Imputing IRIS coordinates ..."))
+    if np.count_nonzero(f_missing & ~f_undefined) > 0:
+        # Impute missing coordinates for known IRIS
+        df.update(spatial_utils.sample_from_zones(
+            context, df_iris, df[f_missing & ~f_undefined], "iris_id", random, label = "Imputing IRIS coordinates ..."))
 
-    # Impute missing coordinates for unknown IRIS
-    df.update(spatial_utils.sample_from_zones(
-        context, df_municipalities, df[f_missing & f_undefined], "commune_id", random, label = "Imputing municipality coordinates ..."))
+    if np.count_nonzero(f_missing & f_undefined) > 0:
+        # Impute missing coordinates for unknown IRIS
+        df.update(spatial_utils.sample_from_zones(
+            context, df_municipalities, df[f_missing & f_undefined], "commune_id", random, label = "Imputing municipality coordinates ..."))
 
     # Consolidate
     df["imputed"] = f_missing
