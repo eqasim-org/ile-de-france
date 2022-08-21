@@ -221,15 +221,8 @@ def create(output_path):
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
     os.mkdir("%s/bpe_2021" % output_path)
-    db = pysal.open("%s/bpe_2021/bpe21_ensemble_xy.csv" % output_path, "w")
-
-    db.header = columns
-    db.field_spec = types
-
-    for index, row in df_selection[columns].iterrows():
-        db.write(row)
-
-    db.close()
+    df_selection[columns].to_csv("%s/bpe_2021/bpe21_ensemble_xy.csv" % output_path,
+        sep = ";", index = False)
 
     # Dataset: Tax data
     # Required attributes: CODGEO, D115, ..., D915
