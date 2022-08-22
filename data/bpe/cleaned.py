@@ -69,6 +69,8 @@ def execute(context):
     df.loc[df["DEPCOM"] == df["iris_id"], "iris_id"] = "undefined"
 
     df["iris_id"] = df["iris_id"].astype("category")
+    df["iris_id"] = df["iris_id"].cat.add_categories("undefined")
+
     df["commune_id"] = df["DEPCOM"].astype("category")
 
     print("Found %d/%d (%.2f%%) observations without IRIS" % (
