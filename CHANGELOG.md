@@ -2,6 +2,10 @@
 
 **Under development**
 
+- Fix: Arbitrary order of week days in merged GTFS
+- Use BPE 2021 instead of BPE 2019
+- Update configuration files for Lyon, Nantes, Corsica
+- Add a basic sample based vehicle fleet generation tailored for use with the `emissions` matsim contrib
 - Fixing socioprofessional category for Nantes and Lyon (Cerema)
 - Fix documentation and processing for Nantes GTFS
 - Add law status of the SIRENE enterprises for down-stream freight models (this requires both SIREN and SIRET data as input!)

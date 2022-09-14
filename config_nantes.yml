@@ -1,4 +1,4 @@
-## Synthetic population pipeline for Île-de-France
+## Synthetic population pipeline for Nantes
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
@@ -7,7 +7,7 @@ working_directory: cache
 # This section defines which parts of the pipeline should be run
 run:
   - synthesis.output # To create the output population in the output_path (see below)
-  #- matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
+  # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 # Here the configuraiton of the pipeline starts
 config:
@@ -15,7 +15,7 @@ config:
   processes: 4
 
   # Define whether to use ENTD or EGT as the household travel survey (HTS)
-  hts: entd
+  hts: edgt_44
 
   # Define sampling rate and random seed for the output population
   sampling_rate: 0.001
@@ -24,11 +24,14 @@ config:
   # Paths to the input data and where the output should be stored
   data_path: /path/to/my/data
   output_path: output
+  output_prefix: nantes_
 
   # Only interesting if you run the simulation
   java_memory: 14G
 
-  # Uncommented below to enable vehicle fleet generation
-  # generate_vehicles_file: True
-  # generate_vehicles_method: fleet_sample
-  # vehicles_data_year: 2015
+  # Nantes settings
+  census_path: rp_2015/FD_INDCVIZC_2015.dbf
+  regions: []
+  departments: [44]
+  gtfs_path: gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/brevibus.gtfs.zip;gtfs/gtfs-tan.zip;gtfs/lilapresquile.gtfs.zip;gtfs/loire-atlantique915785.zip;gtfs/pdl44.zip;gtfs/stran-merge.gtfs.zip
+  osm_path: osm/pays-de-la-loire-latest.osm.pbf

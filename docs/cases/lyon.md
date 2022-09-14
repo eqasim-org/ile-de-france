@@ -17,14 +17,23 @@ respective file (*FD_INDCVIZE_2015.dbf*) into the `data/rp_2015` folder.
 
 ### B) Address database (BD-TOPO)
 
-You need to download the region-specific address database. Go to [IGN Open data database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo), scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*. Click on the download link under
-*Région Auvergne-Rhône-Alpes - R 84*. Open the downloaded archive and copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo` (overriding the data for Île-de-France if you had set up that scenario before).
+You need to download the region-specific address database.
+
+- [Address database](https://geoservices.ign.fr/bdtopo)
+- Use a ftp client to download the *Région Auvergne-Rhône-Alpes - R 84* . Most browsers will not be able to download the data.
+- Open the downloaded archive and open/unpack it to to access the folder
+  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R84_2020-12-15`
+  - `BDTOPO`
+  - `1_DONNEES_LIVRAISON_2021-01-00120`
+  - `BDT_3-0_SHP_LAMB93_R84-ED2020-12-15`
+  - `ADRESSES`
+- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
 
 ### C) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
-Geofabrik provides a cut-out for the former [Rhône-Alpes](https://download.geofabrik.de/europe/france/rhone-alpes.html) region. Download the region file in *.osm.pbf* format and put the file into the
+Geofabrik provides a cut-out for the former [Rhône-Alpes](https://download.geofabrik.de/europe/france/rhone-alpes.html) region: [rhone-alpes-220101.osm.pbf](https://download.geofabrik.de/europe/france/rhone-alpes-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
 folder `data/osm`.
 
 ### D) GTFS data
@@ -143,13 +152,13 @@ department identifiers to the list.
 In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
 is used, choose the updated HTS in the config file.
 
-**Important** : when using `edgt_lyon` you **must** set the `edgt_lyon_source` to either `adisp` or `cerema`, else an error will be raised. 
+**Important** : when using `edgt_lyon` you **must** set the `edgt_lyon_source` to either `adisp` or `cerema`, else an error will be raised.
 
 ```yaml
 config:
   # ...
   hts: edgt_lyon
-  edgt_lyon_source: adisp  # adisp/cerema 
+  edgt_lyon_source: adisp  # adisp/cerema
   # ...
 ```
 
@@ -174,7 +183,7 @@ To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets
 config:
   # ...
   gtfs_path: gtfs/GTFS_TCL.ZIP;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/CAPI.GTFS.zip;gtfs/GTFS_RX.ZIP;gtfs/SEM-GTFS.zip;gtfs/stas.gtfs.zip;gtfs/VIENNE.GTFS.zip
-  osm_path: osm/rhone-alpes-latest.osm.pbf
+  osm_path: osm/rhone-alpes-220101.osm.pbf
   # ...
 ```
 

@@ -14,18 +14,27 @@ def configure(context):
 
 def execute(context):
     relevant_siren = context.stage("data.sirene.raw_siret")["siren"].unique()
+    df_siren = []
 
-    df_siren = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siren_path")), usecols = [
-            "siren", "categorieJuridiqueUniteLegale"
-        ],
-        dtype = dict(siren = int, categorieJuridiqueUniteLegale = int)
-    )
+    with context.progress(label = "Reading SIREN ...") as progress:
+        csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siren_path")), usecols = [
+                "siren", "categorieJuridiqueUniteLegale"
+            ],
+            dtype = dict(siren = int, categorieJuridiqueUniteLegale = int),
+            chunksize = 10240
+        )
 
-    df_siren = df_siren[
-        df_siren["siren"].isin(relevant_siren)
-    ]
+        for df_chunk in csv:
+            progress.update(len(df_chunk))
 
-    return df_siren
+            df_chunk = df_chunk[
+                df_chunk["siren"].isin(relevant_siren)
+            ]
+
+            if len(df_chunk) > 0:
+                df_siren.append(df_chunk)
+
+    return pd.concat(df_siren)
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("siren_path"))):

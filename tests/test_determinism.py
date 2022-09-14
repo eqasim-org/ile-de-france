@@ -54,7 +54,7 @@ def _test_determinism(index, data_path, tmpdir):
         #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
         "ile_de_france_households.xml.gz":  "cdbd6ed5b175328861f237dc58dee1ff",
         #"ile_de_france_facilities.xml.gz":  "5ad41afff9ae5c470082510b943e6778",
-        "ile_de_france_config.xml":         "3a4fd53d874984fce347eadb32442cf2"
+        "ile_de_france_config.xml":         "5ac6633bfef5a5053f10b720ffbc064a"
     }
 
     # activities.gpkg, trips.gpkg, meta.json,

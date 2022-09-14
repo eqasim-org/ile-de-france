@@ -1,13 +1,13 @@
 ## Synthetic population pipeline for Corsica
-## based on the synpp package, which is used
-## as unit tests for the eqasim-java package.
+## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
-working_directory: /home/shoerl/scenarios/cache/corsica
+working_directory: cache
 
 # This section defines which parts of the pipeline should be run
 run:
-  - matsim.output
+  - synthesis.output # To create the output population in the output_path (see below)
+  # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 # Here the configuraiton of the pipeline starts
 config:
@@ -18,23 +18,25 @@ config:
   hts: entd
 
   # Define sampling rate and random seed for the output population
-  sampling_rate: 0.01
+  sampling_rate: 0.001
   random_seed: 1234
 
   # Paths to the input data and where the output should be stored
-  data_path: /home/shoerl/scenarios/data/corsica
+  data_path: /path/to/my/data
+  output_path: output
   output_prefix: corsica_
 
   # Only interesting if you run the simulation
   java_memory: 14G
 
-  # Specific for Corsica
-  regions: [94]
+  # Corsica settings
   census_path: rp_2015/FD_INDCVIZE_2015.dbf
-  gtfs_path: gtfs/cars2a-gtfs.zip;gtfs/cars2b-gtfs.zip;gtfs/cfc-gtfs.zip
+  regions: [94]
+  gtfs_path: gtfs/corse/cars2a-gtfs.zip;gtfs/corse/cars2b-gtfs.zip;gtfs/corse/GTFS été 2021.zip
   osm_path: osm/corse-latest.osm.pbf
   matching_minimum_observations: 5
 
-  write_jar: false
-  output_path: /home/shoerl/eqasim/eqasim-java/ile_de_france/src/test/resources/corsica
-  eqasim_path: /home/shoerl/eqasim/eqasim-java/ile_de_france/target/ile_de_france-1.1.0.jar
+  # Uncomment to generate a scenario for eqasim-java unit testing
+  # write_jar: false
+  # output_path: /path/to/eqasim-java/ile_de_france/src/test/resources/corsica
+  # eqasim_path: /path/to/eqasim-java/ile_de_france/target/ile_de_france-1.1.0.jar

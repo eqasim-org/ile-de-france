@@ -220,16 +220,9 @@ def create(output_path):
     types = [("C", 10, 0), ("C", 12, 0), ("C", 12, 0), ("C", 4, 0), ("C", 5, 0), ("C", 3, 0)]
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
-    os.mkdir("%s/bpe_2019" % output_path)
-    db = pysal.open("%s/bpe_2019/bpe19_ensemble_xy.dbf" % output_path, "w")
-
-    db.header = columns
-    db.field_spec = types
-
-    for index, row in df_selection[columns].iterrows():
-        db.write(row)
-
-    db.close()
+    os.mkdir("%s/bpe_2021" % output_path)
+    df_selection[columns].to_csv("%s/bpe_2021/bpe21_ensemble_xy.csv" % output_path,
+        sep = ";", index = False)
 
     # Dataset: Tax data
     # Required attributes: CODGEO, D115, ..., D915
@@ -678,13 +671,13 @@ def create(output_path):
 
     import gzip
     os.mkdir("%s/osm" % output_path)
-    with gzip.open("%s/osm/ile-de-france-latest.osm.gz" % output_path, "wb+") as f:
+    with gzip.open("%s/osm/ile-de-france-220101.osm.gz" % output_path, "wb+") as f:
         f.write(bytes("\n".join(osm), "utf-8"))
 
     import subprocess
     subprocess.check_call([
-        "osmosis", "--read-xml", "%s/osm/ile-de-france-latest.osm.gz" % output_path,
-        "--write-pbf", "%s/osm/ile-de-france-latest.osm.pbf" % output_path
+        "osmosis", "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
+        "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
     ])
 
     # Data set: GTFS

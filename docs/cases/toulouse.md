@@ -17,15 +17,24 @@ respective file (*FD_INDCVIZD_2015.dbf*) into the `data/rp_2015` folder.
 
 ### B) Address database (BD-TOPO)
 
-You need to download the region-specific address database. Go to [IGN Open data database](https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#bd-topo), scroll down until you see *BD TOPO® Décembre 2020 Tous Thèmes par région édition Décembre 2020 format shapefile*. Click on the download link under
-*Région Occitanie - R 76*. Open the downloaded archive and copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo` (overriding the data for Île-de-France if you had set up that scenario before).
+You need to download the region-specific address database.
+
+- [Address database](https://geoservices.ign.fr/bdtopo)
+- Use a ftp client to download the *Région Occitanie - R 76* . Most browsers will not be able to download the data.
+- Open the downloaded archive and open/unpack it to to access the folder
+  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R76_2020-12-15`
+  - `BDTOPO`
+  - `1_DONNEES_LIVRAISON_2021-01-00120`
+  - `BDT_3-0_SHP_LAMB93_R76-ED2020-12-15`
+  - `ADRESSES`
+- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
 
 ### C) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
 Geofabrik does not provide a continuous cut-out for Occitanie. Instead, the
-former regions of [Midi-Pyrennées](https://download.geofabrik.de/europe/france/midi-pyrenees.html) and [Languedoc-Roussilon](https://download.geofabrik.de/europe/france/languedoc-roussillon.html) are available. Download both regions in *.osm.pbf* format and put the files into the
+former regions of [Midi-Pyrennées](https://download.geofabrik.de/europe/france/midi-pyrenees.html) and [Languedoc-Roussilon](https://download.geofabrik.de/europe/france/languedoc-roussillon.html) are available: [midi-pyrenees-220101.osm.pbf](https://download.geofabrik.de/europe/france/midi-pyrenees-220101.osm.pbf) and [languedoc-roussillon-220101.osm.pbf](https://download.geofabrik.de/europe/france/languedoc-roussillon-220101.osm.pbf). Download both regions in *.osm.pbf* format and put the files into the
 folder `data/osm`.
 
 ### D) GTFS data
@@ -116,7 +125,7 @@ To prepare the pipeline for a simulation of Toulouse, the paths to the OSM data 
 config:
   # ...
   gtfs_path: gtfs/tisseo.zip;gtfs/TAM_MMM_GTFS.zip;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/RESEAU_LR_GTFS_20200706.zip
-  osm_path: osm/midi-pyrenees-latest.osm.pbf;osm/languedoc-roussillon-latest.osm.pbf
+  osm_path: osm/midi-pyrenees-220101.osm.pbf;osm/languedoc-roussillon-220101.osm.pbf
   # ...
 ```
 

@@ -21,7 +21,8 @@ The road network in the pipeline is based on OpenStreetMap data.
 A cut-out for Île-de-France is available from Geofabrik:
 
 - [Île-de-France OSM](https://download.geofabrik.de/europe/france/ile-de-france.html)
-- Download *ile-de-france-latest.osm.pbf* and put it into the folder `data/osm`.
+- We recommend to use the fixed snapshot from 01/01/2022: [ile-de-france-220101.osm.pbf](https://download.geofabrik.de/europe/france/ile-de-france-220101.osm.pbf)
+- Download *ile-de-france-220101.osm.pbf* and put it into the folder `data/osm`.
 
 ### II) Public transit schedule (GTFS)
 
@@ -96,6 +97,55 @@ where all simulation is written.
 As of version `1.0.6` of the Île-de-France pipeline, simulations of a 5% population sample use calibrated values for the mode choice model. This means after running for 60 or more iterations, the correct mode shares and network speeds are achieved, compared to the EGT reference data.
 
 For more flexibility and advanced simulations, have a look at the MATSim
-simulation code provided at https://github.com/eqasim-org/eqasim-java. The generate
-`ile-de-france-*.jar` from this pipeline is a automatically compiled version of
+simulation code provided at https://github.com/eqasim-org/eqasim-java. The generated
+`ile-de-france-*.jar` from this pipeline is an automatically compiled version of
 this code.
+
+## <a name="section-data"></a>Using MATSim's emissions contrib
+
+You can calculate air pollution emissions using matsim by using some additional data.
+
+You must download the crit'air data from this site : https://www.statistiques.developpement-durable.gouv.fr/donnees-sur-le-parc-automobile-francais-au-1er-janvier-2021
+
+
+You should download both files :
+
+ - Données régionales des voitures particulières - 2011 à 2021 (zip, 1.79 Mo)
+ - Données communales des voitures particulières - 2011 à 2021 (zip, 130.33 Mo)
+
+Inside the zip you'll find one data file per year, you can extract the files concerning the year you're intereseted in (let's use `2015` for this exemple). Then unzip and place them in a `data/vehicles_2015/`.
+
+Then, in the `config.yml`, you must enable the vehicle fleet generation :
+
+```yaml
+# ...
+
+config:
+  generate_vehicles_file: True
+  generate_vehicles_method: fleet_sample
+  vehicles_data_year: 2015
+
+# ...
+```
+
+You should end up, at the end of the `matsim.output` stage, with a vechicles.xml file.
+
+After you run the full simulation, you'll be able to use some classes defined in `eqasim-java` to analyse and compute emissions based on the MATSim outputs.
+
+for exemple :
+
+```bash
+java -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.emissions.RunComputeEmissionsEvents --config-path config.xml --hbefa-cold-avg ./EFA_ColdStart_Vehcat_2015_Cold_Average.csv --hbefa-hot-avg ./EFA_HOT_Vehcat_2015_Hot_Average.csv --hbefa-cold-detailed ./EFA_ColdStart_Subsegm_2015_Cold_Detailed.csv --hbefa-hot-detailed ./EFA_HOT_Subsegm_2015_Hot_Detailed.csv
+```
+
+```bash
+java -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.emissions.RunExportEmissionsNetwork --config-path config.xml --time-bin-size 3600
+```
+
+```bash
+java -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.emissions.RunComputeEmissionsGrid --config-path config.xml --domain-shp-path idf_2154.shp
+```
+
+Please note that you need a copy of the HBEFA database in order to run those.
+
+For further information you can look at [eqasim-java](https://github.com/eqasim-org/eqasim-java) and [matsim-libs/contribs/emissions](https://github.com/matsim-org/matsim-libs/tree/master/contribs/emissions)

@@ -61,7 +61,7 @@ def run(context, entry_point, arguments = [], class_path = None, vm_arguments = 
         raise RuntimeError("Mode is expected to be one of 'raise', 'return_code' or 'output'")
 
 def validate(context):
-    if shutil.which(context.config("java_binary")) == "":
+    if shutil.which(context.config("java_binary")) in ["", None]:
         raise RuntimeError("Cannot find Java binary at: %s" % context.config("java_binary"))
 
     if not b"11" in sp.check_output([

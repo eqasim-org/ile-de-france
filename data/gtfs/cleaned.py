@@ -32,6 +32,14 @@ def execute(context):
     # Merge feeds
     merged_feed = gtfs.merge_feeds(feeds) if len(feeds) > 1 else feeds[0]
 
+    # Fix for pt2matsim (will be fixed after PR #173)
+    # Order of week days must be fixed
+    days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    columns = list(merged_feed["calendar"].columns)
+    for day in days: columns.remove(day)
+    columns += ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+    merged_feed["calendar"] = merged_feed["calendar"][columns]
+
     # Write feed (not as a ZIP, but as files, for pt2matsim)
     gtfs.write_feed(merged_feed, "%s/output" % context.path())
 
