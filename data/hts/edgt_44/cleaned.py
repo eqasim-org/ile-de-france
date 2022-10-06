@@ -29,6 +29,16 @@ MODES_MAP = {
 def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.edgt_44.raw")
 
+    # Select people who : 
+    # i)   Fully awnsered the questionary (PENQ = 1) 
+    # ii)  and made at least one trip (P19 = 1) 
+    # iii) or stayed at home (P19 =2)
+    # All persons with PENQ == 1 match the ii and iii conditions
+    # but code is  written to make it explicit
+    # counts :  all persons : 29496 ;  filtered persons : 20799
+    df_persons = df_persons.loc[df_persons["PENQ"] == 1]
+    df_persons = df_persons.loc[df_persons["P19"].isin(["1", "2"])]
+
     # Merge departement into households
     df_households["departement_id"] = "44"
 
