@@ -29,16 +29,6 @@ MODES_MAP = {
 def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.edgt_44.raw")
 
-    # Select people who : 
-    # i)   Fully awnsered the questionary (PENQ = 1) 
-    # ii)  and made at least one trip (P19 = 1) 
-    # iii) or stayed at home (P19 =2)
-    # All persons with PENQ == 1 match the ii and iii conditions
-    # but code is  written to make it explicit
-    # counts :  all persons : 29496 ;  filtered persons : 20799
-    df_persons = df_persons.loc[df_persons["PENQ"] == 1]
-    df_persons = df_persons.loc[df_persons["P19"].isin(["1", "2"])]
-
     # Merge departement into households
     df_households["departement_id"] = "44"
 
@@ -110,6 +100,14 @@ def execute(context):
     # Has subscription (not availabile in EDGT 44)
     df_persons["has_pt_subscription"] = False
 
+    # Survey respondents 
+    # PENQ 1 : fully awnsered the travel questionary section, having a chain or non-movers
+    # PENQ 2 : nonrespondent of travel questionary section
+    df_persons.loc[df_persons["PENQ"] == 1, "travel_respondent"] = True
+    df_persons.loc[df_persons["PENQ"] == 2, "travel_respondent"] = False
+
+    assert np.count_nonzero(df_persons["travel_respondent"].isna()) == 0
+
     # Trip purpose
     df_trips["following_purpose"] = "invalid"
     df_trips["preceding_purpose"] = "invalid"
@@ -161,7 +159,11 @@ def execute(context):
 
     # Chain length
     df_count = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "number_of_trips")
+    # People with at least one trip (number_of_trips > 0)
     df_persons = pd.merge(df_persons, df_count, on = "person_id", how = "left")
+    # People that awnsered the travel questionary section but stayed at home (number_of_trips = 0)
+    df_persons.loc[(df_persons["travel_respondent"] == True) & (df_persons["number_of_trips"].isna()), "number_of_trips"]  = 0
+    # Nonrespondent of travel questionary section (number_of_trips = -1)
     df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(int)
 
     # Passenger attribute
