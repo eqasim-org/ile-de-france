@@ -33,7 +33,7 @@ You need to download the region-specific address database.
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
-Geofabrik provides a cut-out for the [Corsica](https://download.geofabrik.de/europe/france/corse.html) region. Download the region file in *.osm.pbf* format and put the file into the
+Geofabrik provides a cut-out for the [Corsica](https://download.geofabrik.de/europe/france/corse.html) region: [corse-220101.osm.pbf](https://download.geofabrik.de/europe/france/corse-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
 folder `data/osm`.
 
 ### D) GTFS data
@@ -56,7 +56,7 @@ Afterwards, you should have the following additional files in your directory str
 
 *Only for simulation:*
 
-- `osm/corse-latest.osm.pbf`
+- `osm/corse-220101.osm.pbf`
 - `gtfs/GTFS été 2021.zip`
 - `gtfs/cars2a-gtfs.zip`
 - `gtfs/cars2b-gtfs.zip`
@@ -121,7 +121,7 @@ To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets
 config:
   # ...
   gtfs_path: gtfs/cars2a-gtfs.zip;gtfs/cars2b-gtfs.zip;gtfs/GTFS été 2021.zip
-  osm_path: osm/corse-latest.osm.pbf
+  osm_path: osm/corse-220101.osm.pbf
   # ...
 ```
 

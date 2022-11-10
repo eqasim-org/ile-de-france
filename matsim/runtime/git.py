@@ -28,7 +28,7 @@ def run(context, arguments = [], cwd = None, catch_output = False):
             raise RuntimeError("Git return code: %d" % return_code)
 
 def validate(context):
-    if shutil.which(context.config("git_binary")) == "":
+    if shutil.which(context.config("git_binary")) in ["", None]:
         raise RuntimeError("Cannot find git binary at: %s" % context.config("git_binary"))
 
     if not b"2." in sp.check_output([

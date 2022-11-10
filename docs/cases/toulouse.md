@@ -34,7 +34,7 @@ You need to download the region-specific address database.
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
 Geofabrik does not provide a continuous cut-out for Occitanie. Instead, the
-former regions of [Midi-Pyrennées](https://download.geofabrik.de/europe/france/midi-pyrenees.html) and [Languedoc-Roussilon](https://download.geofabrik.de/europe/france/languedoc-roussillon.html) are available. Download both regions in *.osm.pbf* format and put the files into the
+former regions of [Midi-Pyrennées](https://download.geofabrik.de/europe/france/midi-pyrenees.html) and [Languedoc-Roussilon](https://download.geofabrik.de/europe/france/languedoc-roussillon.html) are available: [midi-pyrenees-220101.osm.pbf](https://download.geofabrik.de/europe/france/midi-pyrenees-220101.osm.pbf) and [languedoc-roussillon-220101.osm.pbf](https://download.geofabrik.de/europe/france/languedoc-roussillon-220101.osm.pbf). Download both regions in *.osm.pbf* format and put the files into the
 folder `data/osm`.
 
 ### D) GTFS data
@@ -125,7 +125,7 @@ To prepare the pipeline for a simulation of Toulouse, the paths to the OSM data 
 config:
   # ...
   gtfs_path: gtfs/tisseo.zip;gtfs/TAM_MMM_GTFS.zip;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/RESEAU_LR_GTFS_20200706.zip
-  osm_path: osm/midi-pyrenees-latest.osm.pbf;osm/languedoc-roussillon-latest.osm.pbf
+  osm_path: osm/midi-pyrenees-220101.osm.pbf;osm/languedoc-roussillon-220101.osm.pbf
   # ...
 ```
 
