@@ -132,7 +132,7 @@ def write_feed(feed, path):
 
         for slot in REQUIRED_SLOTS + OPTIONAL_SLOTS:
             if slot in feed:
-                with open("%s/%s.txt" % (path, slot), "w+") as f:
+                with open("%s/%s.txt" % (path, slot), "w+", encoding="utf-8") as f:
                     print("  Writing %s.txt ..." % slot)
                     feed[slot].to_csv(f, index = None, line_terminator='\n')
 

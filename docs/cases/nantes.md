@@ -33,7 +33,7 @@ You need to download the region-specific address database.
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
-Geofabrik provides a cut-out for the [Pays de la Loire](https://download.geofabrik.de/europe/france/pays-de-la-loire.html) region. Download the region file in *.osm.pbf* format and put the file into the
+Geofabrik provides a cut-out for the [Pays de la Loire](https://download.geofabrik.de/europe/france/pays-de-la-loire.html) region: [pays-de-la-loire-220101.osm.pbf](https://download.geofabrik.de/europe/france/pays-de-la-loire-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
 folder `data/osm`.
 
 ### D) GTFS data
@@ -146,7 +146,7 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 config:
   # ...
   gtfs_path: gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/brevibus.gtfs.zip;gtfs/gtfs-tan.zip;gtfs/lilapresquile.gtfs.zip;gtfs/loire-atlantique915785.zip;gtfs/pdl44.zip;gtfs/stran-merge.gtfs.zip
-  osm_path: osm/pays-de-la-loire-latest.osm.pbf
+  osm_path: osm/pays-de-la-loire-220101.osm.pbf
   # ...
 ```
 

@@ -37,7 +37,7 @@ def run(context, arguments = [], cwd = None):
         raise RuntimeError("Maven return code: %d" % return_code)
 
 def validate(context):
-    if shutil.which(context.config("maven_binary")) == "":
+    if shutil.which(context.config("maven_binary")) in ["", None]:
         raise RuntimeError("Cannot find Maven binary at: %s" % context.config("maven_binary"))
 
     if not b"3." in sp.check_output([

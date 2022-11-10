@@ -100,6 +100,14 @@ def execute(context):
     # Has subscription (not availabile in EDGT 44)
     df_persons["has_pt_subscription"] = False
 
+    # Survey respondents 
+    # PENQ 1 : fully awnsered the travel questionary section, having a chain or non-movers
+    # PENQ 2 : nonrespondent of travel questionary section
+    df_persons.loc[df_persons["PENQ"] == 1, "travel_respondent"] = True
+    df_persons.loc[df_persons["PENQ"] == 2, "travel_respondent"] = False
+
+    assert np.count_nonzero(df_persons["travel_respondent"].isna()) == 0
+
     # Trip purpose
     df_trips["following_purpose"] = "invalid"
     df_trips["preceding_purpose"] = "invalid"
@@ -151,7 +159,11 @@ def execute(context):
 
     # Chain length
     df_count = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "number_of_trips")
+    # People with at least one trip (number_of_trips > 0)
     df_persons = pd.merge(df_persons, df_count, on = "person_id", how = "left")
+    # People that awnsered the travel questionary section but stayed at home (number_of_trips = 0)
+    df_persons.loc[(df_persons["travel_respondent"] == True) & (df_persons["number_of_trips"].isna()), "number_of_trips"]  = 0
+    # Nonrespondent of travel questionary section (number_of_trips = -1)
     df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(int)
 
     # Passenger attribute
