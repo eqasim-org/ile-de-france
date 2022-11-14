@@ -2,6 +2,9 @@
 
 **Under development**
 
+- Fix: Properly treat non-movers in EDGT 44
+- Fix: Avoid duplicate persons in same households
+- Add option to export detailed link geometries
 - Fix: Arbitrary order of week days in merged GTFS
 - Use BPE 2021 instead of BPE 2019
 - Update configuration files for Lyon, Nantes, Corsica
