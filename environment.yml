@@ -16,6 +16,7 @@ dependencies:
   - tqdm=4.46.0
   - pytables=3.6.1
   - xlrd=1.2.0
+  - openpyxl=3.0.9
   - pip=20.0.2
 
   - pip:
