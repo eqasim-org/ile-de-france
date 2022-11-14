@@ -54,10 +54,8 @@ def execute(context):
         with open("%s/config.xml" % context.path(), "w+") as f_write:
             f_write.write(content)
 
-    # force en_US local is needed for the detailed_geometry file, see https://github.com/matsim-org/pt2matsim/pull/168
-    # fixed in pt2matsim version 22.4
     pt2matsim.run(context, "org.matsim.pt2matsim.run.Osm2MultimodalNetwork", 
-        arguments=["config.xml"] #, vm_arguments=["-Duser.language=en", "-Duser.region=US", "-Duser.country=US", "-Duser.variant=US"]
+        arguments=["config.xml"]
     )
 
     assert(os.path.exists("%s/network.xml.gz" % context.path()))
