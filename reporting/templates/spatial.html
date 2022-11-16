@@ -1,0 +1,67 @@
+<h1>Spatial extent</h1>
+
+<p>The generated scenario contains <em>{{ spatial.department_count }}</em> departments.</p>
+
+<div id="departments-spatial"></div>
+<script>
+var spatial = {{ spatial.departments|safe }};
+
+var specification = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 600,
+    "height": 300,
+    "layer": [{
+      "data": {
+        "values": spatial,
+        "format": {
+          "type": "topojson",
+          "feature": "data"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "lightgray",
+        "stroke": "white"
+      },
+      "encoding": {
+        "tooltip": {"field": "properties.departement_id", "type": "nominal"},
+      }
+    }]
+  }
+
+vegaEmbed("#departments-spatial", specification);
+</script>
+
+<p>They contain <em>{{ spatial.municipality_count }}</em> municipalities.</p>
+
+<div class="vega" id="municipalities-spatial"></div>
+<script>
+var spatial = {{ spatial.municipalities|safe }};
+
+var specification = {
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "width": 600,
+    "height": 300,
+    "layer": [{
+      "data": {
+        "values": spatial,
+        "format": {
+          "type": "topojson",
+          "feature": "data"
+        }
+      },
+      "mark": {
+        "type": "geoshape",
+        "fill": "lightgray",
+        "stroke": "white"
+      },
+      "encoding": {
+        "tooltip": {"field": "properties.municipality_id", "type": "nominal"},
+      }
+    }]
+  }
+
+vegaEmbed("#municipalities-spatial", specification);
+</script>
+
+<p>Segmented into <em>{{ spatial.iris_count }}</em> IRIS.</p>

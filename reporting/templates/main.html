@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Synthetic travel demand</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.21.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.20.2"></script>
+    <style>
+      #content {
+        width: 1000px;
+        margin: auto;
+      }
+
+      html {
+        font-family: sans-serif;
+        font-size: 10pt;
+      }
+
+      em {
+        font-weight: bold;
+        font-style: normal;
+        color: rgb(255, 0, 0);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content">
+      {% include "spatial.html" %}
+    </div>
+  </body>
+</html>
