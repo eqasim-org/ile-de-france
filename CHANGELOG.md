@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fix: Handle commas in coordinates in BPE
 - Fix: Properly treat non-movers in EDGT 44
 - Fix: Avoid duplicate persons in same households
 - Add option to export detailed link geometries
