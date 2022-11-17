@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fix: Make types consistent for mode recognition in ENTD
 - Fix: Properly treat non-movers in EDGT 44
 - Fix: Avoid duplicate persons in same households
 - Add option to export detailed link geometries
