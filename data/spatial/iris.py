@@ -7,17 +7,15 @@ import os
 Loads the IRIS zoning system.
 """
 
-YEAR = 2017
-SOURCE = "iris_%d/CONTOURS-IRIS.shp" % YEAR
-
 def configure(context):
     context.config("data_path")
+    context.config("iris_path", "iris_2017/CONTOURS-IRIS.shp")
     context.stage("data.spatial.codes")
 
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
 
-    df_iris = gpd.read_file("%s/%s" % (context.config("data_path"), SOURCE))[[
+    df_iris = gpd.read_file("%s/%s" % (context.config("data_path"), context.config("iris_path")))[[
         "CODE_IRIS", "INSEE_COM", "geometry"
     ]].rename(columns = {
         "CODE_IRIS": "iris_id",
@@ -41,7 +39,7 @@ def execute(context):
     return df_iris
 
 def validate(context):
-    if not os.path.exists("%s/%s" % (context.config("data_path"), SOURCE)):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("iris_path"))):
         raise RuntimeError("IRIS data is not available")
 
-    return os.path.getsize("%s/%s" % (context.config("data_path"), SOURCE))
+    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("iris_path")))
