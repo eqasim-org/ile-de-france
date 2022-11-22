@@ -11,6 +11,8 @@ Loads raw OD data from French census data.
 def configure(context):
     context.stage("data.spatial.codes")
     context.config("data_path")
+    context.config("od_pro_path", "rp_2015/FD_MOBPRO_2015.dbf")
+    context.config("od_sco_path", "rp_2015/FD_MOBSCO_2015.dbf")
 
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
@@ -18,7 +20,7 @@ def execute(context):
 
     # First, load work
 
-    table = simpledbf.Dbf5("%s/rp_2015/FD_MOBPRO_2015.dbf" % context.config("data_path"))
+    table = simpledbf.Dbf5("%s/%s" % (context.config("data_path"), context.config("od_pro_path")))
     records = []
 
     with context.progress(label = "Reading work flows ...", total = table.numrec) as progress:
@@ -39,7 +41,7 @@ def execute(context):
 
     # Second, load education
 
-    table = simpledbf.Dbf5("%s/rp_2015/FD_MOBSCO_2015.dbf" % context.config("data_path"))
+    table = simpledbf.Dbf5("%s/%s" % (context.config("data_path"), context.config("od_sco_path")))
     records = []
 
     with context.progress(label = "Reading education flows ...", total = 4782736) as progress:
@@ -59,13 +61,13 @@ def execute(context):
     pd.concat(records).to_hdf("%s/education.hdf" % context.cache_path, "movements")
 
 def validate(context):
-    if not os.path.exists("%s/rp_2015/FD_MOBPRO_2015.dbf" % context.config("data_path")):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("od_pro_path"))):
         raise RuntimeError("RP MOBPRO data is not available")
 
-    if not os.path.exists("%s/rp_2015/FD_MOBSCO_2015.dbf" % context.config("data_path")):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("od_sco_path"))):
         raise RuntimeError("RP MOBSCO data is not available")
 
     return [
-        os.path.getsize("%s/rp_2015/FD_MOBPRO_2015.dbf" % context.config("data_path")),
-        os.path.getsize("%s/rp_2015/FD_MOBSCO_2015.dbf" % context.config("data_path"))
+        os.path.getsize("%s/%s" % (context.config("data_path"), context.config("od_pro_path"))),
+        os.path.getsize("%s/%s" % (context.config("data_path"), context.config("od_sco_path")))
     ]

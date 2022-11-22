@@ -8,21 +8,26 @@ Loads the regional aggregated income distribution.
 
 def configure(context):
     context.config("data_path")
+    context.config("income_reg_path", "filosofi_2015/FILO_DISP_REG.xls")
+    context.config("income_year", 15)
 
 def execute(context):
     df = pd.read_excel(
-        "%s/filosofi_2015/FILO_DISP_REG.xls" % context.config("data_path"),
+        "%s/%s" % (context.config("data_path"), context.config("income_reg_path")),
         sheet_name = "ENSEMBLE", skiprows = 5
     )
 
-    values = df[df["CODGEO"] == 11][[
-        "D115", "D215", "D315", "D415", "Q215", "D615", "D715", "D815", "D915"
-    ]].values[0]
+    values = df[df["CODGEO"] == 11][
+        [
+            i + str(context.config("income_year"))
+            for i in ["D1", "D2", "D3", "D4", "Q2", "D6", "D7", "D8", "D9"]
+        ]
+    ].values[0]
 
     return values
 
 def validate(context):
-    if not os.path.exists("%s/filosofi_2015/FILO_DISP_REG.xls" % context.config("data_path")):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("income_reg_path"))):
         raise RuntimeError("Filosofi data is not available")
 
-    return os.path.getsize("%s/filosofi_2015/FILO_DISP_REG.xls" % context.config("data_path"))
+    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("income_reg_path")))
