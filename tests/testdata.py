@@ -617,7 +617,7 @@ def create(output_path):
     df_sirene.to_csv("%s/sirene/StockEtablissement_utf8.zip" % output_path, index = False)
 
     df_sirene = df_sirene[["siren"]].copy()
-    df_sirene["categorieJuridiqueUniteLegale"] = 1000
+    df_sirene["categorieJuridiqueUniteLegale"] = "1000"
     df_sirene.to_csv("%s/sirene/StockUniteLegale_utf8.zip" % output_path, index = False)
 
     # Data set: OSM
