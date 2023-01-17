@@ -20,7 +20,7 @@ def execute(context):
         csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siren_path")), usecols = [
                 "siren", "categorieJuridiqueUniteLegale"
             ],
-            dtype = dict(siren = int, categorieJuridiqueUniteLegale = int),
+            dtype = dict(siren = int, categorieJuridiqueUniteLegale = str),
             chunksize = 10240
         )
 
