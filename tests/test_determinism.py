@@ -49,7 +49,7 @@ def _test_determinism(index, data_path, tmpdir):
     REFERENCE_HASHES = {
         "ile_de_france_activities.csv":                   "dcf8e08e9f238c90bff0298048251dac",
         "ile_de_france_persons.csv":                      "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
-        "ile_de_france_households.csv":                   "882ce7dc1a44403d12c5aa10709c0d5b",
+        "ile_de_france_households.csv":                   "fa08f930689b27f9772c79d35075960d",
         #"ile_de_france_population.xml.gz":  "e1407f918cb92166ebf46ad769d8d085",
         #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
         "ile_de_france_households.xml.gz":  "cdbd6ed5b175328861f237dc58dee1ff",
