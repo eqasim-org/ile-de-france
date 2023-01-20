@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 
 """
@@ -18,10 +19,8 @@ def execute(context):
 
     if scenario == "none":
         return df_census
-    
-    # Load scenario data
-    df_census = df_census.rename(columns = { "weight": "base_weight" })
 
+    # Load scenario data
     df_scenario = pd.read_excel(
         "%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")),
         sheet_name="Weights")
@@ -33,19 +32,42 @@ def execute(context):
     })
     assert len(df_scenario) > 0
 
-    # Establish inflation / deflation factor per persona dependent on scenario
-    df_shares = df_census.groupby("persona")["base_weight"].sum().reset_index()
-    df_shares["base_share"] = df_shares["base_weight"] / df_shares["base_weight"].sum()
-    df_shares = pd.merge(df_shares, df_scenario, on = "persona")
+    # Perform weighting
+    df_households = df_census.groupby(["household_id", "persona"]).size().reset_index(name = "members")
+    df_households = pd.merge(df_households, df_census[["household_id", "weight"]].drop_duplicates(
+        "household_id", keep = "first"), on = "household_id")
 
-    df_shares["scenario_factor"] = df_shares["scenario_share"] / df_shares["base_share"]
+    threshold = 1e-6
+    print("Weighting households for personas ...")
 
-    # Modify the population weights
-    df_census = pd.merge(df_census, df_shares[["persona", "scenario_factor"]], on = "persona")
-    df_census["weight"] = df_census["base_weight"] * df_census["scenario_factor"]
+    for iteration in range(0, 100):
+        differences = []
 
-    # Cleanup
-    df_census = df_census.drop(columns = ["base_weight", "scenario_factor"])
+        for __, row in df_scenario.iterrows():
+            f_persona = df_households["persona"] == row["persona"]
+            df_selection = df_households[f_persona]
+
+            total_count = np.sum(df_households["members"] * df_households["weight"])
+            persona_count = np.sum(df_selection["members"] * df_selection["weight"])
+
+            current_weight = persona_count / total_count
+            target_weight = row["scenario_share"]
+            differences.append(current_weight - target_weight)
+
+            f_household = df_households["household_id"].isin(df_selection["household_id"])
+            df_households.loc[f_household, "weight"] *= target_weight / current_weight
+
+        mismatch = np.sum(np.abs(differences))
+        print("  Mismatch after iteration {}:".format(iteration), mismatch)
+
+        if mismatch < threshold:
+            break
+
+    # Re-apply weights
+    df_census = df_census.drop(columns = "weight")
+    df_census = pd.merge(df_census, df_households[[
+         "household_id", "weight"]].drop_duplicates("household_id"), on = "household_id")
+
     return df_census
 
 def validate(context):
