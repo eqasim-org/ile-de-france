@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import os
 
@@ -8,8 +7,8 @@ Loads the regional aggregated income distribution.
 
 def configure(context):
     context.config("data_path")
-    context.config("income_reg_path", "filosofi_2015/FILO_DISP_REG.xls")
-    context.config("income_year", 15)
+    context.config("income_reg_path", "filosofi_2019/FILO2019_DISP_REG.xlsx")
+    context.config("income_year", 19)
 
 def execute(context):
     df = pd.read_excel(

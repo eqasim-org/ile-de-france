@@ -1,5 +1,3 @@
-import simpledbf
-from tqdm import tqdm
 import pandas as pd
 import os
 
@@ -10,7 +8,6 @@ This stage loads the raw data from the French service registry.
 def configure(context):
     context.config("data_path")
     context.config("bpe_path", "bpe_2021/bpe21_ensemble_xy.csv")
-
     context.stage("data.spatial.codes")
 
 def execute(context):
@@ -40,6 +37,6 @@ def execute(context):
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("bpe_path"))):
-        raise RuntimeError("BPE 2021 data is not available")
+        raise RuntimeError("BPE data is not available")
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("bpe_path")))

@@ -7,43 +7,43 @@
 
 tests = [
     {
-        "name": "Census 2015",
+        "name": "Census 2019",
         "urls": [
-            "https://www.insee.fr/fr/statistiques/3625223",
-            "https://www.insee.fr/fr/statistiques/fichier/3625223/RP2015_INDCVIZA_dbf.zip",
-            "https://www.insee.fr/fr/statistiques/fichier/3625223/RP2015_INDCVIZE_dbf.zip",
-            "https://www.insee.fr/fr/statistiques/fichier/3625223/RP2015_INDCVIZD_dbf.zip"
+            "https://www.insee.fr/fr/statistiques/6544333",
+            "https://www.insee.fr/fr/statistiques/fichier/6544333/RP2019_INDCVIZA_csv.zip",
+            "https://www.insee.fr/fr/statistiques/fichier/6544333/RP2019_INDCVIZD_csv.zip",
+            "https://www.insee.fr/fr/statistiques/fichier/6544333/RP2019_INDCVIZE_csv.zip"
         ]
     },
     {
-        "name": "OD Matrices 2015",
+        "name": "OD Matrices 2019",
         "urls": [
-            "https://www.insee.fr/fr/statistiques/3566008",
-            "https://www.insee.fr/fr/statistiques/3565982",
-            "https://www.insee.fr/fr/statistiques/fichier/3566008/rp2015_mobpro_dbase.zip",
-            "https://www.insee.fr/fr/statistiques/fichier/3565982/rp2015_mobsco_dbase.zip"
+            "https://www.insee.fr/fr/statistiques/6456056",
+            "https://www.insee.fr/fr/statistiques/6456052",
+            "https://www.insee.fr/fr/statistiques/fichier/6456056/RP2019_mobpro_csv.zip",
+            "https://www.insee.fr/fr/statistiques/fichier/6456052/RP2019_mobsco_csv.zip"
         ]
     },
     {
-        "name": "Population totals 2015",
+        "name": "Population totals 2019",
         "urls": [
-            "https://www.insee.fr/fr/statistiques/3627376",
-            "https://www.insee.fr/fr/statistiques/fichier/3627376/base-ic-evol-struct-pop-2015.zip"
+            "https://www.insee.fr/fr/statistiques/6543200",
+            "https://www.insee.fr/fr/statistiques/fichier/6543200/base-ic-evol-struct-pop-2019_csv.zip"
         ]
     },
     {
-        "name": "Filosofi 2015",
+        "name": "Filosofi 2019",
         "urls": [
-            "https://insee.fr/fr/statistiques/3560118",
-            "https://www.insee.fr/fr/statistiques/fichier/3560118/indic-struct-distrib-revenu-2015-COMMUNES.zip",
-            "https://www.insee.fr/fr/statistiques/fichier/3560118/indic-struct-distrib-revenu-2015-SUPRA.zip"
+            "https://www.insee.fr/fr/statistiques/6036907",
+            "https://www.insee.fr/fr/statistiques/fichier/6036907/indic-struct-distrib-revenu-2019-COMMUNES_csv.zip",
+            "https://www.insee.fr/fr/statistiques/fichier/6036907/indic-struct-distrib-revenu-2019-SUPRA_csv.zip"
         ]
     },
     {
-        "name": "BPE 2019",
+        "name": "BPE 2021",
         "urls": [
             "https://www.insee.fr/fr/statistiques/3568638",
-            "https://www.insee.fr/fr/statistiques/fichier/3568638/bpe19_ensemble_xy_dbase.zip"
+            "https://www.insee.fr/fr/statistiques/fichier/3568638/bpe21_ensemble_xy_csv.zip"
         ]
     },
     {
@@ -59,35 +59,47 @@ tests = [
         ]
     },
     {
-        "name": "IRIS 2017",
+        "name": "IRIS 2021",
         "urls": [
-            "https://geoservices.ign.fr/documentation/diffusion/telechargement-donnees-libres.html#contoursiris",
-            "https://drive.google.com/file/d/1lv3LkxZMJj_W0pqZ2rOl6oepZ4ogtkbh/view?usp=sharing"
-            # Temporary provided in GDrive
+            "https://geoservices.ign.fr/contoursiris",
+            "https://wxs.ign.fr/1yhlj2ehpqf3q6dt6a2y7b64/telechargement/inspire/CONTOURS-IRIS-PACK_2021-01$CONTOURS-IRIS_2-1__SHP__FRA_2021-01-01/file/CONTOURS-IRIS_2-1__SHP__FRA_2021-01-01.7z"
         ]
     },
     {
-        "name": "Zoning 2017",
+        "name": "Zoning 2021",
         "urls": [
             "https://www.insee.fr/fr/information/2017499",
-            "https://www.insee.fr/fr/statistiques/fichier/2017499/reference_IRIS_geo2017.zip"
+            "https://www.insee.fr/fr/statistiques/fichier/2017499/reference_IRIS_geo2021.zip"
         ]
     },
     {
         "name": "SIRENE",
         "urls": [
-            "https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/",
-            "https://www.data.gouv.fr/fr/datasets/r/9e26138d-7938-4c1e-971b-d307489f12db"
+            "https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/"
+        ]
+    },
+    
+    {
+        "name": "BAN",
+        "urls": [
+            "https://adresse.data.gouv.fr/donnees-nationales",
+            "https://adresse.data.gouv.fr/data/ban/adresses/latest/csv"
         ]
     },
     {
-        "name": "BD-TOPO",
+        "name": "SIRET géolocalisé",
         "urls": [
-            "ftp://BDTOPO_V3_NL_ext:Ohp3quaz2aideel4@ftp3.ign.fr/BDTOPO_3-0_2020-12-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_2020-12-15.7z",
-            "ftp://BDTOPO_V3_NL_ext:Ohp3quaz2aideel4@ftp3.ign.fr/BDTOPO_3-0_2020-12-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R76_2020-12-15.7z",
-            "ftp://BDTOPO_V3_NL_ext:Ohp3quaz2aideel4@ftp3.ign.fr/BDTOPO_3-0_2020-12-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R84_2020-12-15.7z"
+            "https://adresse.data.gouv.fr/donnees-nationales"
         ]
     },
+    # {
+    #     "name": "BD-TOPO",
+    #     "urls": [
+    #         "ftp://BDTOPO_V3_NL_ext:Ohp3quaz2aideel4@ftp3.ign.fr/BDTOPO_3-0_2020-12-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_2020-12-15.7z",
+    #         "ftp://BDTOPO_V3_NL_ext:Ohp3quaz2aideel4@ftp3.ign.fr/BDTOPO_3-0_2020-12-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R76_2020-12-15.7z",
+    #         "ftp://BDTOPO_V3_NL_ext:Ohp3quaz2aideel4@ftp3.ign.fr/BDTOPO_3-0_2020-12-15/BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R84_2020-12-15.7z"
+    #     ]
+    # },
     {
         "name": "OSM",
         "urls": [

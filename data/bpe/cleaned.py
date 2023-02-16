@@ -1,6 +1,4 @@
-import pandas as pd
 import numpy as np
-
 import shapely.geometry as geo
 import data.spatial.utils as spatial_utils
 

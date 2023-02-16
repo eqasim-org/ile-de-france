@@ -1,6 +1,5 @@
-import pandas as pd
 import os
-import numpy as np
+import pandas as pd
 
 """
 This stage loads the raw data from the French enterprise registry.
@@ -16,11 +15,11 @@ def execute(context):
     relevant_siren = context.stage("data.sirene.raw_siret")["siren"].unique()
     df_siren = []
 
-    with context.progress(label = "Reading SIREN ...") as progress:
+    with context.progress(label = "Reading SIREN...") as progress:
         csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siren_path")), usecols = [
                 "siren", "categorieJuridiqueUniteLegale"
             ],
-            dtype = dict(siren = int, categorieJuridiqueUniteLegale = str),
+            dtype = dict(siren = "int32", categorieJuridiqueUniteLegale = str),
             chunksize = 10240
         )
 

@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from sklearn.neighbors import KDTree
 import os
 
@@ -14,8 +13,8 @@ Loads and prepares income distributions by municipality:
 def configure(context):
     context.config("data_path")
     context.stage("data.spatial.municipalities")
-    context.config("income_com_path", "filosofi_2015/FILO_DISP_COM.xls")
-    context.config("income_year", 15)
+    context.config("income_com_path", "filosofi_2019/FILO2019_DISP_COM.xlsx")
+    context.config("income_year", 19)
 
 def execute(context):
     # Load income distribution

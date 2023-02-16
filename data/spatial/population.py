@@ -1,6 +1,5 @@
-import numpy as np
-import pandas as pd
 import os
+import pandas as pd
 
 """
 Loads aggregate population data.
@@ -9,8 +8,8 @@ Loads aggregate population data.
 def configure(context):
     context.config("data_path")
     context.stage("data.spatial.codes")
-    context.config("population_path", "rp_2015/base-ic-evol-struct-pop-2015.xls")
-    context.config("population_year", 15)
+    context.config("population_path", "rp_2019/base-ic-evol-struct-pop-2019.xlsx")
+    context.config("population_year", 10)
 
 def execute(context):
     year = str(context.config("population_year"))
@@ -44,3 +43,4 @@ def validate(context):
         raise RuntimeError("Aggregated census data is not available")
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("population_path")))
+     

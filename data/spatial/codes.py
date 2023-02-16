@@ -1,6 +1,5 @@
-import numpy as np
-import pandas as pd
 import os
+import pandas as pd
 
 """
 This stages loads a file containing all spatial codes in France and how
@@ -13,7 +12,7 @@ def configure(context):
 
     context.config("regions", [11])
     context.config("departments", [])
-    context.config("codes_path", "codes_2017/reference_IRIS_geo2017.xls")
+    context.config("codes_path", "codes_2021/reference_IRIS_geo2021.xlsx")
 
 def execute(context):
     # Load IRIS registry

@@ -1,6 +1,5 @@
-import pandas as pd
 import os
-import numpy as np
+import pandas as pd
 
 """
 This stage loads the raw data from the French enterprise registry.
@@ -19,15 +18,16 @@ def execute(context):
 
     df_siret = []
 
-    with context.progress(label = "Reading SIRET ...") as progress:
+    with context.progress(label = "Reading SIRET...") as progress:
         csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siret_path")), usecols = [
                 "siren", "siret", "codeCommuneEtablissement", "activitePrincipaleEtablissement",
                 "trancheEffectifsEtablissement", "libelleVoieEtablissement", "numeroVoieEtablissement",
                 "typeVoieEtablissement", "etatAdministratifEtablissement"
             ],
-            dtype = dict(siren = int, siret = int, codeCommuneEtablissement = str, trancheEffectifsEtablissement = str, typeVoieEtablissement = str),
+            dtype = dict(siren = "int32", siret = "int64", codeCommuneEtablissement = str, trancheEffectifsEtablissement = str, typeVoieEtablissement = str),
             chunksize = 10240
         )
+
 
         for df_chunk in csv:
             progress.update(len(df_chunk))
@@ -42,6 +42,7 @@ def execute(context):
 
             if len(df_chunk) > 0:
                 df_siret.append(df_chunk)
+
 
     return pd.concat(df_siret)
 

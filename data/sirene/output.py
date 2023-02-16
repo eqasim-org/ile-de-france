@@ -1,9 +1,3 @@
-import pandas as pd
-import Levenshtein
-import tqdm
-import numpy as np
-import geopandas as gpd
-
 """
 Often, we need localized SIRENE data in losely related projects. This stage
 makes it easy to extract the data set from the pipeline.

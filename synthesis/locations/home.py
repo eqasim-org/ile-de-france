@@ -1,23 +1,20 @@
 import pandas as pd
-import Levenshtein
-import tqdm
 import numpy as np
 import geopandas as gpd
 
 """
 This stage provides a list of home places that serve as potential locations for
-home activities. They are derived from the BDTOPO address database.
+home activities. They are derived from the BAN address database.
 
 As home locations are assigned by IRIS, we re-assign the IRIS code here for
 each address coordinate. Additionally, we create fake locations in IRIS that
-are requested by the population, but which have no actual address. TODO: The
-reason for that may be that the BDTOPO data and the used zoning system are not
-in line with each other (i.e. communes have been merged, IRIS have been re-arranged
-, etc.)
+are requested by the population, but which have no actual address. TODO: Switch
+back from BAN to BD TOPO BATI and filter on "logements" > 0 to keep only residential
+buildings
 """
 
 def configure(context):
-    context.stage("data.bdtopo.cleaned")
+    context.stage("data.ban.raw")
     context.stage("data.spatial.iris")
 
 def execute(context):
@@ -26,7 +23,7 @@ def execute(context):
     required_iris = set(df_iris["iris_id"].unique())
 
     # Load all addresses and add IRIS information
-    df_addresses = context.stage("data.bdtopo.cleaned")[["geometry"]]
+    df_addresses = context.stage("data.ban.raw")[["geometry"]]
 
     print("Imputing IRIS into addresses ...")
     df_addresses = gpd.sjoin(df_addresses,
@@ -39,7 +36,7 @@ def execute(context):
     # Add fake homes for IRIS without addresses
     missing_iris = required_iris - set(df_addresses["iris_id"].unique())
 
-    print("Adding homes at the centroid of %d/%d IRIS without BD-TOPO observations" % (
+    print("Adding homes at the centroid of %d/%d IRIS without BAN observations" % (
         len(missing_iris), len(required_iris)))
 
     df_added = []
