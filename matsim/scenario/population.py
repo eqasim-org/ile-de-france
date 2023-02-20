@@ -56,7 +56,7 @@ def add_person(writer, person, activities, trips):
     writer.add_attribute("employed", "java.lang.String", person[PERSON_FIELDS.index("employed")])
     writer.add_attribute("sex", "java.lang.String", person[PERSON_FIELDS.index("sex")][0])
 
-    writer.add_attribute("persona", "java.lang.Integer", person[PERSON_FIELDS.index("persona")][0])
+    writer.add_attribute("persona", "java.lang.Integer", person[PERSON_FIELDS.index("persona")])
 
     writer.end_attributes()
 
