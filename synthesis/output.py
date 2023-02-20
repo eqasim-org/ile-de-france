@@ -53,7 +53,7 @@ def execute(context):
         "person_id", "household_id",
         "age", "employed", "sex", "socioprofessional_class",
         "has_driving_license", "has_pt_subscription",
-        "census_person_id", "hts_id"
+        "census_person_id", "hts_id", "persona"
     ]]
 
     df_persons.to_csv("%s/%spersons.csv" % (output_path, output_prefix), sep = ";", index = None)

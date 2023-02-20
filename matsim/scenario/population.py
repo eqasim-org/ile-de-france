@@ -20,7 +20,7 @@ PERSON_FIELDS = [
     "census_household_id", "census_person_id", "household_id",
     "has_license", "has_pt_subscription", "is_passenger",
     "hts_id", "hts_household_id",
-    "age", "employed", "sex"
+    "age", "employed", "sex", "persona"
 ]
 
 ACTIVITY_FIELDS = [
@@ -55,6 +55,8 @@ def add_person(writer, person, activities, trips):
     writer.add_attribute("age", "java.lang.Integer", person[PERSON_FIELDS.index("age")])
     writer.add_attribute("employed", "java.lang.String", person[PERSON_FIELDS.index("employed")])
     writer.add_attribute("sex", "java.lang.String", person[PERSON_FIELDS.index("sex")][0])
+
+    writer.add_attribute("persona", "java.lang.Integer", person[PERSON_FIELDS.index("persona")][0])
 
     writer.end_attributes()
 

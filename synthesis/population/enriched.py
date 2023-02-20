@@ -28,7 +28,7 @@ def execute(context):
         "census_person_id", "census_household_id",
         "age", "sex", "employed", "studies",
         "number_of_vehicles", "household_size", "consumption_units",
-        "socioprofessional_class"
+        "socioprofessional_class", "persona"
     ]]
 
     # Attach matching information
