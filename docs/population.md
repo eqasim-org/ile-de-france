@@ -20,49 +20,49 @@ to start with an empty folder, e.g. `/data`. All data sets need to be named
 in a specific way and put into specific sub-directories. The following paragraphs
 describe this process.
 
-### 1) Census data (RP 2015)
+### 1) Census data (RP 2019)
 
 Census data containing the socio-demographic information of people living in
 France is available at the website of INSEE:
 
-- [Census data](https://www.insee.fr/fr/statistiques/3625223)
-- Download the data for **Zone A** in **dbase** format by clicking the link under *Individus localisés au canton-ou-ville - Zone A*.
-- Copy the contents of the *zip* file into the folder `data/rp_2015`
+- [Census data](https://www.insee.fr/fr/statistiques/6544333)
+- Download the data for **Zone A** in **csv** format by clicking the link under *Individus localisés au canton-ou-ville - Zone A*.
+- Copy the contents of the *zip* file into the folder `data/rp_2019`
 
-### 2) Origin-destination data (RP-MOBPRO / RP-MOBSCO 2015)
+### 2) Origin-destination data (RP-MOBPRO / RP-MOBSCO 2019)
 
 Origin-destination data is also available from INSEE at two locations:
 
-- [Work origin-destination data](https://www.insee.fr/fr/statistiques/3566008)
-- [Education origin-destination data](https://www.insee.fr/fr/statistiques/3565982)
-- Download the data from the links, both in **dbase** format.
-- Copy the contents of both *zip* files into the folder `data/rp_2015`.
+- [Work origin-destination data](https://www.insee.fr/fr/statistiques/6456056)
+- [Education origin-destination data](https://www.insee.fr/fr/statistiques/6456052)
+- Download the data from the links, both in **csv** format.
+- Copy the contents of both *zip* files into the folder `data/rp_2019`.
 
-### 3) Population totals 2015
+### 3) Population totals 2019
 
 We also make use of more aggregated population totals:
 
-- [Population data](https://www.insee.fr/fr/statistiques/3627376)
-- Download the data for *France hors Mayotte*.
-- Copy the contents of the *zip* file into the folder `data/rp_2015`.
+- [Population data](https://www.insee.fr/fr/statistiques/6543200)
+- Download the data for *France hors Mayotte* in **xlsx** format.
+- Copy the contents of the *zip* file into the folder `data/rp_2019`.
 
-### 4) Income tax data (Filosofi 2015)
+### 4) Income tax data (Filosofi 2019)
 
 The tax data set is available from INSEE:
 
-- [Income tax data](https://insee.fr/fr/statistiques/3560118)
-- Download the munipality data (first link): *Base niveau communes en 2015*
-- Copy the content of the *zip* file into the folder `data/filosofi_2015`
-- Download the administrative level data (second linke): *Base niveau administratif en 2015*
+- [Income tax data](https://insee.fr/fr/statistiques/6036907)
+- Download the munipality data (first link): *Base niveau communes en 2019* in **xlsx** format
+- Copy the content of the *zip* file into the folder `data/filosofi_2019`
+- Download the administrative level data (second link): *Base niveau administratif en 2019* in **xlsx** format
 - Unpack the *zip* file, it contains more *zip* files.
-- Copy the content of *indic-struct-distrib-revenu-2015-REG.zip* into `data/filosofi_2015`
+- Copy the content of *indic-struct-distrib-revenu-2019-REG.zip* into `data/filosofi_2019`
 
-### 5) Service and facility census (BPE 2019)
+### 5) Service and facility census (BPE 2021)
 
 The census of services and facilities in France is available from INSEE:
 
 - [Service and facility census](https://www.insee.fr/fr/statistiques/3568638)
-- Download the uppermost data set in **CSV** format. It contains all available
+- Download the uppermost data set in **csv** format. It contains all available
 services while the lower data sets only contain observations for specific sectors.
 - Copy the content of the *zip* file into the folder `data/bpe_2021`.
 
@@ -81,7 +81,7 @@ a few are actually relevant for the pipeline. Those are:
   - Données trajets domicile-travail, domicile-étude, accidents (Q_individu.csv)
   - Données mobilité contrainte, trajets vers lieu de travail (Q_ind_lieu_teg.csv)
   - Données mobilité déplacements locaux (K_deploc.csv)
-- Put the downloaded *csv* files int othe folder `data/entd_2008`.
+- Put the downloaded *csv* files in to the folder `data/entd_2008`.
 
 ### 6b) *(Optional)* Regional household travel survey (EGT)
 
@@ -96,14 +96,14 @@ the following files are accessible in the folder `data/egt_2010`:
 The IRIS zoning system is available from IGN:
 
 - [IRIS data](https://geoservices.ign.fr/contoursiris)
-- Download the **2017** edition.
+- Download the **2021** edition.
 - In the *zip* file, follow the following path:
-  - *CONTOURS-IRIS_2-1__SHP__FRA_2017-01-01*
+  - *CONTOURS-IRIS_2-1__SHP__FRA_2021-01-01*
   - *CONTOURS-IRIS*
-  - *1_DONNEES_LIVRAISON_2018-06-00105*
-  - *CONTOURS-IRIS_2-1_SHP_LAMB93_FXX-2017*
-- Copy the contents of this folder (like *CONTOURS-IRIS.shp*) into the folder `data/iris_2017`.
-- ***Attention***: Currently, the data set is not avaialble at IGN. As a fallback, you can download the data [here](https://drive.google.com/file/d/1lv3LkxZMJj_W0pqZ2rOl6oepZ4ogtkbh/view?usp=sharing).
+  - *1_DONNEES_LIVRAISON_2021-06-00217*
+  - *CONTOURS-IRIS_2-1_SHP_LAMB93_FXX-2021*
+- Copy the contents of this folder (like *CONTOURS-IRIS.shp*) into the folder `data/iris_2021`.
+
 
 ### 8) Zoning registry
 
@@ -111,15 +111,15 @@ We make use of a zoning registry by INSEE that establishes a connection between
 the identifiers of IRIS, municipalities, departments and regions:
 
 - [Zoning data](https://www.insee.fr/fr/information/2017499)
-- Download the **2017** edition as a *zip* file.
-- Open the *zip* and copy the file `reference_IRIS_geo2017.xls` into `data/codes_2017`.
+- Download the **2021** edition as a *zip* file.
+- Open the *zip* and copy the file `reference_IRIS_geo2021.xls` into `data/codes_2021`.
 
 ### 9) Enterprise census (SIRENE)
 
 The enterprise census of France is available on data.gouv.fr:
 
 - [Enterprise census](https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/)
-- Scroll down and click on the green download button on the right for the two following data sets:
+- Scroll down and click on the blue download button on the right for the two following data sets:
   - **Sirene : Fichier StockUniteLegale** (followed by a date), the database of enterprises
   - **Sirene : Fichier StockEtablissement** (followed by a date), the database of enterprise facilities
 - The files are updated monthly and are rather large. After downloading, you should have two files:
@@ -127,49 +127,58 @@ The enterprise census of France is available on data.gouv.fr:
   - `StockUniteLegale_utf8.zip`
 - Move both *zip* files into `data/sirene`.
 
-### 10) Address database (BD-TOPO)
+### 10) Enterprise census (SIRENE) geolocation match
 
-The French address database is available from IGN:
+The enterprise census of France geolocation is available on data.gouv.fr:
 
-- [Address database](https://geoservices.ign.fr/bdtopo)
-- Use a ftp client to download the *Région Île-de-France - R 11* . Most browsers will not be able to download the data.
-- Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_2020-12-15`
-  - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_2021-01-00120`
-  - `BDT_3-0_SHP_LAMB93_R11-ED2020-12-15`
-  - `ADRESSES`
-- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
+- [Enterprise census geolocation](https://www.data.gouv.fr/fr/datasets/geolocalisation-des-etablissements-du-repertoire-sirene-pour-les-etudes-statistiques/)
+- Scroll down and click on the blue download button on the right for the following data set:
+    - **Sirene : Fichier GeolocalisationEtablissement_Sirene_pour_etudes_statistiques** (followed by a date), 
+- Put the downloaded *csv* file into `data/sirene`
+
+### 10) Adresses database (BAN)
+The adresses census of France is available on data.gouv.fr:
+
+- [BAN](https://adresse.data.gouv.fr/donnees-nationales)
+- Scroll down and click on the blue download button on the left for the following data set **Format CSV historique**:
+    - downoload departments files needed in the form of **adresses-75.csv.gz** where the two digits represents the department identifier. For Île-de-France you will need : 75, 77, 78, 91, 92, 93, 94, 95
+- expand archives and put csv files into `data/ban
+
 
 ### Overview
 
 Your folder structure should now have at least the following files:
 
-- `data/rp_2015/FD_INDCVIZA_2015.dbf`
-- `data/rp_2015/FD_MOBPRO_2015.dbf`
-- `data/rp_2015/FD_MOBSCO_2015.dbf`
-- `data/rp_2015/base-ic-evol-struct-pop-2015.xls`
-- `data/filosofi_2015/FILO_DISP_COM.xls`
-- `data/filosofi_2015/FILO_DISP_REG.xls`
-- `data/bpe_2019/bpe19_ensemble_xy.dbf`
+- `data/rp_2019/FD_INDCVIZA_2019.csv`
+- `data/rp_2019/FD_MOBPRO_2029.csv`
+- `data/rp_2019/FD_MOBSCO_2019.csv`
+- `data/rp_2019/base-ic-evol-struct-pop-2019.xls`
+- `data/filosofi_2019/FILO2019_DISP_COM.xlsx`
+- `data/filosofi_2019/FILO2019_DISP_REG.xlsx`
+- `data/bpe_2021/bpe21_ensemble_xy.csv`
 - `data/entd_2008/Q_individu.csv`
 - `data/entd_2008/Q_tcm_individu.csv`
 - `data/entd_2008/Q_menage.csv`
 - `data/entd_2008/Q_tcm_menage_0.csv`
 - `data/entd_2008/K_deploc.csv`
 - `data/entd_2008/Q_ind_lieu_teg.csv`
-- `data/iris_2017/CONTOURS-IRIS.cpg`
-- `data/iris_2017/CONTOURS-IRIS.dbf`
-- `data/iris_2017/CONTOURS-IRIS.prj`
-- `data/iris_2017/CONTOURS-IRIS.shp`
-- `data/iris_2017/CONTOURS-IRIS.shx`
-- `data/codes_2017/reference_IRIS_geo2017.xls`
+- `data/iris_2021/CONTOURS-IRIS.cpg`
+- `data/iris_2021/CONTOURS-IRIS.dbf`
+- `data/iris_2021/CONTOURS-IRIS.prj`
+- `data/iris_2021/CONTOURS-IRIS.shp`
+- `data/iris_2021/CONTOURS-IRIS.shx`
+- `data/codes_2021/reference_IRIS_geo2021.xls`
 - `data/sirene/StockEtablissement_utf8.csv`
-- `data/bdtopo/ADRESSE.shp`
-- `data/bdtopo/ADRESSE.cpg`
-- `data/bdtopo/ADRESSE.dbf`
-- `data/bdtopo/ADRESSE.prj`
-- `data/bdtopo/ADRESSE.shx`
+- `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8`
+- `data/ban/adresses-75.csv`
+- `data/ban/adresses-77.csv`
+- `data/ban/adresses-78.csv`
+- `data/ban/adresses-91.csv`
+- `data/ban/adresses-92.csv`
+- `data/ban/adresses-93.csv`
+- `data/ban/adresses-94.csv`
+- `data/ban/adresses-95.csv`
+
 
 In case you are using the regional household travel survey (EGT), the following
 files should also be in place:
