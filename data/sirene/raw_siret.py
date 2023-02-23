@@ -21,14 +21,16 @@ def execute(context):
     with context.progress(label = "Reading SIRET...") as progress:
         csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siret_path")), usecols = [
                 "siren", "siret", "codeCommuneEtablissement", "activitePrincipaleEtablissement",
-                "trancheEffectifsEtablissement", "libelleVoieEtablissement", "numeroVoieEtablissement",
-                "typeVoieEtablissement", "etatAdministratifEtablissement"
+                "trancheEffectifsEtablissement","etatAdministratifEtablissement"
             ],
             dtype = dict(siren = "int32", siret = "int64", codeCommuneEtablissement = str, trancheEffectifsEtablissement = str, typeVoieEtablissement = str),
             chunksize = 10240
         )
 
-
+        # csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siret_path")), usecols = [
+        #         "siren", "siret", "codeCommuneEtablissement", "activitePrincipaleEtablissement",
+        #         "trancheEffectifsEtablissement", "libelleVoieEtablissement", "numeroVoieEtablissement",
+        #         "typeVoieEtablissement", "etatAdministratifEtablissement"
         for df_chunk in csv:
             progress.update(len(df_chunk))
 

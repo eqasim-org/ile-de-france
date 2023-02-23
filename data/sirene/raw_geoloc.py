@@ -13,12 +13,16 @@ def configure(context):
 
 
 def execute(context):
+    # Filter by departement
+    df_codes = context.stage("data.spatial.codes")
+    requested_departements = set(df_codes["departement_id"].unique())
     
     # lecture du fichier géolocalisé de l'INSEE pour la base SIRET
     COLUMNS_DTYPES = {
         "siret":"int64", 
         "x":"float", 
         "y":"float",
+        "plg_code_commune":"str",
     }
 
     df_siret_geoloc = pd.DataFrame(columns=["siret","x","y"])
@@ -29,7 +33,14 @@ def execute(context):
     
          for df_chunk in csv:
             progress.update(len(df_chunk))
-            pd.concat([df_siret_geoloc, df_chunk])
+            
+            f = df_chunk["siret"].isna() # Just to get a mask
+            
+            for departement in requested_departements:
+
+                f |= df_chunk["plg_code_commune"].str.startswith(departement)
+
+            df_siret_geoloc = pd.concat([df_siret_geoloc, df_chunk[f]],ignore_index=True)
 
     return df_siret_geoloc
 

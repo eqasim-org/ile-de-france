@@ -2,11 +2,12 @@
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
-working_directory: cache
+working_directory: C:/Users/arthur.burianne/Documents/tech_Lab/tmp_2019
 
 # This section defines which parts of the pipeline should be run
 run:
   - synthesis.output # To create the output population in the output_path (see below)
+  - documentation.paper # to create plots
   #- matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 # Here the configuraiton of the pipeline starts
@@ -20,10 +21,16 @@ config:
   # Define sampling rate and random seed for the output population
   sampling_rate: 0.001
   random_seed: 1234
+  acquisition_sample_size: 1
 
   # Paths to the input data and where the output should be stored
-  data_path: /path/to/my/data
-  output_path: output
+  data_path: C:/Users/arthur.burianne/Documents/tech_Lab/data_2019
+  output_path: C:/Users/arthur.burianne/Documents/tech_Lab/output_2019
+  paper_path: C:/Users/arthur.burianne/Documents/tech_Lab/output_2019/paper
+  
+  # Data exceptions
+  population_year: 19
+
 
   # Only interesting if you run the simulation
   java_memory: 14G

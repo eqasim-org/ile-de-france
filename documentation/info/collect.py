@@ -75,24 +75,8 @@ def execute(context):
         "number_of_incomplete_distributions": int(np.sum(~df_income_municipality["is_missing"] & df_income_municipality["is_imputed"])),
         "number_of_missing_distributions": int(np.sum(df_income_municipality["is_missing"]))
     }
-# # 
-#     BDTOPO
-#     info["bdtopo"] = {
-#         "initial_count": context.get_info("data.bdtopo.cleaned", "initial_count"),
-#         "final_count": context.get_info("data.bdtopo.cleaned", "final_count"),
-#     }
- 
-    # SIRENE
-    # info["sirene"] = {
-    #     # "initial_count": context.get_info("data.sirene.localized", "initial_count"),
-    #     # "exact_count": context.get_info("data.sirene.localized", "exact_count"),
-    #     "no_municipality_count": context.get_info("data.sirene.localized", "no_municipality_count"),
-    #     "levenshtein_count": context.get_info("data.sirene.localized", "levenshtein_count"),
-    # }
 
-    # for key, value in info.items():
-    #     print(key, '->', value)
-    # exit()
+
     # Output
     with open("%s/info.json" % context.cache_path, "w+") as f:
         json.dump(info, f, indent = True)
