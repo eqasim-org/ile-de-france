@@ -197,9 +197,7 @@ cd ile-de-france
 conda env create -f environment.yml
 ```
 
-This will create a new Anaconda environment with the name `ile-de-france`. (In
-case you don't want to use Anaconda, we also provide a `requirements.txt` to
-install all dependencies in a `virtualenv` using `pip install -r requirements.txt`).
+This will create a new Anaconda environment with the name `ile-de-france`.
 
 To activate the environment, run:
 
