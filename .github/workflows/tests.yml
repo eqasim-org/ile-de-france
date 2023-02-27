@@ -13,27 +13,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Set up Java
-      - uses: actions/setup-java@v1
-        with:
-          distribution: "adopt"
-          java-version: "11"
-
-    - name: Set up conda environment
-      - uses: conda-incubator/setup-miniconda@v2
-        with:
-          activate-environment: "ile-de-france"
-          environment-file: environment.yml
-          python-version: "3.7"
-
+    - uses: actions/setup-java@v1
+      with:
+        distribution: "adopt"
+        java-version: "11"
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: "ile-de-france"
+        environment-file: environment.yml
+        python-version: "3.7"
     - name: Set up osmosis
       run: |
         wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
         mkdir $HOME/osmosis
         tar xf osmosis.tgz -C $HOME/osmosis
         echo $HOME/osmosis/bin >> $GITHUB_PATH
-
     - name: Test versions
       run: |
         java -version
@@ -41,7 +35,6 @@ jobs:
         python3 --version
         osmosis -v
         git --version
-
     - name: Run pipeline tests
       run: |
         MKL_CBWR=AUTO pytest tests/
