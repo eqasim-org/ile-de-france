@@ -29,14 +29,14 @@ jobs:
         tar xf osmosis.tgz -C $HOME/osmosis
         echo $HOME/osmosis/bin >> $GITHUB_PATH
     - name: Test versions
+      shell: bash -el {0}
       run: |
-        conda activate ile-de-france
         java -version
         mvn -v
         python3 --version
         osmosis -v
         git --version
     - name: Run pipeline tests
+      shell: bash -el {0}
       run: |
-        conda activate ile-de-france
         MKL_CBWR=AUTO pytest tests/
