@@ -15,6 +15,7 @@ def execute(context):
     df_sirene = context.stage("data.sirene.cleaned")
     df_siret_geoloc = context.stage("data.sirene.raw_geoloc")
 
+
     # merging geographical SIREN file (containing only SIRET and location) with full SIREN file (all variables and processed)
     df_siret_geoloc.set_index(("siret"),inplace=True,verify_integrity=True)
     df_sirene.set_index(("siret"),inplace=True,verify_integrity=True)
@@ -27,5 +28,6 @@ def execute(context):
 
     # convert to geopandas dataframe with Lambert 93, EPSG:2154 french official projection
     df_sirene = gpd.GeoDataFrame(df_sirene, geometry=gpd.points_from_xy(df_sirene.x, df_sirene.y),crs="EPSG:2154")
+
 
     return df_sirene

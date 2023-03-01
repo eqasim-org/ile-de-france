@@ -18,9 +18,9 @@ def execute(context):
 
     df_ban = pd.DataFrame()
 
+
+
     COLUMNS_DTYPES = {
-        "numero":"int", 
-        "nom_voie":"str", 
         "code_insee":"str",
         "x":"float", 
         "y":"float"
@@ -47,8 +47,8 @@ def execute(context):
 
     #conversion en geo dataframe projeté en Lambert
     df_ban = gpd.GeoDataFrame(df_ban, geometry=gpd.points_from_xy(df_ban.x, df_ban.y),crs="EPSG:2154")
-    df_ban.rename(columns={"numero": "number", "nom_voie": "street","code_insee":"commune_id"},inplace=True)
-
+    df_ban.rename(columns={"code_insee":"commune_id"},inplace=True)
+    # df_ban.rename(columns={"numero": "number", "nom_voie": "street","code_insee":"commune_id"},inplace=True) 
     return df_ban
  
 

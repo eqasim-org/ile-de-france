@@ -228,15 +228,15 @@ def create(output_path):
 
 
     df_income = df.drop_duplicates("municipality")[["municipality"]].rename(columns = dict(municipality = "CODGEO"))
-    df_income["D115"] = 9122.0
-    df_income["D215"] = 11874.0
-    df_income["D315"] = 14430.0
-    df_income["D415"] = 16907.0
-    df_income["Q215"] = 22240.0
-    df_income["D615"] = 22827.0
-    df_income["D715"] = 25699.0
-    df_income["D815"] = 30094.0
-    df_income["D915"] = 32303.0
+    df_income["D119"] = 9122.0
+    df_income["D219"] = 11874.0
+    df_income["D319"] = 14430.0
+    df_income["D419"] = 16907.0
+    df_income["Q219"] = 22240.0
+    df_income["D619"] = 22827.0
+    df_income["D719"] = 25699.0
+    df_income["D819"] = 30094.0
+    df_income["D919"] = 32303.0
 
     # Deliberately remove some of them
     df_income = df_income[~df_income["CODGEO"].isin([
@@ -616,23 +616,18 @@ def create(output_path):
 
 
     os.mkdir("%s/sirene" % output_path)
-    compression_opts = dict(method='zip', archive_name=output_path + "/sirene/StockEtablissement_utf8.zip") 
-    
-    # df_sirene.to_csv("StockEtablissement_utf8.csv", index = False,sep=";", compression=compression_opts)
-    df_sirene.to_csv(output_path + "/sirene/StockEtablissement_utf8.csv", index = False,sep=";")
+    df_sirene.to_csv(output_path + "/sirene/StockEtablissement_utf8.zip", index = False,compression={'method': 'zip', 'archive_name': 'StockEtablissement_utf8.csv'})
+
 
     df_sirene = df_sirene[["siren"]].copy()
     df_sirene["categorieJuridiqueUniteLegale"] = "1000"
-    compression_opts = dict(method='zip', archive_name=output_path + "/sirene/StockUniteLegale_utf8.zip") 
 
-    df_sirene.to_csv(output_path + "/sirene/StockUniteLegale_utf8.csv", index = False,sep=";")
-    
+    df_sirene.to_csv(output_path + "/sirene/StockUniteLegale_utf8.zip", index = False,compression={'method': 'zip', 'archive_name': 'StockUniteLegale_utf8.csv'})
 
     # Data set: SIRENE GEOLOCATION
     print("Creating SIRENE GEOLOCATION...")
 
     df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
-    identifiers = random.randint(0, 99999999, observations)
     x = df_selection["geometry"].centroid.x.values
     y = df_selection["geometry"].centroid.y.values
 
@@ -645,7 +640,6 @@ def create(output_path):
         "plg_code_commune":codes_com,
     })
     
-    print(df_sirene_geoloc)
     df_sirene_geoloc.to_csv("%s/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.csv" % output_path, index = False,sep=";")
 
 
@@ -660,13 +654,11 @@ def create(output_path):
         "code_insee": df_selection["INSEE_COM"].values,
         "x": x,
         "y": y
-
     }, crs = "EPSG:2154")
 
-
-    # for dep in df.department.unique():
     os.mkdir("%s/ban" % output_path)
-    df_ban.to_csv(output_path + "\\ban\\" + "adresses-" + "test" + ".csv", index = False)
+    for dep in df.department.unique():
+        df_ban.to_csv(output_path + "\\ban\\" + "adresses-" + dep + ".csv", sep=";",index = False)
 
     
     # Data set: OSM

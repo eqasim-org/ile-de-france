@@ -11,7 +11,8 @@ def configure(context):
 
 def execute(context):
     df_sirene = context.stage("data.sirene.localized")
-    df_sirene["commune"] = df_sirene["commune"].astype(str)
+    df_sirene["commune_id"] = df_sirene["commune_id"].astype(str)
 
     df_sirene.to_file("%s/%ssirene.gpkg" % (
         context.config("output_path"), context.config("output_prefix")), driver = "GPKG")
+    
