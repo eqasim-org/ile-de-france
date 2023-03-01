@@ -1,3 +1,10 @@
+import geopandas as gpd
+import pandas as pd
+import shapely.geometry as geo
+import numpy as np
+import os
+import subprocess
+
 def create(output_path):
     """
     This script creates test fixtures for the Île-de-France / France pipeline.
@@ -52,12 +59,6 @@ def create(output_path):
     COMMUTE_FLOW_OBSERVATIONS = 500
     ADDRESS_OBSERVATIONS = 2000
     SIRENE_OBSERVATIONS = 2000
-
-    import geopandas as gpd
-    import pandas as pd
-    import shapely.geometry as geo
-    import numpy as np
-    import os
 
     random = np.random.RandomState(0)
 
@@ -716,11 +717,11 @@ def create(output_path):
         f.write(bytes("\n".join(osm), "utf-8"))
 
 
-    # import subprocess
-    # subprocess.check_call([
-    #     "osmosis", "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
-    #     "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
-    # ])
+    import subprocess
+    subprocess.check_call([
+        "osmosis", "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
+        "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
+    ],shell=True)
 
     # Data set: GTFS
     print("Creating GTFS ...")
