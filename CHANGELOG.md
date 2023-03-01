@@ -2,6 +2,9 @@
 
 **Under development**
 
+- Update documentation for the required versions of Java and Maven
+- Updated Github workflow with more reuse of existing actions
+- Update synpp to `1.5.1`
 - Fix: Handle commas in coordinates in BPE
 - Fix: Make types consistent for mode recognition in ENTD
 - Fix: Properly treat non-movers in EDGT 44
