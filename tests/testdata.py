@@ -729,7 +729,7 @@ def create(output_path):
     subprocess.check_call([
         shutil.which("osmosis"), "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
         "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
-    ],shell=True)
+    ])
 
 
     # Data set: GTFS
