@@ -32,8 +32,8 @@ def execute(context):
 
         # "sampling_sample_count.pdf": ("documentation.plots.sampling.sample_count", "sample_count.pdf"),
         # "sampling_error_probability.pdf": ("documentation.plots.sampling.error_probability", "error_probability.pdf"),
-        "monte_carlo.pdf": ("documentation.plots.monte_carlo", "monte_carlo.pdf"),
-        "monte_carlo_table.tex": ("documentation.plots.monte_carlo", "monte_carlo_table.tex"),
+        # "monte_carlo.pdf": ("documentation.plots.monte_carlo", "monte_carlo.pdf"),
+        # "monte_carlo_table.tex": ("documentation.plots.monte_carlo", "monte_carlo_table.tex"),
 
         "income_distributions.pdf": ("documentation.plots.income", "income_distributions.pdf"),
 
