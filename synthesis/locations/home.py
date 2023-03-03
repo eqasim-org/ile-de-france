@@ -8,13 +8,13 @@ home activities. They are derived from the BAN address database.
 
 As home locations are assigned by IRIS, we re-assign the IRIS code here for
 each address coordinate. Additionally, we create fake locations in IRIS that
-are requested by the population, but which have no actual address. TODO: Switch
-back from BAN to BD TOPO BATI and filter on "logements" > 0 to keep only residential
+are requested by the population, but which have no actual address. This process
+uses BD TOPO BATI and filter on "logements" > 0 to keep only residential
 buildings
 """
 
 def configure(context):
-    context.stage("data.ban.raw")
+    context.stage("data.bdtopo.raw")
     context.stage("data.spatial.iris")
 
 def execute(context):
@@ -23,7 +23,7 @@ def execute(context):
     required_iris = set(df_iris["iris_id"].unique())
 
     # Load all addresses and add IRIS information
-    df_addresses = context.stage("data.ban.raw")[["geometry"]]
+    df_addresses = context.stage("data.bdtopo.raw")[["geometry"]]
 
     print("Imputing IRIS into addresses ...")
     df_addresses = gpd.sjoin(df_addresses,

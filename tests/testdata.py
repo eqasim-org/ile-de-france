@@ -567,36 +567,30 @@ def create(output_path):
     #     db.write(row)
     # db.close()
 
-    # # Data set: BD-TOPO
-    # print("Creating BD-TOPO ...")
+    # Data set: BD-TOPO
+    print("Creating BD-TOPO ...")
 
-    # observations = ADDRESS_OBSERVATIONS
+    observations = ADDRESS_OBSERVATIONS
 
-    # streets = np.array([
-    #     "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-    #     "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-    # ])[random.randint(0, 26, observations)]
+    df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
 
-    # numbers = random.randint(0, 20, observations)
+    x = df_selection["geometry"].centroid.x.values
+    y = df_selection["geometry"].centroid.y.values
+    z = random.randint(100, 400, observations) 
 
-    # df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
+    df_bdtopo = gpd.GeoDataFrame({
+        "NB_LOGTS": random.randint(0, 10, observations),
+        "ID": random.randint(1000, 1000000, observations),
+        "geometry": [
+            geo.Point(x, y,z) for x, y,z in zip(x, y,z)
+        ]
+    }, crs = "EPSG:2154")
 
-    # x = df_selection["geometry"].centroid.x.values
-    # y = df_selection["geometry"].centroid.y.values
+    # polygons as buildings from iris centroid points
+    df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
-    # df_bdtopo = gpd.GeoDataFrame({
-    #     "CODE_INSEE": df_selection["INSEE_COM"].values,
-    #     "NUMERO": numbers,
-    #     "NOM_1": streets,
-    #     "geometry": [
-    #         geo.Point(x, y) for x, y in zip(x, y)
-    #     ]
-    # }, crs = "EPSG:2154")
-
-    # df_bdtopo["NOM_1"] = "R " + df_bdtopo["NOM_1"]
-
-    # os.mkdir("%s/bdtopo" % output_path)
-    # df_bdtopo.to_file("%s/bdtopo/ADRESSE.shp" % output_path)
+    os.mkdir("%s/bdtopo" % output_path)
+    df_bdtopo.to_file("%s/bdtopo/BATIMENT.shp" % output_path)
 
     # Data set: SIRENE
     print("Creating SIRENE ...")
@@ -644,22 +638,22 @@ def create(output_path):
     df_sirene_geoloc.to_csv("%s/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.csv" % output_path, index = False,sep=";")
 
 
-    # Data set: BAN
-    print("Creating BAN...")
+    # # Data set: BAN
+    # print("Creating BAN...")
 
-    df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
-    x = df_selection["geometry"].centroid.x.values
-    y = df_selection["geometry"].centroid.y.values
+    # df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
+    # x = df_selection["geometry"].centroid.x.values
+    # y = df_selection["geometry"].centroid.y.values
 
-    df_ban = gpd.GeoDataFrame({
-        "code_insee": df_selection["INSEE_COM"].values,
-        "x": x,
-        "y": y
-    }, crs = "EPSG:2154")
+    # df_ban = gpd.GeoDataFrame({
+    #     "code_insee": df_selection["INSEE_COM"].values,
+    #     "x": x,
+    #     "y": y
+    # }, crs = "EPSG:2154")
 
-    os.mkdir("%s/ban" % output_path)
-    for dep in df.department.unique():
-        df_ban.to_csv(output_path + "\\ban\\" + "adresses-" + dep + ".csv", sep=";",index = False)
+    # os.mkdir("%s/ban" % output_path)
+    # for dep in df.department.unique():
+    #     df_ban.to_csv(output_path + "\\ban\\" + "adresses-" + dep + ".csv", sep=";",index = False)
 
     
     # Data set: OSM

@@ -24,8 +24,7 @@ def test_data(tmpdir):
         dict(descriptor = "data.census.cleaned"),
         dict(descriptor = "data.od.cleaned"),
         dict(descriptor = "data.hts.output"),
-        dict(descriptor = "data.sirene.output"),
-        dict(descriptor = "data.ban.raw")
+        dict(descriptor = "data.sirene.output")
     ]
 
     synpp.run(stages, config, working_directory = cache_path)
