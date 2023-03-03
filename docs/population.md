@@ -136,6 +136,23 @@ The enterprise census of France geolocation is available on data.gouv.fr:
     - **Sirene : Fichier GeolocalisationEtablissement_Sirene_pour_etudes_statistiques** (followed by a date), 
 - Put the downloaded *csv* file into `data/sirene`
 
+
+### 10) residential buildings database (BD-TOPO)
+
+The French address database is available from IGN:
+
+- [Address database](https://geoservices.ign.fr/bdtopo)
+- click on the right link *BD TOPO® Shapefile Régions* 
+- it will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
+- download *Région Île-de-France - R 11*
+- Open the downloaded archive and open/unpack it to to access the folder
+  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_some_date` 
+  - `BDTOPO`
+  - `1_DONNEES_LIVRAISON_some_date`
+  - `BDT_3-0_SHP_LAMB93_R11-some_date`
+  - `BATI`
+- Copy the files `BATI.*` from the folder `BATI` in *shape file* format into `data/bdtopo`.
+
 ### 10) Adresses database (BAN)
 The adresses census of France is available on data.gouv.fr:
 
