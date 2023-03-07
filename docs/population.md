@@ -23,28 +23,28 @@ describe this process.
 ### 1) Census data (RP 2019)
 
 Census data containing the socio-demographic information of people living in
-France is available at the website of INSEE:
+France is available from INSEE:
 
 - [Census data](https://www.insee.fr/fr/statistiques/6544333)
 - Download the data for **Zone A** in **csv** format by clicking the link under *Individus localisés au canton-ou-ville - Zone A*.
 - Copy the contents of the *zip* file into the folder `data/rp_2019`
 
-### 2) Origin-destination data (RP-MOBPRO / RP-MOBSCO 2019)
+### 2) Population totals (RP 2019)
 
-Origin-destination data is also available from INSEE at two locations:
+We also make use of more aggregated population totals available from INSEE:
+
+- [Population data](https://www.insee.fr/fr/statistiques/6543200)
+- Download the data for *France hors Mayotte* in **xlsx** format.
+- Copy the contents of the *zip* file into the folder `data/rp_2019`.
+
+### 3) Origin-destination data (RP-MOBPRO / RP-MOBSCO 2019)
+
+Origin-destination data is available from INSEE (at two locations):
 
 - [Work origin-destination data](https://www.insee.fr/fr/statistiques/6456056)
 - [Education origin-destination data](https://www.insee.fr/fr/statistiques/6456052)
 - Download the data from the links, both in **csv** format.
 - Copy the contents of both *zip* files into the folder `data/rp_2019`.
-
-### 3) Population totals 2019
-
-We also make use of more aggregated population totals:
-
-- [Population data](https://www.insee.fr/fr/statistiques/6543200)
-- Download the data for *France hors Mayotte* in **xlsx** format.
-- Copy the contents of the *zip* file into the folder `data/rp_2019`.
 
 ### 4) Income tax data (Filosofi 2019)
 
@@ -91,7 +91,7 @@ guarantee that you have exactly the correct format), you should make sure that
 the following files are accessible in the folder `data/egt_2010`:
 `Menages_semaine.csv`, `Personnes_semaine.csv`, `Deplacements_semaine.csv`.
 
-### 7) IRIS zoning system
+### 7) IRIS zoning system (2021)
 
 The IRIS zoning system is available from IGN:
 
@@ -105,7 +105,7 @@ The IRIS zoning system is available from IGN:
 - Copy the contents of this folder (like *CONTOURS-IRIS.shp*) into the folder `data/iris_2021`.
 
 
-### 8) Zoning registry
+### 8) Zoning registry (2021)
 
 We make use of a zoning registry by INSEE that establishes a connection between
 the identifiers of IRIS, municipalities, departments and regions:
@@ -151,15 +151,7 @@ The French address database is available from IGN:
   - `1_DONNEES_LIVRAISON_some_date`
   - `BDT_3-0_SHP_LAMB93_R11-some_date`
   - `BATI`
-- Copy the files `BATI.*` from the folder `BATI` in *shape file* format into `data/bdtopo`.
-
-### 10) Adresses database (BAN)
-The adresses census of France is available on data.gouv.fr:
-
-- [BAN](https://adresse.data.gouv.fr/donnees-nationales)
-- Scroll down and click on the blue download button on the left for the following data set **Format CSV historique**:
-    - downoload departments files needed in the form of **adresses-75.csv.gz** where the two digits represents the department identifier. For Île-de-France you will need : 75, 77, 78, 91, 92, 93, 94, 95
-- expand archives and put csv files into `data/ban
+- Copy the files `BATIMENT.*` from the folder `BATI` in *shape file* format into `data/bdtopo`.
 
 
 ### Overview
@@ -187,14 +179,11 @@ Your folder structure should now have at least the following files:
 - `data/codes_2021/reference_IRIS_geo2021.xls`
 - `data/sirene/StockEtablissement_utf8.csv`
 - `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8`
-- `data/ban/adresses-75.csv`
-- `data/ban/adresses-77.csv`
-- `data/ban/adresses-78.csv`
-- `data/ban/adresses-91.csv`
-- `data/ban/adresses-92.csv`
-- `data/ban/adresses-93.csv`
-- `data/ban/adresses-94.csv`
-- `data/ban/adresses-95.csv`
+- `data/bdtopo/BATIMENT.cpg`
+- `data/bdtopo/BATIMENT.dbf`
+- `data/bdtopo/BATIMENT.prj`
+- `data/bdtopo/BATIMENT.shp`
+- `data/bdtopo/BATIMENT.shx`
 
 
 In case you are using the regional household travel survey (EGT), the following
