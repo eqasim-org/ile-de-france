@@ -54,9 +54,7 @@ def process_municipality(context, origin_id):
     # From previous step, this should be equal!
     assert len(df_persons) == len(df_candidates)
 
-    print(df_persons)
-    print(df_candidates)
-    print()
+    
     indices = define_ordering(df_persons, df_candidates, context.progress)
     df_candidates = df_candidates.iloc[indices]
 
@@ -73,7 +71,6 @@ def process(context, purpose, df_persons, df_candidates):
     with context.progress(label = "Distributing %s destinations" % purpose, total = len(df_persons)) as progress:
         with context.parallel(dict(df_persons = df_persons, df_candidates = df_candidates)) as parallel:
             for df_partial in parallel.imap_unordered(process_municipality, unique_ids):
-                print(df_partial)
                 df_result.append(df_partial)
 
     return pd.concat(df_result)

@@ -187,14 +187,11 @@ Your folder structure should now have at least the following files:
 - `data/codes_2021/reference_IRIS_geo2021.xls`
 - `data/sirene/StockEtablissement_utf8.csv`
 - `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8`
-- `data/ban/adresses-75.csv`
-- `data/ban/adresses-77.csv`
-- `data/ban/adresses-78.csv`
-- `data/ban/adresses-91.csv`
-- `data/ban/adresses-92.csv`
-- `data/ban/adresses-93.csv`
-- `data/ban/adresses-94.csv`
-- `data/ban/adresses-95.csv`
+- `data/bdtopo/BATIMENT.cpg`
+- `data/bdtopo/BATIMENT.dbf`
+- `data/bdtopo/BATIMENT.prj`
+- `data/bdtopo/BATIMENT.shp`
+- `data/bdtopo/BATIMENT.shx`
 
 
 In case you are using the regional household travel survey (EGT), the following

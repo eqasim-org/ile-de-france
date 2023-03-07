@@ -4,7 +4,7 @@ import geopandas as gpd
 
 """
 This stage provides a list of home places that serve as potential locations for
-home activities. They are derived from the BAN address database.
+home activities. They are derived from the BD TOPO buildings database.
 
 As home locations are assigned by IRIS, we re-assign the IRIS code here for
 each address coordinate. Additionally, we create fake locations in IRIS that
