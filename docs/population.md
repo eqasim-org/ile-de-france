@@ -137,7 +137,7 @@ The enterprise census of France geolocation is available on data.gouv.fr:
 - Put the downloaded *csv* file into `data/sirene`
 
 
-### 10) residential buildings database (BD-TOPO)
+### 10) Buildings database (BD TOPO)
 
 The French address database is available from IGN:
 
