@@ -139,9 +139,9 @@ The enterprise census of France geolocation is available on data.gouv.fr:
 
 ### 10) Buildings database (BD TOPO)
 
-The French address database is available from IGN:
+The French Buildings database is available from IGN:
 
-- [Address database](https://geoservices.ign.fr/bdtopo)
+- [Buildings database](https://geoservices.ign.fr/bdtopo)
 - click on the right link *BD TOPO® Shapefile Régions* 
 - it will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
 - download *Région Île-de-France - R 11*
