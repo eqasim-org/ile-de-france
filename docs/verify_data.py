@@ -78,14 +78,7 @@ tests = [
             "https://www.data.gouv.fr/fr/datasets/base-sirene-des-entreprises-et-de-leurs-etablissements-siren-siret/"
         ]
     },
-    
-    {
-        "name": "BAN",
-        "urls": [
-            "https://adresse.data.gouv.fr/donnees-nationales",
-            "https://adresse.data.gouv.fr/data/ban/adresses/latest/csv"
-        ]
-    },
+   
     {
         "name": "SIRET géolocalisé",
         "urls": [

@@ -637,24 +637,6 @@ def create(output_path):
     
     df_sirene_geoloc.to_csv("%s/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.csv" % output_path, index = False,sep=";")
 
-
-    # # Data set: BAN
-    # print("Creating BAN...")
-
-    # df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
-    # x = df_selection["geometry"].centroid.x.values
-    # y = df_selection["geometry"].centroid.y.values
-
-    # df_ban = gpd.GeoDataFrame({
-    #     "code_insee": df_selection["INSEE_COM"].values,
-    #     "x": x,
-    #     "y": y
-    # }, crs = "EPSG:2154")
-
-    # os.mkdir("%s/ban" % output_path)
-    # for dep in df.department.unique():
-    #     df_ban.to_csv(output_path + "\\ban\\" + "adresses-" + dep + ".csv", sep=";",index = False)
-
     
     # Data set: OSM
     # We add add a road grid of 500m

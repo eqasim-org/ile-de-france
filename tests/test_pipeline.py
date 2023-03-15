@@ -33,7 +33,6 @@ def test_data(tmpdir):
     assert os.path.isfile("%s/ile_de_france_hts_persons.csv" % output_path)
     assert os.path.isfile("%s/ile_de_france_hts_trips.csv" % output_path)
     assert os.path.isfile("%s/ile_de_france_sirene.gpkg" % output_path)
-    # ban?
 
 def run_population(tmpdir, hts):
     data_path = str(tmpdir.mkdir("data"))

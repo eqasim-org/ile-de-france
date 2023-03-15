@@ -36,7 +36,7 @@ def execute(context):
     # Add fake homes for IRIS without addresses
     missing_iris = required_iris - set(df_addresses["iris_id"].unique())
 
-    print("Adding homes at the centroid of %d/%d IRIS without BAN observations" % (
+    print("Adding homes at the centroid of %d/%d IRIS without BDTOPO observations" % (
         len(missing_iris), len(required_iris)))
 
     df_added = []
