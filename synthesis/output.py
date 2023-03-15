@@ -42,7 +42,7 @@ def execute(context):
         "census_household_id"
     ]]
 
-    df_households.to_csv("%s/%shouseholds.csv" % (output_path, output_prefix), sep = ";", index = None)
+    df_households.to_csv("%s/%shouseholds.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
     # Prepare persons
     df_persons = context.stage("synthesis.population.enriched").rename(
@@ -56,7 +56,7 @@ def execute(context):
         "census_person_id", "hts_id"
     ]]
 
-    df_persons.to_csv("%s/%spersons.csv" % (output_path, output_prefix), sep = ";", index = None)
+    df_persons.to_csv("%s/%spersons.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
     # Prepare activities
     df_activities = context.stage("synthesis.population.activities").rename(
@@ -77,7 +77,7 @@ def execute(context):
         "is_first", "is_last"
     ]]
 
-    df_activities.to_csv("%s/%sactivities.csv" % (output_path, output_prefix), sep = ";", index = None)
+    df_activities.to_csv("%s/%sactivities.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
     # Prepare trips
     df_trips = context.stage("synthesis.population.trips").rename(
@@ -98,14 +98,14 @@ def execute(context):
         "is_first", "is_last"
     ]]
 
-    df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None)
+    df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
     if context.config("generate_vehicles_file"):
         # Prepare vehicles
         df_vehicle_types, df_vehicles = context.stage("synthesis.vehicles.selected")
 
-        df_vehicle_types.to_csv("%s/%svehicle_types.csv" % (output_path, output_prefix), sep = ";", index = None)
-        df_vehicles.to_csv("%s/%svehicles.csv" % (output_path, output_prefix), sep = ";", index = None)
+        df_vehicle_types.to_csv("%s/%svehicle_types.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+        df_vehicles.to_csv("%s/%svehicles.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
     # Prepare spatial data sets
     df_locations = context.stage("synthesis.population.spatial.locations")[[
