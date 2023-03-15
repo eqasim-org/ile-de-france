@@ -54,7 +54,6 @@ def process_municipality(context, origin_id):
     # From previous step, this should be equal!
     assert len(df_persons) == len(df_candidates)
 
-    
     indices = define_ordering(df_persons, df_candidates, context.progress)
     df_candidates = df_candidates.iloc[indices]
 

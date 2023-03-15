@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import mock
 from openpyxl.reader import excel

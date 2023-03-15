@@ -1,5 +1,7 @@
+from tqdm import tqdm
 import pandas as pd
 import numpy as np
+import simpledbf
 
 """
 Transforms absolute OD flows from French census into a weighted destination
@@ -22,7 +24,7 @@ def fix_origins(df, commune_ids, purpose):
             rows.append((origin_id, destination_id, 1.0 if origin_id == destination_id else 0.0))
 
     print("Fixing %d origins for %s" % (len(missing_ids), purpose))
-    
+
     return pd.concat([df, pd.DataFrame.from_records(
         rows, columns = ["origin_id", "destination_id", "weight"]
     )])
