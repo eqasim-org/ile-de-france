@@ -509,14 +509,6 @@ def create(output_path):
     
     df_persons.columns = columns
     df_persons.to_csv("%s/rp_2019/FD_INDCVIZA_2019.csv" % output_path,sep=";")
-    # db = pysal.open("%s/rp_2019/FD_INDCVIZA_2019.csv" % output_path, "w")
-    # db.header = columns
-    # db.field_spec = types
-    # for index, row in df_persons.iterrows():
-    #     print(row)
-    #     print("___")
-    #     db.write(row)
-    # db.close()
 
     # Data set: commute flows
     print("Creating commute flows ...")
@@ -539,13 +531,6 @@ def create(output_path):
     
     df_work.columns = columns
     df_work.to_csv("%s/rp_2019/FD_MOBPRO_2019.csv" % output_path,sep=";")
-    
-    # db = pysal.open("%s/rp_2019/FD_MOBPRO_2019.csv" % output_path, "w")
-    # db.header = columns
-    # db.field_spec = types
-    # for index, row in df_work[columns].iterrows():
-    #     db.write(row)
-    # db.close()
 
     # ... education
     df_education = pd.DataFrame(dict(
@@ -556,16 +541,9 @@ def create(output_path):
     df_education["IPONDI"] = 1.0
 
     columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI"]
-    types = [("C", 5, 0), ("C", 5, 0), ("C", 5, 0), ("N", 10, 7)]
     
     df_education.columns = columns
     df_education.to_csv("%s/rp_2019/FD_MOBSCO_2019.csv" % output_path,sep=';')
-    # db = pysal.open("%s/rp_2019/FD_MOBSCO_2019.csv" % output_path, "w")
-    # db.header = columns
-    # db.field_spec = types
-    # for index, row in df_education[columns].iterrows():
-    #     db.write(row)
-    # db.close()
 
     # Data set: BD-TOPO
     print("Creating BD-TOPO ...")
