@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 import geopandas as gpd
 import os
@@ -9,7 +8,7 @@ Loads the IRIS zoning system.
 
 def configure(context):
     context.config("data_path")
-    context.config("iris_path", "iris_2017/CONTOURS-IRIS.shp")
+    context.config("iris_path", "iris_2021/CONTOURS-IRIS.shp")
     context.stage("data.spatial.codes")
 
 def execute(context):

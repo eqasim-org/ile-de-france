@@ -1,8 +1,7 @@
-import pandas as pd
 import numpy as np
-
 import shapely.geometry as geo
 import data.spatial.utils as spatial_utils
+import geopandas as gpd
 
 """
 This stage cleans the enterprise census:
@@ -136,6 +135,7 @@ def execute(context):
 
     # Package up data set
     df = df[["enterprise_id", "activity_type", "commune_id", "imputed", "x", "y"]]
-    df = spatial_utils.to_gpd(context, df.copy())
+
+    df = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.x, df.y),crs="EPSG:2154")
 
     return df

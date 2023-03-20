@@ -1,3 +1,10 @@
+import geopandas as gpd
+import pandas as pd
+import shapely.geometry as geo
+import numpy as np
+import os
+import subprocess
+
 def create(output_path):
     """
     This script creates test fixtures for the Île-de-France / France pipeline.
@@ -52,12 +59,6 @@ def create(output_path):
     COMMUTE_FLOW_OBSERVATIONS = 500
     ADDRESS_OBSERVATIONS = 2000
     SIRENE_OBSERVATIONS = 2000
-
-    import geopandas as gpd
-    import pandas as pd
-    import shapely.geometry as geo
-    import numpy as np
-    import os
 
     random = np.random.RandomState(0)
 
@@ -158,8 +159,8 @@ def create(output_path):
         iris = "CODE_IRIS", municipality = "INSEE_COM"
     ))
 
-    os.mkdir("%s/iris_2017" % output_path)
-    df_iris.to_file("%s/iris_2017/CONTOURS-IRIS.shp" % output_path)
+    os.mkdir("%s/iris_2021" % output_path)
+    df_iris.to_file("%s/iris_2021/CONTOURS-IRIS.shp" % output_path)
 
     # Dataset: Codes
     # Required attributes: CODE_IRIS, DEPCOM, DEP, REG
@@ -170,9 +171,9 @@ def create(output_path):
         iris = "CODE_IRIS", municipality = "DEPCOM", department = "DEP", region = "REG"
     ))
 
-    os.mkdir("%s/codes_2017" % output_path)
+    os.mkdir("%s/codes_2021" % output_path)
     df_codes.to_excel(
-        "%s/codes_2017/reference_IRIS_geo2017.xls" % output_path,
+        "%s/codes_2021/reference_IRIS_geo2021.xlsx" % output_path,
         sheet_name = "Emboitements_IRIS",
         startrow = 5, index = False
     )
@@ -187,11 +188,11 @@ def create(output_path):
     ))
 
     # Set all population to fixed number
-    df_population["P15_POP"] = 120.0
+    df_population["P19_POP"] = 120.0
 
-    os.mkdir("%s/rp_2015" % output_path)
+    os.mkdir("%s/rp_2019" % output_path)
     df_population.to_excel(
-        "%s/rp_2015/base-ic-evol-struct-pop-2015.xls" % output_path,
+        "%s/rp_2019/base-ic-evol-struct-pop-2019.xlsx" % output_path,
         sheet_name = "IRIS", startrow = 5, index = False
     )
 
@@ -215,8 +216,6 @@ def create(output_path):
     df_selection["LAMBERT_X"].iloc[-10:] = np.nan
     df_selection["LAMBERT_Y"].iloc[-10:] = np.nan
 
-    import pysal
-
     types = [("C", 10, 0), ("C", 12, 0), ("C", 12, 0), ("C", 4, 0), ("C", 5, 0), ("C", 3, 0)]
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
@@ -228,16 +227,17 @@ def create(output_path):
     # Required attributes: CODGEO, D115, ..., D915
     print("Creating FILOSOFI ...")
 
+
     df_income = df.drop_duplicates("municipality")[["municipality"]].rename(columns = dict(municipality = "CODGEO"))
-    df_income["D115"] = 9122.0
-    df_income["D215"] = 11874.0
-    df_income["D315"] = 14430.0
-    df_income["D415"] = 16907.0
-    df_income["Q215"] = 22240.0
-    df_income["D615"] = 22827.0
-    df_income["D715"] = 25699.0
-    df_income["D815"] = 30094.0
-    df_income["D915"] = 32303.0
+    df_income["D119"] = 9122.0
+    df_income["D219"] = 11874.0
+    df_income["D319"] = 14430.0
+    df_income["D419"] = 16907.0
+    df_income["Q219"] = 22240.0
+    df_income["D619"] = 22827.0
+    df_income["D719"] = 25699.0
+    df_income["D819"] = 30094.0
+    df_income["D919"] = 32303.0
 
     # Deliberately remove some of them
     df_income = df_income[~df_income["CODGEO"].isin([
@@ -248,9 +248,9 @@ def create(output_path):
     f = df_income["CODGEO"].isin(["1D002", "1D005"])
     df_income.loc[f, "D215"] = np.nan
 
-    os.mkdir("%s/filosofi_2015" % output_path)
+    os.mkdir("%s/filosofi_2019" % output_path)
     df_income.to_excel(
-        "%s/filosofi_2015/FILO_DISP_COM.xls" % output_path,
+        "%s/filosofi_2019/FILO2019_DISP_COM.xlsx" % output_path,
         sheet_name = "ENSEMBLE", startrow = 5, index = False
     )
 
@@ -506,13 +506,9 @@ def create(output_path):
     ]
 
     df_persons = pd.DataFrame.from_records(persons)[columns]
-
-    db = pysal.open("%s/rp_2015/FD_INDCVIZA_2015.dbf" % output_path, "w")
-    db.header = columns
-    db.field_spec = types
-    for index, row in df_persons.iterrows():
-        db.write(row)
-    db.close()
+    
+    df_persons.columns = columns
+    df_persons.to_csv("%s/rp_2019/FD_INDCVIZA_2019.csv" % output_path,sep=";")
 
     # Data set: commute flows
     print("Creating commute flows ...")
@@ -532,12 +528,9 @@ def create(output_path):
 
     columns = ["COMMUNE", "DCLT", "TRANS", "ARM", "IPONDI"]
     types = [("C", 5, 0), ("C", 5, 0), ("C", 1, 0), ("C", 5, 0), ("N", 10, 7)]
-    db = pysal.open("%s/rp_2015/FD_MOBPRO_2015.dbf" % output_path, "w")
-    db.header = columns
-    db.field_spec = types
-    for index, row in df_work[columns].iterrows():
-        db.write(row)
-    db.close()
+    
+    df_work.columns = columns
+    df_work.to_csv("%s/rp_2019/FD_MOBPRO_2019.csv" % output_path,sep=";")
 
     # ... education
     df_education = pd.DataFrame(dict(
@@ -548,78 +541,81 @@ def create(output_path):
     df_education["IPONDI"] = 1.0
 
     columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI"]
-    types = [("C", 5, 0), ("C", 5, 0), ("C", 5, 0), ("N", 10, 7)]
-    db = pysal.open("%s/rp_2015/FD_MOBSCO_2015.dbf" % output_path, "w")
-    db.header = columns
-    db.field_spec = types
-    for index, row in df_education[columns].iterrows():
-        db.write(row)
-    db.close()
+    
+    df_education.columns = columns
+    df_education.to_csv("%s/rp_2019/FD_MOBSCO_2019.csv" % output_path,sep=';')
 
     # Data set: BD-TOPO
     print("Creating BD-TOPO ...")
 
     observations = ADDRESS_OBSERVATIONS
 
-    streets = np.array([
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-    ])[random.randint(0, 26, observations)]
-
-    numbers = random.randint(0, 20, observations)
-
     df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
 
     x = df_selection["geometry"].centroid.x.values
     y = df_selection["geometry"].centroid.y.values
+    z = random.randint(100, 400, observations) 
 
     df_bdtopo = gpd.GeoDataFrame({
-        "CODE_INSEE": df_selection["INSEE_COM"].values,
-        "NUMERO": numbers,
-        "NOM_1": streets,
+        "NB_LOGTS": random.randint(0, 10, observations),
+        "ID": random.randint(1000, 1000000, observations),
         "geometry": [
-            geo.Point(x, y) for x, y in zip(x, y)
+            geo.Point(x, y,z) for x, y,z in zip(x, y,z)
         ]
     }, crs = "EPSG:2154")
 
-    df_bdtopo["NOM_1"] = "R " + df_bdtopo["NOM_1"]
+    # polygons as buildings from iris centroid points
+    df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
     os.mkdir("%s/bdtopo" % output_path)
-    df_bdtopo.to_file("%s/bdtopo/ADRESSE.shp" % output_path)
+    df_bdtopo.to_file("%s/bdtopo/BATIMENT.shp" % output_path)
 
     # Data set: SIRENE
     print("Creating SIRENE ...")
 
     observations = SIRENE_OBSERVATIONS
 
-    streets = np.array([
-        "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-        "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"
-    ])[random.randint(0, 26, observations)]
-
-    numbers = random.randint(0, 20, observations)
     identifiers = random.randint(0, 99999999, observations)
 
     df_sirene = pd.DataFrame({
         "siren": identifiers,
         "siret": identifiers,
-        "libelleVoieEtablissement": streets,
-        "numeroVoieEtablissement": numbers,
         "codeCommuneEtablissement": municipalities[random.randint(0, len(municipalities), observations)],
         "etatAdministratifEtablissement": "A"
     })
 
     df_sirene["activitePrincipaleEtablissement"] = "52.1"
     df_sirene["trancheEffectifsEtablissement"] = "03"
-    df_sirene["typeVoieEtablissement"] = "RUE"
+
 
     os.mkdir("%s/sirene" % output_path)
-    df_sirene.to_csv("%s/sirene/StockEtablissement_utf8.zip" % output_path, index = False)
+    df_sirene.to_csv(output_path + "/sirene/StockEtablissement_utf8.zip", index = False,compression={'method': 'zip', 'archive_name': 'StockEtablissement_utf8.csv'})
+
 
     df_sirene = df_sirene[["siren"]].copy()
     df_sirene["categorieJuridiqueUniteLegale"] = "1000"
-    df_sirene.to_csv("%s/sirene/StockUniteLegale_utf8.zip" % output_path, index = False)
 
+    df_sirene.to_csv(output_path + "/sirene/StockUniteLegale_utf8.zip", index = False,compression={'method': 'zip', 'archive_name': 'StockUniteLegale_utf8.csv'})
+
+    # Data set: SIRENE GEOLOCATION
+    print("Creating SIRENE GEOLOCATION...")
+
+    df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
+    x = df_selection["geometry"].centroid.x.values
+    y = df_selection["geometry"].centroid.y.values
+
+    codes_com =  df_codes["DEPCOM"].iloc[random.randint(0, len(df_iris), observations)]
+
+    df_sirene_geoloc = pd.DataFrame({
+        "siret": identifiers,
+        "x": x,
+        "y": y,
+        "plg_code_commune":codes_com,
+    })
+    
+    df_sirene_geoloc.to_csv("%s/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.csv" % output_path, index = False,sep=";")
+
+    
     # Data set: OSM
     # We add add a road grid of 500m
     print("Creating OSM ...")
@@ -674,11 +670,21 @@ def create(output_path):
     with gzip.open("%s/osm/ile-de-france-220101.osm.gz" % output_path, "wb+") as f:
         f.write(bytes("\n".join(osm), "utf-8"))
 
+
     import subprocess
+    import shutil
+    # subprocess.check_call([
+    #     "osmosis", "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
+    #     "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
+    # ],shell=True)
+
+
+
     subprocess.check_call([
-        "osmosis", "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
+        shutil.which("osmosis"), "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
         "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
     ])
+
 
     # Data set: GTFS
     print("Creating GTFS ...")

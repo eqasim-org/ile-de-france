@@ -1,11 +1,10 @@
 import pandas as pd
-import data.spatial.code_changes as cc
 import numpy as np
 
 """
 Clean the SIRENE enterprise census.
 """
-
+ 
 def configure(context):
     context.stage("data.sirene.raw_siren", ephemeral = True)
     context.stage("data.sirene.raw_siret", ephemeral = True)
@@ -14,6 +13,7 @@ def configure(context):
 def execute(context):
     df_sirene_establishments = context.stage("data.sirene.raw_siret")
     df_sirene_headquarters = context.stage("data.sirene.raw_siren")
+
 
     # Filter out establishments without a corresponding headquarter
     df_sirene = df_sirene_establishments[df_sirene_establishments["siren"].isin(df_sirene_headquarters["siren"])].copy()
@@ -72,44 +72,7 @@ def execute(context):
     if len(excess_communes) > 5:
         raise RuntimeError("Found more than 5 excess municipalities in SIRENE data")
 
-    # Clean up street information
-    df_sirene["street_type"] = df_sirene["typeVoieEtablissement"]
-    df_sirene["street_type"] = df_sirene["street_type"].str.replace("RUE", "R")
-    df_sirene["street_type"] = df_sirene["street_type"].str.replace("QUAI", "QU")
-    df_sirene["street_type"] = df_sirene["street_type"].str.replace("PLACE", "PL")
-
-    df_sirene["street"] = df_sirene["libelleVoieEtablissement"]
-    df_sirene["street"] = df_sirene["street"].str.replace("'", " ")
-    df_sirene["street"] = df_sirene["street"].str.replace("-", " ")
-    df_sirene["street"] = df_sirene["street"].str.replace("2 ", "DEUX ")
-    df_sirene["street"] = df_sirene["street"].str.replace("4 ", "QUATRE ")
-    df_sirene["street"] = df_sirene["street"].str.replace("3 ", "TROIS ")
-    df_sirene["street"] = df_sirene["street"].str.replace(" ST ", " SAINT ")
-    df_sirene["street"] = df_sirene["street"].str.replace(r"^ST ", "SAINT ")
-    df_sirene["street"] = df_sirene["street"].str.replace(" STE ", " SAINTE ")
-    df_sirene["street"] = df_sirene["street"].str.replace(r"^STE ", "SAINTE ")
-    df_sirene["street"] = df_sirene["street"].str.replace(" PTE ", " PORTE ")
-    df_sirene["street"] = df_sirene["street"].str.replace(r"^PLACE ", "PL ")
-
-    df_sirene["street"] = df_sirene["street_type"] + " " + df_sirene["street"]
-
-    df_sirene["number"] = pd.to_numeric(df_sirene["numeroVoieEtablissement"], errors = "coerce")
-
-    df_sirene = df_sirene[["siren", "commune_id", "minimum_employees", "maximum_employees", "street", "number", "ape", "siret"]]
-
-    # Filter out if the information of invalid
-    initial_count = len(df_sirene)
-
-    df_sirene = df_sirene.dropna()
-
-    final_count = len(df_sirene)
-    print("Filtered out %d/%d (%.2f%%) of enterprises because address is invalid" % (
-        initial_count - final_count, initial_count,
-        100 * (initial_count - final_count) / initial_count
-    ))
-
-    df_sirene["number"] = df_sirene["number"].astype(int)
-    df_sirene["street"] = df_sirene["street"].astype(str)
+    df_sirene = df_sirene[["siren", "commune_id", "minimum_employees", "maximum_employees", "ape", "siret"]]
 
     # Add law status
     initial_count = len(df_sirene)
