@@ -1,4 +1,4 @@
-## Synthetic population pipeline for Lyon
+## Synthetic population pipeline for Toulouse
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
@@ -24,15 +24,15 @@ config:
   # Paths to the input data and where the output should be stored
   data_path: /path/to/my/data
   output_path: output
-  output_prefix: lyon_
+  output_prefix: toulouse_
 
   # Only interesting if you run the simulation
   java_memory: 14G
 
-  # Lyon settings
-  census_path: rp_2019/FD_INDCVIZE_2019.csv
-  bdtopo_path: bdtopo_lyon/BATIMENT.shp
+  # Nantes settings
+  census_path: rp_2019/FD_INDCVIZD_2019.csv
+  bdtopo_path: bdtopo_toulouse/BATIMENT.shp
   regions: []
-  departments: ["01", 38, 42, 69, 69M]
-  gtfs_path: gtfs_lyon/GTFS_TCL.ZIP;gtfs_lyon/export_gtfs_voyages.zip;gtfs_lyon/export-intercites-gtfs-last.zip;gtfs_lyon/export-ter-gtfs-last.zip;gtfs_lyon/CAPI.GTFS.zip;gtfs_lyon/GTFS_RX.ZIP;gtfs_lyon/SEM-GTFS.zip;gtfs_lyon/stas.gtfs.zip;gtfs_lyon/VIENNE.GTFS.zip
-  osm_path: osm/rhone-alpes-latest.osm.pbf
+  departments: ["09", 82, 81, 11, 31, 32] # 12 30 34 46 48 65 66
+  gtfs_path: gtfs_toulouse/tisseo.zip;gtfs_toulouse/TAM_MMM_GTFS.zip;gtfs_toulouse/export_gtfs_voyages.zip;gtfs_toulouse/export-intercites-gtfs-last.zip;gtfs_toulouse/export-ter-gtfs-last.zip;gtfs_toulouse/RESEAU_LR_GTFS_20200706.zip
+  osm_path: osm/midi-pyrenees-220101.osm.pbf;osm/languedoc-roussillon-220101.osm.pbf

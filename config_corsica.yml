@@ -30,9 +30,10 @@ config:
   java_memory: 14G
 
   # Corsica settings
-  census_path: rp_2015/FD_INDCVIZE_2015.dbf
+  census_path: rp_2019/FD_INDCVIZE_2019.csv
+  bdtopo_path: bdtopo_corsica/BATIMENT.shp
   regions: [94]
-  gtfs_path: gtfs/corse/cars2a-gtfs.zip;gtfs/corse/cars2b-gtfs.zip;gtfs/corse/GTFS été 2021.zip
+  gtfs_path: gtfs_corsica/corse/cars2a-gtfs.zip;gtfs_corsica/corse/cars2b-gtfs.zip;gtfs_corsica/corse/GTFS été 2021.zip
   osm_path: osm/corse-latest.osm.pbf
   matching_minimum_observations: 5
 

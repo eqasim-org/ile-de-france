@@ -761,7 +761,7 @@ def create(output_path):
     os.mkdir("%s/gtfs" % output_path)
 
     import data.gtfs.utils
-    data.gtfs.utils.write_feed(feed, "%s/gtfs/IDFM_gtfs.zip" % output_path)
+    data.gtfs.utils.write_feed(feed, "%s/gtfs/IDFM-gtfs.zip" % output_path)
 
 if __name__ == "__main__":
     import sys

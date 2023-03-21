@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Update documentation for non-IDF use cases to updated data sets
 - Update: Make use of INSEE RP 2019, BPE 2021, Filosofi 2019, IRIS 2021
 - Make use of BD-TOPO building database for home locations
 - Remove BD-TOPO address database
