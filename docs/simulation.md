@@ -26,27 +26,25 @@ A cut-out for Île-de-France is available from Geofabrik:
 
 ### II) Public transit schedule (GTFS)
 
-A digital public transport schedule for Île-de-France is available from Île-de-France mobilités:
+A digital public transport schedule for Île-de-France is available from Île-de-France mobilités. Since 2023 you are required to create an account and accept the data license before making use of the data.
 
-- [Île-de-France GTFS](https://data.iledefrance-mobilites.fr/explore/dataset/offre-horaires-tc-gtfs-idfm/information/)
-- Go to *Export*, then download the *csv* file. Open the file, for instance in Excel,
-and obtain the URL for *IDFM_gtfs*. Download the *zip* file at this address.
-- Copy the `IDFM_gtfs.zip` into the folder `data/gtfs`.
+- Go to [Île-de-France GTFS](https://prim.iledefrance-mobilites.fr/fr/donnees-statiques/offre-horaires-tc-gtfs-idfm)
+- Create an account "Connexion" on top of the page
+- Once you have created a valid account, go back to the page and click "Exporter la donnée"
+- In the popup window, accept the use conditions and select "CSV" type, then click "Télécharger" to download
+- The resulting file is not the data itself, but only contains a link to them. Open the downloaded CSV and find the URL starting with `https://data.iledefrance-mobilites.fr/api/v2/catalog/datasets/...`
+- Enter the URL in your browser and download the file `IDFM-gtfs.zip`
+- Put `IDFM-gtfs.zip` into the folder `data/gtfs`
 
-Note that this schedule is updated regularly and only valid for the next three
-weeks. It is therefore a bit tricky to work with it, because the schedule varies
-strongly with external factors such as the collective strike during fall 2019
-or the Covid-19 outbreak which is currently going on at the time of writing
-this documentation. Historical data sets are available from [data.gouv.fr](https://transport.data.gouv.fr/datasets/horaires-prevus-sur-les-lignes-de-transport-en-commun-dile-de-france-gtfs/) but
-we did not assess yet how long they are kept and if it is the same data set as
-the one from Île-de-France mobilités.
+Note that this schedule is updated regularly and is only valid for the next three
+weeks.
 
 ### Overview
 
 In your directory structure, there should now be the following additional files:
 
 - `data/osm/ile-de-france-latest.osm.pbf`
-- `data/gtfs/IDFM_gtfs.zip`
+- `data/gtfs/IDFM-gtfs.zip`
 
 ## <a name="section-simulation">Running the simulation
 

@@ -12,22 +12,24 @@ simulation for **Corsica**.
 ### A) Regional census data
 
 Corsica is not included in the census data set that is used for Île-de-France
-(*Zone A*). Instead, *Zone E* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone E* and put the
-respective file (*FD_INDCVIZE_2015.dbf*) into the `data/rp_2015` folder.
+(*Zone A*). Instead, *Zone E* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/6544333). Download the *csv* version of *Zone E* and put the
+contents of the *zip* file into the folder `data/rp_2019`.
 
-### B) Address database (BD-TOPO)
+### B) Buildings database (BD TOPO)
 
-You need to download the region-specific address database.
+You need to download the region-specific buildings database.
 
-- [Address database](https://geoservices.ign.fr/bdtopo)
-- Use a ftp client to download the *Région Corse - R 94* . Most browsers will not be able to download the data.
+- [Buildings database](https://geoservices.ign.fr/bdtopo)
+- Click on the right link *BD TOPO® Shapefile Régions* 
+- It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
+- Download *Région Corse - R 94*
 - Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R94_2020-12-15`
+  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R94_some_date` 
   - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_2021-01-00120`
-  - `BDT_3-0_SHP_LAMB93_R94-ED2020-12-15`
-  - `ADRESSES`
-- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
+  - `1_DONNEES_LIVRAISON_some_date`
+  - `BDT_3-0_SHP_LAMB93_R94-some_date`
+  - `BATI`
+- Copy the files `BATIMENT.*` from the folder `BATI` in *shape file* format into `data/bdtopo_corsica`.
 
 ### C) OpenStreetMap data
 
@@ -46,20 +48,25 @@ it is necessary to collect all relevant GTFS schedules one by one.
 - [Cars Corse du Sud](https://www.data.corsica/explore/dataset/horaires-cars2a-gtfs/export/)
 - [Cars Haute Corse](https://www.data.corsica/explore/dataset/horaires-cars2b-gtfs/export/)
 
-Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`.
+Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_corsica`.
 
 ### Overview
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2015/FD_INDCVIZE_2015.dbf`
+- `data/rp_2019/FD_INDCVIZE_2019.csv`
+- `data/bdtopo_corsica/BATIMENT.cpg`
+- `data/bdtopo_corsica/BATIMENT.dbf`
+- `data/bdtopo_corsica/BATIMENT.prj`
+- `data/bdtopo_corsica/BATIMENT.shp`
+- `data/bdtopo_corsica/BATIMENT.shx`
 
 *Only for simulation:*
 
-- `osm/corse-220101.osm.pbf`
-- `gtfs/GTFS été 2021.zip`
-- `gtfs/cars2a-gtfs.zip`
-- `gtfs/cars2b-gtfs.zip`
+- `data/osm/corse-220101.osm.pbf`
+- `data/gtfs_corsica/GTFS été 2021.zip`
+- `data/gtfs_corsica/cars2a-gtfs.zip`
+- `data/gtfs_corsica/cars2b-gtfs.zip`
 
 Note that the file names may change slightly over time as GTFS schedule are
 updated continuously.
@@ -69,12 +76,13 @@ updated continuously.
 To generate the synthetic population, the `config.yml` needs to be updated. While
 the relevant code points to the Île-de-France data sets by default, you can
 adjust the paths inidividually. To let the pipeline use the *Zone E* census
-data set, add the following to `config.yml` in the `config` section:
+data set and the updated buildings, add the following to `config.yml` in the `config` section:
 
 ```yaml
 config:
   # ...
-  census_path: rp_2015/FD_INDCVIZE_2015.dbf
+  census_path: rp_2019/FD_INDCVIZE_2019.csv
+  bdtopo_path: bdtopo_corsica/BATIMENT.shp
   # ...
 ```
 
@@ -120,7 +128,7 @@ To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/cars2a-gtfs.zip;gtfs/cars2b-gtfs.zip;gtfs/GTFS été 2021.zip
+  gtfs_path: gtfs_corsica/cars2a-gtfs.zip;gtfs_corsica/cars2b-gtfs.zip;gtfs_corsica/GTFS été 2021.zip
   osm_path: osm/corse-220101.osm.pbf
   # ...
 ```

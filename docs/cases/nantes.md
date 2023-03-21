@@ -12,22 +12,24 @@ simulation for **Nantes** and its surrounding department Loire Atlantique.
 ### A) Regional census data
 
 Nantes is not included in the census data set that is uesd for Île-de-France
-(*Zone A*). Instead, *Zone C* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone C* and put the
-respective file (*FD_INDCVIZC_2015.dbf*) into the `data/rp_2015` folder.
+(*Zone A*). Instead, *Zone C* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/6544333). Download the *csv* version of *Zone C* and put the
+contents of the *zip* file into the folder `data/rp_2019`.
 
-### B) Address database (BD-TOPO)
+### B) Buildings database (BD TOPO)
 
-You need to download the region-specific address database.
+You need to download the region-specific buildings database.
 
-- [Address database](https://geoservices.ign.fr/bdtopo)
-- Use a ftp client to download the *Région Pays de la Loire - R 52* . Most browsers will not be able to download the data.
+- [Buildings database](https://geoservices.ign.fr/bdtopo)
+- Click on the right link *BD TOPO® Shapefile Régions* 
+- It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
+- Download *Région Pays de la Loire - R 52*
 - Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R52_2020-12-15`
+  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R52_some_date` 
   - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_2021-01-00120`
-  - `BDT_3-0_SHP_LAMB93_R52-ED2020-12-15`
-  - `ADRESSES`
-- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
+  - `1_DONNEES_LIVRAISON_some_date`
+  - `BDT_3-0_SHP_LAMB93_R52-some_date`
+  - `BATI`
+- Copy the files `BATIMENT.*` from the folder `BATI` in *shape file* format into `data/bdtopo_nantes`.
 
 ### C) OpenStreetMap data
 
@@ -53,7 +55,7 @@ provide a selection of links, which is not necessarily exhaustive:
 - [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
 - [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
 
-Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`.
+Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_nantes`.
 
 ### E) *Optional*: Regional Household Travel Survey 2015
 
@@ -68,21 +70,26 @@ should be present:
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2015/FD_INDCVIZCs_2015.dbf`
+- `data/rp_2019/FD_INDCVIZC_2019.csv`
+- `data/bdtopo_nantes/BATIMENT.cpg`
+- `data/bdtopo_nantes/BATIMENT.dbf`
+- `data/bdtopo_nantes/BATIMENT.prj`
+- `data/bdtopo_nantes/BATIMENT.shp`
+- `data/bdtopo_nantes/BATIMENT.shx`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
 
 *Only for simulation:*
 
-- `osm/pays-de-la-loire-latest.osm.pbf`
-- `gtfs/gtfs-tan.zip`
-- `gtfs/pdl44.zip`
-- `gtfs/stran-merge.gtfs.zip`
-- `gtfs/brevibus.gtfs.zipp`
-- `gtfs/lilapresquile.gtfs.zip`
-- `gtfs/loire-atlantique915785.zip`
-- `gtfs/export-ter-gtfs-last.zip`
-- `gtfs/export_gtfs_voyages.zip`
-- `gtfs/export-intercites-gtfs-last.zip`
+- `data/osm/pays-de-la-loire-latest.osm.pbf`
+- `data/gtfs_nantes/gtfs-tan.zip`
+- `data/gtfs_nantes/pdl44.zip`
+- `data/gtfs_nantes/stran-merge.gtfs.zip`
+- `data/gtfs_nantes/brevibus.gtfs.zipp`
+- `data/gtfs_nantes/lilapresquile.gtfs.zip`
+- `data/gtfs_nantes/loire-atlantique915785.zip`
+- `data/gtfs_nantes/export-ter-gtfs-last.zip`
+- `data/gtfs_nantes/export_gtfs_voyages.zip`
+- `data/gtfs_nantes/export-intercites-gtfs-last.zip`
 
 Note that the file names may change slightly over time as GTFS schedule are
 updated continuously.
@@ -92,12 +99,13 @@ updated continuously.
 To generate the synthetic population, the `config.yml` needs to be updated. While
 the relevant code points to the Île-de-France data sets by default, you can
 adjust the paths inidividually. To let the pipeline use the *Zone C* census
-data set, add the following to `config.yml` in the `config` section:
+data set and the updated buildings, add the following to `config.yml` in the `config` section:
 
 ```yaml
 config:
   # ...
-  census_path: rp_2015/FD_INDCVIZC_2015.dbf
+  census_path: rp_2019/FD_INDCVIZC_2019.csv
+  bdtopo_path: bdtopo_nantes/BATIMENT.shp
   # ...
 ```
 
@@ -145,7 +153,7 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/brevibus.gtfs.zip;gtfs/gtfs-tan.zip;gtfs/lilapresquile.gtfs.zip;gtfs/loire-atlantique915785.zip;gtfs/pdl44.zip;gtfs/stran-merge.gtfs.zip
+  gtfs_path: gtfs_nantes/export_gtfs_voyages.zip;gtfs_nantes/export-intercites-gtfs-last.zip;gtfs_nantes/export-ter-gtfs-last.zip;gtfs_nantes/brevibus.gtfs.zip;gtfs_nantes/gtfs-tan.zip;gtfs_nantes/lilapresquile.gtfs.zip;gtfs_nantes/loire-atlantique915785.zip;gtfs_nantes/pdl44.zip;gtfs_nantes/stran-merge.gtfs.zip
   osm_path: osm/pays-de-la-loire-220101.osm.pbf
   # ...
 ```

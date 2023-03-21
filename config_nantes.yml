@@ -30,8 +30,9 @@ config:
   java_memory: 14G
 
   # Nantes settings
-  census_path: rp_2015/FD_INDCVIZC_2015.dbf
+  census_path: rp_2019/FD_INDCVIZC_2019.csv
+  bdtopo_path: bdtopo_nantes/BATIMENT.shp
   regions: []
   departments: [44]
-  gtfs_path: gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/brevibus.gtfs.zip;gtfs/gtfs-tan.zip;gtfs/lilapresquile.gtfs.zip;gtfs/loire-atlantique915785.zip;gtfs/pdl44.zip;gtfs/stran-merge.gtfs.zip
+  gtfs_path: gtfs_nantes/export_gtfs_voyages.zip;gtfs_nantes/export-intercites-gtfs-last.zip;gtfs_nantes/export-ter-gtfs-last.zip;gtfs_nantes/brevibus.gtfs.zip;gtfs_nantes/gtfs-tan.zip;gtfs_nantes/lilapresquile.gtfs.zip;gtfs_nantes/loire-atlantique915785.zip;gtfs_nantes/pdl44.zip;gtfs_nantes/stran-merge.gtfs.zip
   osm_path: osm/pays-de-la-loire-latest.osm.pbf

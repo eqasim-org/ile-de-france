@@ -12,22 +12,24 @@ simulation for **Toulouse**.
 ### A) Regional census data
 
 Toulouse is not included in the census data set that is uesd for Île-de-France
-(*Zone A*). Instead, *Zone D* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone D* and put the
-respective file (*FD_INDCVIZD_2015.dbf*) into the `data/rp_2015` folder.
+(*Zone A*). Instead, *Zone D* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/6544333). Download the *csv* version of *Zone C* and put the
+contents of the *zip* file into the folder `data/rp_2019`.
 
-### B) Address database (BD-TOPO)
+### B) Buildings database (BD TOPO)
 
-You need to download the region-specific address database.
+You need to download the region-specific buildings database.
 
-- [Address database](https://geoservices.ign.fr/bdtopo)
-- Use a ftp client to download the *Région Occitanie - R 76* . Most browsers will not be able to download the data.
+- [Buildings database](https://geoservices.ign.fr/bdtopo)
+- Click on the right link *BD TOPO® Shapefile Régions* 
+- It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
+- Download *Région Occitanie - R 76*
 - Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R76_2020-12-15`
+  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R76_some_date` 
   - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_2021-01-00120`
-  - `BDT_3-0_SHP_LAMB93_R76-ED2020-12-15`
-  - `ADRESSES`
-- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
+  - `1_DONNEES_LIVRAISON_some_date`
+  - `BDT_3-0_SHP_LAMB93_R76-some_date`
+  - `BATI`
+- Copy the files `BATIMENT.*` from the folder `BATI` in *shape file* format into `data/bdtopo_toulouse`.
 
 ### C) OpenStreetMap data
 
@@ -51,24 +53,29 @@ provide a selection of links, which is not necessarily exhaustive:
 - [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
 - [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
 
-Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`.
+Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_toulouse`.
 
 ### Overview
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2015/FD_INDCVIZD_2015.dbf`
+- `data/rp_2019/FD_INDCVIZD_2019.csv`
+- `data/bdtopo_nantes/BATIMENT.cpg`
+- `data/bdtopo_nantes/BATIMENT.dbf`
+- `data/bdtopo_nantes/BATIMENT.prj`
+- `data/bdtopo_nantes/BATIMENT.shp`
+- `data/bdtopo_nantes/BATIMENT.shx`
 
 *Only for simulation:*
 
-- `osm/midi-pyrenees-latest.osm.pbf`
-- `osm/languedoc-roussillon-latest.osm.pbf`
-- `gtfs/tisseo.zip`
-- `gtfs/TAM_MMM_GTFS.zip`
-- `gtfs/RESEAU_LR_GTFS_20200706.zip`
-- `gtfs/export_gtfs_voyages.zip`
-- `gtfs/export-intercites-gtfs-last.zip`
-- `gtfs/export-ter-gtfs-last.zip`
+- `data/osm/midi-pyrenees-latest.osm.pbf`
+- `data/osm/languedoc-roussillon-latest.osm.pbf`
+- `data/gtfs_toulouse/tisseo.zip`
+- `data/gtfs_toulouse/TAM_MMM_GTFS.zip`
+- `data/gtfs_toulouse/RESEAU_LR_GTFS_20200706.zip`
+- `data/gtfs_toulouse/export_gtfs_voyages.zip`
+- `data/gtfs_toulouse/export-intercites-gtfs-last.zip`
+- `data/gtfs_toulouse/export-ter-gtfs-last.zip`
 
 Note that the file names may change slightly over time as GTFS schedule are
 updated continuously.
@@ -78,12 +85,13 @@ updated continuously.
 To generate the synthetic population, the `config.yml` needs to be updated. While
 the relevant code points to the Île-de-France data sets by default, you can
 adjust the paths inidividually. To let the pipeline use the *Zone D* census
-data set, add the following to `config.yml` in the `config` section:
+data set and the updated buildings, add the following to `config.yml` in the `config` section:
 
 ```yaml
 config:
   # ...
-  census_path: rp_2015/FD_INDCVIZD_2015.dbf
+  census_path: rp_2019/FD_INDCVIZD_2019.csv
+  bdtopo_path: bdtopo_toulouse/BATIMENT.shp
   # ...
 ```
 
@@ -124,7 +132,7 @@ To prepare the pipeline for a simulation of Toulouse, the paths to the OSM data 
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/tisseo.zip;gtfs/TAM_MMM_GTFS.zip;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/RESEAU_LR_GTFS_20200706.zip
+  gtfs_path: gtfs_toulouse/tisseo.zip;gtfs_toulouse/TAM_MMM_GTFS.zip;gtfs_toulouse/export_gtfs_voyages.zip;gtfs_toulouse/export-intercites-gtfs-last.zip;gtfs_toulouse/export-ter-gtfs-last.zip;gtfs_toulouse/RESEAU_LR_GTFS_20200706.zip
   osm_path: osm/midi-pyrenees-220101.osm.pbf;osm/languedoc-roussillon-220101.osm.pbf
   # ...
 ```
