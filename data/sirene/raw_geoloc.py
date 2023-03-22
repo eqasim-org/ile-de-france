@@ -27,7 +27,7 @@ def execute(context):
 
     df_siret_geoloc = pd.DataFrame(columns=["siret","x","y"])
     
-    with context.progress(label = "Reading geolocaized SIRET by INSEE(RIL matched) ...") as progress:
+    with context.progress(label = "Reading geolocaized SIRET by INSEE ...") as progress:
          csv = pd.read_csv("%s/%s" % (context.config("data_path"), context.config("siret_geo_path")), 
                           usecols = COLUMNS_DTYPES.keys(), sep=";",dtype = COLUMNS_DTYPES,chunksize = 10240)
     
