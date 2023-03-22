@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 """
-This stage loads the raw data from the French enterprise registry.
+This stage loads the geolocalization data for the French enterprise registry.
 """
 
 def configure(context):
@@ -17,7 +17,6 @@ def execute(context):
     df_codes = context.stage("data.spatial.codes")
     requested_departements = set(df_codes["departement_id"].unique())
     
-    # lecture du fichier géolocalisé de l'INSEE pour la base SIRET
     COLUMNS_DTYPES = {
         "siret":"int64", 
         "x":"float", 
