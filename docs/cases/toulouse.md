@@ -9,13 +9,7 @@ simulation for **Toulouse**.
 
 ## Additional data
 
-### A) Regional census data
-
-Toulouse is not included in the census data set that is uesd for Île-de-France
-(*Zone A*). Instead, *Zone D* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/6544333). Download the *csv* version of *Zone C* and put the
-contents of the *zip* file into the folder `data/rp_2019`.
-
-### B) Buildings database (BD TOPO)
+### A) Buildings database (BD TOPO)
 
 You need to download the region-specific buildings database.
 
@@ -23,15 +17,9 @@ You need to download the region-specific buildings database.
 - Click on the right link *BD TOPO® Shapefile Régions* 
 - It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
 - Download *Région Occitanie - R 76*
-- Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R76_some_date` 
-  - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_some_date`
-  - `BDT_3-0_SHP_LAMB93_R76-some_date`
-  - `BATI`
-- Copy the files `BATIMENT.*` from the folder `BATI` in *shape file* format into `data/bdtopo_toulouse`.
+- Copy the *7z* file into `data/bdtopo_toulouse`.
 
-### C) OpenStreetMap data
+### B) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
@@ -39,7 +27,7 @@ Geofabrik does not provide a continuous cut-out for Occitanie. Instead, the
 former regions of [Midi-Pyrennées](https://download.geofabrik.de/europe/france/midi-pyrenees.html) and [Languedoc-Roussilon](https://download.geofabrik.de/europe/france/languedoc-roussillon.html) are available: [midi-pyrenees-220101.osm.pbf](https://download.geofabrik.de/europe/france/midi-pyrenees-220101.osm.pbf) and [languedoc-roussillon-220101.osm.pbf](https://download.geofabrik.de/europe/france/languedoc-roussillon-220101.osm.pbf). Download both regions in *.osm.pbf* format and put the files into the
 folder `data/osm`.
 
-### D) GTFS data
+### C) GTFS data
 
 Again, only if you want to run simulations, the digital transit schedule is required.
 Unfortunately, there is no consolidated GTFS schedule avaiable for the Occitanie region. Hence,
@@ -60,11 +48,7 @@ Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_
 Afterwards, you should have the following additional files in your directory structure:
 
 - `data/rp_2019/FD_INDCVIZD_2019.csv`
-- `data/bdtopo_nantes/BATIMENT.cpg`
-- `data/bdtopo_nantes/BATIMENT.dbf`
-- `data/bdtopo_nantes/BATIMENT.prj`
-- `data/bdtopo_nantes/BATIMENT.shp`
-- `data/bdtopo_nantes/BATIMENT.shx`
+- `data/bdtopo_nantes/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R76_2022-12-15.7z`
 
 *Only for simulation:*
 
@@ -90,8 +74,7 @@ data set and the updated buildings, add the following to `config.yml` in the `co
 ```yaml
 config:
   # ...
-  census_path: rp_2019/FD_INDCVIZD_2019.csv
-  bdtopo_path: bdtopo_toulouse/BATIMENT.shp
+  bdtopo_path: bdtopo_toulouse
   # ...
 ```
 

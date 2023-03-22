@@ -18,6 +18,7 @@ dependencies:
   - xlrd=1.2.0
   - openpyxl=3.0.9
   - pip=20.0.2
+  - py7zr=0.20.0
 
   - pip:
     - simpledbf==0.2.6

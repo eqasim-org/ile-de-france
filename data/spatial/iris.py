@@ -1,6 +1,7 @@
 import pandas as pd
 import geopandas as gpd
 import os
+import py7zr
 
 """
 Loads the IRIS zoning system.
@@ -14,7 +15,20 @@ def configure(context):
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
 
-    df_iris = gpd.read_file("%s/%s" % (context.config("data_path"), context.config("iris_path")))[[
+    with py7zr.SevenZipFile("{}/{}".format(context.config("data_path"), context.config("iris_path"))) as archive:
+        contour_paths = [
+            path for path in archive.getnames()
+            if "LAMB93" in path
+        ]
+
+        archive.extract(context.path(), contour_paths)
+    
+    shp_path = [path for path in contour_paths if path.endswith(".shp")]
+
+    if len(shp_path) != 1:
+        raise RuntimeError("Cannot find IRIS shapes inside the archive, please report this as an error!")
+
+    df_iris = gpd.read_file("{}/{}".format(context.path(), shp_path[0]))[[
         "CODE_IRIS", "INSEE_COM", "geometry"
     ]].rename(columns = {
         "CODE_IRIS": "iris_id",

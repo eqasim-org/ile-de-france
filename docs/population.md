@@ -26,8 +26,8 @@ Census data containing the socio-demographic information of people living in
 France is available from INSEE:
 
 - [Census data](https://www.insee.fr/fr/statistiques/6544333)
-- Download the data for **Zone A** in **csv** format by clicking the link under *Individus localisés au canton-ou-ville - Zone A*.
-- Copy the contents of the *zip* file into the folder `data/rp_2019`
+- Download the data set in **csv** format by clicking the link under *Individus localisés au canton-ou-ville*.
+- Copy the *zip* file into the folder `data/rp_2019`
 
 ### 2) Population totals (RP 2019)
 
@@ -35,7 +35,7 @@ We also make use of more aggregated population totals available from INSEE:
 
 - [Population data](https://www.insee.fr/fr/statistiques/6543200)
 - Download the data for *France hors Mayotte* in **xlsx** format.
-- Copy the contents of the *zip* file into the folder `data/rp_2019`.
+- Copy the *zip* file into the folder `data/rp_2019`.
 
 ### 3) Origin-destination data (RP-MOBPRO / RP-MOBSCO 2019)
 
@@ -44,7 +44,7 @@ Origin-destination data is available from INSEE (at two locations):
 - [Work origin-destination data](https://www.insee.fr/fr/statistiques/6456056)
 - [Education origin-destination data](https://www.insee.fr/fr/statistiques/6456052)
 - Download the data from the links, both in **csv** format.
-- Copy the contents of both *zip* files into the folder `data/rp_2019`.
+- Copy both *zip* files into the folder `data/rp_2019`.
 
 ### 4) Income tax data (Filosofi 2019)
 
@@ -52,10 +52,9 @@ The tax data set is available from INSEE:
 
 - [Income tax data](https://insee.fr/fr/statistiques/6036907)
 - Download the munipality data (first link): *Base niveau communes en 2019* in **xlsx** format
-- Copy the content of the *zip* file into the folder `data/filosofi_2019`
+- Copy the *zip* file into the folder `data/filosofi_2019`
 - Download the administrative level data (second link): *Base niveau administratif en 2019* in **xlsx** format
-- Unpack the *zip* file, it contains more *zip* files.
-- Copy the content of *indic-struct-distrib-revenu-2019-REG.zip* into `data/filosofi_2019`
+- Copy the second *zip* file into `data/filosofi_2019`
 
 ### 5) Service and facility census (BPE 2021)
 
@@ -64,7 +63,7 @@ The census of services and facilities in France is available from INSEE:
 - [Service and facility census](https://www.insee.fr/fr/statistiques/3568638)
 - Download the uppermost data set in **csv** format. It contains all available
 services while the lower data sets only contain observations for specific sectors.
-- Copy the content of the *zip* file into the folder `data/bpe_2021`.
+- Copy the *zip* file into the folder `data/bpe_2021`.
 
 ### 6a) National household travel survey (ENTD 2008)
 
@@ -97,12 +96,7 @@ The IRIS zoning system is available from IGN:
 
 - [IRIS data](https://geoservices.ign.fr/contoursiris)
 - Download the **2021** edition.
-- In the *zip* file, follow the following path:
-  - *CONTOURS-IRIS_2-1__SHP__FRA_2021-01-01*
-  - *CONTOURS-IRIS*
-  - *1_DONNEES_LIVRAISON_2021-06-00217*
-  - *CONTOURS-IRIS_2-1_SHP_LAMB93_FXX-2021*
-- Copy the contents of this folder (like *CONTOURS-IRIS.shp*) into the folder `data/iris_2021`.
+- Copy the *7z* file into the folder `data/iris_2021`
 
 
 ### 8) Zoning registry (2021)
@@ -112,7 +106,7 @@ the identifiers of IRIS, municipalities, departments and regions:
 
 - [Zoning data](https://www.insee.fr/fr/information/2017499)
 - Download the **2021** edition as a *zip* file.
-- Open the *zip* and copy the file `reference_IRIS_geo2021.xls` into `data/codes_2021`.
+- Copy the *zip* file into `data/codes_2021`.
 
 ### 9) Enterprise census (SIRENE)
 
@@ -127,15 +121,12 @@ The enterprise census of France is available on data.gouv.fr:
   - `StockUniteLegale_utf8.zip`
 - Move both *zip* files into `data/sirene`.
 
-### 10) Enterprise census (SIRENE) geolocation match
+The geolocated enterprise census is available on data.gouv.fr:
 
-The enterprise census of France geolocation is available on data.gouv.fr:
-
-- [Enterprise census geolocation](https://www.data.gouv.fr/fr/datasets/geolocalisation-des-etablissements-du-repertoire-sirene-pour-les-etudes-statistiques/)
+- [Geolocated enterprise census](https://www.data.gouv.fr/fr/datasets/geolocalisation-des-etablissements-du-repertoire-sirene-pour-les-etudes-statistiques/)
 - Scroll down and click on the blue download button on the right for the following data set:
     - **Sirene : Fichier GeolocalisationEtablissement_Sirene_pour_etudes_statistiques** (followed by a date), 
-- Put the downloaded *csv* file into `data/sirene`
-
+- Put the downloaded *zip* file into `data/sirene`
 
 ### 10) Buildings database (BD TOPO)
 
@@ -145,46 +136,32 @@ The French Buildings database is available from IGN:
 - Click on the right link *BD TOPO® Shapefile Régions* 
 - It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
 - Download *Région Île-de-France - R 11*
-- Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R11_some_date` 
-  - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_some_date`
-  - `BDT_3-0_SHP_LAMB93_R11-some_date`
-  - `BATI`
-- Copy the files `BATIMENT.*` from the folder `BATI` in *shape file* format into `data/bdtopo`.
+- Copy the *7z* file into `data/bdtopo_idf`.
 
 
 ### Overview
 
 Your folder structure should now have at least the following files:
 
-- `data/rp_2019/FD_INDCVIZA_2019.csv`
-- `data/rp_2019/FD_MOBPRO_2029.csv`
-- `data/rp_2019/FD_MOBSCO_2019.csv`
-- `data/rp_2019/base-ic-evol-struct-pop-2019.xls`
-- `data/filosofi_2019/FILO2019_DISP_COM.xlsx`
-- `data/filosofi_2019/FILO2019_DISP_REG.xlsx`
-- `data/bpe_2021/bpe21_ensemble_xy.csv`
+- `data/rp_2019/RP2019_INDCVI_csv.zip`
+- `data/rp_2019/RP2019_MOBPRO_csv.zip`
+- `data/rp_2019/RP2019_MOBSCO_csv.zip`
+- `data/rp_2019/base-ic-evol-struct-pop-2019.zip`
+- `data/filosofi_2019/indic-struct-distrib-revenu-2019-COMMUNES.zip`
+- `data/filosofi_2019/indic-struct-distrib-revenu-2019-SUPRA.zip`
+- `data/bpe_2021/bpe21_ensemble_xy_csv.zip`
 - `data/entd_2008/Q_individu.csv`
 - `data/entd_2008/Q_tcm_individu.csv`
 - `data/entd_2008/Q_menage.csv`
 - `data/entd_2008/Q_tcm_menage_0.csv`
 - `data/entd_2008/K_deploc.csv`
 - `data/entd_2008/Q_ind_lieu_teg.csv`
-- `data/iris_2021/CONTOURS-IRIS.cpg`
-- `data/iris_2021/CONTOURS-IRIS.dbf`
-- `data/iris_2021/CONTOURS-IRIS.prj`
-- `data/iris_2021/CONTOURS-IRIS.shp`
-- `data/iris_2021/CONTOURS-IRIS.shx`
-- `data/codes_2021/reference_IRIS_geo2021.xls`
+- `data/iris_2021/CONTOURS-IRIS_2-1__SHP__FRA_2021-01-01.7z`
+- `data/codes_2021/reference_IRIS_geo2021.zip`
 - `data/sirene/StockEtablissement_utf8.csv`
-- `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8`
-- `data/bdtopo/BATIMENT.cpg`
-- `data/bdtopo/BATIMENT.dbf`
-- `data/bdtopo/BATIMENT.prj`
-- `data/bdtopo/BATIMENT.shp`
-- `data/bdtopo/BATIMENT.shx`
-
+- `data/sirene/StockUniteLegale_utf8.zip`
+- `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.zip`
+- `data/bdtopo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R11_2022-12-15.7z`
 
 In case you are using the regional household travel survey (EGT), the following
 files should also be in place:

@@ -7,14 +7,17 @@ Loads the regional aggregated income distribution.
 
 def configure(context):
     context.config("data_path")
-    context.config("income_reg_path", "filosofi_2019/FILO2019_DISP_REG.xlsx")
+    context.config("income_reg_path", "indic-struct-distrib-revenu-2019-SUPRA.zip")
+    context.config("income_reg_xlsx", "FILO2019_DISP_REG.xlsx")
     context.config("income_year", 19)
 
 def execute(context):
-    df = pd.read_excel(
-        "%s/%s" % (context.config("data_path"), context.config("income_reg_path")),
-        sheet_name = "ENSEMBLE", skiprows = 5
-    )
+    with zipfile.ZipFile("{}/{}".format(
+        context.config("data_path"), context.config("income_reg_path"))) as archive:
+        with archive.open(context.config("income_reg_xlsx")) as f:
+            df = pd.read_excel(f,
+                sheet_name = "ENSEMBLE", skiprows = 5
+            )
 
     values = df[df["CODGEO"] == 11][
         [
