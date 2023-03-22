@@ -26,7 +26,7 @@ def execute(context):
     with py7zr.SevenZipFile(source_path) as archive:
         building_paths = [
             path for path in archive.getnames()
-            if re.search(r"/BATIMENT\.[a-z]{3}$")
+            if re.search(r"/BATIMENT\.[a-z]{3}$", path)
         ]
 
         archive.extract(context.path(), building_paths)
