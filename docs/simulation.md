@@ -65,6 +65,7 @@ to the binary using the `osmosis_binary` option in the confiuration file. Osmosi
 can be downloaded [here](https://wiki.openstreetmap.org/wiki/Osmosis).
 - **git** `=> 2.39.2` is used to clone the repositories containing the simulation code. In
 case you clone the pipeline repository previously, you should be all set.
+- In recent versions of **Ubuntu** you may need to install the `font-config` package to avoid crashes of MATSim when writing images (`sudo apt install fontconfig`).
 
 Then, open your `config.yml` and uncomment the `matsim.output` stage in the
 `run` section. If you call `python3 -m synpp` again, the pipeline will know
