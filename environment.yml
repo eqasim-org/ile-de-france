@@ -18,7 +18,10 @@ dependencies:
   - xlrd=1.2.0
   - openpyxl=3.0.9
   - pip=20.0.2
+  - python=3.7.12
   - py7zr=0.20.0
+  - cmake=3.25.1 # Strangely, necessary for fiona to be compatible
+  - fiona=1.8.21
 
   - pip:
     - synpp==1.5.1
