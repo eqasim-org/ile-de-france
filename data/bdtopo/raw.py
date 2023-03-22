@@ -6,6 +6,7 @@ import geopandas as gpd
 import py7zr
 import re
 import glob
+import numpy as np
 
 """
 This stage loads the raw data from the French building registry.
@@ -43,7 +44,7 @@ def execute(context):
                 if item['properties']["NB_LOGTS"] is not None and int(item['properties']["NB_LOGTS"]) > 0:
                     poly = geo.Polygon([i for i in item["geometry"]["coordinates"][0]])
 
-                    if df_departments.covers(poly):         
+                    if np.any(df_departments.covers(poly)):         
                         df_bdtopo.append(dict(geometry = geo.Point(poly.centroid),
                                               bdtopo_id = item["properties"]["ID"],
                                               housing = int(item['properties']["NB_LOGTS"])))
