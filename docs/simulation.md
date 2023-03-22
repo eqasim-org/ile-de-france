@@ -34,7 +34,7 @@ A digital public transport schedule for Île-de-France is available from Île-de
 - In the popup window, accept the use conditions and select "CSV" type, then click "Télécharger" to download
 - The resulting file is not the data itself, but only contains a link to them. Open the downloaded CSV and find the URL starting with `https://data.iledefrance-mobilites.fr/api/v2/catalog/datasets/...`
 - Enter the URL in your browser and download the file `IDFM-gtfs.zip`
-- Put `IDFM-gtfs.zip` into the folder `data/gtfs`
+- Put `IDFM-gtfs.zip` into the folder `data/gtfs_idf`
 
 Note that this schedule is updated regularly and is only valid for the next three
 weeks.
@@ -44,7 +44,7 @@ weeks.
 In your directory structure, there should now be the following additional files:
 
 - `data/osm/ile-de-france-latest.osm.pbf`
-- `data/gtfs/IDFM-gtfs.zip`
+- `data/gtfs_idf/IDFM-gtfs.zip`
 
 ## <a name="section-simulation">Running the simulation
 
