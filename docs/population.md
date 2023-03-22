@@ -54,8 +54,7 @@ The tax data set is available from INSEE:
 - Download the munipality data (first link): *Base niveau communes en 2019* in **xlsx** format
 - Copy the content of the *zip* file into the folder `data/filosofi_2019`
 - Download the administrative level data (second link): *Base niveau administratif en 2019* in **xlsx** format
-- Unpack the *zip* file, it contains more *zip* files.
-- Copy the content of *indic-struct-distrib-revenu-2019-REG.zip* into `data/filosofi_2019`
+- Copy the content of the second *zip* into `data/filosofi_2019`
 
 ### 5) Service and facility census (BPE 2021)
 
