@@ -7,7 +7,7 @@ Loads the regional aggregated income distribution.
 
 def configure(context):
     context.config("data_path")
-    context.config("income_reg_path", "indic-struct-distrib-revenu-2019-SUPRA.zip")
+    context.config("income_reg_path", "filosofi_2019/indic-struct-distrib-revenu-2019-SUPRA.zip")
     context.config("income_reg_xlsx", "FILO2019_DISP_REG.xlsx")
     context.config("income_year", 19)
 
@@ -30,6 +30,6 @@ def execute(context):
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("income_reg_path"))):
-        raise RuntimeError("Filosofi data is not available")
+        raise RuntimeError("Regional Filosofi data is not available")
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("income_reg_path")))

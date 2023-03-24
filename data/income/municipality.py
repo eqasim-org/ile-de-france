@@ -90,6 +90,6 @@ def execute(context):
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("income_com_path"))):
-        raise RuntimeError("Filosofi data is not available")
+        raise RuntimeError("Municipality Filosofi data is not available")
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("income_com_path")))
