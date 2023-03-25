@@ -2,6 +2,8 @@
 
 **Under development**
 
+- Use national census data to ease creation of scenarios other than IDF
+- Read input data directly from ZIP archives instead of requiring the user to unpack the files
 - Update documentation for non-IDF use cases to updated data sets
 - Update: Make use of INSEE RP 2019, BPE 2021, Filosofi 2019, IRIS 2021
 - Make use of BD-TOPO building database for home locations
