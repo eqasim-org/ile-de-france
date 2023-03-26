@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Updated conda environment
 - Use national census data to ease creation of scenarios other than IDF
 - Read input data directly from ZIP archives instead of requiring the user to unpack the files
 - Update documentation for non-IDF use cases to updated data sets

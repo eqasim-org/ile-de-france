@@ -574,9 +574,6 @@ def create(output_path):
             archive.write(source, "content/{}".format(source.split("/")[-1]))
             os.remove(source)
         
-    import shutil
-    shutil.copy("%s/bdtopo_idf/bdtopo.7z" % output_path, "/home/shoerl")
-
     # Data set: SIRENE
     print("Creating SIRENE ...")
 
