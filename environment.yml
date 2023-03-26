@@ -2,6 +2,7 @@ name: ile-de-france
 
 channels:
   - defaults
+  - conda-forge
 
 dependencies:
   - matplotlib=3.5.0
