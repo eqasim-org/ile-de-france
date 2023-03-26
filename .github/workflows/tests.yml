@@ -21,7 +21,7 @@ jobs:
       with:
         activate-environment: "ile-de-france"
         environment-file: environment.yml
-        python-version: "3.7"
+        python-version: "3.9"
     - name: Set up osmosis
       run: |
         wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
