@@ -1,5 +1,3 @@
-# This is a *mamba* environment file compatible with a recent mamba-forge installation.
-
 name: ile-de-france
 
 channels:
@@ -18,12 +16,12 @@ dependencies:
   - tqdm=4.46.0
   - pytables=3.6.1
   - xlrd=1.2.0
-  - openpyxl=3.0.9
+  - openpyxl=3.0.10
   - pip=21.3.1
   - python=3.7.12
   - py7zr=0.20.0
   - cmake=3.25.1 # Strangely, necessary for fiona to be compatible
-  - fiona=1.8.21
+  - fiona=1.8.20
 
   - pip:
     - synpp==1.5.1
