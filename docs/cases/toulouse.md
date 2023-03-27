@@ -25,7 +25,7 @@ Only if you plan to run a simulation (and not just generate a synthetic populati
 you need to obtain additional data from OpenStreetMap.
 Geofabrik does not provide a continuous cut-out for Occitanie. Instead, the
 former regions of [Midi-Pyrennées](https://download.geofabrik.de/europe/france/midi-pyrenees.html) and [Languedoc-Roussilon](https://download.geofabrik.de/europe/france/languedoc-roussillon.html) are available: [midi-pyrenees-220101.osm.pbf](https://download.geofabrik.de/europe/france/midi-pyrenees-220101.osm.pbf) and [languedoc-roussillon-220101.osm.pbf](https://download.geofabrik.de/europe/france/languedoc-roussillon-220101.osm.pbf). Download both regions in *.osm.pbf* format and put the files into the
-folder `data/osm`.
+folder `data/osm_toulouse`.
 
 ### C) GTFS data
 
@@ -52,8 +52,8 @@ Afterwards, you should have the following additional files in your directory str
 
 *Only for simulation:*
 
-- `data/osm/midi-pyrenees-latest.osm.pbf`
-- `data/osm/languedoc-roussillon-latest.osm.pbf`
+- `data/osm_toulouse/midi-pyrenees-latest.osm.pbf`
+- `data/osm_toulouse/languedoc-roussillon-latest.osm.pbf`
 - `data/gtfs_toulouse/tisseo.zip`
 - `data/gtfs_toulouse/TAM_MMM_GTFS.zip`
 - `data/gtfs_toulouse/RESEAU_LR_GTFS_20200706.zip`
@@ -116,7 +116,7 @@ To prepare the pipeline for a simulation of Toulouse, the paths to the OSM data 
 config:
   # ...
   gtfs_path: gtfs_toulouse/tisseo.zip;gtfs_toulouse/TAM_MMM_GTFS.zip;gtfs_toulouse/export_gtfs_voyages.zip;gtfs_toulouse/export-intercites-gtfs-last.zip;gtfs_toulouse/export-ter-gtfs-last.zip;gtfs_toulouse/RESEAU_LR_GTFS_20200706.zip
-  osm_path: osm/midi-pyrenees-220101.osm.pbf;osm/languedoc-roussillon-220101.osm.pbf
+  osm_path: osm_toulouse
   # ...
 ```
 

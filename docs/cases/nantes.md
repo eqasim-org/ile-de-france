@@ -24,7 +24,7 @@ You need to download the region-specific buildings database.
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
 Geofabrik provides a cut-out for the [Pays de la Loire](https://download.geofabrik.de/europe/france/pays-de-la-loire.html) region: [pays-de-la-loire-220101.osm.pbf](https://download.geofabrik.de/europe/france/pays-de-la-loire-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
-folder `data/osm`.
+folder `data/osm_nantes`.
 
 ### C) GTFS data
 
@@ -64,7 +64,7 @@ Afterwards, you should have the following additional files in your directory str
 
 *Only for simulation:*
 
-- `data/osm/pays-de-la-loire-latest.osm.pbf`
+- `data/osm_nantes/pays-de-la-loire-latest.osm.pbf`
 - `data/gtfs_nantes/gtfs-tan.zip`
 - `data/gtfs_nantes/pdl44.zip`
 - `data/gtfs_nantes/stran-merge.gtfs.zip`
@@ -137,7 +137,7 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 config:
   # ...
   gtfs_path: gtfs_nantes/export_gtfs_voyages.zip;gtfs_nantes/export-intercites-gtfs-last.zip;gtfs_nantes/export-ter-gtfs-last.zip;gtfs_nantes/brevibus.gtfs.zip;gtfs_nantes/gtfs-tan.zip;gtfs_nantes/lilapresquile.gtfs.zip;gtfs_nantes/loire-atlantique915785.zip;gtfs_nantes/pdl44.zip;gtfs_nantes/stran-merge.gtfs.zip
-  osm_path: osm/pays-de-la-loire-220101.osm.pbf
+  osm_path: osm_nantes
   # ...
 ```
 

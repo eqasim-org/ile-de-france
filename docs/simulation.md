@@ -22,7 +22,7 @@ A cut-out for Île-de-France is available from Geofabrik:
 
 - [Île-de-France OSM](https://download.geofabrik.de/europe/france/ile-de-france.html)
 - We recommend to use the fixed snapshot from 01/01/2022: [ile-de-france-220101.osm.pbf](https://download.geofabrik.de/europe/france/ile-de-france-220101.osm.pbf)
-- Download *ile-de-france-220101.osm.pbf* and put it into the folder `data/osm`.
+- Download *ile-de-france-220101.osm.pbf* and put it into the folder `data/osm_idf`.
 
 ### II) Public transit schedule (GTFS)
 
@@ -43,7 +43,7 @@ weeks.
 
 In your directory structure, there should now be the following additional files:
 
-- `data/osm/ile-de-france-latest.osm.pbf`
+- `data/osm_idf/ile-de-france-latest.osm.pbf`
 - `data/gtfs_idf/IDFM-gtfs.zip`
 
 ## <a name="section-simulation">Running the simulation

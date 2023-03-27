@@ -24,7 +24,7 @@ You need to download the region-specific buildings database.
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
 Geofabrik provides a cut-out for the former [Rhône-Alpes](https://download.geofabrik.de/europe/france/rhone-alpes.html) region: [rhone-alpes-220101.osm.pbf](https://download.geofabrik.de/europe/france/rhone-alpes-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
-folder `data/osm`.
+folder `data/osm_lyon`.
 
 ### C) GTFS data
 
@@ -95,7 +95,7 @@ Afterwards, you should have the following additional files in your directory str
 
 *Only for simulation:*
 
-- `data/osm/rhone-alpes-latest.osm.pbf`
+- `data/osm_lyon/rhone-alpes-latest.osm.pbf`
 - `data/gtfs_lyon/GTFS_TCL.ZIP`
 - `data/gtfs_lyon/CAPI.GTFS.zip`
 - `data/gtfs_lyon/GTFS_RX.ZIP`
@@ -174,7 +174,7 @@ To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets
 config:
   # ...
   gtfs_path: gtfs_lyon/GTFS_TCL.ZIP;gtfs_lyon/export_gtfs_voyages.zip;gtfs_lyon/export-intercites-gtfs-last.zip;gtfs_lyon/export-ter-gtfs-last.zip;gtfs_lyon/CAPI.GTFS.zip;gtfs_lyon/GTFS_RX.ZIP;gtfs_lyon/SEM-GTFS.zip;gtfs_lyon/stas.gtfs.zip;gtfs_lyon/VIENNE.GTFS.zip
-  osm_path: osm/rhone-alpes-220101.osm.pbf
+  osm_path: osm_lyon
   # ...
 ```
 

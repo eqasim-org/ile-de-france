@@ -670,8 +670,8 @@ def create(output_path):
     osm.append('</osm>')
 
     import gzip
-    os.mkdir("%s/osm" % output_path)
-    with gzip.open("%s/osm/ile-de-france-220101.osm.gz" % output_path, "wb+") as f:
+    os.mkdir("%s/osm_idf" % output_path)
+    with gzip.open("%s/osm_idf/ile-de-france-220101.osm.gz" % output_path, "wb+") as f:
         f.write(bytes("\n".join(osm), "utf-8"))
 
 
@@ -679,8 +679,8 @@ def create(output_path):
     import shutil
 
     subprocess.check_call([
-        shutil.which("osmosis"), "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
-        "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
+        shutil.which("osmosis"), "--read-xml", "%s/osm_idf/ile-de-france-220101.osm.gz" % output_path,
+        "--write-pbf", "%s/osm_idf/ile-de-france-220101.osm.pbf" % output_path
     ])
 
 
