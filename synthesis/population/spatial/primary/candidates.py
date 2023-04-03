@@ -23,6 +23,7 @@ def sample_destination_municipalities(context, arguments):
     df_od = df_od[df_od["origin_id"] == origin_id].copy()
 
     # Sample destinations
+    df_od["weight"] = df_od["weight"].map(lambda x: float(x))
     df_od["count"] = random.multinomial(count, df_od["weight"].values)
     df_od = df_od[df_od["count"] > 0]
 

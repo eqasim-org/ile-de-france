@@ -11,6 +11,7 @@ Then, for each household, a centile is selected randomly from the respective
 income distribution and a random income within the selected stratum is chosen.
 """
 
+
 def configure(context):
     context.stage("data.income.municipality")
     context.stage("synthesis.population.sampled")
@@ -18,7 +19,9 @@ def configure(context):
 
     context.config("random_seed")
 
+
 MAXIMUM_INCOME_FACTOR = 1.2
+
 
 def _sample_income(context, args):
     commune_id, random_seed = args
@@ -30,13 +33,22 @@ def _sample_income(context, args):
     df_selected = df_households[f]
 
     centiles = list(df_income[df_income["commune_id"] == commune_id][["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]].iloc[0].values / 12)
+
+    incomes = _income_uniform_sample(random, centiles, len(df_selected))
+
+    return f, incomes
+
+
+def _income_uniform_sample(random_state, centiles, size):
     centiles = np.array([0] + centiles + [np.max(centiles) * MAXIMUM_INCOME_FACTOR])
 
-    indices = random.randint(10, size = len(df_selected))
+    indices = random_state.randint(10, size=size)
     lower_bounds, upper_bounds = centiles[indices], centiles[indices + 1]
 
-    incomes = lower_bounds + random.random_sample(size = len(df_selected)) * (upper_bounds - lower_bounds)
-    return f, incomes
+    incomes = lower_bounds + random_state.random_sample(size=size) * (upper_bounds - lower_bounds)
+
+    return incomes
+
 
 def execute(context):
     random = np.random.RandomState(context.config("random_seed"))
