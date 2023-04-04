@@ -2,6 +2,11 @@ import numpy as np
 import pandas as pd
 import multiprocessing as mp
 from tqdm import tqdm
+from bhepop2.tools import add_attributes_households
+from bhepop2.functions import validate_distributions
+from bhepop2.max_entropy_enrich import MaxEntropyEnrichment
+from bhepop2 import utils
+from maxentropy.utils import DivergenceError
 
 """
 This stage assigns a household income to each household of the synthesized
@@ -13,6 +18,7 @@ income distribution and a random income within the selected stratum is chosen.
 
 def configure(context):
     context.stage("data.income.municipality")
+    context.stage("data.income.municipality_attributes")
     context.stage("synthesis.population.sampled")
     context.stage("synthesis.population.spatial.home.zones")
 
@@ -22,12 +28,44 @@ MAXIMUM_INCOME_FACTOR = 1.2
 
 def _sample_income(context, args):
     commune_id, random_seed = args
-    df_households, df_income = context.data("households"), context.data("income")
+    df_households, df_income, df_income_2 = context.data("households"), context.data("income"), context.data("income_2")
 
     random = np.random.RandomState(random_seed)
 
     f = df_households["commune_id"] == commune_id
     df_selected = df_households[f]
+
+    distribs = df_income_2[df_income_2["commune_id"] == commune_id]
+
+    modalities = ["size", "family_comp"]
+    parameters = {
+        "abs_minimum": 0,
+        "relative_maximum": 1.5,
+        "maxentropy_algorithm": "Nelder-Mead",
+        "maxentropy_verbose": 0,
+        "delta_min": 1000,
+    }
+
+    enrich_class = None
+    try:
+        enrich_class = MaxEntropyEnrichment(df_selected, distribs, modalities, parameters=parameters,
+                                            seed=random_seed)
+    except AssertionError:
+        pass
+
+    if enrich_class is not None:
+        try:
+            enrich_class.optimise()
+            pop = enrich_class.assign_feature_value_to_pop()
+            print("Enriched synpop on commune ", commune_id)
+            # convert to monthly income
+            pop["feature"] = pop["feature"] / 12
+            incomes = pop["feature"].values
+            return f, incomes, "bhepop2"
+        except DivergenceError:
+            print("Synpop enrichment on commune {} failed".format(commune_id))
+
+    print("evaluate incomes on commune {} with original method".format(commune_id))
 
     centiles = list(df_income[df_income["commune_id"] == commune_id][["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]].iloc[0].values / 12)
     centiles = np.array([0] + centiles + [np.max(centiles) * MAXIMUM_INCOME_FACTOR])
@@ -36,13 +74,17 @@ def _sample_income(context, args):
     lower_bounds, upper_bounds = centiles[indices], centiles[indices + 1]
 
     incomes = lower_bounds + random.random_sample(size = len(df_selected)) * (upper_bounds - lower_bounds)
-    return f, incomes
+
+    return f, incomes, "eqasim"
 
 def execute(context):
     random = np.random.RandomState(context.config("random_seed"))
 
     # Load data
     df_income = context.stage("data.income.municipality")
+    df_income_bhepop2 = context.stage("data.income.municipality_attributes")
+
+    df_population = context.stage("synthesis.population.sampled")
 
     df_households = context.stage("synthesis.population.sampled")[[
         "household_id", "consumption_units"
@@ -53,16 +95,22 @@ def execute(context):
     ]]
 
     df_households = pd.merge(df_households, df_homes)
+    df_households = add_attributes_households(df_population, df_households)
 
     # Perform sampling per commune
-    with context.parallel(dict(households = df_households, income = df_income)) as parallel:
+    with context.parallel(dict(households = df_households, income = df_income, income_2 = df_income_bhepop2)) as parallel:
         commune_ids = df_households["commune_id"].unique()
         random_seeds = random.randint(10000, size = len(commune_ids))
 
-        for f, incomes in context.progress(parallel.imap(_sample_income, zip(commune_ids, random_seeds)), label = "Imputing income ...", total = len(commune_ids)):
+        for f, incomes, method in context.progress(parallel.imap(_sample_income, zip(commune_ids, random_seeds)), label = "Imputing income ...", total = len(commune_ids)):
             df_households.loc[f, "household_income"] = incomes * df_households.loc[f, "consumption_units"]
+            df_households.loc[f, "method"] = method
 
     # Cleanup
-    df_households = df_households[["household_id", "household_income", "consumption_units"]]
+    # df_households = df_households[["household_id", "household_income", "consumption_units"] + ["size", "family_comp", "method"]]
     assert len(df_households) == len(df_households["household_id"].unique())
+
+    df_households.to_csv("households_original.csv")
+
+    exit(0)
     return df_households
