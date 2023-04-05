@@ -54,10 +54,10 @@ jobs:
       run: |
         java -version
         mvn -v
-        python3 --version
+        python --version
         osmosis -v
         git --version
-        python3 -c "import fiona"
+        python -c "import fiona"
     - name: Run pipeline tests
       shell: bash -el {0}
       run: |
