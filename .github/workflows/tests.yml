@@ -20,12 +20,21 @@ jobs:
       with:
         distribution: "adopt"
         java-version: "11"
+    - uses: actions/cache@v2
+      env:
+        CACHE_NUMBER: 0
+      with:
+        path: ~/conda_pkgs_dir
+        key:
+          ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+          hashFiles('environment.yml') }}
     - uses: conda-incubator/setup-miniconda@v2
       with:
         activate-environment: "ile-de-france"
         environment-file: environment.yml
         python-version: "3.9"
     - name: Set up osmosis
+      shell: bash -el {0}
       run: |
         wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
         mkdir $HOME/osmosis
