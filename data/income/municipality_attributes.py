@@ -9,8 +9,8 @@ def configure(context):
     context.config("income_year", 19)
 
 def execute(context):
-
-    distributions = read_filosofi("%s/%s" % (context.config("data_path"), context.config("income_com_path")))
+    year = str(context.config("income_year"))
+    distributions = read_filosofi("%s/%s" % (context.config("data_path"), context.config("income_com_path")), year)
     distributions.rename(
         columns={
             "q1": "D1",
