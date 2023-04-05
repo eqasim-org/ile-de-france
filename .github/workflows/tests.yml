@@ -33,12 +33,21 @@ jobs:
         activate-environment: "ile-de-france"
         environment-file: environment.yml
         python-version: "3.9"
-    - name: Set up osmosis
+    - name: Set up osmosis (Linux)
+      if: matrix.os == 'ubuntu-latest'
       shell: bash -el {0}
       run: |
         wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
         mkdir $HOME/osmosis
         tar xf osmosis.tgz -C $HOME/osmosis
+        echo $HOME/osmosis/bin >> $GITHUB_PATH
+    - name: Set up osmosis (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: bash -el {0}
+      run: |
+        powershell -command "& { iwr https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.zip -OutFile osmosis.zip }"
+        mkdir $HOME/osmosis
+        unzip osmosis.zip -d $HOME/osmosis
         echo $HOME/osmosis/bin >> $GITHUB_PATH
     - name: Test versions
       shell: bash -el {0}
@@ -48,6 +57,7 @@ jobs:
         python3 --version
         osmosis -v
         git --version
+        python3 -c "import fiona"
     - name: Run pipeline tests
       shell: bash -el {0}
       run: |
