@@ -5,12 +5,12 @@ from bhepop2.tools import read_filosofi
 def configure(context):
     context.config("data_path")
     context.stage("data.spatial.municipalities")
-
+    context.config("income_com_path", "filosofi_2019/FILO2019_DISP_COM.xlsx")
+    context.config("income_year", 19)
 
 def execute(context):
 
-    distributions = read_filosofi("%s/filosofi_2015/FILO_DISP_COM.xls" %
-                                  context.config("data_path"))
+    distributions = read_filosofi("%s/%s" % (context.config("data_path"), context.config("income_com_path")))
     distributions.rename(
         columns={
             "q1": "D1",
@@ -29,7 +29,7 @@ def execute(context):
 
 
 def validate(context):
-    if not os.path.exists("%s/filosofi_2015/FILO_DISP_COM.xls" % context.config("data_path")):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("income_com_path"))):
         raise RuntimeError("Filosofi data is not available")
 
-    return os.path.getsize("%s/filosofi_2015/FILO_DISP_COM.xls" % context.config("data_path"))
+    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("income_com_path")))
