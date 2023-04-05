@@ -40,7 +40,7 @@ def _sample_income(context, args):
     modalities = ["size", "family_comp"]
     parameters = {
         "abs_minimum": 0,
-        "relative_maximum": 1.5,
+        "relative_maximum": MAXIMUM_INCOME_FACTOR,
         "maxentropy_algorithm": "Nelder-Mead",
         "maxentropy_verbose": 0,
         "delta_min": 1000,
@@ -110,7 +110,7 @@ def execute(context):
     # df_households = df_households[["household_id", "household_income", "consumption_units"] + ["size", "family_comp", "method"]]
     assert len(df_households) == len(df_households["household_id"].unique())
 
-    df_households.to_csv("households_original.csv")
+    df_households.to_csv("households.csv")
 
     exit(0)
     return df_households
