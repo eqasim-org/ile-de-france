@@ -2,7 +2,8 @@
 
 **Under development**
 
-- Updated conda environment
+- Added integration tests for Windows
+- Updated conda environment based entirely on *conda-forge*
 - Use national census data to ease creation of scenarios other than IDF
 - Make various inputs with long source names folder-based (OSM, BD-TOPO, IRIS, ...)
 - Read input data directly from ZIP archives instead of requiring the user to unpack the files
