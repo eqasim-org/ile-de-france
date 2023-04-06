@@ -21,6 +21,7 @@ def define_distance_ordering(df_persons, df_candidates, progress):
     ]).T
 
     for home_coordinate, commute_distance in zip(df_persons["home_location"], df_persons["commute_distance"]):
+        home_coordinate = np.array([home_coordinate.x, home_coordinate.y])
         distances = np.sqrt(np.sum((commute_coordinates[f_available] - home_coordinate)**2, axis = 1))
         costs[f_available] = np.abs(distances - commute_distance)
 
