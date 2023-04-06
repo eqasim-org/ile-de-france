@@ -64,7 +64,7 @@ to convert, filter and merge OSM data sets. Alternatively, you can set the path
 to the binary using the `osmosis_binary` option in the confiuration file. Osmosis
 can be downloaded [here](https://wiki.openstreetmap.org/wiki/Osmosis).
 - **git** `=> 2.39.2` is used to clone the repositories containing the simulation code. In
-case you clone the pipeline repository previously, you should be all set.
+case you clone the pipeline repository previously, you should be all set. However, Windows has problems with working with the long path names that result from the pipelien structure of the project. To avoid the problem, you very likely should set git into *long path mode* by calling `git config --system core.longpaths true`.
 - In recent versions of **Ubuntu** you may need to install the `font-config` package to avoid crashes of MATSim when writing images (`sudo apt install fontconfig`).
 
 Then, open your `config.yml` and uncomment the `matsim.output` stage in the
