@@ -56,6 +56,7 @@ jobs:
       run: |
         git config --global user.email "you@example.com"
         git config --global user.name "Your Name"
+        git config --system core.longpaths true
     - name: Test versions
       shell: bash -el {0}
       run: |
