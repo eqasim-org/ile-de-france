@@ -16,11 +16,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Test git command on Windows
-      if: matrix.os == 'windows-latest'
-      shell: bash -el {0}
-      run: |
-        git clone https://github.com/eqasim-org/eqasim-java.git --branch upstream --single-branch eqasim-java --depth 1
     - uses: actions/setup-java@v2
       with:
         distribution: "adopt"
@@ -55,6 +50,12 @@ jobs:
         mkdir $HOME/osmosis
         unzip osmosis.zip -d $HOME/osmosis
         echo $HOME/osmosis/bin >> $GITHUB_PATH
+    - name: Prepare git for Windows
+      if: matrix.os == 'windows-latest'
+      shell: bash -el {0}
+      run: |
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
     - name: Test versions
       shell: bash -el {0}
       run: |
