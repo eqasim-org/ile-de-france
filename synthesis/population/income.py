@@ -18,7 +18,6 @@ income distribution and a random income within the selected stratum is chosen.
 
 def configure(context):
     context.stage("data.income.municipality")
-    context.stage("data.income.municipality_attributes")
     context.stage("synthesis.population.sampled")
     context.stage("synthesis.population.spatial.home.zones")
 
@@ -28,14 +27,28 @@ MAXIMUM_INCOME_FACTOR = 1.2
 
 def _sample_income(context, args):
     commune_id, random_seed = args
-    df_households, df_income, df_income_2 = context.data("households"), context.data("income"), context.data("income_2")
+    df_households, df_income = context.data("households"), context.data("income")
 
     random = np.random.RandomState(random_seed)
 
     f = df_households["commune_id"] == commune_id
     df_selected = df_households[f]
 
-    distribs = df_income_2[df_income_2["commune_id"] == commune_id]
+    distribs = df_income[df_income["commune_id"] == commune_id]
+    distribs.rename(
+        columns={
+            "q1": "D1",
+            "q2": "D2",
+            "q3": "D3",
+            "q4": "D4",
+            "q5": "D5",
+            "q6": "D6",
+            "q7": "D7",
+            "q8": "D8",
+            "q9": "D9",
+        },
+        inplace=True,
+    )
 
     modalities = ["size", "family_comp"]
     parameters = {
@@ -67,7 +80,10 @@ def _sample_income(context, args):
 
     print("evaluate incomes on commune {} with original method".format(commune_id))
 
-    centiles = list(df_income[df_income["commune_id"] == commune_id][["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]].iloc[0].values / 12)
+    distrib_all = df_income[(df_income["commune_id"] == commune_id) & (df_income["modality"] == "all")]
+    assert len(distrib_all) == 1
+
+    centiles = list(distrib_all[["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]].iloc[0].values / 12)
     centiles = np.array([0] + centiles + [np.max(centiles) * MAXIMUM_INCOME_FACTOR])
 
     indices = random.randint(10, size = len(df_selected))
@@ -82,7 +98,6 @@ def execute(context):
 
     # Load data
     df_income = context.stage("data.income.municipality")
-    df_income_bhepop2 = context.stage("data.income.municipality_attributes")
 
     df_population = context.stage("synthesis.population.sampled")
 
@@ -98,7 +113,7 @@ def execute(context):
     df_households = add_attributes_households(df_population, df_households)
 
     # Perform sampling per commune
-    with context.parallel(dict(households = df_households, income = df_income, income_2 = df_income_bhepop2)) as parallel:
+    with context.parallel(dict(households = df_households, income = df_income)) as parallel:
         commune_ids = df_households["commune_id"].unique()
         random_seeds = random.randint(10000, size = len(commune_ids))
 
@@ -110,7 +125,7 @@ def execute(context):
     # df_households = df_households[["household_id", "household_income", "consumption_units"] + ["size", "family_comp", "method"]]
     assert len(df_households) == len(df_households["household_id"].unique())
 
-    df_households.to_csv("households.csv")
+    df_households.to_csv("households.csv", index=False)
 
     exit(0)
     return df_households
