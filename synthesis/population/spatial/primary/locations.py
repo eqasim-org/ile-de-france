@@ -72,7 +72,7 @@ def process(context, purpose, df_persons, df_candidates):
             for df_partial in parallel.imap_unordered(process_municipality, unique_ids):
                 df_result.append(df_partial)
 
-    return pd.concat(df_result)
+    return pd.concat(df_result).sort_index()
 
 def execute(context):
     data = context.stage("synthesis.population.spatial.primary.candidates")

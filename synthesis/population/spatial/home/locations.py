@@ -39,7 +39,7 @@ def execute(context):
 
     # Sample locations for home
 
-    unique_iris_ids = set(df_homes["iris_id"].unique())
+    unique_iris_ids = sorted(set(df_homes["iris_id"].unique()))
 
     with context.progress(label = "Sampling home locations ...", total = len(unique_iris_ids)) as progress:
         with context.parallel(dict(
@@ -49,4 +49,4 @@ def execute(context):
             df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
 
     df_homes = gpd.GeoDataFrame(df_homes, crs = "EPSG:2154")
-    return df_homes[["household_id", "commune_id", "geometry"]]
+    return df_homes[["household_id", "commune_id", "geometry"]].sort_index()
