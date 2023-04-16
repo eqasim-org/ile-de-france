@@ -55,7 +55,7 @@ def execute(context):
         if len(df_chunk) > 0:
             df_records.append(df_chunk)
 
-    pd.concat(df_records).to_hdf("%s/census.hdf" % context.path(), "census")
+    return pd.concat(df_records)
 
 
 def validate(context):

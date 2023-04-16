@@ -44,7 +44,7 @@ def execute(context):
             if len(df_chunk) > 0:
                 df_records.append(df_chunk)
         
-        pd.concat(df_records).to_hdf("%s/work.hdf" % context.cache_path, "movements")
+        work = pd.concat(df_records)
 
 
     # Second, load education
@@ -74,7 +74,9 @@ def execute(context):
             if len(df_chunk) > 0:
                 df_records.append(df_chunk)
         
-        pd.concat(df_records).to_hdf("%s/education.hdf" % context.cache_path, "movements")
+        education = pd.concat(df_records)
+
+    return work, education
 
 
 def validate(context):
