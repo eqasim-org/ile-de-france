@@ -2,6 +2,7 @@ import geopandas as gpd
 import pandas as pd
 import shapely.geometry as geo
 import os, datetime, json
+import sqlite3
 
 def configure(context):
     context.stage("synthesis.population.enriched")
@@ -24,6 +25,17 @@ def validate(context):
 
     if not os.path.isdir(output_path):
         raise RuntimeError("Output directory must exist: %s" % output_path)
+
+def placeholder_last_change_gpkg(path):
+    '''
+    Replace last_change date with a placeholder in GeoPackage metadata.
+
+    This allow for comparison of output digests between runs.
+    '''
+    conn = sqlite3.connect(path)
+    conn.cursor().execute("UPDATE gpkg_contents SET last_change='2000-01-01T00:00:00Z'")
+    conn.commit()
+    conn.close()
 
 def execute(context):
     output_path = context.config("output_path")
@@ -119,14 +131,18 @@ def execute(context):
     # Write spatial activities
     df_spatial = gpd.GeoDataFrame(df_activities, crs = "EPSG:2154")
     df_spatial["purpose"] = df_spatial["purpose"].astype(str)
-    df_spatial.to_file("%s/%sactivities.gpkg" % (output_path, output_prefix), driver = "GPKG")
+    path = "%s/%sactivities.gpkg" % (output_path, output_prefix)
+    df_spatial.to_file(path, driver = "GPKG")
+    placeholder_last_change_gpkg(path)
 
     # Write spatial homes
+    path = "%s/%shomes.gpkg" % (output_path, output_prefix)
     df_spatial[
         df_spatial["purpose"] == "home"
     ].drop_duplicates("household_id")[[
         "household_id", "geometry"
-    ]].to_file("%s/%shomes.gpkg" % (output_path, output_prefix), driver = "GPKG")
+    ]].to_file(path, driver = "GPKG")
+    placeholder_last_change_gpkg(path)
 
     # Write spatial commutes
     df_spatial = pd.merge(
@@ -140,7 +156,9 @@ def execute(context):
     ]
 
     df_spatial = df_spatial.drop(columns = ["home_geometry", "work_geometry"])
-    df_spatial.to_file("%s/%scommutes.gpkg" % (output_path, output_prefix), driver = "GPKG")
+    path = "%s/%scommutes.gpkg" % (output_path, output_prefix)
+    df_spatial.to_file(path, driver = "GPKG")
+    placeholder_last_change_gpkg(path)
 
     # Write spatial trips
     df_spatial = pd.merge(df_trips, df_locations[[
@@ -168,4 +186,6 @@ def execute(context):
     df_spatial["following_purpose"] = df_spatial["following_purpose"].astype(str)
     df_spatial["preceding_purpose"] = df_spatial["preceding_purpose"].astype(str)
     df_spatial["mode"] = df_spatial["mode"].astype(str)
-    df_spatial.to_file("%s/%strips.gpkg" % (output_path, output_prefix), driver = "GPKG")
+    path = "%s/%strips.gpkg" % (output_path, output_prefix)
+    df_spatial.to_file(path, driver = "GPKG")
+    placeholder_last_change_gpkg(path)
