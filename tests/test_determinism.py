@@ -41,15 +41,57 @@ def _test_determinism(index, data_path, tmpdir):
 
     stages = [
         dict(descriptor = "synthesis.output"),
+    ]
+
+    synpp.run(stages, config, working_directory = cache_path)
+
+    REFERENCE_HASHES = {
+        "ile_de_france_activities.csv":     "dcf8e08e9f238c90bff0298048251dac",
+        "ile_de_france_activities.gpkg":    "c3849a0489f4f2c200f10b4538c2fb13",
+        "ile_de_france_commutes.gpkg":      "af5eba0bd221681382a1f8ef49a29c72",
+        "ile_de_france_homes.gpkg":         "22275384bf07add834529364f01a0cdb",
+        "ile_de_france_households.csv":     "fa08f930689b27f9772c79d35075960d",
+        "ile_de_france_persons.csv":        "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
+        "ile_de_france_trips.csv":          "c283a9a9de3f5aeb95ef8e1308ae3434",
+        "ile_de_france_trips.gpkg":         "84b27ad4b1f88d5bdcd7e4a136c938bd",
+    }
+
+    generated_hashes = {
+        file: hash_file("%s/%s" % (output_path, file)) for file in REFERENCE_HASHES.keys()
+    }
+
+    print("Generated hashes: ", generated_hashes)
+
+    for file in REFERENCE_HASHES.keys():
+        assert REFERENCE_HASHES[file] == generated_hashes[file]
+
+def test_determinism_matsim(tmpdir):
+    data_path = str(tmpdir.mkdir("data"))
+    testdata.create(data_path)
+
+    for index in range(2):
+        _test_determinism_matsim(index, data_path, tmpdir)
+
+def _test_determinism_matsim(index, data_path, tmpdir):
+    print("Running index %d" % index)
+
+    cache_path = str(tmpdir.mkdir("cache_%d" % index))
+    output_path = str(tmpdir.mkdir("output_%d" % index))
+    config = dict(
+        data_path = data_path, output_path = output_path,
+        regions = [10, 11], sampling_rate = 1.0, hts = "entd",
+        random_seed = 1000, processes = 1,
+        secloc_maximum_iterations = 10,
+        maven_skip_tests = True
+    )
+
+    stages = [
         dict(descriptor = "matsim.output"),
     ]
 
     synpp.run(stages, config, working_directory = cache_path)
 
     REFERENCE_HASHES = {
-        "ile_de_france_activities.csv":                   "dcf8e08e9f238c90bff0298048251dac",
-        "ile_de_france_persons.csv":                      "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
-        "ile_de_france_households.csv":                   "fa08f930689b27f9772c79d35075960d",
         #"ile_de_france_population.xml.gz":  "e1407f918cb92166ebf46ad769d8d085",
         #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
         "ile_de_france_households.xml.gz":  "cdbd6ed5b175328861f237dc58dee1ff",
