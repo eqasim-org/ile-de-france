@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Configure directory for GTFS and then auto-detect contained zip files
 - Added integration tests for Windows
 - Updated conda environment based entirely on *conda-forge*
 - Use national census data to ease creation of scenarios other than IDF

@@ -135,7 +135,7 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs_nantes/export_gtfs_voyages.zip;gtfs_nantes/export-intercites-gtfs-last.zip;gtfs_nantes/export-ter-gtfs-last.zip;gtfs_nantes/brevibus.gtfs.zip;gtfs_nantes/gtfs-tan.zip;gtfs_nantes/lilapresquile.gtfs.zip;gtfs_nantes/loire-atlantique915785.zip;gtfs_nantes/pdl44.zip;gtfs_nantes/stran-merge.gtfs.zip
+  gtfs_path: gtfs_nantes
   osm_path: osm_nantes
   # ...
 ```
