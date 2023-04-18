@@ -32,7 +32,7 @@ config:
   # Corsica settings
   bdtopo_path: bdtopo_corsica
   regions: [94]
-  gtfs_path: gtfs_corsica/corse/cars2a-gtfs.zip;gtfs_corsica/corse/cars2b-gtfs.zip;gtfs_corsica/corse/GTFS été 2021.zip
+  gtfs_path: gtfs_corsica
   osm_path: osm/corse-latest.osm.pbf
   matching_minimum_observations: 5
 
