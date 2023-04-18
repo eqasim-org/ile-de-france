@@ -1,7 +1,6 @@
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
-import simpledbf
 
 """
 Transforms absolute OD flows from French census into a weighted destination

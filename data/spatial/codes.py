@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import zipfile
 
 """
 This stages loads a file containing all spatial codes in France and how
@@ -12,19 +13,22 @@ def configure(context):
 
     context.config("regions", [11])
     context.config("departments", [])
-    context.config("codes_path", "codes_2021/reference_IRIS_geo2021.xlsx")
+    context.config("codes_path", "codes_2021/reference_IRIS_geo2021.zip")
+    context.config("codes_xlsx", "reference_IRIS_geo2021.xlsx")
 
 def execute(context):
     # Load IRIS registry
-    df_codes = pd.read_excel(
-        "%s/%s" % (context.config("data_path"), context.config("codes_path")),
-        skiprows = 5, sheet_name = "Emboitements_IRIS"
-    )[["CODE_IRIS", "DEPCOM", "DEP", "REG"]].rename(columns = {
-        "CODE_IRIS": "iris_id",
-        "DEPCOM": "commune_id",
-        "DEP": "departement_id",
-        "REG": "region_id"
-    })
+    with zipfile.ZipFile(
+        "{}/{}".format(context.config("data_path"), context.config("codes_path"))) as archive:
+        with archive.open(context.config("codes_xlsx")) as f:
+            df_codes = pd.read_excel(f,
+                skiprows = 5, sheet_name = "Emboitements_IRIS"
+            )[["CODE_IRIS", "DEPCOM", "DEP", "REG"]].rename(columns = {
+                "CODE_IRIS": "iris_id",
+                "DEPCOM": "commune_id",
+                "DEP": "departement_id",
+                "REG": "region_id"
+            })
 
     df_codes["iris_id"] = df_codes["iris_id"].astype("category")
     df_codes["commune_id"] = df_codes["commune_id"].astype("category")

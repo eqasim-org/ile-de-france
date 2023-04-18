@@ -3,6 +3,8 @@ import pandas as pd
 import shapely.geometry as geo
 import numpy as np
 import os
+import py7zr, zipfile
+import glob
 import subprocess
 
 def create(output_path):
@@ -162,6 +164,11 @@ def create(output_path):
     os.mkdir("%s/iris_2021" % output_path)
     df_iris.to_file("%s/iris_2021/CONTOURS-IRIS.shp" % output_path)
 
+    with py7zr.SevenZipFile("%s/iris_2021/iris.7z" % output_path, "w") as archive:
+        for source in glob.glob("%s/iris_2021/CONTOURS-IRIS.*" % output_path):
+            archive.write(source, "LAMB93/{}".format(source.split("/")[-1]))
+            os.remove(source)
+
     # Dataset: Codes
     # Required attributes: CODE_IRIS, DEPCOM, DEP, REG
     print("Creating codes ...")
@@ -172,11 +179,13 @@ def create(output_path):
     ))
 
     os.mkdir("%s/codes_2021" % output_path)
-    df_codes.to_excel(
-        "%s/codes_2021/reference_IRIS_geo2021.xlsx" % output_path,
-        sheet_name = "Emboitements_IRIS",
-        startrow = 5, index = False
-    )
+
+    with zipfile.ZipFile("%s/codes_2021/reference_IRIS_geo2021.zip" % output_path, "w") as archive:
+        with archive.open("reference_IRIS_geo2021.xlsx", "w") as f:
+            df_codes.to_excel(
+                f, sheet_name = "Emboitements_IRIS",
+                startrow = 5, index = False
+            )
 
     # Dataset: Aggregate census
     # Required attributes: IRIS, COM, DEP, REG, P15_POP
@@ -191,10 +200,12 @@ def create(output_path):
     df_population["P19_POP"] = 120.0
 
     os.mkdir("%s/rp_2019" % output_path)
-    df_population.to_excel(
-        "%s/rp_2019/base-ic-evol-struct-pop-2019.xlsx" % output_path,
-        sheet_name = "IRIS", startrow = 5, index = False
-    )
+
+    with zipfile.ZipFile("%s/rp_2019/base-ic-evol-struct-pop-2019.zip" % output_path, "w") as archive:
+        with archive.open("base-ic-evol-struct-pop-2019.xlsx", "w") as f:
+            df_population.to_excel(
+                f, sheet_name = "IRIS", startrow = 5, index = False
+            )
 
     # Dataset: BPE
     # Required attributes: DCIRIS, LAMBERT_X, LAMBERT_Y, TYPEQU, DEPCOM, DEP
@@ -216,12 +227,14 @@ def create(output_path):
     df_selection["LAMBERT_X"].iloc[-10:] = np.nan
     df_selection["LAMBERT_Y"].iloc[-10:] = np.nan
 
-    types = [("C", 10, 0), ("C", 12, 0), ("C", 12, 0), ("C", 4, 0), ("C", 5, 0), ("C", 3, 0)]
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
     os.mkdir("%s/bpe_2021" % output_path)
-    df_selection[columns].to_csv("%s/bpe_2021/bpe21_ensemble_xy.csv" % output_path,
-        sep = ";", index = False)
+
+    with zipfile.ZipFile("%s/bpe_2021/bpe21_ensemble_xy_csv.zip" % output_path, "w") as archive:
+        with archive.open("bpe21_ensemble_xy.csv", "w") as f:
+            df_selection[columns].to_csv(f,
+                sep = ";", index = False)
 
     # Dataset: Tax data
     # Required attributes: CODGEO, D115, ..., D915
@@ -249,10 +262,12 @@ def create(output_path):
     df_income.loc[f, "D215"] = np.nan
 
     os.mkdir("%s/filosofi_2019" % output_path)
-    df_income.to_excel(
-        "%s/filosofi_2019/FILO2019_DISP_COM.xlsx" % output_path,
-        sheet_name = "ENSEMBLE", startrow = 5, index = False
-    )
+
+    with zipfile.ZipFile("%s/filosofi_2019/indic-struct-distrib-revenu-2019-COMMUNES.zip" % output_path, "w") as archive:
+        with archive.open("FILO2019_DISP_COM.xlsx", "w") as f:
+            df_income.to_excel(
+                f, sheet_name = "ENSEMBLE", startrow = 5, index = False
+            )
 
     # Data set: ENTD
     print("Creating ENTD ...")
@@ -462,7 +477,6 @@ def create(output_path):
             iris = "ZZZZZZZZZ"
 
         destination_municipality = random.choice(df["municipality"].unique())
-        destination_region = df[df["municipality"] == destination_municipality]["region"].values[0]
         destination_department = df[df["municipality"] == destination_municipality]["department"].values[0]
 
         for person_index in range(CENSUS_HOUSEHOLD_MEMBERS):
@@ -485,30 +499,12 @@ def create(output_path):
         "SEXE", "TACT", "TRANS", "VOIT", "DEROU"
     ]
 
-    types = [
-        ("C", 5, 0),
-        ("C", 7, 0),
-        ("C", 3, 0),
-        ("C", 1, 0),
-        ("C", 1, 0), # CS 1
-        ("C", 3, 0),
-        ("C", 9, 0),
-        ("C", 2, 0),
-        ("C", 1, 0),
-        ("C", 1, 0),
-        ("C", 1, 0),
-        ("N", 10, 7), # IPONDI
-        ("C", 1, 0),
-        ("C", 2, 0),
-        ("C", 1, 0),
-        ("C", 1, 0),
-        ("C", 1, 0),
-    ]
-
     df_persons = pd.DataFrame.from_records(persons)[columns]
-    
     df_persons.columns = columns
-    df_persons.to_csv("%s/rp_2019/FD_INDCVIZA_2019.csv" % output_path,sep=";")
+
+    with zipfile.ZipFile("%s/rp_2019/RP2019_INDCVI_csv.zip" % output_path, "w") as archive:
+        with archive.open("FD_INDCVI_2019.csv", "w") as f:
+            df_persons.to_csv(f, sep = ";")
 
     # Data set: commute flows
     print("Creating commute flows ...")
@@ -527,10 +523,11 @@ def create(output_path):
     df_work["IPONDI"] = 1.0
 
     columns = ["COMMUNE", "DCLT", "TRANS", "ARM", "IPONDI"]
-    types = [("C", 5, 0), ("C", 5, 0), ("C", 1, 0), ("C", 5, 0), ("N", 10, 7)]
-    
     df_work.columns = columns
-    df_work.to_csv("%s/rp_2019/FD_MOBPRO_2019.csv" % output_path,sep=";")
+
+    with zipfile.ZipFile("%s/rp_2019/RP2019_mobpro_csv.zip" % output_path, "w") as archive:
+        with archive.open("FD_MOBPRO_2019.csv", "w") as f:
+            df_work.to_csv(f, sep = ";")
 
     # ... education
     df_education = pd.DataFrame(dict(
@@ -541,9 +538,11 @@ def create(output_path):
     df_education["IPONDI"] = 1.0
 
     columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI"]
-    
     df_education.columns = columns
-    df_education.to_csv("%s/rp_2019/FD_MOBSCO_2019.csv" % output_path,sep=';')
+
+    with zipfile.ZipFile("%s/rp_2019/RP2019_mobsco_csv.zip" % output_path, "w") as archive:
+        with archive.open("FD_MOBSCO_2019.csv", "w") as f:
+            df_education.to_csv(f, sep = ";")
 
     # Data set: BD-TOPO
     print("Creating BD-TOPO ...")
@@ -567,9 +566,14 @@ def create(output_path):
     # polygons as buildings from iris centroid points
     df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
-    os.mkdir("%s/bdtopo" % output_path)
-    df_bdtopo.to_file("%s/bdtopo/BATIMENT.shp" % output_path)
+    os.mkdir("%s/bdtopo_idf" % output_path)
+    df_bdtopo.to_file("%s/bdtopo_idf/BATIMENT.shp" % output_path)
 
+    with py7zr.SevenZipFile("%s/bdtopo_idf/bdtopo.7z" % output_path, "w") as archive:
+        for source in glob.glob("%s/bdtopo_idf/BATIMENT.*" % output_path):
+            archive.write(source, "content/{}".format(source.split("/")[-1]))
+            os.remove(source)
+        
     # Data set: SIRENE
     print("Creating SIRENE ...")
 
@@ -589,13 +593,13 @@ def create(output_path):
 
 
     os.mkdir("%s/sirene" % output_path)
-    df_sirene.to_csv(output_path + "/sirene/StockEtablissement_utf8.zip", index = False,compression={'method': 'zip', 'archive_name': 'StockEtablissement_utf8.csv'})
+    df_sirene.to_csv(output_path + "/sirene/StockEtablissement_utf8.zip", index = False, compression={'method': 'zip', 'archive_name': 'StockEtablissement_utf8.csv'})
 
 
     df_sirene = df_sirene[["siren"]].copy()
     df_sirene["categorieJuridiqueUniteLegale"] = "1000"
 
-    df_sirene.to_csv(output_path + "/sirene/StockUniteLegale_utf8.zip", index = False,compression={'method': 'zip', 'archive_name': 'StockUniteLegale_utf8.csv'})
+    df_sirene.to_csv(output_path + "/sirene/StockUniteLegale_utf8.zip", index = False, compression={'method': 'zip', 'archive_name': 'StockUniteLegale_utf8.csv'})
 
     # Data set: SIRENE GEOLOCATION
     print("Creating SIRENE GEOLOCATION...")
@@ -613,7 +617,7 @@ def create(output_path):
         "plg_code_commune":codes_com,
     })
     
-    df_sirene_geoloc.to_csv("%s/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.csv" % output_path, index = False,sep=";")
+    df_sirene_geoloc.to_csv("%s/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.zip" % output_path, index = False, sep=";", compression={'method': 'zip', 'archive_name': 'GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.csv'})
 
     
     # Data set: OSM
@@ -666,23 +670,17 @@ def create(output_path):
     osm.append('</osm>')
 
     import gzip
-    os.mkdir("%s/osm" % output_path)
-    with gzip.open("%s/osm/ile-de-france-220101.osm.gz" % output_path, "wb+") as f:
+    os.mkdir("%s/osm_idf" % output_path)
+    with gzip.open("%s/osm_idf/ile-de-france-220101.osm.gz" % output_path, "wb+") as f:
         f.write(bytes("\n".join(osm), "utf-8"))
 
 
     import subprocess
     import shutil
-    # subprocess.check_call([
-    #     "osmosis", "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
-    #     "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
-    # ],shell=True)
-
-
 
     subprocess.check_call([
-        shutil.which("osmosis"), "--read-xml", "%s/osm/ile-de-france-220101.osm.gz" % output_path,
-        "--write-pbf", "%s/osm/ile-de-france-220101.osm.pbf" % output_path
+        shutil.which("osmosis"), "--read-xml", "%s/osm_idf/ile-de-france-220101.osm.gz" % output_path,
+        "--write-pbf", "%s/osm_idf/ile-de-france-220101.osm.pbf" % output_path
     ])
 
 
@@ -707,8 +705,6 @@ def create(output_path):
         route_long_name = "The eqasim train", route_desc = "",
         route_type = 2
     )])
-
-    stops = []
 
     df_stops = df[df["municipality"].isin(["1B019", "2D007"])].copy()
     df_stops = df_stops.to_crs("EPSG:4326")
@@ -758,10 +754,10 @@ def create(output_path):
         from_stop_id = [], to_stop_id = [], transfer_type = []
     ))
 
-    os.mkdir("%s/gtfs" % output_path)
+    os.mkdir("%s/gtfs_idf" % output_path)
 
     import data.gtfs.utils
-    data.gtfs.utils.write_feed(feed, "%s/gtfs/IDFM-gtfs.zip" % output_path)
+    data.gtfs.utils.write_feed(feed, "%s/gtfs_idf/IDFM-gtfs.zip" % output_path)
 
 if __name__ == "__main__":
     import sys

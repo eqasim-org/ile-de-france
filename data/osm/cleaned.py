@@ -1,6 +1,7 @@
 import data.osm.osmosis
 import os, os.path, gzip
 import shapely.geometry as geo
+import glob
 
 """
 This file reads the OSM data in PBF format specified by the "osm_path"
@@ -19,7 +20,7 @@ Additionally, the stage cuts the OSM data to the requested region of the pipelin
 
 def configure(context):
     context.config("data_path")
-    context.config("osm_path", "osm/ile-de-france-220101.osm.pbf")
+    context.config("osm_path", "osm_idf")
 
     context.config("osm_highways", "*")
     context.config("osm_railways", "*")
@@ -51,15 +52,15 @@ def write_poly(df, path, geometry_column = "geometry"):
         f.write("\n".join(data))
 
 def execute(context):
-    input_files = context.config("osm_path").split(";")
-
+    input_files = get_input_files("{}/{}".format(context.config("data_path"), context.config("osm_path")))
+    
     # Prepare bounding area
     df_area = context.stage("data.spatial.municipalities")
     write_poly(df_area, "%s/boundary.poly" % context.path())
 
     # Filter input files for quicker processing
     for index, path in enumerate(input_files):
-        print("Filtering %s ..." % path)
+        print("Filtering %s ..." % path.split("/")[-1])
         print("Depending on the amount of OSM data, this may take quite some time!")
 
         mode = "pbf" if path.endswith("pbf") else "xml"
@@ -67,7 +68,7 @@ def execute(context):
         highway_tags = context.config("osm_highways")
         railway_tags = context.config("osm_railways")
 
-        absolute_path = os.path.abspath("%s/%s" % (context.config("data_path"), path))
+        absolute_path = os.path.abspath(path)
 
         data.osm.osmosis.run(context, [
             "--read-%s" % mode, absolute_path,
@@ -97,14 +98,20 @@ def execute(context):
 
     return "output.osm.gz"
 
+def get_input_files(base_path):
+    osm_paths = list(glob.glob("{}/*.osm.pbf".format(base_path)))
+    osm_paths += list(glob.glob("{}/*.osm.xml".format(base_path)))
+
+    if len(osm_paths) == 0:
+        raise RuntimeError("Did not find any OSM data (.osm.pbf) in {}".format(base_path))
+    
+    return osm_paths
+
 def validate(context):
-    input_files = context.config("osm_path").split(";")
+    input_files = get_input_files("{}/{}".format(context.config("data_path"), context.config("osm_path")))
     total_size = 0
 
     for path in input_files:
-        if not os.path.exists("%s/%s" % (context.config("data_path"), path)):
-            raise RuntimeError("OSM data is not available: %s" % path)
-        else:
-            total_size += os.path.getsize("%s/%s" % (context.config("data_path"), path))
+        total_size += os.path.getsize(path)
 
     return total_size

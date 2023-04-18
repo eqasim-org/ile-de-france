@@ -1,5 +1,4 @@
 import pandas as pd
-import Levenshtein
 import tqdm
 import numpy as np
 import geopandas as gpd
