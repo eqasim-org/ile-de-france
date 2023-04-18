@@ -64,5 +64,5 @@ def run_population(tmpdir, hts):
 def test_population_with_entd(tmpdir):
     run_population(tmpdir, "entd")
 
-def test_population_with_egt(tmpdir):
-    run_population(tmpdir, "entd") # TODO: Fix this!
+#def test_population_with_egt(tmpdir):
+#    run_population(tmpdir, "entd") # TODO: Fix this!

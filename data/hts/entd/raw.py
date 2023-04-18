@@ -1,4 +1,3 @@
-import simpledbf
 from tqdm import tqdm
 import pandas as pd
 import os
