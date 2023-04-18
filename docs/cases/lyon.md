@@ -89,7 +89,6 @@ If you get the EDGT data from the ADISP portal, the following files should be pr
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2019/FD_INDCVIZE_2019.csv`
 - `data/bdtopo_lyon/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R84_2022-12-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 

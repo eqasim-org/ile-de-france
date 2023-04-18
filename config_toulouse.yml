@@ -34,4 +34,4 @@ config:
   regions: []
   departments: ["09", 82, 81, 11, 31, 32] # 12 30 34 46 48 65 66
   gtfs_path: gtfs_toulouse/tisseo.zip;gtfs_toulouse/TAM_MMM_GTFS.zip;gtfs_toulouse/export_gtfs_voyages.zip;gtfs_toulouse/export-intercites-gtfs-last.zip;gtfs_toulouse/export-ter-gtfs-last.zip;gtfs_toulouse/RESEAU_LR_GTFS_20200706.zip
-  osm_path: osm/midi-pyrenees-220101.osm.pbf;osm/languedoc-roussillon-220101.osm.pbf
+  osm_path: osm_toulouse
