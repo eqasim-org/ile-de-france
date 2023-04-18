@@ -115,7 +115,7 @@ To prepare the pipeline for a simulation of Toulouse, the paths to the OSM data 
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs_toulouse/tisseo.zip;gtfs_toulouse/TAM_MMM_GTFS.zip;gtfs_toulouse/export_gtfs_voyages.zip;gtfs_toulouse/export-intercites-gtfs-last.zip;gtfs_toulouse/export-ter-gtfs-last.zip;gtfs_toulouse/RESEAU_LR_GTFS_20200706.zip
+  gtfs_path: gtfs_toulouse
   osm_path: osm_toulouse
   # ...
 ```

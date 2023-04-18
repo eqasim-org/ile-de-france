@@ -111,7 +111,7 @@ To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs_corsica/cars2a-gtfs.zip;gtfs_corsica/cars2b-gtfs.zip;gtfs_corsica/GTFS été 2021.zip
+  gtfs_path: gtfs_corsica
   osm_path: osm_corsica
   # ...
 ```

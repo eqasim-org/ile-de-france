@@ -33,5 +33,5 @@ config:
   bdtopo_path: bdtopo_lyon
   regions: []
   departments: ["01", 38, 42, 69, 69M]
-  gtfs_path: gtfs_lyon/GTFS_TCL.ZIP;gtfs_lyon/export_gtfs_voyages.zip;gtfs_lyon/export-intercites-gtfs-last.zip;gtfs_lyon/export-ter-gtfs-last.zip;gtfs_lyon/CAPI.GTFS.zip;gtfs_lyon/GTFS_RX.ZIP;gtfs_lyon/SEM-GTFS.zip;gtfs_lyon/stas.gtfs.zip;gtfs_lyon/VIENNE.GTFS.zip
+  gtfs_path: gtfs_lyon
   osm_path: osm/rhone-alpes-latest.osm.pbf
