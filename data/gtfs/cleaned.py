@@ -47,7 +47,7 @@ def execute(context):
 
 def get_input_files(base_path):
     gtfs_paths = [
-        str(child)
+        child.name
         for child in pathlib.Path(base_path).glob("*")
         if child.suffix.lower() == ".zip"
     ]
