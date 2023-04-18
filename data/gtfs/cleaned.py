@@ -49,7 +49,7 @@ def get_input_files(base_path):
     gtfs_paths = [
         str(child)
         for child in pathlib.Path(base_path).glob("*")
-        if child.suffix.lower() == "zip"
+        if child.suffix.lower() == ".zip"
     ]
 
     if len(gtfs_paths) == 0:
