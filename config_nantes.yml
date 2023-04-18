@@ -34,4 +34,4 @@ config:
   regions: []
   departments: [44]
   gtfs_path: gtfs_nantes
-  osm_path: osm/pays-de-la-loire-latest.osm.pbf
+  osm_path: osm_nantes

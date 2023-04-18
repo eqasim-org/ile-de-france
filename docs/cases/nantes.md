@@ -58,7 +58,6 @@ should be present:
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2019/FD_INDCVIZC_2019.csv`
 - `data/bdtopo_nantes/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R52_2022-12-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
 

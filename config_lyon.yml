@@ -34,4 +34,4 @@ config:
   regions: []
   departments: ["01", 38, 42, 69, 69M]
   gtfs_path: gtfs_lyon
-  osm_path: osm/rhone-alpes-latest.osm.pbf
+  osm_path: osm_lyon

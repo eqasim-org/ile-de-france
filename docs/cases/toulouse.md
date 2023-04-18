@@ -47,7 +47,6 @@ Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2019/FD_INDCVIZD_2019.csv`
 - `data/bdtopo_nantes/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R76_2022-12-15.7z`
 
 *Only for simulation:*

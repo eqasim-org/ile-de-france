@@ -31,8 +31,7 @@ folder `data/osm_lyon`.
 Again, only if you want to run simulations, the digital transit schedule is required.
 Unfortunately, there is no consolidated GTFS schedule avaiable for the region of interest. Hence,
 it is necessary to collect all relevant GTFS schedules one by one. Here, we
-provide a selection of links, which is not necessarily exhaustive (for instance,
-it would be possible to add schedules for Saint Etienne or Grenoble)
+provide a selection of links, which is not necessarily exhaustive:
 
 - [TCL (Lyon)](https://transport.data.gouv.fr/datasets/horaires-theoriques-du-reseau-transports-en-commun-lyonnais-1/)
 - [SNCF TER](https://ressources.data.sncf.com/explore/dataset/sncf-ter-gtfs/information/)
@@ -52,7 +51,7 @@ For Lyon, a regional household travel survey (EDGT Lyon 2015) is available on re
 from the authorities. If you have the data available, you can use it in the pipeline.
 To do so, put the relevant files into `data/edgt_lyon_2015`.
 
-The data can be obtained either directly from the CEREMA or through the ADISP portal (http://www.progedo-adisp.fr/serie_emd.php).
+The data can be obtained either directly from the CEREMA or through the [ADISP portal](http://www.progedo-adisp.fr/serie_emd.php).
 
 #### D.a) Data from CEREMA
 
@@ -89,7 +88,6 @@ If you get the EDGT data from the ADISP portal, the following files should be pr
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2019/FD_INDCVIZE_2019.csv`
 - `data/bdtopo_lyon/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R84_2022-12-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 
