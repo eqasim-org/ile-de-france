@@ -21,7 +21,7 @@ def execute(context):
     # Load and cut feeds
     feeds = []
     for path in input_files:
-        feed = gtfs.read_feed("%s/%s" % (context.config("data_path"), path))
+        feed = gtfs.read_feed(path)
         feed = gtfs.cut_feed(feed, df_area)
 
         # This was fixed in pt2matsim, so we can remove one a new release (> 20.7) is available.
@@ -47,7 +47,7 @@ def execute(context):
 
 def get_input_files(base_path):
     gtfs_paths = [
-        child.name
+        str(child)
         for child in pathlib.Path(base_path).glob("*")
         if child.suffix.lower() == ".zip"
     ]
