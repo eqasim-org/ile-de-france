@@ -9,13 +9,7 @@ simulation for **Nantes** and its surrounding department Loire Atlantique.
 
 ## Additional data
 
-### A) Regional census data
-
-Nantes is not included in the census data set that is uesd for Île-de-France
-(*Zone A*). Instead, *Zone C* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/6544333). Download the *csv* version of *Zone C* and put the
-contents of the *zip* file into the folder `data/rp_2019`.
-
-### B) Buildings database (BD TOPO)
+### A) Buildings database (BD TOPO)
 
 You need to download the region-specific buildings database.
 
@@ -23,22 +17,16 @@ You need to download the region-specific buildings database.
 - Click on the right link *BD TOPO® Shapefile Régions* 
 - It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
 - Download *Région Pays de la Loire - R 52*
-- Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R52_some_date` 
-  - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_some_date`
-  - `BDT_3-0_SHP_LAMB93_R52-some_date`
-  - `BATI`
-- Copy the files `BATIMENT.*` from the folder `BATI` in *shape file* format into `data/bdtopo_nantes`.
+- Copy the *7z* file into `data/bdtopo_nantes`.
 
-### C) OpenStreetMap data
+### B) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
 Geofabrik provides a cut-out for the [Pays de la Loire](https://download.geofabrik.de/europe/france/pays-de-la-loire.html) region: [pays-de-la-loire-220101.osm.pbf](https://download.geofabrik.de/europe/france/pays-de-la-loire-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
-folder `data/osm`.
+folder `data/osm_nantes`.
 
-### D) GTFS data
+### C) GTFS data
 
 Again, only if you want to run simulations, the digital transit schedule is required.
 Unfortunately, there is no consolidated GTFS schedule avaiable for the region of interest. Hence,
@@ -57,7 +45,7 @@ provide a selection of links, which is not necessarily exhaustive:
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_nantes`.
 
-### E) *Optional*: Regional Household Travel Survey 2015
+### D) *Optional*: Regional Household Travel Survey 2015
 
 For Loire Atlantique, a regional household travel survey (EDGT Loire Atlantique 2015) is available as [open data](https://data.loire-atlantique.fr/explore/dataset/224400028_enquete-deplacements-en-loire-atlantique/information/). Download the raw data "données brutes" at bullet point 1 one the website. Put the relevant files into `data/edgt_44_2015`. The following files
 should be present:
@@ -71,16 +59,12 @@ should be present:
 Afterwards, you should have the following additional files in your directory structure:
 
 - `data/rp_2019/FD_INDCVIZC_2019.csv`
-- `data/bdtopo_nantes/BATIMENT.cpg`
-- `data/bdtopo_nantes/BATIMENT.dbf`
-- `data/bdtopo_nantes/BATIMENT.prj`
-- `data/bdtopo_nantes/BATIMENT.shp`
-- `data/bdtopo_nantes/BATIMENT.shx`
+- `data/bdtopo_nantes/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R52_2022-12-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
 
 *Only for simulation:*
 
-- `data/osm/pays-de-la-loire-latest.osm.pbf`
+- `data/osm_nantes/pays-de-la-loire-latest.osm.pbf`
 - `data/gtfs_nantes/gtfs-tan.zip`
 - `data/gtfs_nantes/pdl44.zip`
 - `data/gtfs_nantes/stran-merge.gtfs.zip`
@@ -104,8 +88,7 @@ data set and the updated buildings, add the following to `config.yml` in the `co
 ```yaml
 config:
   # ...
-  census_path: rp_2019/FD_INDCVIZC_2019.csv
-  bdtopo_path: bdtopo_nantes/BATIMENT.shp
+  bdtopo_path: bdtopo_nantes
   # ...
 ```
 
@@ -154,7 +137,7 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 config:
   # ...
   gtfs_path: gtfs_nantes/export_gtfs_voyages.zip;gtfs_nantes/export-intercites-gtfs-last.zip;gtfs_nantes/export-ter-gtfs-last.zip;gtfs_nantes/brevibus.gtfs.zip;gtfs_nantes/gtfs-tan.zip;gtfs_nantes/lilapresquile.gtfs.zip;gtfs_nantes/loire-atlantique915785.zip;gtfs_nantes/pdl44.zip;gtfs_nantes/stran-merge.gtfs.zip
-  osm_path: osm/pays-de-la-loire-220101.osm.pbf
+  osm_path: osm_nantes
   # ...
 ```
 

@@ -22,7 +22,7 @@ A cut-out for Île-de-France is available from Geofabrik:
 
 - [Île-de-France OSM](https://download.geofabrik.de/europe/france/ile-de-france.html)
 - We recommend to use the fixed snapshot from 01/01/2022: [ile-de-france-220101.osm.pbf](https://download.geofabrik.de/europe/france/ile-de-france-220101.osm.pbf)
-- Download *ile-de-france-220101.osm.pbf* and put it into the folder `data/osm`.
+- Download *ile-de-france-220101.osm.pbf* and put it into the folder `data/osm_idf`.
 
 ### II) Public transit schedule (GTFS)
 
@@ -34,7 +34,7 @@ A digital public transport schedule for Île-de-France is available from Île-de
 - In the popup window, accept the use conditions and select "CSV" type, then click "Télécharger" to download
 - The resulting file is not the data itself, but only contains a link to them. Open the downloaded CSV and find the URL starting with `https://data.iledefrance-mobilites.fr/api/v2/catalog/datasets/...`
 - Enter the URL in your browser and download the file `IDFM-gtfs.zip`
-- Put `IDFM-gtfs.zip` into the folder `data/gtfs`
+- Put `IDFM-gtfs.zip` into the folder `data/gtfs_idf`
 
 Note that this schedule is updated regularly and is only valid for the next three
 weeks.
@@ -43,8 +43,8 @@ weeks.
 
 In your directory structure, there should now be the following additional files:
 
-- `data/osm/ile-de-france-latest.osm.pbf`
-- `data/gtfs/IDFM-gtfs.zip`
+- `data/osm_idf/ile-de-france-latest.osm.pbf`
+- `data/gtfs_idf/IDFM-gtfs.zip`
 
 ## <a name="section-simulation">Running the simulation
 
@@ -64,7 +64,8 @@ to convert, filter and merge OSM data sets. Alternatively, you can set the path
 to the binary using the `osmosis_binary` option in the confiuration file. Osmosis
 can be downloaded [here](https://wiki.openstreetmap.org/wiki/Osmosis).
 - **git** `=> 2.39.2` is used to clone the repositories containing the simulation code. In
-case you clone the pipeline repository previously, you should be all set.
+case you clone the pipeline repository previously, you should be all set. However, Windows has problems with working with the long path names that result from the pipelien structure of the project. To avoid the problem, you very likely should set git into *long path mode* by calling `git config --system core.longpaths true`.
+- In recent versions of **Ubuntu** you may need to install the `font-config` package to avoid crashes of MATSim when writing images (`sudo apt install fontconfig`).
 
 Then, open your `config.yml` and uncomment the `matsim.output` stage in the
 `run` section. If you call `python3 -m synpp` again, the pipeline will know
