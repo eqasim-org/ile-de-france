@@ -9,8 +9,8 @@ Loads raw OD data from French census data.
 def configure(context):
     context.stage("data.spatial.codes")
     context.config("data_path")
-    context.config("od_pro_path", "rp_2019/RP2019_mobpro_csv.zip")
-    context.config("od_sco_path", "rp_2019/RP2019_mobsco_csv.zip")
+    context.config("od_pro_path", "rp_2019/RP2019_MOBPRO_csv.zip")
+    context.config("od_sco_path", "rp_2019/RP2019_MOBSCO_csv.zip")
     context.config("od_pro_csv", "FD_MOBPRO_2019.csv")
     context.config("od_sco_csv", "FD_MOBSCO_2019.csv")
 
