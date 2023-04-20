@@ -687,7 +687,6 @@ def create(output_path):
 
 
     import subprocess
-    import shutil
 
     subprocess.check_call([
         shutil.which("osmosis"), "--read-xml", "%s/osm_idf/ile-de-france-220101.osm.gz" % output_path,
