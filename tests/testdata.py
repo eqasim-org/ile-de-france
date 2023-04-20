@@ -568,7 +568,7 @@ def create(output_path):
     df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
     os.mkdir("{}/bdtopo22".format(output_path))
-    df_bdtopo.to_file("{}/bdtopo22/content.gpkg".format(output_path))
+    df_bdtopo.to_file("{}/bdtopo22/content.gpkg".format(output_path), layer = "batiment")
 
     bdtopo_date = "2022-03-15"
     bdtopo_departments = ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D"]
