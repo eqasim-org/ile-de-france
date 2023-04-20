@@ -174,7 +174,7 @@ def execute(context):
     df_count = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "number_of_trips")
     # People with at least one trip (number_of_trips > 0)
     df_persons = pd.merge(df_persons, df_count, on = "person_id", how = "left")
-    # People that awnsered the travel questionary section but stayed at home (number_of_trips = 0)
+    # People that answered the travel questionary section but stayed at home (number_of_trips = 0)
     df_persons.loc[(df_persons["travel_respondent"] == True) & (df_persons["number_of_trips"].isna()), "number_of_trips"] = 0
     # Nonrespondent of travel questionary section (number_of_trips = -1)
     df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(int)
