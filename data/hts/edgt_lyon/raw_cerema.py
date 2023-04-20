@@ -19,7 +19,7 @@ HOUSEHOLD_COLUMNS = {
 }
 
 PERSON_COLUMNS = {
-    "ECH": str, "PER": int, "PP2": str,
+    "ECH": str, "PER": int, "PP2": str, "PENQ": str,
     "P3": int, "P2": int, "P4": int,
     "P7": str, "P12": str,
     "P10": str, "P9": str, "P5": str,
