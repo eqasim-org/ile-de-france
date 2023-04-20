@@ -30,7 +30,6 @@ config:
   java_memory: 14G
 
   # Nantes settings
-  bdtopo_path: bdtopo_nantes
   regions: []
   departments: [44]
   gtfs_path: gtfs_nantes

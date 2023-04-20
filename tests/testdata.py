@@ -2,7 +2,7 @@ import geopandas as gpd
 import pandas as pd
 import shapely.geometry as geo
 import numpy as np
-import os
+import os, shutil
 import py7zr, zipfile
 import glob
 import subprocess
@@ -553,26 +553,38 @@ def create(output_path):
 
     x = df_selection["geometry"].centroid.x.values
     y = df_selection["geometry"].centroid.y.values
-    z = random.randint(100, 400, observations) 
+    z = random.randint(100, 400, observations) # Not used but keeping unit test hashes constant
 
     df_bdtopo = gpd.GeoDataFrame({
-        "NB_LOGTS": random.randint(0, 10, observations),
-        "ID": random.randint(1000, 1000000, observations),
+        "nombre_de_logements": random.randint(0, 10, observations),
+        "cleabs": random.randint(1000, 1000000, observations),
         "geometry": [
-            geo.Point(x, y,z) for x, y,z in zip(x, y,z)
+            geo.Point(x, y) for x, y in zip(x, y)
         ]
     }, crs = "EPSG:2154")
+
+    df_bdtopo["cleabs"] = df_bdtopo["cleabs"].apply(lambda x: "AAAAAAAA{:016d}".format(x))
 
     # polygons as buildings from iris centroid points
     df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
-    os.mkdir("%s/bdtopo_idf" % output_path)
-    df_bdtopo.to_file("%s/bdtopo_idf/BATIMENT.shp" % output_path)
+    os.mkdir("{}/bdtopo22".format(output_path))
+    df_bdtopo.to_file("{}/bdtopo22/content.gpkg".format(output_path), layer = "batiment")
 
-    with py7zr.SevenZipFile("%s/bdtopo_idf/bdtopo.7z" % output_path, "w") as archive:
-        for source in glob.glob("%s/bdtopo_idf/BATIMENT.*" % output_path):
-            archive.write(source, "content/{}".format(source.split("/")[-1]))
-            os.remove(source)
+    bdtopo_date = "2022-03-15"
+    bdtopo_departments = ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D"]
+
+    with py7zr.SevenZipFile("{}/bdtopo22/bdtopo.7z".format(output_path), "w") as archive:
+        archive.write("{}/bdtopo22/content.gpkg".format(output_path), "content/content.gpkg")
+        os.remove("{}/bdtopo22/content.gpkg".format(output_path))
+    
+    for department in bdtopo_departments:
+        shutil.copyfile(
+            "{}/bdtopo22/bdtopo.7z".format(output_path), 
+            "{}/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D0{}_{}.7z".format(
+                output_path, department, bdtopo_date))
+        
+    os.remove("{}/bdtopo22/bdtopo.7z".format(output_path))
         
     # Data set: SIRENE
     print("Creating SIRENE ...")
@@ -676,7 +688,6 @@ def create(output_path):
 
 
     import subprocess
-    import shutil
 
     subprocess.check_call([
         shutil.which("osmosis"), "--read-xml", "%s/osm_idf/ile-de-france-220101.osm.gz" % output_path,

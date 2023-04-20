@@ -14,10 +14,11 @@ simulation for **Corsica**.
 You need to download the region-specific buildings database.
 
 - [Buildings database](https://geoservices.ign.fr/bdtopo)
-- Click on the right link *BD TOPO® Shapefile Régions* 
-- It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
-- Download *Région Corse - R 94*
-- Copy the *7z* file into `data/bdtopo_corsica`.
+- In the sidebar on the right, under *Téléchargement anciennes éditions*, click on *BD TOPO® 2022 GeoPackage Départements* to go to the saved data publications from 2022.
+- The data is split by department and they are identified with a number. For Corsica, download:
+  - Corse-du-Sud (2A)
+  - Haute-Corse (2B)
+- Copy the two *7z* files into `data/bdtopo22`.
 
 ### B) OpenStreetMap data
 
@@ -42,7 +43,8 @@ Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/bdtopo_corsica/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R94_2022-12-15.7z`
+- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02A_2022-03-15.7z`
+- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02B_2022-03-15.7z`
 
 *Only for simulation:*
 
@@ -56,19 +58,8 @@ updated continuously.
 
 ## Generating the population
 
-To generate the synthetic population, the `config.yml` needs to be updated. While
-the relevant code points to the Île-de-France data sets by default, you can
-adjust the paths inidividually. To let the pipeline use the *Zone E* census
-data set and the updated buildings, add the following to `config.yml` in the `config` section:
-
-```yaml
-config:
-  # ...
-  bdtopo_path: bdtopo_corsica
-  # ...
-```
-
-Furthermore, by default the pipeline will filter all other data sets for the
+To generate the synthetic population, the `config.yml` needs to be updated. 
+By default the pipeline will filter all other data sets for the
 Île-de-France region. To make it use the selected region, adjust the
 configuration as follows:
 
