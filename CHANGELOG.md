@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fix: Correctly treat non-movers in CEREMA EDGT for Lyon
 - Configure directory for GTFS and then auto-detect contained zip files
 - Added integration tests for Windows
 - Updated conda environment based entirely on *conda-forge*
