@@ -525,7 +525,7 @@ def create(output_path):
     columns = ["COMMUNE", "DCLT", "TRANS", "ARM", "IPONDI"]
     df_work.columns = columns
 
-    with zipfile.ZipFile("%s/rp_2019/RP2019_mobpro_csv.zip" % output_path, "w") as archive:
+    with zipfile.ZipFile("%s/rp_2019/RP2019_MOBPRO_csv.zip" % output_path, "w") as archive:
         with archive.open("FD_MOBPRO_2019.csv", "w") as f:
             df_work.to_csv(f, sep = ";")
 
@@ -540,7 +540,7 @@ def create(output_path):
     columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI"]
     df_education.columns = columns
 
-    with zipfile.ZipFile("%s/rp_2019/RP2019_mobsco_csv.zip" % output_path, "w") as archive:
+    with zipfile.ZipFile("%s/rp_2019/RP2019_MOBSCO_csv.zip" % output_path, "w") as archive:
         with archive.open("FD_MOBSCO_2019.csv", "w") as f:
             df_education.to_csv(f, sep = ";")
 

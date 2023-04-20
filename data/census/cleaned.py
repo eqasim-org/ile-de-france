@@ -14,7 +14,7 @@ def configure(context):
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df = pd.read_hdf("%s/census.hdf" % context.path("data.census.raw"))
+    df = context.stage("data.census.raw")
 
     # Construct household IDs for persons with NUMMI != Z
     df_household_ids = df[["CANTVILLE", "NUMMI"]]

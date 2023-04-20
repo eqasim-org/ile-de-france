@@ -41,7 +41,7 @@ def execute(context):
 
     df_added = []
 
-    for iris_id in missing_iris:
+    for iris_id in sorted(missing_iris):
         centroid = df_iris[df_iris["iris_id"] == iris_id]["geometry"].centroid.iloc[0]
 
         df_added.append({

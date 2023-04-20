@@ -56,8 +56,7 @@ def execute(context):
                     if len(df_chunk) > 0:
                         df_records.append(df_chunk)
 
-                # TODO: Why do we save a HDF here and don't just return the data frame?
-                pd.concat(df_records).to_hdf("{}/census.hdf".format(context.path()), "census")
+    return pd.concat(df_records)
 
 
 def validate(context):

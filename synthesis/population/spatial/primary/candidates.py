@@ -79,7 +79,7 @@ def process(context, purpose, random, df_persons, df_od, df_locations):
             for df_partial in parallel.imap_unordered(sample_destination_municipalities, df_demand.itertuples(index = False, name = None)):
                 df_flow.append(df_partial)
 
-    df_flow = pd.concat(df_flow)
+    df_flow = pd.concat(df_flow).sort_values(["origin_id", "destination_id"])
 
     # Sample destinations based on the obtained flows
     unique_ids = df_flow["destination_id"].unique()
@@ -92,7 +92,7 @@ def process(context, purpose, random, df_persons, df_od, df_locations):
             for df_partial in parallel.imap_unordered(sample_locations, zip(unique_ids, random_seeds)):
                 df_result.append(df_partial)
 
-    df_result = pd.concat(df_result)
+    df_result = pd.concat(df_result).sort_values(["origin_id", "destination_id"])
 
     return df_result[["origin_id", "destination_id", "location_id"]]
 
