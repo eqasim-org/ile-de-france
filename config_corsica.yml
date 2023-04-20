@@ -30,7 +30,6 @@ config:
   java_memory: 14G
 
   # Corsica settings
-  bdtopo_path: bdtopo_corsica
   regions: [94]
   gtfs_path: gtfs_corsica
   osm_path: osm/corse-latest.osm.pbf

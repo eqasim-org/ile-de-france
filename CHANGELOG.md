@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Increase reproducibility for BD-TOPO by requiring user to dump the IGN files in 7z'ed GPKG format into one central folder for `bdtopo22`
 - Fix: Properly treat non-movers in EDGT Lyon ADISP data
 - Configure directory for GTFS and then auto-detect contained zip files
 - Added integration tests for Windows

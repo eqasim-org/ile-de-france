@@ -30,8 +30,7 @@ config:
   java_memory: 14G
 
   # Toulouse settings
-  bdtopo_path: bdtopo_toulouse
   regions: []
-  departments: ["09", 82, 81, 11, 31, 32] # 12 30 34 46 48 65 66
+  departments: ["09", "82", "81", "11", "31", "32"] # 12 30 34 46 48 65 66
   gtfs_path: gtfs_toulouse
   osm_path: osm_toulouse

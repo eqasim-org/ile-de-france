@@ -24,6 +24,7 @@ def execute(context):
 
     # Load all addresses and add IRIS information
     df_addresses = context.stage("data.bdtopo.raw")[["geometry"]]
+    df_addresses["geometry"] = df_addresses["geometry"].centroid
 
     print("Imputing IRIS into addresses ...")
     df_addresses = gpd.sjoin(df_addresses,
