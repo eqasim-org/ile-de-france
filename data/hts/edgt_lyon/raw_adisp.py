@@ -21,6 +21,7 @@ HOUSEHOLD_COLUMNS = {
 
 PERSON_COLUMNS = {
     "ECH": str, "PER": int, "ZFP": str, # id
+    "PENQ": str, # respondents of travel questionary section
     "P2": int, "P4": int, # sex, age
     "P9": str, # employed, studies
     "P7": str, "P12": str, # has_license, has_pt_subscription
