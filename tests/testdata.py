@@ -553,6 +553,7 @@ def create(output_path):
 
     x = df_selection["geometry"].centroid.x.values
     y = df_selection["geometry"].centroid.y.values
+    z = random.randint(100, 400, observations) # Not used but keeping unit test hashes constant
 
     df_bdtopo = gpd.GeoDataFrame({
         "nombre_de_logements": random.randint(0, 10, observations),
