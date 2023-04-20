@@ -571,7 +571,7 @@ def create(output_path):
     df_bdtopo.to_file("{}/bdtopo22/content.gpkg".format(output_path))
 
     bdtopo_date = "2022-03-15"
-    bdtopo_departments = [75, 77, 78, 91, 92, 93, 94, 95]
+    bdtopo_departments = ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D"]
 
     with py7zr.SevenZipFile("{}/bdtopo22/bdtopo.7z".format(output_path), "w") as archive:
         archive.write("{}/bdtopo22/content.gpkg".format(output_path), "content/content.gpkg")
