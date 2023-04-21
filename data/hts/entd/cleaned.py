@@ -162,11 +162,11 @@ def execute(context):
 
     for prefix, activity_type in PURPOSE_MAP:
         df_trips.loc[
-            df_trips["V2_MMOTIFDES"].astype(np.str).str.startswith(prefix), "following_purpose"
+            df_trips["V2_MMOTIFDES"].astype(str).str.startswith(prefix), "following_purpose"
         ] = activity_type
 
         df_trips.loc[
-            df_trips["V2_MMOTIFORI"].astype(np.str).str.startswith(prefix), "preceding_purpose"
+            df_trips["V2_MMOTIFORI"].astype(str).str.startswith(prefix), "preceding_purpose"
         ] = activity_type
 
     df_trips["following_purpose"] = df_trips["following_purpose"].astype("category")
@@ -177,7 +177,7 @@ def execute(context):
 
     for prefix, mode in MODES_MAP:
         df_trips.loc[
-            df_trips["V2_MTP"].astype(np.str).str.startswith(prefix), "mode"
+            df_trips["V2_MTP"].astype(str).str.startswith(prefix), "mode"
         ] = mode
 
     df_trips["mode"] = df_trips["mode"].astype("category")
