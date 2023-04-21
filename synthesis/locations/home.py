@@ -28,7 +28,7 @@ def execute(context):
 
     print("Imputing IRIS into addresses ...")
     df_addresses = gpd.sjoin(df_addresses,
-        df_iris[["iris_id", "commune_id", "geometry"]], op = "within")
+        df_iris[["iris_id", "commune_id", "geometry"]], predicate = "within")
     del df_addresses["index_right"]
 
     df_addresses.loc[df_addresses["iris_id"].isna(), "iris_id"] = "unknown"

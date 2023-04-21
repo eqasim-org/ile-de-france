@@ -164,7 +164,7 @@ def cut_feed(feed, df_area, crs = None):
     print("Filtering stations ...")
     initial_count = len(df_stations)
 
-    df_stations = gpd.sjoin(df_stations, df_area, op = "within")
+    df_stations = gpd.sjoin(df_stations, df_area, predicate = "within")
     final_count = len(df_stations)
 
     print("Found %d/%d stations inside the specified area" % (final_count, initial_count))
