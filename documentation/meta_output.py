@@ -21,7 +21,7 @@ def get_commit():
     root_path = os.path.realpath("{}/..".format(root_path))
 
     try:
-        return sp.check_output(["git", "rev-parse", "HEAD"], cwd = root_path)
+        return sp.check_output(["git", "rev-parse", "HEAD"], cwd = root_path).strip()
     except sp.CalledProcessError:
         return "unknown"
 
