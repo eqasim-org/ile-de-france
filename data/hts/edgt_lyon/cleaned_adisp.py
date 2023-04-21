@@ -67,8 +67,8 @@ def execute(context):
     df_trips = hts.compute_first_last(df_trips)
 
     # Weight
-    df_persons["person_weight"] = df_persons["COEP"].astype(np.float)
-    df_households["household_weight"] = df_households["COE0"].astype(np.float)
+    df_persons["person_weight"] = df_persons["COEP"].astype(float)
+    df_households["household_weight"] = df_households["COE0"].astype(float)
 
     # Clean age
     df_persons["age"] = df_persons["P4"].astype(int)

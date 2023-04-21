@@ -42,7 +42,7 @@ MODES_MAP = [
 ]
 
 def convert_time(x):
-    return np.dot(np.array(x.split(":"), dtype = np.float), [3600.0, 60.0, 1.0])
+    return np.dot(np.array(x.split(":"), dtype = float), [3600.0, 60.0, 1.0])
 
 def execute(context):
     df_individu, df_tcm_individu, df_menage, df_tcm_menage, df_deploc = context.stage("data.hts.entd.raw")
@@ -94,8 +94,8 @@ def execute(context):
     df_trips["trip_id"] = np.arange(len(df_trips))
 
     # Weight
-    df_persons["person_weight"] = df_persons["PONDV1"].astype(np.float)
-    df_households["household_weight"] = df_households["PONDV1"].astype(np.float)
+    df_persons["person_weight"] = df_persons["PONDV1"].astype(float)
+    df_households["household_weight"] = df_households["PONDV1"].astype(float)
 
     # Clean age
     df_persons.loc[:, "age"] = df_persons["AGE"]
@@ -206,8 +206,8 @@ def execute(context):
     df_trips = hts.compute_first_last(df_trips)
 
     # Trip times
-    df_trips["departure_time"] = df_trips["V2_MORIHDEP"].apply(convert_time).astype(np.float)
-    df_trips["arrival_time"] = df_trips["V2_MDESHARR"].apply(convert_time).astype(np.float)
+    df_trips["departure_time"] = df_trips["V2_MORIHDEP"].apply(convert_time).astype(float)
+    df_trips["arrival_time"] = df_trips["V2_MDESHARR"].apply(convert_time).astype(float)
     df_trips = hts.fix_trip_times(df_trips)
 
     # Durations

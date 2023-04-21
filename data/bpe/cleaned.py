@@ -58,8 +58,8 @@ def execute(context):
     df["activity_type"] = df["activity_type"].astype("category")
 
     # Clean coordinates
-    df["x"] = df["LAMBERT_X"].astype(str).str.replace(",", ".").astype(np.float)
-    df["y"] = df["LAMBERT_Y"].astype(str).str.replace(",", ".").astype(np.float)
+    df["x"] = df["LAMBERT_X"].astype(str).str.replace(",", ".").astype(float)
+    df["y"] = df["LAMBERT_Y"].astype(str).str.replace(",", ".").astype(float)
 
     # Clean IRIS and commune
     df["iris_id"] = df["DCIRIS"].str.replace("_", "")

@@ -75,7 +75,7 @@ def execute(context):
     df["commute_mode"] = df["commute_mode"].astype("category")
 
     # Weight
-    df["weight"] = df["IPONDI"].astype(np.float)
+    df["weight"] = df["IPONDI"].astype(float)
 
     # Clean SEXE
     df.loc[df["SEXE"] == "1", "sex"] = "male"
