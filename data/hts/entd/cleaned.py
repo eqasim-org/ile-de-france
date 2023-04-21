@@ -73,10 +73,10 @@ def execute(context):
     ]], on = "IDENT_IND", how = "left")
 
     # Transform original IDs to integer (they are hierarchichal)
-    df_persons["entd_person_id"] = df_persons["IDENT_IND"].astype(np.int)
-    df_persons["entd_household_id"] = df_persons["IDENT_MEN"].astype(np.int)
-    df_households["entd_household_id"] = df_households["idENT_MEN"].astype(np.int)
-    df_trips["entd_person_id"] = df_trips["IDENT_IND"].astype(np.int)
+    df_persons["entd_person_id"] = df_persons["IDENT_IND"].astype(int)
+    df_persons["entd_household_id"] = df_persons["IDENT_MEN"].astype(int)
+    df_households["entd_household_id"] = df_households["idENT_MEN"].astype(int)
+    df_trips["entd_person_id"] = df_trips["IDENT_IND"].astype(int)
 
     # Construct new IDs for households, persons and trips (which are unique globally)
     df_households["household_id"] = np.arange(len(df_households))
@@ -128,9 +128,9 @@ def execute(context):
     df_households["number_of_vehicles"] += df_households["V1_JNBVEH"].fillna(0)
     df_households["number_of_vehicles"] += df_households["V1_JNBMOTO"].fillna(0)
     df_households["number_of_vehicles"] += df_households["V1_JNBCYCLO"].fillna(0)
-    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(np.int)
+    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(int)
 
-    df_households["number_of_bikes"] = df_households["V1_JNBVELOADT"].fillna(0).astype(np.int)
+    df_households["number_of_bikes"] = df_households["V1_JNBVELOADT"].fillna(0).astype(int)
 
     # License
     df_persons["has_license"] = (df_persons["V1_GPERMIS"] == 1) | (df_persons["V1_GPERMIS2R"] == 1)
@@ -154,7 +154,7 @@ def execute(context):
     df_households.loc[df_households["TrancheRevenuMensuel"].str.startswith("De 4 000"), "income_class"] = 11
     df_households.loc[df_households["TrancheRevenuMensuel"].str.startswith("De 6 000"), "income_class"] = 12
     df_households.loc[df_households["TrancheRevenuMensuel"].str.startswith("10 000"), "income_class"] = 13
-    df_households["income_class"] = df_households["income_class"].astype(np.int)
+    df_households["income_class"] = df_households["income_class"].astype(int)
 
     # Trip purpose
     df_trips["following_purpose"] = "other"
@@ -222,7 +222,7 @@ def execute(context):
         df_persons, df_trips[["person_id", "NDEP"]].drop_duplicates("person_id").rename(columns = { "NDEP": "number_of_trips" }),
         on = "person_id", how = "left"
     )
-    df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(np.int)
+    df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(int)
     df_persons.loc[(df_persons["number_of_trips"] == -1) & df_persons["is_kish"], "number_of_trips"] = 0
 
     # Passenger attribute

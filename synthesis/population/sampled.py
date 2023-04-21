@@ -24,7 +24,7 @@ def execute(context):
     df_rounding = df_census[["household_id", "weight", "household_size"]].drop_duplicates("household_id")
     df_rounding["multiplicator"] = np.floor(df_rounding["weight"])
     df_rounding["multiplicator"] += random.random_sample(len(df_rounding)) <= (df_rounding["weight"] - df_rounding["multiplicator"])
-    df_rounding["multiplicator"] = df_rounding["multiplicator"].astype(np.int)
+    df_rounding["multiplicator"] = df_rounding["multiplicator"].astype(int)
 
     # Multiply households (use same multiplicator for all household members)
     household_multiplicators = df_rounding["multiplicator"].values

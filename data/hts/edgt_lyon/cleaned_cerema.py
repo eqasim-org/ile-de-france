@@ -41,11 +41,11 @@ def execute(context):
 
     # Transform original IDs to integer (they are hierarchichal)
     df_households["edgt_household_id"] = (df_households["ECH"] + df_households["MP2"]).astype(int)
-    df_persons["edgt_person_id"] = df_persons["PER"].astype(np.int)
+    df_persons["edgt_person_id"] = df_persons["PER"].astype(int)
     df_persons["edgt_household_id"] = (df_persons["ECH"] + df_persons["PP2"]).astype(int)
-    df_trips["edgt_person_id"] = df_trips["PER"].astype(np.int)
+    df_trips["edgt_person_id"] = df_trips["PER"].astype(int)
     df_trips["edgt_household_id"] = (df_trips["ECH"] + df_trips["DP2"]).astype(int)
-    df_trips["edgt_trip_id"] = df_trips["NDEP"].astype(np.int)
+    df_trips["edgt_trip_id"] = df_trips["NDEP"].astype(int)
 
     # Construct new IDs for households, persons and trips (which are unique globally)
     df_households["household_id"] = np.arange(len(df_households))
@@ -70,7 +70,7 @@ def execute(context):
     df_households["household_weight"] = df_households["COEM"].astype(np.float)
 
     # Clean age
-    df_persons["age"] = df_persons["P4"].astype(np.int)
+    df_persons["age"] = df_persons["P4"].astype(int)
 
     # Clean sex
     df_persons.loc[df_persons["P2"] == 1, "sex"] = "male"
@@ -106,8 +106,8 @@ def execute(context):
 
     # Number of vehicles
     df_households["number_of_vehicles"] = df_households["M6"] + df_households["M5"]
-    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(np.int)
-    df_households["number_of_bikes"] = df_households["M7"].astype(np.int)
+    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(int)
+    df_households["number_of_bikes"] = df_households["M7"].astype(int)
 
     # License
     df_persons["has_license"] = df_persons["P5"] == "1"
