@@ -69,4 +69,4 @@ jobs:
     - name: Run pipeline tests
       shell: bash -el {0}
       run: |
-        MKL_CBWR=AUTO pytest --strict tests/
+        MKL_CBWR=AUTO pytest -vvv tests/
