@@ -30,7 +30,7 @@ def configure(context):
     hts = context.config("hts")
     context.stage("data.hts.selected", alias = "hts")
 
-# @numba.jit(nopython = True, parallel = True)
+@numba.jit(nopython = True) # Already parallelized parallel = True)
 def sample_indices(uniform, cdf, selected_indices):
     indices = np.arange(len(uniform))
 
