@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fix: Segfault in statistical matching caused by `numba` in recent versions
 - Increase reproducibility for BD-TOPO by requiring user to dump the IGN files in 7z'ed GPKG format into one central folder for `bdtopo22`
 - Fix: Correctly treat non-movers in CEREMA EDGT for Lyon
 - Fix: Properly treat non-movers in EDGT Lyon ADISP data
