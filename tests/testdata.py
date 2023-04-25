@@ -224,8 +224,8 @@ def create(output_path):
     df_selection["TYPEQU"] = categories[random.randint(0, len(categories), size = len(df_selection))]
 
     # Deliberately set coordinates for some to NaN
-    df_selection.iloc[-10:, "LAMBERT_X"] = np.nan
-    df_selection.iloc[-10:, "LAMBERT_Y"] = np.nan
+    df_selection.iloc[-10:, df_selection.columns.get_loc("LAMBERT_X")] = np.nan
+    df_selection.iloc[-10:, df_selection.columns.get_loc("LAMBERT_Y")] = np.nan
 
     columns = ["DCIRIS", "LAMBERT_X", "LAMBERT_Y", "TYPEQU", "DEPCOM", "DEP"]
 
