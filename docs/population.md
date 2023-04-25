@@ -139,6 +139,15 @@ The French Buildings database is available from IGN:
 - Copy the *7z* file into `data/bdtopo_idf`.
 
 
+### 11) Adresses database (BAN)
+
+The French adresses database is available on data.gouv.fr :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (75, 77, 78, 91, 92, 93, 94) 
+- Copy the *gz* files into `data/ban`.
+
+
 ### Overview
 
 Your folder structure should now have at least the following files:
@@ -162,6 +171,14 @@ Your folder structure should now have at least the following files:
 - `data/sirene/StockUniteLegale_utf8.zip`
 - `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.zip`
 - `data/bdtopo/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R11_2022-12-15.7z`
+- `data/ban/adresses-75.csv.gz`
+- `data/ban/adresses-77.csv.gz`
+- `data/ban/adresses-78.csv.gz`
+- `data/ban/adresses-91.csv.gz`
+- `data/ban/adresses-92.csv.gz`
+- `data/ban/adresses-93.csv.gz`
+- `data/ban/adresses-94.csv.gz`
+- 
 
 In case you are using the regional household travel survey (EGT), the following
 files should also be in place:
