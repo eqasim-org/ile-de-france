@@ -1,60 +1,64 @@
-import os
+import os, glob
 import pandas as pd
 import geopandas as gpd
-import gzip
+import numpy as np
 
-
-# """
-# This stage loads the raw data from the new French address registry (BAN).
-# """
+"""
+This stage loads the raw data from the new French address registry (BAN).
+"""
 
 def configure(context):
-    context.config("data_path")
-    context.config("ban_path", "/ban/")
     context.stage("data.spatial.codes")
 
+    context.config("data_path")
+    context.config("ban_path", "ban")
+
+BAN_DTYPES = {
+    "code_insee": str,
+    "x": float, 
+    "y": float
+}
+
 def execute(context):
+    # Find relevant departments
     df_codes = context.stage("data.spatial.codes")
-    requested_departements = set(df_codes["departement_id"].unique())
-    requested_communes = set(df_codes["commune_id"].unique())
+    requested_departments = set(df_codes["departement_id"].unique())
 
-    df_ban = pd.DataFrame()
+    # Load BAN
+    df_ban = []
 
+    for source_path in find_ban("{}/{}".format(context.config("data_path"), context.config("ban_oath"))):
+        print("Reading {} ...".format(source_path))
 
-    COLUMNS_DTYPES = {
-        "code_insee":"str",
-        "x":"float", 
-        "y":"float"
-    }
-     
-    for dep in requested_departements:
+        df_partial = pd.read_csv(source_path, 
+            compression = "gzip", sep = ";", usecols = BAN_DTYPES.keys(), dtype = BAN_DTYPES)
         
-        with context.progress(label = "Loading BAN address registry for département : " + str(dep) + " ...") as progress:
-            
-            # gzip archive for department BAN name
-            source_path = context.config("data_path") + context.config("ban_path") + "adresses-" + str(dep) + ".csv.gz"
+        # Filter by departments
+        df_partial["department_id"] = df_partial["code_insee"].str[:2]
+        df_partial = df_partial[["department_id", "x", "y"]]
+        df_partial = df_partial[df_partial["department_id"].isin(requested_departments)]
 
-            # # gzip open and csv to pandas DataFrame
-            df_ban_tmp = pd.read_csv(source_path, compression='gzip', sep=";",usecols = COLUMNS_DTYPES.keys(), dtype = COLUMNS_DTYPES)
+        if len(df_partial) > 0:
+            df_ban.append(df_partial)
+    
+    df_ban = pd.concat(df_ban)
+    df_ban = gpd.GeoDataFrame(
+        df_ban, geometry = gpd.points_from_xy(df_ban.x, df_ban.y), crs = "EPSG:2154")
+    
+    # Check that we cover all requested departments at least once
+    for department_id in requested_departments:
+        assert np.count_nonzero(df_ban["department_id"] == department_id) > 0
 
-            # communes filter
-            df_ban_tmp = df_ban_tmp[df_ban_tmp['code_insee'].isin(requested_communes)].copy()
+    return df_ban[["geometry"]]
 
-            # concat   
-            df_ban = pd.concat([df_ban,df_ban_tmp])
+def find_ban(path):
+    candidates = list(glob.glob("{}/*.csv.gz".format(path)))
 
-            progress.update()
-            
-                 
-    #convert to geo dataframe
-    df_ban = gpd.GeoDataFrame(df_ban, geometry=gpd.points_from_xy(df_ban.x, df_ban.y),crs="EPSG:2154")
-    df_ban.rename(columns={"code_insee":"commune_id"},inplace=True)
-
-    return df_ban
- 
+    if len(candidates) == 0:
+        raise RuntimeError("BAN data is not available in {}".format(path))
+    
+    return candidates
 
 def validate(context):
-    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("ban_path"))):
-        raise RuntimeError("BAN data is not available")
-
-    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("ban_path")))
+    paths = find_ban("{}/{}".format(context.config("data_path"), context.config("ban_path")))
+    return sum([os.path.getsize(path) for path in paths])
