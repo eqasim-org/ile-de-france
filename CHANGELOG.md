@@ -2,6 +2,8 @@
 
 **Under development**
 
+- Make use of building information (housing) and addresses that are attached to them for home locatio assignment
+- Make use of National Address Database (BAN)
 - Fix: Segfault in statistical matching caused by `numba` in recent versions
 - Increase reproducibility for BD-TOPO by requiring user to dump the IGN files in 7z'ed GPKG format into one central folder for `bdtopo22`
 - Fix: Correctly treat non-movers in CEREMA EDGT for Lyon
