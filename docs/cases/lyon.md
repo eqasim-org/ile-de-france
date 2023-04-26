@@ -56,7 +56,7 @@ You need to download the region-specific adresses database :
 
 - [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
 - Click on the link *adresses-xx.csv.gz* where xx = departments codes (01,38,42,69) 
-- Copy the *gz* files into `data/ban`.
+- Copy the *gz* files into `data/ban_lyon`.
 
 
 ### E) *Optional*: Regional Household Travel Survey 2015
@@ -108,12 +108,12 @@ Afterwards, you should have the following additional files in your directory str
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D038_2022-03-15.7z`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D042_2022-03-15.7z`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D069_2022-03-15.7z`
-- Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
+- `data/ban_lyon/adresses-01.csv.gz`
+- `data/ban_lyon/adresses-38.csv.gz`
+- `data/ban_lyon/adresses-42.csv.gz`
+- `data/ban_lyon/adresses-69.csv.gz`
 
-- `data/ban/adresses-01.csv.gz`
-- `data/ban/adresses-38.csv.gz`
-- `data/ban/adresses-42.csv.gz`
-- `data/ban/adresses-69.csv.gz`
+- Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 
 *Only for simulation:*
 
@@ -186,6 +186,7 @@ config:
   # ...
   gtfs_path: gtfs_lyon
   osm_path: osm_lyon
+  ban_path: ban_lyon
   # ...
 ```
 

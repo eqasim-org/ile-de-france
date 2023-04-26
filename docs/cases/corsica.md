@@ -46,7 +46,7 @@ You need to download the region-specific adresses database :
 
 - [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
 - Click on the link *adresses-xx.csv.gz* where xx = departments codes (09, 11, 31, 32, 81, 82) 
-- Copy the *gz* files into `data/ban`.
+- Copy the *gz* files into `data/ban_corsica`.
 
 
 ### Overview
@@ -55,8 +55,8 @@ Afterwards, you should have the following additional files in your directory str
 
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02A_2022-03-15.7z`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02B_2022-03-15.7z`
-- `data/ban/adresses-2A.csv.gz`
-- `data/ban/adresses-2B.csv.gz`
+- `data/ban_corsica/adresses-2A.csv.gz`
+- `data/ban_corsica/adresses-2B.csv.gz`
 
 *Only for simulation:*
 
@@ -115,6 +115,7 @@ config:
   # ...
   gtfs_path: gtfs_corsica
   osm_path: osm_corsica
+  ban_path: ban_corsica
   # ...
 ```
 

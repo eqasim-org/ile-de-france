@@ -151,7 +151,7 @@ The French adresses database is available on data.gouv.fr :
 
 - [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
 - Click on the link *adresses-xx.csv.gz* where xx = departments codes (75, 77, 78, 91, 92, 93, 94) 
-- Copy the *gz* files into `data/ban`.
+- Copy the *gz* files into `data/ban_idf`.
 
 
 ### Overview
@@ -176,13 +176,13 @@ Your folder structure should now have at least the following files:
 - `data/sirene/StockEtablissement_utf8.csv`
 - `data/sirene/StockUniteLegale_utf8.zip`
 - `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.zip`
-- `data/ban/adresses-75.csv.gz`
-- `data/ban/adresses-77.csv.gz`
-- `data/ban/adresses-78.csv.gz`
-- `data/ban/adresses-91.csv.gz`
-- `data/ban/adresses-92.csv.gz`
-- `data/ban/adresses-93.csv.gz`
-- `data/ban/adresses-94.csv.gz`
+- `data/ban_idf/adresses-75.csv.gz`
+- `data/ban_idf/adresses-77.csv.gz`
+- `data/ban_idf/adresses-78.csv.gz`
+- `data/ban_idf/adresses-91.csv.gz`
+- `data/ban_idf/adresses-92.csv.gz`
+- `data/ban_idf/adresses-93.csv.gz`
+- `data/ban_idf/adresses-94.csv.gz`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D075_2022-03-15.7z`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D077_2022-03-15.7z`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D078_2022-03-15.7z`

@@ -51,7 +51,7 @@ You need to download the region-specific adresses database :
 
 - [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
 - Click on the link *adresses-xx.csv.gz* where xx = departments codes (01,38,42,69) 
-- Copy the *gz* files into `data/ban`.
+- Copy the *gz* files into `data/ban_nantes`.
 
 ### E) *Optional*: Regional Household Travel Survey 2015
 
@@ -68,7 +68,7 @@ Afterwards, you should have the following additional files in your directory str
 
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D044_2022-03-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
-- `data/ban/adresses-44.csv.gz`
+- `data/ban_nantes/adresses-44.csv.gz`
 
 *Only for simulation:*
 
@@ -135,6 +135,7 @@ config:
   # ...
   gtfs_path: gtfs_nantes
   osm_path: osm_nantes
+  ban_path: ban_nantes
   # ...
 ```
 
