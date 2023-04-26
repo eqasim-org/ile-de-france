@@ -34,7 +34,7 @@ def _sample_locations(context, args):
     random = np.random.RandomState(random_seed)
 
     if sampling_mode == "weighted":
-        cdf = np.cumsmum(df_locations["weight"].values)
+        cdf = np.cumsum(df_locations["weight"].values)
         cdf /= cdf[-1]
 
         indices = np.array([np.count_nonzero(cdf < u) 
