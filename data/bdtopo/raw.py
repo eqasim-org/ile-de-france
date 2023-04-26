@@ -9,7 +9,7 @@ import glob
 import numpy as np
 
 """
-This stage loads the raw data from the BAN French building registry.
+This stage loads the raw data from the French building registry (BD-TOPO).
 """
  
 def configure(context):
