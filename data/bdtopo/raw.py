@@ -15,7 +15,6 @@ This stage loads the raw data from the French building registry.
 def configure(context):
     context.config("data_path")
     context.config("bdtopo_path", "bdtopo22")
-    context.config("bdtopo_date", "2022-03-15")
 
     context.stage("data.spatial.departments")
 
@@ -33,84 +32,70 @@ def execute(context):
     df_departments = context.stage("data.spatial.departments")
     print("Expecting data for {} departments".format(len(df_departments)))
     
-    candidate_paths = find_bdtopo("{}/{}".format(context.config("data_path"), context.config("bdtopo_path")))
-    department_paths = {}
-
-    date = context.config("bdtopo_date")
-
-    for department_id in df_departments["departement_id"].values:
-        for path in candidate_paths:
-            if path.endswith("BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D{}_{}.7z".format(
-                get_department_string(department_id), date)):
-                department_paths[department_id] = path
-                break
-    
-    for department_id in df_departments["departement_id"].values:
-        if department_id not in department_paths:        
-            raise RuntimeError("No BDTOPO data found for department {}".format(department_id))
+    source_paths = find_bdtopo("{}/{}".format(context.config("data_path"), context.config("bdtopo_path")))
 
     df_bdtopo = []
     known_ids = set()
 
-    for department_id, department_path in department_paths.items():
-        print("Loading department {}".format(department_id))
+    for source_path in source_paths:
+        print("Loading {}".format(source_path.split("/")[-1]))
+        geometry_path = None
 
-        with py7zr.SevenZipFile(department_path) as archive:
+        with py7zr.SevenZipFile(source_path) as archive:
             # Find the path inside the archive
-            geometry_path = [path for path in archive.getnames() if path.endswith(".gpkg")]
+            internal_path = [path for path in archive.getnames() if path.endswith(".gpkg")]
             
-            if len(geometry_path) != 1:
-                raise RuntimeError("Cannot find unambiguous geometry source in: {}".format(department_path))
+            if len(internal_path) != 1:
+                print("  Skipping: No unambiguous geometry source found!")
 
-            print("  Extracting ...")
-            archive.extract(context.path(), geometry_path[0])
+            else:
+                print("  Extracting ...")
+                archive.extract(context.path(), internal_path[0])
+                geometry_path = "{}/{}".format(context.path(), internal_path[0])
 
-            geometry_path = "{}/{}".format(context.path(), geometry_path[0])
+        if geometry_path is not None:
+            with context.progress(label = "  Reading ...") as progress:
+                data = { "cleabs": [], "nombre_de_logements": [], "geometry": [] }
+                with fiona.open(geometry_path, layer = "batiment") as package:
+                    for item in package:
+                        data["cleabs"].append(item["properties"]["cleabs"])
+                        data["nombre_de_logements"].append(item["properties"]["nombre_de_logements"])
+                        data["geometry"].append(geo.shape(item["geometry"]))
+                        progress.update()
 
-        with context.progress(label = "Reading ...") as progress:
-            data = { "cleabs": [], "nombre_de_logements": [], "geometry": [] }
-            with fiona.open(geometry_path, layer = "batiment") as package:
-                for item in package:
-                    data["cleabs"].append(item["properties"]["cleabs"])
-                    data["nombre_de_logements"].append(item["properties"]["nombre_de_logements"])
-                    data["geometry"].append(geo.shape(item["geometry"]))
-                    progress.update()
+                df_buildings = pd.DataFrame(data)
+                df_buildings = gpd.GeoDataFrame(df_buildings, crs = "EPSG:2154")
+            
+            df_buildings["building_id"] = df_buildings["cleabs"].apply(lambda x: int(x[8:]))
+            df_buildings["housing"] = df_buildings["nombre_de_logements"].fillna(0).astype(int)
 
-            df_buildings = pd.DataFrame(data)
-            df_buildings = gpd.GeoDataFrame(df_buildings, crs = "EPSG:2154")
-        
-        df_buildings["building_id"] = df_buildings["cleabs"].apply(lambda x: int(x[8:]))
-        df_buildings["housing"] = df_buildings["nombre_de_logements"].fillna(0).astype(int)
+            df_buildings["centroid"] = df_buildings["geometry"].centroid
+            df_buildings = df_buildings.set_geometry("centroid")
 
-        df_buildings["centroid"] = df_buildings["geometry"].centroid
-        df_buildings = df_buildings.set_geometry("centroid")
+            print("  Filtering ...")
 
-        print("  Filtering ...")
+            initial_count = len(df_buildings)
+            df_buildings = df_buildings[df_buildings["housing"] > 0]
+            final_count = len(df_buildings)
+            print("    {}/{} filtered by dwellings".format(initial_count - final_count, initial_count))
 
-        initial_count = len(df_buildings)
-        df_buildings = df_buildings[df_buildings["housing"] > 0]
-        final_count = len(df_buildings)
-        print("    {}/{} filtered by dwellings".format(initial_count - final_count, initial_count))
+            initial_count = len(df_buildings)
+            df_buildings = df_buildings[~df_buildings["building_id"].isin(known_ids)]
+            final_count = len(df_buildings)
+            print("    {}/{} filtered duplicates".format(initial_count - final_count, initial_count))
 
-        initial_count = len(df_buildings)
-        df_buildings = df_buildings[~df_buildings["building_id"].isin(known_ids)]
-        final_count = len(df_buildings)
-        print("    {}/{} filtered duplicates".format(initial_count - final_count, initial_count))
+            initial_count = len(df_buildings)
+            df_buildings = gpd.sjoin(df_buildings, df_departments, predicate = "within")
+            final_count = len(df_buildings)
+            print("    {}/{} filtered spatially".format(initial_count - final_count, initial_count))
 
-        initial_count = len(df_buildings)
-        df_buildings = gpd.sjoin(df_buildings, df_departments[
-            df_departments["departement_id"] == department_id
-        ], predicate = "within")
-        final_count = len(df_buildings)
-        print("    {}/{} filtered spatially".format(initial_count - final_count, initial_count))
+            df_buildings["department_id"] = df_buildings["departement_id"]
+            df_buildings = df_buildings.set_geometry("geometry")
 
-        df_buildings["department_id"] = department_id
-        df_buildings = df_buildings.set_geometry("geometry")
+            df_bdtopo.append(df_buildings[["building_id", "housing", "department_id", "geometry"]])
+            known_ids |= set(df_buildings["building_id"].unique())
 
-        df_bdtopo.append(df_buildings[["building_id", "housing", "department_id", "geometry"]])
-        known_ids |= set(df_buildings["building_id"].unique())
-
-        os.remove(geometry_path)
+            os.remove(geometry_path)
 
     df_bdtopo = pd.concat(df_bdtopo)
 
