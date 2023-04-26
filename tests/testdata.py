@@ -568,23 +568,23 @@ def create(output_path):
     # polygons as buildings from iris centroid points
     df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
-    os.mkdir("{}/bdtopo22".format(output_path))
-    df_bdtopo.to_file("{}/bdtopo22/content.gpkg".format(output_path), layer = "batiment")
+    os.mkdir("{}/bdtopo_idf".format(output_path))
+    df_bdtopo.to_file("{}/bdtopo_idf/content.gpkg".format(output_path), layer = "batiment")
 
     bdtopo_date = "2022-03-15"
     bdtopo_departments = ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D"]
 
-    with py7zr.SevenZipFile("{}/bdtopo22/bdtopo.7z".format(output_path), "w") as archive:
-        archive.write("{}/bdtopo22/content.gpkg".format(output_path), "content/content.gpkg")
-        os.remove("{}/bdtopo22/content.gpkg".format(output_path))
+    with py7zr.SevenZipFile("{}/bdtopo_idf/bdtopo.7z".format(output_path), "w") as archive:
+        archive.write("{}/bdtopo_idf/content.gpkg".format(output_path), "content/content.gpkg")
+        os.remove("{}/bdtopo_idf/content.gpkg".format(output_path))
     
     for department in bdtopo_departments:
         shutil.copyfile(
-            "{}/bdtopo22/bdtopo.7z".format(output_path), 
-            "{}/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D0{}_{}.7z".format(
+            "{}/bdtopo_idf/bdtopo.7z".format(output_path), 
+            "{}/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D0{}_{}.7z".format(
                 output_path, department, bdtopo_date))
         
-    os.remove("{}/bdtopo22/bdtopo.7z".format(output_path))
+    os.remove("{}/bdtopo_idf/bdtopo.7z".format(output_path))
         
     # Data set: SIRENE
     print("Creating SIRENE ...")
