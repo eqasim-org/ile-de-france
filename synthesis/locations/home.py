@@ -50,7 +50,7 @@ def execute(context):
             "commune_id": iris_id[:5]
         })
 
-    df_added = pd.DataFrame.from_records(df_added)
+    df_added = gpd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_addresses.crs)
 
     # Merge together
     df_addresses["fake"] = False

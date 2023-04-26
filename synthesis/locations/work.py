@@ -40,7 +40,7 @@ def execute(context):
             "commune_id": commune_id, "employees": 1.0, "geometry": centroid,
         })
 
-    df_added = pd.DataFrame.from_records(df_added)
+    df_added = pd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_sirene.crs)
 
     # Merge together
     df_sirene["fake"] = False

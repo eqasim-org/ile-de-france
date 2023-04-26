@@ -34,7 +34,7 @@ def execute(context):
             "commune_id": commune_id, "geometry": centroid
         })
 
-    df_added = pd.DataFrame.from_records(df_added)
+    df_added = gpd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_locations.crs)
 
     # Merge together
     df_locations["fake"] = False
