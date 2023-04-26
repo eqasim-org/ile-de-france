@@ -34,29 +34,29 @@ def execute(context):
     df_addresses.loc[df_addresses["iris_id"].isna(), "iris_id"] = "unknown"
     df_addresses["iris_id"] = df_addresses["iris_id"].astype("category")
 
+    df_addresses["fake"] = False
+
     # Add fake homes for IRIS without addresses
     missing_iris = required_iris - set(df_addresses["iris_id"].unique())
 
-    print("Adding homes at the centroid of %d/%d IRIS without BDTOPO observations" % (
-        len(missing_iris), len(required_iris)))
+    if len(missing_iris) > 0:
+        print("Adding homes at the centroid of %d/%d IRIS without BDTOPO observations" % (
+            len(missing_iris), len(required_iris)))
 
-    df_added = []
+        df_added = []
 
-    for iris_id in sorted(missing_iris):
-        centroid = df_iris[df_iris["iris_id"] == iris_id]["geometry"].centroid.iloc[0]
+        for iris_id in sorted(missing_iris):
+            centroid = df_iris[df_iris["iris_id"] == iris_id]["geometry"].centroid.iloc[0]
 
-        df_added.append({
-            "iris_id": iris_id, "geometry": centroid,
-            "commune_id": iris_id[:5]
-        })
+            df_added.append({
+                "iris_id": iris_id, "geometry": centroid,
+                "commune_id": iris_id[:5]
+            })
 
-    df_added = gpd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_addresses.crs)
+        df_added = gpd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_addresses.crs)
 
-    # Merge together
-    df_addresses["fake"] = False
-    df_added["fake"] = True
-
-    df_addresses = pd.concat([df_addresses, df_added])
+        df_added["fake"] = True
+        df_addresses = pd.concat([df_addresses, df_added])
 
     # Add work identifier
     df_addresses["location_id"] = np.arange(len(df_addresses))
