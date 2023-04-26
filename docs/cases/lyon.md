@@ -49,7 +49,17 @@ provide a selection of links, which is not necessarily exhaustive:
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_lyon`.
 
-### D) *Optional*: Regional Household Travel Survey 2015
+
+### D) Adresses database (BAN)
+
+You need to download the region-specific adresses database :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (01,38,42,69) 
+- Copy the *gz* files into `data/ban`.
+
+
+### E) *Optional*: Regional Household Travel Survey 2015
 
 For Lyon, a regional household travel survey (EDGT Lyon 2015) is available on request
 from the authorities. If you have the data available, you can use it in the pipeline.
@@ -57,7 +67,7 @@ To do so, put the relevant files into `data/edgt_lyon_2015`.
 
 The data can be obtained either directly from the CEREMA or through the [ADISP portal](http://www.progedo-adisp.fr/serie_emd.php).
 
-#### D.a) Data from CEREMA
+#### E.a) Data from CEREMA
 
 If you get the EDGT directly from the CEREMA, the following files should be present:
 
@@ -72,7 +82,7 @@ If you get the EDGT directly from the CEREMA, the following files should be pres
 - `data/edgt_lyon_2015/EDGT_AML_PERSO_DIST_DT_2015-10-27.txt`
 - `data/edgt_lyon_2015/EDGT_AML_TRAJET_DIST_2015-10-27.txt`
 
-#### D.a) Data from the ADISP portal
+#### E.a) Data from the ADISP portal
 
 If you get the EDGT data from the ADISP portal, the following files should be present:
 
@@ -88,14 +98,6 @@ If you get the EDGT data from the ADISP portal, the following files should be pr
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.MAP`
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TAB`
 
-
-### E) Adresses database (BAN)
-
-You need to download the region-specific adresses database :
-
-- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
-- Click on the link *adresses-xx.csv.gz* where xx = departments codes (01,38,42,69) 
-- Copy the *gz* files into `data/ban`.
 
 
 ### Overview
