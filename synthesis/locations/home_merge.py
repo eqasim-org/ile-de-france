@@ -30,6 +30,7 @@ def execute(context):
     # Load all addresses and residential buildings information
     df_buildings = context.stage("data.bdtopo.raw")
     df_buildings["geometry"] = df_buildings["geometry"].centroid
+    df_buildings["centroid"] = df_buildings["geometry"].centroid
 
     df_addresses = context.stage("data.ban.raw")
     
