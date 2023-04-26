@@ -23,7 +23,7 @@ def execute(context):
     required_iris = set(df_iris["iris_id"].unique())
 
     # Load all addresses and add IRIS information
-    df_addresses = context.stage("data.bdtopo.raw")[["geometry"]]
+    df_addresses = context.stage("data.bdtopo.raw")[["geometry"]].copy()
     df_addresses["geometry"] = df_addresses["geometry"].centroid
 
     print("Imputing IRIS into addresses ...")
