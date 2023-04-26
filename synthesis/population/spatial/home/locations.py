@@ -38,7 +38,7 @@ def _sample_locations(context, args):
         cdf /= cdf[-1]
 
         indices = np.array([np.count_nonzero(cdf < u) 
-            for u in random.random(0.0, 1.0, size = home_count)])
+            for u in random.random_sample(size = home_count)])
     elif sampling_mode == "uniform":
         indices = random.randint(location_count, size = home_count)
     else:
