@@ -569,8 +569,6 @@ def create(output_path):
         ]
     }, crs = "EPSG:2154")
 
-    df_bdtopo["cleabs"] = df_bdtopo["cleabs"].apply(lambda x: "AAAAAAAA{:016d}".format(x))
-
     # polygons as buildings from iris centroid points
     df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
