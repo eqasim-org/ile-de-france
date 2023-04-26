@@ -607,7 +607,7 @@ def create(output_path):
         "y": y})
 
     df_ban = df_ban[:round(len(x)*.8)]
-    os.mkdir("%s/ban" % output_path)
+    os.mkdir("%s/ban_idf" % output_path)
 
     for dep in df["department"].unique():
         df_ban.to_csv("%s/ban_idf/adresses-%s.csv.gz" % (output_path, dep),  compression='gzip', sep=";", index=False)
