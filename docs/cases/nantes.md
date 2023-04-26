@@ -45,7 +45,15 @@ provide a selection of links, which is not necessarily exhaustive:
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_nantes`.
 
-### D) *Optional*: Regional Household Travel Survey 2015
+### D) Adresses database (BAN)
+
+You need to download the region-specific adresses database :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (01,38,42,69) 
+- Copy the *gz* files into `data/ban`.
+
+### E) *Optional*: Regional Household Travel Survey 2015
 
 For Loire Atlantique, a regional household travel survey (EDGT Loire Atlantique 2015) is available as [open data](https://data.loire-atlantique.fr/explore/dataset/224400028_enquete-deplacements-en-loire-atlantique/information/). Download the raw data "données brutes" at bullet point 1 one the website. Put the relevant files into `data/edgt_44_2015`. The following files
 should be present:
@@ -60,6 +68,7 @@ Afterwards, you should have the following additional files in your directory str
 
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D044_2022-03-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
+- `data/ban/adresses-44.csv.gz`
 
 *Only for simulation:*
 
