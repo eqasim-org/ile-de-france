@@ -27,7 +27,7 @@ def execute(context):
     # Load BAN
     df_ban = []
 
-    for source_path in find_ban("{}/{}".format(context.config("data_path"), context.config("ban_oath"))):
+    for source_path in find_ban("{}/{}".format(context.config("data_path"), context.config("ban_path"))):
         print("Reading {} ...".format(source_path))
 
         df_partial = pd.read_csv(source_path, 
