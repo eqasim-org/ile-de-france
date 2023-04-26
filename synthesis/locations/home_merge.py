@@ -29,6 +29,8 @@ def execute(context):
 
     # Load all addresses and residential buildings information
     df_buildings = context.stage("data.bdtopo.raw")
+    df_buildings["geometry"] = df_buildings["geometry"].centroid
+
     df_addresses = context.stage("data.ban.raw")
     
     print("nb bâtiments :" + str(len(df_buildings)))
@@ -43,14 +45,14 @@ def execute(context):
     df_buildings_adresses = df_buildings_buffer.sjoin(df_addresses, how="left",predicate="contains")
     
     # set adresses points as geometry
-    df_buildings_adresses["geometry"] = gpd.points_from_xy(df_buildings_adresses.x, df_buildings_adresses.y, crs="EPSG:2154")    
+    df_buildings_adresses["geometry"] =  gpd.points_from_xy(df_buildings_adresses.x, df_buildings_adresses.y, crs="EPSG:2154")    
 
     # for non matched buldings, uses centroid as point coordinates
     df_buildings_adresses.loc[df_buildings_adresses["x"].isna(),"geometry"] = df_buildings_adresses[df_buildings_adresses["x"].isna()]["centroid"]   
     
     # residence count per buildings distribution on adresses matches (1 or many)
     # as numpy array to fasten process
-    adresses_count = df_buildings_adresses["bdtopo_id"].str[14:].astype("int64").to_numpy()
+    adresses_count = df_buildings_adresses["building_id"].to_numpy()
 
     # get buildings ids, count, and map to rebuild
     adresses_group_id,indices,adresses_group_count = np.unique(adresses_count,return_inverse=True,return_counts=True)
@@ -61,6 +63,5 @@ def execute(context):
     
     # residences distribution per buildings
     df_buildings_adresses["distributed_residences"] = df_buildings_adresses["housing"] /df_buildings_adresses["adresses_count"]
-    df_buildings_adresses = df_buildings_adresses.rename(columns={'index_right':"ban_id"})
   
-    return df_buildings_adresses
+    return df_buildings_adresses[["geometry", "building_id", "distributed_residences"]]

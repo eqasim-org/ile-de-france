@@ -23,25 +23,31 @@ def _sample_locations(context, args):
 
     assert location_count > 0
     assert home_count > 0
-
-    df_locations.sort_values(by=['distributed_residences'],inplace=True)
-    df_locations.reset_index(inplace=True,drop=True)
     
+    # random = np.random.RandomState(random_seed)
+
+    #cdf = np.cumsmum(df_locations["distributed_residences"])
+    #cdf /= cdf[-1]
+
+    #indices = [
+    #       np.count_nonzero(cdf < u) 
+    #       for u in random.random(0, 1, size = home_count)]
+
     # normalize IRIS residences weights
     residences_weights  = df_locations["distributed_residences"]/df_locations["distributed_residences"].sum()
     residences_weights = residences_weights.to_numpy()
     
     # weighted draw
-    indices = np.random.default_rng(random_seed).choice(df_locations.index.to_numpy(),size=home_count,p=residences_weights)
-    
+    indices = np.random.default_rng(random_seed).choice(np.arange(len(df_locations)), size=home_count,p=residences_weights)
+
     # uniform draw
     # random = np.random.RandomState(random_seed)
     # indices = random.randint(location_count, size = home_count)
 
     # apply selection
     df_homes["geometry"] = df_locations.iloc[indices]["geometry"].values
-    df_homes["bdtopo_id"] = df_locations.iloc[indices]["bdtopo_id"].values
-    df_homes["distributed_residences"] = df_locations.iloc[indices]["distributed_residences"].values
+    df_homes["building_id"] = df_locations.iloc[indices]["building_id"].values
+    
     context.progress.update()
     return df_homes
 
@@ -55,7 +61,7 @@ def execute(context):
     df_locations = context.stage("synthesis.locations.home")
                    
     # Sample locations for home
-    unique_iris_ids = set(df_homes["iris_id"].unique())
+    unique_iris_ids = sorted(set(df_homes["iris_id"].unique()))
 
     with context.progress(label = "Sampling home locations ...", total = len(unique_iris_ids)) as progress:
         with context.parallel(dict(
@@ -65,9 +71,4 @@ def execute(context):
             df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
 
     df_homes = gpd.GeoDataFrame(df_homes, crs = "EPSG:2154")
-    print(df_homes)
-    print(type(df_homes))
-    df_homes[["geometry", "bdtopo_id","distributed_residences"]].to_file("C:/Users/arthur.burianne/Documents/tech_Lab/output_zipBan/df_homes.gpkg", driver = "GPKG")
-
-
-    return df_homes[["household_id", "commune_id", "geometry", "bdtopo_id","distributed_residences"]]
+    return df_homes[["household_id", "commune_id", "geometry", "building_id"]]

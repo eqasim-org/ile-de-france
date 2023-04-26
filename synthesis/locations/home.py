@@ -28,7 +28,7 @@ def execute(context):
     required_iris = set(df_iris["iris_id"].unique())
     
     # Load all addresses and add IRIS information
-    df_addresses = context.stage("synthesis.locations.home_merge")[["geometry","bdtopo_id","distributed_residences"]]
+    df_addresses = context.stage("synthesis.locations.home_merge")
 
     print("Imputing IRIS into addresses ...")
    
@@ -47,7 +47,7 @@ def execute(context):
 
     df_added = []
 
-    for iris_id in missing_iris:
+    for iris_id in sorted(missing_iris):
         centroid = df_iris[df_iris["iris_id"] == iris_id]["geometry"].centroid.iloc[0]
 
         df_added.append({

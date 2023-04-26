@@ -16,8 +16,7 @@ def execute(context):
     
     
     # Load data
-    df_work = pd.read_hdf("%s/work.hdf" % context.path("data.od.raw"))
-    df_education = pd.read_hdf("%s/education.hdf" % context.path("data.od.raw"))
+    df_work, df_education = context.stage("data.od.raw")
 
     # Renaming
     df_work = df_work.rename(RENAME, axis = 1)

@@ -2,7 +2,7 @@ import geopandas as gpd
 import pandas as pd
 import shapely.geometry as geo
 import numpy as np
-import os
+import os, shutil
 import py7zr, zipfile
 import glob
 import subprocess
@@ -525,7 +525,7 @@ def create(output_path):
     columns = ["COMMUNE", "DCLT", "TRANS", "ARM", "IPONDI"]
     df_work.columns = columns
 
-    with zipfile.ZipFile("%s/rp_2019/RP2019_mobpro_csv.zip" % output_path, "w") as archive:
+    with zipfile.ZipFile("%s/rp_2019/RP2019_MOBPRO_csv.zip" % output_path, "w") as archive:
         with archive.open("FD_MOBPRO_2019.csv", "w") as f:
             df_work.to_csv(f, sep = ";")
 
@@ -540,7 +540,7 @@ def create(output_path):
     columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI"]
     df_education.columns = columns
 
-    with zipfile.ZipFile("%s/rp_2019/RP2019_mobsco_csv.zip" % output_path, "w") as archive:
+    with zipfile.ZipFile("%s/rp_2019/RP2019_MOBSCO_csv.zip" % output_path, "w") as archive:
         with archive.open("FD_MOBSCO_2019.csv", "w") as f:
             df_education.to_csv(f, sep = ";")
 
@@ -553,32 +553,45 @@ def create(output_path):
 
     x = df_selection["geometry"].centroid.x.values
     y = df_selection["geometry"].centroid.y.values
-    z = random.randint(100, 400, observations) 
-    ids = "-BATIMENT_0000000".join([str(n) for n in random.randint(1000, 1000000, observations)])
-    ids = ids.split("-")
+    z = random.randint(100, 400, observations) # Not used but keeping unit test hashes constant
+
+    ids = [
+        "BATIMENT{:016d}".format(n) for n in random.randint(1000, 1000000, observations) 
+    ]
     
     ids[0] = ids[1] # setting multiple adresses for 1 building usecase
 
     df_bdtopo = gpd.GeoDataFrame({
-        "NB_LOGTS": random.randint(0, 10, observations),
-        "ID": ids,
+        "nombre_de_logements": random.randint(0, 10, observations),
+        "cleabs": ids,
         "geometry": [
-            geo.Point(x, y,z) for x, y,z in zip(x, y,z)
+            geo.Point(x, y) for x, y in zip(x, y)
         ]
     }, crs = "EPSG:2154")
+
+    df_bdtopo["cleabs"] = df_bdtopo["cleabs"].apply(lambda x: "AAAAAAAA{:016d}".format(x))
 
     # polygons as buildings from iris centroid points
     df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
 
-    os.mkdir("%s/bdtopo" % output_path)
-    df_bdtopo.to_file("%s/bdtopo/BATIMENT.shp" % output_path)
+    os.mkdir("{}/bdtopo22".format(output_path))
+    df_bdtopo.to_file("{}/bdtopo22/content.gpkg".format(output_path), layer = "batiment")
 
-    with py7zr.SevenZipFile("%s/bdtopo/bdtopo.7z" % output_path, "w") as archive:
-        for source in glob.glob("%s/bdtopo/BATIMENT.*" % output_path):
-            archive.write(source, "content/{}".format(source.split("/")[-1]))
-            os.remove(source)
+    bdtopo_date = "2022-03-15"
+    bdtopo_departments = ["1A", "1B", "1C", "1D", "2A", "2B", "2C", "2D"]
+
+    with py7zr.SevenZipFile("{}/bdtopo22/bdtopo.7z".format(output_path), "w") as archive:
+        archive.write("{}/bdtopo22/content.gpkg".format(output_path), "content/content.gpkg")
+        os.remove("{}/bdtopo22/content.gpkg".format(output_path))
     
-    
+    for department in bdtopo_departments:
+        shutil.copyfile(
+            "{}/bdtopo22/bdtopo.7z".format(output_path), 
+            "{}/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D0{}_{}.7z".format(
+                output_path, department, bdtopo_date))
+        
+    os.remove("{}/bdtopo22/bdtopo.7z".format(output_path))
+        
     # Data set: BAN
     print("Creating BAN ...")
 
@@ -589,7 +602,7 @@ def create(output_path):
     x = df_selection["geometry"].centroid.x.values
     y = df_selection["geometry"].centroid.y.values
     municipality = df["municipality"].unique()
-        
+
     df_ban = pd.DataFrame({
         "code_insee": municipality[random.randint(0, len(municipality), observations)],
         "x": x,
@@ -600,9 +613,6 @@ def create(output_path):
 
     for dep in df["department"].unique():
         df_ban.to_csv("%s/ban/adresses-%s.csv.gz" % (output_path, dep),  compression='gzip', sep=";", index=False)
-
-    
-
 
     # Data set: SIRENE
     print("Creating SIRENE ...")
@@ -706,7 +716,6 @@ def create(output_path):
 
 
     import subprocess
-    import shutil
 
     subprocess.check_call([
         shutil.which("osmosis"), "--read-xml", "%s/osm_idf/ile-de-france-220101.osm.gz" % output_path,

@@ -14,10 +14,14 @@ simulation for **Lyon** and surroundings.
 You need to download the region-specific buildings database.
 
 - [Buildings database](https://geoservices.ign.fr/bdtopo)
-- Click on the right link *BD TOPO® Shapefile Régions* 
-- It will leads you to *BD TOPO® some date Tous Thèmes par région format shapefile projection légale*
-- Download *Région Auvergne-Rhône-Alpes - R 84*
-- Copy the *7z* file into `data/bdtopo_lyon`.
+- In the sidebar on the right, under *Téléchargement anciennes éditions*, click on *BD TOPO® 2022 GeoPackage Départements* to go to the saved data publications from 2022.
+- The data is split by department and they are identified with a number. For the departments around Lyon, download:
+  - Ain (01)
+  - Isère (38)
+  - Loire (42)
+  - Rhône (69)
+- Copy the four *7z* files into `data/bdtopo22`.
+- If you decide to add additional departments to the simulation (for instance, to simulate the whole Auvergne-Rhône-Alpes region) make sure to download the respective data sets.
 
 ### B) OpenStreetMap data
 
@@ -88,7 +92,10 @@ If you get the EDGT data from the ADISP portal, the following files should be pr
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/bdtopo_lyon/BDTOPO_3-3_TOUSTHEMES_SHP_LAMB93_R84_2022-12-15.7z`
+- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D001_2022-03-15.7z`
+- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D038_2022-03-15.7z`
+- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D042_2022-03-15.7z`
+- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D069_2022-03-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 
 *Only for simulation:*
@@ -109,19 +116,8 @@ updated continuously.
 
 ## Generating the population
 
-To generate the synthetic population, the `config.yml` needs to be updated. While
-the relevant code points to the Île-de-France data sets by default, you can
-adjust the paths inidividually. To let the pipeline use the *Zone E* census
-data set and the updated buildings, add the following to `config.yml` in the `config` section:
-
-```yaml
-config:
-  # ...
-  bdtopo_path: bdtopo_lyon
-  # ...
-```
-
-Furthermore, by default the pipeline will filter all other data sets for the
+To generate the synthetic population, the `config.yml` needs to be updated. 
+By default the pipeline will filter all other data sets for the
 Île-de-France region. To make it use the selected region, adjust the
 configuration as follows:
 
@@ -129,14 +125,14 @@ configuration as follows:
 config:
   # ...
   regions: []
-  departments: ["01", 38, 42, 69, 69M] # 26 "07"
+  departments: ["01", "38", "42", "69"] # 26 "07"
   # ...
 ```
 
 This will make the pipeline filter all data sets for the departments noted
 in the list above, which is a set of the closest departments around Lyon.
 If you want to generate the whole (ancient) Rhône-Alpes region, add the commented out
-department identifiers to the list.
+department identifiers to the list (and make sure to download the buildings database)
 
 In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
 is used, choose the updated HTS in the config file.

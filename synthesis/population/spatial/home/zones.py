@@ -37,7 +37,7 @@ def execute(context):
     df_municipalities["population"] = df_population["population"]
 
     df_households["commune_id"].cat.add_categories(
-        set(df_municipalities.index.unique()) - set(df_households["commune_id"].cat.categories),
+        sorted(set(df_municipalities.index.unique()) - set(df_households["commune_id"].cat.categories)),
         inplace = True)
 
     departements = df_households[~f_has_commune]["departement_id"].unique()
@@ -65,7 +65,7 @@ def execute(context):
     df_iris["population"] = df_population["population"]
 
     df_households["iris_id"].cat.add_categories(
-        set(df_iris.index.unique()) - set(df_households["iris_id"].cat.categories),
+        sorted(set(df_iris.index.unique()) - set(df_households["iris_id"].cat.categories)),
         inplace = True)
 
     communes = df_households[~f_has_iris & f_has_commune]["commune_id"].unique()

@@ -27,7 +27,7 @@ def execute(context):
 
     df_added = []
 
-    for commune_id in missing_communes:
+    for commune_id in sorted(missing_communes):
         centroid = df_zones[df_zones["commune_id"] == commune_id]["geometry"].centroid.iloc[0]
 
         df_added.append({
