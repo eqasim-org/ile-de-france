@@ -49,6 +49,15 @@ provide a selection of links, which is not necessarily exhaustive:
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_toulouse`.
 
+
+### D) Adresses database (BAN)
+
+You need to download the region-specific adresses database :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (09, 11, 31, 32, 81, 82) 
+- Copy the *gz* files into `data/ban`.
+
 ### Overview
 
 Afterwards, you should have the following additional files in your directory structure:
@@ -59,6 +68,13 @@ Afterwards, you should have the following additional files in your directory str
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D032_2022-03-15.7z`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D081_2022-03-15.7z`
 - `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D082_2022-03-15.7z`
+
+- `data/ban/adresses-09.csv.gz`
+- `data/ban/adresses-11.csv.gz`
+- `data/ban/adresses-31.csv.gz`
+- `data/ban/adresses-32.csv.gz`
+- `data/ban/adresses-81.csv.gz`
+- `data/ban/adresses-82.csv.gz`
 
 *Only for simulation:*
 
