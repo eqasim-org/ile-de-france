@@ -63,6 +63,6 @@ def execute(context):
     df_buildings_adresses["adresses_count"] = adresses_count
     
     # residences distribution per buildings
-    df_buildings_adresses["distributed_residences"] = df_buildings_adresses["housing"] /df_buildings_adresses["adresses_count"]
+    df_buildings_adresses["weight"] = df_buildings_adresses["housing"] /df_buildings_adresses["adresses_count"]
   
-    return df_buildings_adresses[["geometry", "building_id", "distributed_residences"]]
+    return df_buildings_adresses[["geometry", "building_id", "weight"]]

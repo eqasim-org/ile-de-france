@@ -53,7 +53,7 @@ def execute(context):
         df_added.append({
             "iris_id": iris_id, "geometry": centroid,
             "commune_id": iris_id[:5],
-            "distributed_residences" : 1
+            "weight" : 1
         })
 
     df_added = pd.DataFrame.from_records(df_added)

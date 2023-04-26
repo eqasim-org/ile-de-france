@@ -26,7 +26,7 @@ def _sample_locations(context, args):
     
     # random = np.random.RandomState(random_seed)
 
-    #cdf = np.cumsmum(df_locations["distributed_residences"])
+    #cdf = np.cumsmum(df_locations["weight"])
     #cdf /= cdf[-1]
 
     #indices = [
@@ -34,7 +34,7 @@ def _sample_locations(context, args):
     #       for u in random.random(0, 1, size = home_count)]
 
     # normalize IRIS residences weights
-    residences_weights  = df_locations["distributed_residences"]/df_locations["distributed_residences"].sum()
+    residences_weights  = df_locations["weight"]/df_locations["weight"].sum()
     residences_weights = residences_weights.to_numpy()
     
     # weighted draw
