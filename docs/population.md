@@ -150,7 +150,7 @@ The French Buildings database is available from IGN:
 The French adresses database is available on data.gouv.fr :
 
 - [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
-- Click on the link *adresses-xx.csv.gz* where xx = departments codes (75, 77, 78, 91, 92, 93, 94) 
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (75, 77, 78, 91, 92, 93, 94, 95) 
 - Copy the *gz* files into `data/ban_idf`.
 
 
