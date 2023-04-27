@@ -70,7 +70,7 @@ def statistical_matching(progress, df_source, source_identifier, weight, df_targ
     # Perform matching
     weights = df_source[weight].values
     assigned_indices = np.ones((len(df_target),), dtype = int) * -1
-    unassigned_mask = np.ones((len(df_target),), dtype = np.bool)
+    unassigned_mask = np.ones((len(df_target),), dtype = bool)
     assigned_levels = np.ones((len(df_target),), dtype = int) * -1
     uniform = random.random_sample(size = (len(df_target),))
 
