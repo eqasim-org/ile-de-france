@@ -51,8 +51,8 @@ def execute(context):
     df_addresses = pd.concat([df_addresses, df_missing])
 
     # Obtain weights for all addresses
-    df_total = df_addresses.groupby("building_id")["housing"].sum().reset_index(name = "total")
-    df_addresses = pd.merge(df_addresses, df_total, on = "building_id")
-    df_addresses["weight"] = df_addresses["housing"] / df_addresses["total"]
+    df_count = df_addresses.groupby("building_id").size().reset_index(name = "count")
+    df_addresses = pd.merge(df_addresses, df_count, on = "building_id")
+    df_addresses["weight"] = df_addresses["housing"] / df_addresses["count"]
     
     return df_addresses[["building_id", "weight", "geometry"]]
