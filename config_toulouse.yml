@@ -35,3 +35,4 @@ config:
   gtfs_path: gtfs_toulouse
   osm_path: osm_toulouse
   ban_path: ban_toulouse
+  bdtopo_path: bdtopo_toulouse

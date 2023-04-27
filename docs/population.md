@@ -143,7 +143,7 @@ The French Buildings database is available from IGN:
   - Seine-Saint-Denis (93)
   - Val-de-Marne (94)
   - Val-d'Oise (95)
-- Copy the eight *7z* files into `data/bdtopo22`.
+- Copy the eight *7z* files into `data/bdtopo_idf`.
 
 ### 11) Adresses database (BAN)
 
@@ -176,6 +176,14 @@ Your folder structure should now have at least the following files:
 - `data/sirene/StockEtablissement_utf8.csv`
 - `data/sirene/StockUniteLegale_utf8.zip`
 - `data/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.zip`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D075_2022-03-15.7z`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D077_2022-03-15.7z`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D078_2022-03-15.7z`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D091_2022-03-15.7z`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D092_2022-03-15.7z`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D093_2022-03-15.7z`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D094_2022-03-15.7z`
+- `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D095_2022-03-15.7z`
 - `data/ban_idf/adresses-75.csv.gz`
 - `data/ban_idf/adresses-77.csv.gz`
 - `data/ban_idf/adresses-78.csv.gz`
@@ -183,14 +191,6 @@ Your folder structure should now have at least the following files:
 - `data/ban_idf/adresses-92.csv.gz`
 - `data/ban_idf/adresses-93.csv.gz`
 - `data/ban_idf/adresses-94.csv.gz`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D075_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D077_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D078_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D091_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D092_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D093_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D094_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D095_2022-03-15.7z`
 
 In case you are using the regional household travel survey (EGT), the following
 files should also be in place:

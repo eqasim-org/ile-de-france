@@ -34,6 +34,7 @@ config:
   gtfs_path: gtfs_corsica
   osm_path: osm_corsica
   ban_path: ban_corsica
+  bdtopo_path: bdtopo_corsica
   matching_minimum_observations: 5
 
   # Uncomment to generate a scenario for eqasim-java unit testing

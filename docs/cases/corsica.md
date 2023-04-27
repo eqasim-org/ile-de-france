@@ -18,7 +18,7 @@ You need to download the region-specific buildings database.
 - The data is split by department and they are identified with a number. For Corsica, download:
   - Corse-du-Sud (2A)
   - Haute-Corse (2B)
-- Copy the two *7z* files into `data/bdtopo22`.
+- Copy the two *7z* files into `data/bdtopo_corsica`.
 
 ### B) OpenStreetMap data
 
@@ -53,8 +53,8 @@ You need to download the region-specific adresses database :
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02A_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02B_2022-03-15.7z`
+- `data/bdtopo_corsica/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02A_2022-03-15.7z`
+- `data/bdtopo_corsica/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02B_2022-03-15.7z`
 - `data/ban_corsica/adresses-2A.csv.gz`
 - `data/ban_corsica/adresses-2B.csv.gz`
 
@@ -116,6 +116,7 @@ config:
   gtfs_path: gtfs_corsica
   osm_path: osm_corsica
   ban_path: ban_corsica
+  bdtopo_path: bdtopo_corsica
   # ...
 ```
 

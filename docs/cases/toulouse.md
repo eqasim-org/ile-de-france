@@ -22,7 +22,7 @@ You need to download the region-specific buildings database.
   - Gers (32)
   - Tarn (81)
   - Var (82)
-- Copy the six *7z* files into `data/bdtopo22`.
+- Copy the six *7z* files into `data/bdtopo_toulouse`.
 - If you decide to add additional departments to the simulation (for instance, to simulate the whole Occitanie region) make sure to download the respective data sets.
 
 ### B) OpenStreetMap data
@@ -62,12 +62,12 @@ You need to download the region-specific adresses database :
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D009_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D011_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D031_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D032_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D081_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D082_2022-03-15.7z`
+- `data/bdtopo_toulouse/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D009_2022-03-15.7z`
+- `data/bdtopo_toulouse/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D011_2022-03-15.7z`
+- `data/bdtopo_toulouse/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D031_2022-03-15.7z`
+- `data/bdtopo_toulouse/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D032_2022-03-15.7z`
+- `data/bdtopo_toulouse/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D081_2022-03-15.7z`
+- `data/bdtopo_toulouse/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D082_2022-03-15.7z`
 - `data/ban_toulouse/adresses-09.csv.gz`
 - `data/ban_toulouse/adresses-11.csv.gz`
 - `data/ban_toulouse/adresses-31.csv.gz`
@@ -132,6 +132,7 @@ config:
   gtfs_path: gtfs_toulouse
   osm_path: osm_toulouse
   ban_path: ban_toulouse
+  bdtopo_path: bdtopo_toulouse
   # ...
 ```
 
