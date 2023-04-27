@@ -17,7 +17,7 @@ You need to download the region-specific buildings database.
 - In the sidebar on the right, under *Téléchargement anciennes éditions*, click on *BD TOPO® 2022 GeoPackage Départements* to go to the saved data publications from 2022.
 - The data is split by department and they are identified with a number. For the Loire-Atlantique department around Nantes, download:
   - Loire-Atlantique (44)
-- Copy the *7z* file into `data/bdtopo22`.
+- Copy the *7z* file into `data/bdtopo_nantes`.
 
 ### B) OpenStreetMap data
 
@@ -58,7 +58,7 @@ should be present:
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D044_2022-03-15.7z`
+- `data/bdtopo_nantes/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D044_2022-03-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
 
 *Only for simulation:*
@@ -126,6 +126,7 @@ config:
   # ...
   gtfs_path: gtfs_nantes
   osm_path: osm_nantes
+  bdtopo_path: bdtopo_nantes
   # ...
 ```
 

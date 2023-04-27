@@ -32,7 +32,8 @@ config:
   # Corsica settings
   regions: [94]
   gtfs_path: gtfs_corsica
-  osm_path: osm/corse-latest.osm.pbf
+  osm_path: osm_corsica
+  bdtopo_path: bdtopo_corsica
   matching_minimum_observations: 5
 
   # Uncomment to generate a scenario for eqasim-java unit testing
