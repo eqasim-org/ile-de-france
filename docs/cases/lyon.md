@@ -20,7 +20,7 @@ You need to download the region-specific buildings database.
   - Isère (38)
   - Loire (42)
   - Rhône (69)
-- Copy the four *7z* files into `data/bdtopo22`.
+- Copy the four *7z* files into `data/bdtopo_lyon`.
 - If you decide to add additional departments to the simulation (for instance, to simulate the whole Auvergne-Rhône-Alpes region) make sure to download the respective data sets.
 
 ### B) OpenStreetMap data
@@ -92,10 +92,10 @@ If you get the EDGT data from the ADISP portal, the following files should be pr
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D001_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D038_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D042_2022-03-15.7z`
-- `data/bdtopo22/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D069_2022-03-15.7z`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D001_2022-03-15.7z`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D038_2022-03-15.7z`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D042_2022-03-15.7z`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D069_2022-03-15.7z`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 
 *Only for simulation:*
@@ -169,6 +169,7 @@ config:
   # ...
   gtfs_path: gtfs_lyon
   osm_path: osm_lyon
+  bdtopo_path: bdtopo_lyon
   # ...
 ```
 
