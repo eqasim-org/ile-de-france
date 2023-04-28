@@ -8,7 +8,6 @@ def configure(context):
     context.stage("synthesis.locations.home.locations")
 
     context.config("random_seed")
-    context.config("home_location_sampling", "weighted")
 
 def _sample_locations(context, args):
     # Extract data sets
@@ -33,16 +32,11 @@ def _sample_locations(context, args):
     # Perform sampling
     random = np.random.RandomState(random_seed)
 
-    if sampling_mode == "weighted":
-        cdf = np.cumsum(df_locations["weight"].values)
-        cdf /= cdf[-1]
+    cdf = np.cumsum(df_locations["weight"].values)
+    cdf /= cdf[-1]
 
-        indices = np.array([np.count_nonzero(cdf < u) 
-            for u in random.random_sample(size = home_count)])
-    elif sampling_mode == "uniform":
-        indices = random.randint(location_count, size = home_count)
-    else:
-        raise RuntimeError("Unknown sampling mode")
+    indices = np.array([np.count_nonzero(cdf < u) 
+        for u in random.random_sample(size = home_count)])
     
     # Apply selection
     df_homes["geometry"] = df_locations.iloc[indices]["geometry"].values
@@ -70,6 +64,3 @@ def execute(context):
             df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
 
     return df_homes[["household_id", "commune_id", "building_id", "geometry"]]
-
-def validate(context):
-    assert context.config("home_location_sampling") in ("weighted", "uniform")

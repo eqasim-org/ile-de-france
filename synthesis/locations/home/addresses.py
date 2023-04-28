@@ -20,27 +20,34 @@ If no adresses matches a buidling, its centroid is taken as the unique address.
 
 def configure(context):
     context.stage("data.bdtopo.raw")
-    context.stage("data.ban.raw")
     
     context.config("home_address_buffer", 5.0)
+
+    if context.config("home_location_sampling", "weighted") == "weighted":
+        context.stage("data.ban.raw")
 
 def execute(context):
     # Load buildings
     df_buildings = context.stage("data.bdtopo.raw")
+    print("Number of buildings:", + len(df_buildings))
 
-    # Load addresses
-    df_addresses = context.stage("data.ban.raw")[["geometry"]].copy()
-    
-    print("Number of buildings:" + str(len(df_buildings)))
-    print("Number of addresses:" + str(len(df_addresses)))
+    if context.config("home_location_sampling") == "uniform":
+        df_addresses = pd.DataFrame({
+            "building_id": [], "housing": [], "geometry": []
+        })
 
-    # Buffer buildings to capture adresses in their vicinity
-    df_buffer = df_buildings[["building_id", "housing", "geometry"]].copy()
-    df_buffer["geometry"] = df_buffer.buffer(context.config("home_address_buffer"))
+    else: # weighted
+        # Load addresses
+        df_addresses = context.stage("data.ban.raw")[["geometry"]].copy()
+        print("Number of addresses:", + len(df_addresses))
 
-    # Find close-by addresses
-    df_addresses = gpd.sjoin(df_addresses, df_buffer, predicate = "within")[[
-        "building_id", "housing", "geometry"]]
+        # Buffer buildings to capture adresses in their vicinity
+        df_buffer = df_buildings[["building_id", "housing", "geometry"]].copy()
+        df_buffer["geometry"] = df_buffer.buffer(context.config("home_address_buffer"))
+
+        # Find close-by addresses
+        df_addresses = gpd.sjoin(df_addresses, df_buffer, predicate = "within")[[
+            "building_id", "housing", "geometry"]]
     
     # Create missing addresses by using centroids
     df_missing = df_buildings[~df_buildings["building_id"].isin(df_addresses["building_id"])].copy()
@@ -49,6 +56,7 @@ def execute(context):
 
     # Put together matched and missing addresses
     df_addresses = pd.concat([df_addresses, df_missing])
+    df_addresses = gpd.GeoDataFrame(df_addresses, crs = "EPSG:2154")
 
     # Obtain weights for all addresses
     df_count = df_addresses.groupby("building_id").size().reset_index(name = "count")
@@ -56,3 +64,6 @@ def execute(context):
     df_addresses["weight"] = df_addresses["housing"] / df_addresses["count"]
     
     return df_addresses[["building_id", "weight", "geometry"]]
+
+def validate(context):
+    assert context.config("home_location_sampling") in ("weighted", "uniform")
