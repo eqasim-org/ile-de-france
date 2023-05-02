@@ -13,7 +13,6 @@ def _sample_locations(context, args):
     # Extract data sets
     df_locations = context.data("df_locations")
     df_homes = context.data("df_homes")
-    sampling_mode = context.data("sampling_mode")
 
     # Extract task parameters
     iris_id, random_seed = args
@@ -58,7 +57,7 @@ def execute(context):
 
     with context.progress(label = "Sampling home locations ...", total = len(unique_iris_ids)):
         with context.parallel(dict(
-            df_locations = df_locations, df_homes = df_homes, sampling_mode = context.config("home_location_sampling")
+            df_locations = df_locations, df_homes = df_homes
         )) as parallel:
             seeds = random.randint(10000, size = len(unique_iris_ids))
             df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
