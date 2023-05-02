@@ -23,7 +23,8 @@ def configure(context):
     
     context.config("home_address_buffer", 5.0)
 
-    if context.config("home_location_sampling", "weighted") == "weighted":
+    context.config("home_location_weight", "housing")
+    if context.config("home_location_source", "addresses") == "addresses":
         context.stage("data.ban.raw")
 
 def execute(context):
@@ -31,12 +32,12 @@ def execute(context):
     df_buildings = context.stage("data.bdtopo.raw")
     print("Number of buildings:", + len(df_buildings))
 
-    if context.config("home_location_sampling") == "uniform":
+    if context.config("home_location_source") == "buildings":
         df_addresses = pd.DataFrame({
             "building_id": [], "housing": [], "geometry": []
         })
 
-    else: # weighted
+    else: # addresses
         # Load addresses
         df_addresses = context.stage("data.ban.raw")[["geometry"]].copy()
         print("Number of addresses:", + len(df_addresses))
@@ -59,11 +60,15 @@ def execute(context):
     df_addresses = gpd.GeoDataFrame(df_addresses, crs = "EPSG:2154")
 
     # Obtain weights for all addresses
-    df_count = df_addresses.groupby("building_id").size().reset_index(name = "count")
-    df_addresses = pd.merge(df_addresses, df_count, on = "building_id")
-    df_addresses["weight"] = df_addresses["housing"] / df_addresses["count"]
+    if context.config("home_location_weight") == "housing":
+        df_count = df_addresses.groupby("building_id").size().reset_index(name = "count")
+        df_addresses = pd.merge(df_addresses, df_count, on = "building_id")
+        df_addresses["weight"] = df_addresses["housing"] / df_addresses["count"]
+    else:
+        df_addresses["weight"] = 1.0
     
     return df_addresses[["building_id", "weight", "geometry"]]
 
 def validate(context):
-    assert context.config("home_location_sampling") in ("weighted", "uniform")
+    assert context.config("home_location_source") in ("addresses", "buildings")
+    assert context.config("home_location_weight") in ("uniform", "housing")
