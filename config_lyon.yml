@@ -34,4 +34,5 @@ config:
   departments: ["01", "38", "42", "69"]
   gtfs_path: gtfs_lyon
   osm_path: osm_lyon
+  ban_path: ban_lyon
   bdtopo_path: bdtopo_lyon

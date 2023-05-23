@@ -34,4 +34,5 @@ config:
   departments: [44]
   gtfs_path: gtfs_nantes
   osm_path: osm_nantes
+  ban_path: ban_nantes
   bdtopo_path: bdtopo_nantes

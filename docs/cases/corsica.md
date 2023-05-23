@@ -39,12 +39,24 @@ it is necessary to collect all relevant GTFS schedules one by one.
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_corsica`.
 
+
+### D) Adresses database (BAN)
+
+You need to download the region-specific adresses database :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (09, 11, 31, 32, 81, 82) 
+- Copy the *gz* files into `data/ban_corsica`.
+
+
 ### Overview
 
 Afterwards, you should have the following additional files in your directory structure:
 
 - `data/bdtopo_corsica/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02A_2022-03-15.7z`
 - `data/bdtopo_corsica/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D02B_2022-03-15.7z`
+- `data/ban_corsica/adresses-2A.csv.gz`
+- `data/ban_corsica/adresses-2B.csv.gz`
 
 *Only for simulation:*
 
@@ -103,6 +115,7 @@ config:
   # ...
   gtfs_path: gtfs_corsica
   osm_path: osm_corsica
+  ban_path: ban_corsica
   bdtopo_path: bdtopo_corsica
   # ...
 ```

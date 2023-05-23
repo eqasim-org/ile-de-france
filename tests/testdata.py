@@ -151,7 +151,7 @@ def create(output_path):
 
     df = pd.DataFrame.from_records(df)
     df = gpd.GeoDataFrame(df, crs = "EPSG:2154")
-
+   
     # Dataset: IRIS zones
     # Required attributes: CODE_IRIS, INSEE_COM, geometry
     print("Creating IRIS zones ...")
@@ -555,15 +555,19 @@ def create(output_path):
     y = df_selection["geometry"].centroid.y.values
     z = random.randint(100, 400, observations) # Not used but keeping unit test hashes constant
 
+    ids = [
+        "BATIMENT{:016d}".format(n) for n in random.randint(1000, 1000000, observations) 
+    ]
+    
+    ids[0] = ids[1] # setting multiple adresses for 1 building usecase
+
     df_bdtopo = gpd.GeoDataFrame({
         "nombre_de_logements": random.randint(0, 10, observations),
-        "cleabs": random.randint(1000, 1000000, observations),
+        "cleabs": ids,
         "geometry": [
             geo.Point(x, y) for x, y in zip(x, y)
         ]
     }, crs = "EPSG:2154")
-
-    df_bdtopo["cleabs"] = df_bdtopo["cleabs"].apply(lambda x: "AAAAAAAA{:016d}".format(x))
 
     # polygons as buildings from iris centroid points
     df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
@@ -586,6 +590,28 @@ def create(output_path):
         
     os.remove("{}/bdtopo_idf/bdtopo.7z".format(output_path))
         
+    # Data set: BAN
+    print("Creating BAN ...")
+
+    observations = ADDRESS_OBSERVATIONS
+
+    df_selection = df_iris.iloc[random.randint(0, len(df_iris), observations)]
+
+    x = df_selection["geometry"].centroid.x.values
+    y = df_selection["geometry"].centroid.y.values
+    municipality = df["municipality"].unique()
+
+    df_ban = pd.DataFrame({
+        "code_insee": municipality[random.randint(0, len(municipality), observations)],
+        "x": x,
+        "y": y})
+
+    df_ban = df_ban[:round(len(x)*.8)]
+    os.mkdir("%s/ban_idf" % output_path)
+
+    for dep in df["department"].unique():
+        df_ban.to_csv("%s/ban_idf/adresses-%s.csv.gz" % (output_path, dep),  compression='gzip', sep=";", index=False)
+
     # Data set: SIRENE
     print("Creating SIRENE ...")
 

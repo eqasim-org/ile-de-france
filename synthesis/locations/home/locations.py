@@ -4,33 +4,27 @@ import geopandas as gpd
 
 """
 This stage provides a list of home places that serve as potential locations for
-home activities. They are derived from the BD TOPO buildings database.
-
-As home locations are assigned by IRIS, we re-assign the IRIS code here for
-each address coordinate. Additionally, we create fake locations in IRIS that
-are requested by the population, but which have no actual address. This process
-uses BD TOPO BATI and filter on "logements" > 0 to keep only residential
-buildings
+home activities.
 """
 
 def configure(context):
-    context.stage("data.bdtopo.raw")
     context.stage("data.spatial.iris")
+    context.stage("synthesis.locations.home.addresses")
 
 def execute(context):
     # Find required IRIS
     df_iris = context.stage("data.spatial.iris")
     required_iris = set(df_iris["iris_id"].unique())
-
+    
     # Load all addresses and add IRIS information
-    df_addresses = context.stage("data.bdtopo.raw")[["geometry"]].copy()
-    df_addresses["geometry"] = df_addresses["geometry"].centroid
+    df_addresses = context.stage("synthesis.locations.home.addresses")
 
     print("Imputing IRIS into addresses ...")
+   
     df_addresses = gpd.sjoin(df_addresses,
         df_iris[["iris_id", "commune_id", "geometry"]], predicate = "within")
     del df_addresses["index_right"]
-
+    
     df_addresses.loc[df_addresses["iris_id"].isna(), "iris_id"] = "unknown"
     df_addresses["iris_id"] = df_addresses["iris_id"].astype("category")
 
@@ -50,16 +44,18 @@ def execute(context):
 
             df_added.append({
                 "iris_id": iris_id, "geometry": centroid,
-                "commune_id": iris_id[:5]
+                "commune_id": iris_id[:5],
+                "weight" : 1,
+                "building_id": -1
             })
 
         df_added = gpd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_addresses.crs)
-
         df_added["fake"] = True
+
         df_addresses = pd.concat([df_addresses, df_added])
 
-    # Add work identifier
+    # Add home identifier
     df_addresses["location_id"] = np.arange(len(df_addresses))
     df_addresses["location_id"] = "home_" + df_addresses["location_id"].astype(str)
 
-    return df_addresses[["location_id", "iris_id", "commune_id", "fake", "geometry"]]
+    return df_addresses

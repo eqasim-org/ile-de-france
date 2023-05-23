@@ -33,6 +33,7 @@ config:
   regions: [94]
   gtfs_path: gtfs_corsica
   osm_path: osm_corsica
+  ban_path: ban_corsica
   bdtopo_path: bdtopo_corsica
   matching_minimum_observations: 5
 
