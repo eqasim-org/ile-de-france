@@ -9,9 +9,9 @@ import glob
 import numpy as np
 
 """
-This stage loads the raw data from the French building registry.
+This stage loads the raw data from the French building registry (BD-TOPO).
 """
-
+ 
 def configure(context):
     context.config("data_path")
     context.config("bdtopo_path", "bdtopo_idf")

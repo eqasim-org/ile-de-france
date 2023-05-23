@@ -34,4 +34,5 @@ config:
   departments: ["09", "82", "81", "11", "31", "32"] # 12 30 34 46 48 65 66
   gtfs_path: gtfs_toulouse
   osm_path: osm_toulouse
+  ban_path: ban_toulouse
   bdtopo_path: bdtopo_toulouse

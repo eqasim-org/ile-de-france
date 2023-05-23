@@ -145,6 +145,15 @@ The French Buildings database is available from IGN:
   - Val-d'Oise (95)
 - Copy the eight *7z* files into `data/bdtopo_idf`.
 
+### 11) Adresses database (BAN)
+
+The French adresses database is available on data.gouv.fr :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (75, 77, 78, 91, 92, 93, 94, 95) 
+- Copy the *gz* files into `data/ban_idf`.
+
+
 ### Overview
 
 Your folder structure should now have at least the following files:
@@ -175,6 +184,13 @@ Your folder structure should now have at least the following files:
 - `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D093_2022-03-15.7z`
 - `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D094_2022-03-15.7z`
 - `data/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D095_2022-03-15.7z`
+- `data/ban_idf/adresses-75.csv.gz`
+- `data/ban_idf/adresses-77.csv.gz`
+- `data/ban_idf/adresses-78.csv.gz`
+- `data/ban_idf/adresses-91.csv.gz`
+- `data/ban_idf/adresses-92.csv.gz`
+- `data/ban_idf/adresses-93.csv.gz`
+- `data/ban_idf/adresses-94.csv.gz`
 
 In case you are using the regional household travel survey (EGT), the following
 files should also be in place:
