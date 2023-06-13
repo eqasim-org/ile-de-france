@@ -4,7 +4,7 @@ import shapely.geometry as geo
 import os, datetime, json
 import sqlite3
 import math
-
+import numpy as np
 def configure(context):
     context.stage("synthesis.population.enriched")
 
@@ -20,6 +20,10 @@ def configure(context):
 
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
+    
+    if context.config("mode_choice") == True:
+        context.stage("matsim.simulation.prepare")
+
 
 def validate(context):
     output_path = context.config("output_path")
@@ -124,7 +128,17 @@ def execute(context):
         "is_first", "is_last"
     ]]
 
+    if context.config("mode_choice") == True:
+        df_trips=df_trips.drop(columns=["mode"])
+        df_mode_choice_trips = pd.read_csv("{}/ile_de_france_tripModes.csv".format(context.path('matsim.simulation.prepare')),delimiter=(";"))
+        df_mode_choice_trips = df_mode_choice_trips.rename(columns={"personId": "person_id", "tripId": "trip_index","mode" : "mode"})
+        
+        df_trips = pd.merge(df_trips,df_mode_choice_trips, on=["person_id","trip_index"],how="left",validate="one_to_one")
+
+        assert(np.count_nonzero(df_trips["mode"].isna())==0)                                   
+
     df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+
 
     if context.config("generate_vehicles_file"):
         # Prepare vehicles

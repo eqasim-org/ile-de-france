@@ -4,6 +4,8 @@ import os.path
 import matsim.runtime.eqasim as eqasim
 
 def configure(context):
+
+    context.config("mode_choice",False)
     context.stage("matsim.scenario.population")
     context.stage("matsim.scenario.households")
 
@@ -139,6 +141,21 @@ def execute(context):
         "--config:plans.inputPlansFile", "prepared_population.xml.gz"
     ])
     assert os.path.exists("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
+
+    
+    
+    # mode choice
+    if context.config("mode_choice") == True: # need to validate parameters names (trivial=False  / matsim=True)
+              
+        eqasim.run(context, "org.eqasim.ile_de_france.RunModeChoice", [
+            "--config-path", "%sconfig.xml" % context.config("output_prefix"),
+            "--output-plans-path", "%spopulation.xml.gz" % context.config("output_prefix"),
+            "--config:global.numberOfThreads", context.config("processes"),
+            "--output-csv-path", "%stripModes.csv" % context.config("output_prefix")
+        ])
+        assert os.path.exists("%s/%stripModes.csv" % (context.path(), context.config("output_prefix")))
+        assert os.path.exists("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
+    
 
     # Validate scenario
     eqasim.run(context, "org.eqasim.core.scenario.validation.RunScenarioValidator", [
