@@ -8,13 +8,14 @@ def configure(context):
     context.stage("data.gtfs.cleaned")
 
     context.config("gtfs_date", "dayWithMostServices")
+    context.config("crs", "EPSG:2154")
 
 def execute(context):
     gtfs_path = "%s/output" % context.path("data.gtfs.cleaned")
 
     pt2matsim.run(context, "org.matsim.pt2matsim.run.Gtfs2TransitSchedule", [
         gtfs_path,
-        context.config("gtfs_date"), "EPSG:2154",
+        context.config("gtfs_date"), context.config("crs"),
         "%s/transit_schedule.xml.gz" % context.path(),
         "%s/transit_vehicles.xml.gz" % context.path()
     ])

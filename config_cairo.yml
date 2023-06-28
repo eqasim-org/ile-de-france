@@ -1,0 +1,50 @@
+## Synthetic population pipeline for Corsica
+## based on the synpp package
+
+# This is the path to a directory where the pipeline can store temporary data
+working_directory: /home/shoerl/anthropolis/cairo/cache
+
+# This section defines which parts of the pipeline should be run
+run:
+  # - synthesis.output # To create the output population in the output_path (see below)
+  # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
+  # - matsim.scenario.supply.osm
+  - matsim.scenario.supply.gtfs
+
+aliases:
+  data.spatial.municipalities: cairo.raw.boundary
+  synthesis.population.enriched: cairo.cleaned.population
+  synthesis.population.activities: cairo.cleaned.activities
+  synthesis.population.trips: cairo.cleaned.trips
+
+# Here the configuraiton of the pipeline starts
+config:
+  # Some general configuration
+  processes: 4
+
+  # Define whether to use ENTD or EGT as the household travel survey (HTS)
+  hts: entd
+
+  # Define sampling rate and random seed for the output population
+  sampling_rate: 0.001
+  random_seed: 1234
+
+  # Paths to the input data and where the output should be stored
+  data_path: /home/shoerl/anthropolis/cairo/data
+  output_path: /home/shoerl/anthropolis/cairo/output
+  output_prefix: cairo_
+
+  # Only interesting if you run the simulation
+  java_memory: 14G
+
+  # Corsica settings
+  regions: [94]
+  gtfs_path: gtfs_cairo
+  osm_path: osm_cairo
+
+  crs: EPSG:4326
+
+  cairo:
+    boundary_path: tfc_gcr_bounds.geojson
+    population_path: population.csv
+    locations_path: locations.gpkg

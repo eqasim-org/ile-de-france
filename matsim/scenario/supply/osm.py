@@ -8,6 +8,7 @@ def configure(context):
     context.stage("data.osm.cleaned")
 
     context.config("export_detailed_network", False)
+    context.config("crs", "EPSG:2154")
 
 def execute(context):
     osm_path = "%s/output.osm.gz" % context.path("data.osm.cleaned")
@@ -26,7 +27,7 @@ def execute(context):
 
         content = content.replace(
             '<param name="outputCoordinateSystem" value="null" />',
-            '<param name="outputCoordinateSystem" value="EPSG:2154" />'
+            '<param name="outputCoordinateSystem" value="{}" />'.format(context.config("crs"))
         )
 
         content = content.replace(
