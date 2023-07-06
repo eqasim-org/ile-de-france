@@ -20,6 +20,8 @@ def configure(context):
 
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
+    
+    context.config("crs")
 
 def validate(context):
     output_path = context.config("output_path")
@@ -143,7 +145,7 @@ def execute(context):
     ]], how = "left", on = ["person_id", "activity_index"])
 
     # Write spatial activities
-    df_spatial = gpd.GeoDataFrame(df_activities, crs = "EPSG:2154")
+    df_spatial = gpd.GeoDataFrame(df_activities, crs = context.config("crs"))
     df_spatial["purpose"] = df_spatial["purpose"].astype(str)
     path = "%s/%sactivities.gpkg" % (output_path, output_prefix)
     df_spatial.to_file(path, driver = "GPKG")
@@ -196,7 +198,7 @@ def execute(context):
 
     df_spatial = df_spatial.drop(columns = ["preceding_geometry", "following_geometry"])
 
-    df_spatial = gpd.GeoDataFrame(df_spatial, crs = "EPSG:2154")
+    df_spatial = gpd.GeoDataFrame(df_spatial, crs = context.config("crs"))
     df_spatial["following_purpose"] = df_spatial["following_purpose"].astype(str)
     df_spatial["preceding_purpose"] = df_spatial["preceding_purpose"].astype(str)
     df_spatial["mode"] = df_spatial["mode"].astype(str)

@@ -8,8 +8,8 @@ working_directory: /home/shoerl/anthropolis/cairo/cache
 run:
   # - synthesis.output # To create the output population in the output_path (see below)
   # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
-  # - matsim.scenario.supply.osm
-  - matsim.scenario.supply.gtfs
+  - matsim.scenario.supply.osm
+  # - matsim.scenario.supply.gtfs
 
 aliases:
   data.spatial.municipalities: cairo.raw.boundary
@@ -42,7 +42,7 @@ config:
   gtfs_path: gtfs_cairo
   osm_path: osm_cairo
 
-  crs: EPSG:4326
+  crs: EPSG:22992
 
   cairo:
     boundary_path: tfc_gcr_bounds.geojson
