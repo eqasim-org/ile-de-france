@@ -2,14 +2,13 @@
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
-working_directory: /home/shoerl/anthropolis/cairo/cache
+working_directory: /data/cairo/cache
 
 # This section defines which parts of the pipeline should be run
 run:
   # - synthesis.output # To create the output population in the output_path (see below)
   # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
-  - matsim.scenario.supply.osm
-  # - matsim.scenario.supply.gtfs
+  - cairo.raw.locations
 
 aliases:
   data.spatial.municipalities: cairo.raw.boundary
@@ -30,8 +29,8 @@ config:
   random_seed: 1234
 
   # Paths to the input data and where the output should be stored
-  data_path: /home/shoerl/anthropolis/cairo/data
-  output_path: /home/shoerl/anthropolis/cairo/output
+  data_path: /data/cairo/data
+  output_path: /data/cairo/output
   output_prefix: cairo_
 
   # Only interesting if you run the simulation
@@ -46,5 +45,5 @@ config:
 
   cairo:
     boundary_path: tfc_gcr_bounds.geojson
-    population_path: population.csv
-    locations_path: locations.gpkg
+    population_path: data_cairo/population+home-act.csv
+    locations_path: data_cairo/activity-locations.gpkg

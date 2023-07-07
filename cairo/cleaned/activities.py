@@ -24,6 +24,13 @@ def execute(context):
     # Purpose
     df_activities = df_activities.rename(columns = { "activity_start_time": "start_time" })
     df_activities = df_activities.rename(columns = { "activity_end_time": "end_time" })
+    
+    # Times
+    df_activities["start_time"] *= 60
+    df_activities["end_time"] *= 60
+    
+    # Sort
+    df_activities = df_activities.sort_values(by = ["person_id", "activity_index"])
 
     return df_activities[[
         "person_id", "household_id",
@@ -31,3 +38,4 @@ def execute(context):
         "purpose", "start_time", "end_time",
         "is_first", "is_last"
     ]]
+

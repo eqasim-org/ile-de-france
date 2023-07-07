@@ -3,13 +3,18 @@ import numpy as np
 
 def configure(context):
     context.stage("cairo.raw.population")
+    context.config("sampling_rate")
 
 def execute(context):
     df_persons = context.stage("cairo.raw.population")
     df_persons = df_persons.drop_duplicates("person_id")
+    
+    # Sampling
+    sampling_rate = context.config("sampling_rate")
+    df_persons = df_persons.sample(frac = sampling_rate)
 
     # Manage IDs
-    df_persons["census_person_id"] = df_persons["person_id"].svalues
+    df_persons["census_person_id"] = df_persons["person_id"].values
     df_persons["person_id"] = np.arange(len(df_persons))
 
     df_persons["census_household_id"] = df_persons["census_person_id"]
@@ -43,5 +48,6 @@ def execute(context):
         "household_income",
 
         "age", "sex", "socioprofessional_class",
-        "employed", "has_licesne", "has_pt_subscription"
+        "employed", "has_license", "has_pt_subscription"
     ]]
+ 
