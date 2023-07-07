@@ -5,7 +5,9 @@ def configure(context):
 
 def execute(context):
     df_candidates = context.stage("cairo.locations.candidates")
+    candidate_index = CandidateIndex(df_candidates, "location_id")
 
+    
     
 
 
