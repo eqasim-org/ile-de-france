@@ -6,15 +6,19 @@ working_directory: /data/cairo/cache
 
 # This section defines which parts of the pipeline should be run
 run:
-  # - synthesis.output # To create the output population in the output_path (see below)
-  # - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
-  - cairo.raw.locations
+  - synthesis.output # To create the output population in the output_path (see below)
+  #- matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 aliases:
   data.spatial.municipalities: cairo.raw.boundary
   synthesis.population.enriched: cairo.cleaned.population
   synthesis.population.activities: cairo.cleaned.activities
   synthesis.population.trips: cairo.cleaned.trips
+  synthesis.population.spatial.locations: cairo.locations.all
+  synthesis.population.spatial.home.locations: cairo.cleaned.homes
+  synthesis.locations.secondary: cairo.matsim.secondary_locations
+  synthesis.population.spatial.primary.locations: cairo.matsim.primary_locations
+  matsim.simulation.prepare: cairo.matsim.prepare
 
 # Here the configuraiton of the pipeline starts
 config:
@@ -44,6 +48,10 @@ config:
   crs: EPSG:22992
 
   cairo:
-    boundary_path: tfc_gcr_bounds.geojson
+    boundary_path: data_cairo/tfc_gcr_bounds.geojson
     population_path: data_cairo/population+home-act.csv
     locations_path: data_cairo/activity-locations.gpkg
+    sla_iterations: 1
+
+  eqasim_branch: cairo
+  eqasim_commit: 590eb2a4

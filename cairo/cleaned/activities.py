@@ -28,14 +28,20 @@ def execute(context):
     # Times
     df_activities["start_time"] *= 60
     df_activities["end_time"] *= 60
-    
+
+    df_activities.loc[~np.isfinite(df_activities["start_time"]), "start_time"] = np.nan
+    df_activities.loc[~np.isfinite(df_activities["end_time"]), "end_time"] = np.nan
+
+    # Distance
+    df_activities["preceding_distance"] *= 1e3
+
     # Sort
     df_activities = df_activities.sort_values(by = ["person_id", "activity_index"])
 
     return df_activities[[
-        "person_id", "household_id",
+        "person_id", # "household_id",
         "activity_index", "trip_index",
         "purpose", "start_time", "end_time",
-        "is_first", "is_last"
+        "is_first", "is_last", "preceding_distance"
     ]]
 

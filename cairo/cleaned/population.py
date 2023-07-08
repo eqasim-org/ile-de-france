@@ -39,6 +39,10 @@ def execute(context):
     df_persons["has_license"] = df_persons["car_availability"] == "all"
     df_persons["has_pt_subscription"] = False
 
+    # Attributes needed for MATSim
+    df_persons["is_passenger"] = False
+    df_persons["hts_household_id"] = -1
+
     return df_persons[[
         "household_id", "census_household_id",
         "person_id", "census_person_id", "hts_id",
@@ -48,6 +52,8 @@ def execute(context):
         "household_income",
 
         "age", "sex", "socioprofessional_class",
-        "employed", "has_license", "has_pt_subscription"
+        "employed", "has_license", "has_pt_subscription",
+
+        "is_passenger", "hts_household_id"
     ]]
  
