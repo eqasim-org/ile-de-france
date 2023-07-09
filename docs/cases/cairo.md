@@ -7,7 +7,7 @@ We have adapted the pipeline for Cairo. There are some steps that are external t
 
 These data need to be requested externally, but eventually it might make sense to include them in the pipeline to have a full process from raw data to the outputs. Currently, the main purpose of the adapted pipeline code is to transform the data in our standard formats and perform location assignment. Here we use the secondary location choice functionality that we have available, but also to assign work and education places. Only home locations are fixed in the Cairo version of the pipeline.
 
-The cairo pipeline is contained in the `cairo` branch of the `iel-de-france` repository for now. We can think of creating a separate repository for it once it becomes more stable.
+The cairo pipeline is contained in the `cairo` branch of the `ile-de-france` repository for now. We can think of creating a separate repository for it once it becomes more stable.
 
 Note that for the simulation part (MATSim) there is the `cairo` branch in the `eqasim-java` repository.
 
@@ -25,7 +25,7 @@ The final directory structure should look as follows:
 
 - `/data/data_cairo/activity-locations.gpkg`
 - `/data/data_cairo/population+home-act.csv`
-- `/data/data_cairo/activity-locations.gpkg`
+- `/data/data_cairo/tfc_gcr_bounds.geojson`
 - `/data/gtfs_cairo/bus_new-times.zip`
 - `/data/gtfs_cairo/metro-new-times.zip`
 - `/data/osm_cairo/egypt-latest.osm.pbf`
