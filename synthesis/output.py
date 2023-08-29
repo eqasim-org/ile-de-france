@@ -6,6 +6,7 @@ import sqlite3
 import math
 import numpy as np
 def configure(context):
+
     context.stage("synthesis.population.enriched")
 
     context.stage("synthesis.population.activities")
@@ -21,7 +22,7 @@ def configure(context):
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
     
-    if context.config("mode_choice") == True:
+    if context.config("mode_choice", False):
         context.stage("matsim.simulation.prepare")
 
 
