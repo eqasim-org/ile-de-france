@@ -34,7 +34,7 @@ def test_data(tmpdir):
     assert os.path.isfile("%s/ile_de_france_hts_trips.csv" % output_path)
     assert os.path.isfile("%s/ile_de_france_sirene.gpkg" % output_path)
 
-def run_population(tmpdir, hts,mode_choice):
+def run_population(tmpdir, hts, mode_choice):
     data_path = str(tmpdir.mkdir("data"))
     testdata.create(data_path)
 
@@ -46,7 +46,7 @@ def run_population(tmpdir, hts,mode_choice):
         random_seed = 1000, processes = 1,
         secloc_maximum_iterations = 10,
         maven_skip_tests = True,
-        mode_choice=mode_choice
+        mode_choice = mode_choice
     )
 
     stages = [
@@ -63,10 +63,10 @@ def run_population(tmpdir, hts,mode_choice):
     assert os.path.isfile("%s/ile_de_france_meta.json" % output_path)
 
 def test_population_with_entd(tmpdir):
-    run_population(tmpdir, "entd",False)
+    run_population(tmpdir, "entd", False)
 
 def test_population_with_mode_choice(tmpdir):
-    run_population(tmpdir, "entd",True)
+    run_population(tmpdir, "entd", True)
 
 #def test_population_with_egt(tmpdir):
 #    run_population(tmpdir, "entd") # TODO: Fix this!

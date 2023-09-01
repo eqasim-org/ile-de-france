@@ -2,6 +2,8 @@
 
 **Under development**
 
+- Update to `eqasim-java` commit `7cbe85b`
+- Adding optional `eqasim-java`-based mode choice step using the `mode_choice` configuration option
 - Make use of building information (housing) and addresses that are attached to them for home locatio assignment
 - Make use of National Address Database (BAN)
 - Further simplify handling of BD-TOPO by avoiding matching of very specific file names
