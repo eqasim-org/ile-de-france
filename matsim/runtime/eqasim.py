@@ -11,7 +11,8 @@ def configure(context):
     context.stage("matsim.runtime.maven")
 
     context.config("eqasim_version", "1.3.1")
-    context.config("eqasim_branch", "upstream")
+    context.config("eqasim_branch", "v1.2.0")
+    context.config("eqasim_commit", None)
     context.config("eqasim_repository", "https://github.com/eqasim-org/eqasim-java.git")
     context.config("eqasim_path", "")
 
@@ -39,9 +40,13 @@ def execute(context):
             "--depth", "1"
         ])
 
+        if context.config("eqasim_commit") is not None:
+            git.run(context, [
+                "checkout", context.config("eqasim_commit")
+            ], cwd = "{}/eqasim-java".format(context.path()))
+
         # Build eqasim
         maven.run(context, ["-Pstandalone", "--projects", "ile_de_france", "--also-make", "package", "-DskipTests=true"], cwd = "%s/eqasim-java" % context.path())
-        jar_path = "%s/eqasim-java/ile_de_france/target/ile_de_france-%s.jar" % (context.path(), version)
 
     # Special case: We provide the jar directly. This is mainly used for
     # creating input to unit tests of the eqasim-java package.
