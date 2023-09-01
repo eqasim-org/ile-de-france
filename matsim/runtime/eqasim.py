@@ -11,8 +11,8 @@ def configure(context):
     context.stage("matsim.runtime.maven")
 
     context.config("eqasim_version", "1.3.1")
-    context.config("eqasim_branch", "v1.2.0")
-    context.config("eqasim_commit", None)
+    context.config("eqasim_tag", None)
+    context.config("eqasim_commit", "de0009a")
     context.config("eqasim_repository", "https://github.com/eqasim-org/eqasim-java.git")
     context.config("eqasim_path", "")
 
@@ -35,15 +35,18 @@ def execute(context):
         # Clone repository and checkout version
         git.run(context, [
             "clone", context.config("eqasim_repository"),
-            "--branch", context.config("eqasim_branch"),
-            "--single-branch", "eqasim-java",
-            "--depth", "1"
+            "--filter=tree:0", "eqasim-java"
         ])
 
-        if context.config("eqasim_commit") is not None:
-            git.run(context, [
-                "checkout", context.config("eqasim_commit")
-            ], cwd = "{}/eqasim-java".format(context.path()))
+        # Select the configured commit or tag
+        commit = context.config("eqasim_commit")
+        tag = context.config("eqasim_tag")
+        checkout = commit if commit is not None else tag
+        assert checkout is not None
+
+        git.run(context, [
+            "checkout", checkout
+        ], cwd = "{}/eqasim-java".format(context.path()))
 
         # Build eqasim
         maven.run(context, ["-Pstandalone", "--projects", "ile_de_france", "--also-make", "package", "-DskipTests=true"], cwd = "%s/eqasim-java" % context.path())
@@ -65,5 +68,12 @@ def validate(context):
 
     if not os.path.exists(path):
         raise RuntimeError("Cannot find eqasim at: %s" % path)
+    
+    if context.config("eqasim_tag") is None:
+        if context.config("eqasim_commit") is None:
+            raise RuntimeError("Either eqasim commit or tag must be defined")
+        
+    if (context.config("eqasim_tag") is None) == (context.config("eqasim_commit") is None):
+        raise RuntimeError("Eqasim commit and tag must not be defined at the same time")
 
     return os.path.getmtime(path)
