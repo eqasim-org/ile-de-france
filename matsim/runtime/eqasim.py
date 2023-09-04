@@ -12,7 +12,7 @@ def configure(context):
 
     context.config("eqasim_version", "1.3.1")
     context.config("eqasim_tag", None)
-    context.config("eqasim_commit", "de0009a")
+    context.config("eqasim_commit", "7cbe85b")
     context.config("eqasim_repository", "https://github.com/eqasim-org/eqasim-java.git")
     context.config("eqasim_path", "")
 
