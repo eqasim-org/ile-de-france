@@ -124,7 +124,7 @@ def execute(context):
     df_trips = df_trips[[
         "person_id", "trip_index",
         "preceding_activity_index", "following_activity_index",
-        "departure_time", "arrival_time", "mode",
+        "departure_time", "arrival_time",
         "preceding_purpose", "following_purpose",
         "is_first", "is_last"
     ]]
@@ -137,7 +137,6 @@ def execute(context):
         df_mode_choice = df_mode_choice.rename(columns = {
             "personId": "person_id", "tripId": "trip_index", "mode" : "mode"})
         
-        df_trips = df_trips.drop(columns=["mode"])
         df_trips = pd.merge(df_trips, df_mode_choice, on = [
             "person_id", "trip_index"], how="left", validate = "one_to_one")
 
@@ -218,7 +217,10 @@ def execute(context):
     df_spatial = gpd.GeoDataFrame(df_spatial, crs = "EPSG:2154")
     df_spatial["following_purpose"] = df_spatial["following_purpose"].astype(str)
     df_spatial["preceding_purpose"] = df_spatial["preceding_purpose"].astype(str)
-    df_spatial["mode"] = df_spatial["mode"].astype(str)
+
+    if "mode" in df_spatial:
+        df_spatial["mode"] = df_spatial["mode"].astype(str)
+    
     path = "%s/%strips.gpkg" % (output_path, output_prefix)
     df_spatial.to_file(path, driver = "GPKG")
     clean_gpkg(path)
