@@ -67,7 +67,7 @@ def _test_determinism(index, data_path, tmpdir):
         "ile_de_france_activities.csv":     "dcf8e08e9f238c90bff0298048251dac",
         "ile_de_france_households.csv":     "fa08f930689b27f9772c79d35075960d",
         "ile_de_france_persons.csv":        "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
-        "ile_de_france_trips.csv":          "c283a9a9de3f5aeb95ef8e1308ae3434",
+        "ile_de_france_trips.csv":          "63425b21b452b65418db6f6d987a0162",
     }
 
     REFERENCE_GPKG_HASHES = {
