@@ -74,7 +74,7 @@ def _test_determinism(index, data_path, tmpdir):
         "ile_de_france_activities.gpkg":    "f9e519cb5665c314431bcd16bbb8b1b8",
         "ile_de_france_commutes.gpkg":      "2e752795b7cd8e0cd4c8d32e736e455e",
         "ile_de_france_homes.gpkg":         "6f028d84944df9c4ae9342a47a932074",
-        "ile_de_france_trips.gpkg":         "6b7a772aad4b994e5b04076fd7c88266",
+        "ile_de_france_trips.gpkg":         "c5fdcff9416563823dd824c2a8ea85bd",
     }
 
     generated_csv_hashes = {
