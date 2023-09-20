@@ -35,6 +35,7 @@ def execute(context):
     df_municipalities = context.stage("data.spatial.municipalities").set_index("commune_id")
     df_municipalities["population"] = context.stage("data.spatial.population").groupby("commune_id")["population"].sum()
 
+
     df_households["commune_id"] = df_households["commune_id"].cat.add_categories(
         sorted(set(df_municipalities.index.unique()) - set(df_households["commune_id"].cat.categories)))
 

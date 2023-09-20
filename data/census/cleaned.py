@@ -12,9 +12,11 @@ This stage cleans the French population census:
 def configure(context):
     context.stage("data.census.raw")
     context.stage("data.spatial.codes")
+    context.stage("data.spatial.uu")
 
 def execute(context):
     df = context.stage("data.census.raw")
+    uu = context.stage("data.spatial.uu")
 
     # Construct household IDs for persons with NUMMI != Z
     df_household_ids = df[["CANTVILLE", "NUMMI"]]
@@ -111,6 +113,12 @@ def execute(context):
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
+    # UU match
+    df = pd.merge(df,uu,on="commune_id",how="left")
+    df.loc[df["commune_id"] == "undefined","type_uu"] = "rural"
+    df["commune_id"] = df["commune_id"].astype("category")
+    assert ~np.any(df["type_uu"].isna()) 
+
     return df[[
         "person_id", "household_id", "weight",
         "iris_id", "commune_id", "departement_id",
@@ -118,5 +126,5 @@ def execute(context):
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
         "work_outside_region", "education_outside_region",
-        "consumption_units", "socioprofessional_class"
+        "consumption_units", "socioprofessional_class","type_uu"
     ]]

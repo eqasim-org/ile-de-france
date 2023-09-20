@@ -115,6 +115,11 @@ def execute(context):
     df_trips["origin_departement_id"] = df_trips["V2_MORIDEP"].fillna("undefined").astype("category")
     df_trips["destination_departement_id"] = df_trips["V2_MDESDEP"].fillna("undefined").astype("category")
 
+    # Clean unités urbaines    
+    df_households["type_uu"] = df_households["numcom_UU2010"].replace({"B":"suburb","C":"central_city","I":"isolated_city","R":"rural"})
+    assert np.all(~df_households["type_uu"].isna())
+    df_households["type_uu"] = df_households["type_uu"].astype("category")
+
     # Clean employment
     df_persons["employed"] = df_persons["SITUA"].isin([1, 2])
 
@@ -236,6 +241,18 @@ def execute(context):
 
     # Socioprofessional class
     df_persons["socioprofessional_class"] = df_persons["CS24"].fillna(80).astype(int) // 10
+
+
+    # Only keep trips and households that still have a person
+    df_trips = df_trips[df_trips["person_id"].isin(df_persons["person_id"].unique())]
+    df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
+
+    # Finish up
+    df_households = df_households[hts.HOUSEHOLD_COLUMNS + ["income_class"]]
+    df_persons = df_persons[hts.PERSON_COLUMNS]
+    df_trips = df_trips[hts.TRIP_COLUMNS + ["routed_distance"]]
+
+    hts.check(df_households, df_persons, df_trips)
 
     return df_households, df_persons, df_trips
 
