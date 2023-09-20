@@ -29,6 +29,9 @@ config:
   # Only interesting if you run the simulation
   java_memory: 14G
 
+  # Activate if you want to run mode choice
+  mode_choice: false
+
   # Nantes settings
   regions: []
   departments: [44]

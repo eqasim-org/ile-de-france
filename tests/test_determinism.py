@@ -67,14 +67,14 @@ def _test_determinism(index, data_path, tmpdir):
         "ile_de_france_activities.csv":     "dcf8e08e9f238c90bff0298048251dac",
         "ile_de_france_households.csv":     "fa08f930689b27f9772c79d35075960d",
         "ile_de_france_persons.csv":        "ed87e2b6dfd2a9914d5fc7b2bf6d52d3",
-        "ile_de_france_trips.csv":          "c283a9a9de3f5aeb95ef8e1308ae3434",
+        "ile_de_france_trips.csv":          "63425b21b452b65418db6f6d987a0162",
     }
 
     REFERENCE_GPKG_HASHES = {
         "ile_de_france_activities.gpkg":    "f9e519cb5665c314431bcd16bbb8b1b8",
         "ile_de_france_commutes.gpkg":      "2e752795b7cd8e0cd4c8d32e736e455e",
         "ile_de_france_homes.gpkg":         "6f028d84944df9c4ae9342a47a932074",
-        "ile_de_france_trips.gpkg":         "6b7a772aad4b994e5b04076fd7c88266",
+        "ile_de_france_trips.gpkg":         "c5fdcff9416563823dd824c2a8ea85bd",
     }
 
     generated_csv_hashes = {
@@ -125,7 +125,7 @@ def _test_determinism_matsim(index, data_path, tmpdir):
         #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
         "ile_de_france_households.xml.gz":  "cdbd6ed5b175328861f237dc58dee1ff",
         #"ile_de_france_facilities.xml.gz":  "5ad41afff9ae5c470082510b943e6778",
-        "ile_de_france_config.xml":         "5ac6633bfef5a5053f10b720ffbc064a"
+        "ile_de_france_config.xml":         "f374807f12a5151fe1efb6e9904e1a56"
     }
 
     # activities.gpkg, trips.gpkg, meta.json,

@@ -5,14 +5,17 @@ import matsim.runtime.git as git
 import matsim.runtime.java as java
 import matsim.runtime.maven as maven
 
+DEFAULT_EQASIM_VERSION = "1.3.1"
+DEFAULT_EQASIM_COMMIT = "7cbe85b"
+
 def configure(context):
     context.stage("matsim.runtime.git")
     context.stage("matsim.runtime.java")
     context.stage("matsim.runtime.maven")
 
-    context.config("eqasim_version", "1.3.1")
+    context.config("eqasim_version", DEFAULT_EQASIM_VERSION)
+    context.config("eqasim_commit", DEFAULT_EQASIM_COMMIT)
     context.config("eqasim_tag", None)
-    context.config("eqasim_commit", "de0009a")
     context.config("eqasim_repository", "https://github.com/eqasim-org/eqasim-java.git")
     context.config("eqasim_path", "")
 
