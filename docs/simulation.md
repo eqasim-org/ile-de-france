@@ -100,6 +100,17 @@ simulation code provided at https://github.com/eqasim-org/eqasim-java. The gener
 `ile-de-france-*.jar` from this pipeline is an automatically compiled version of
 this code.
 
+## Mode choice
+
+The population files for MATSim will automatically contain randomly assigned transport modes for the trips performed by the agents. In the mode choice process of MATSim, the modes will be adjusted and chosen according to the specific travel conditions of the agents. 
+
+It is possible to perform an upfront mode choice based on freeflow travel times that assigns more realistic modes by performing a 100% mode choice on ideal traffic conditions. To do so, update the `mode_choice` configuration entry in the `config.yml` configuration file. Once the pipeline is run again, the modes will be present in the population:
+
+```yaml
+config:
+  mode_choice: true
+```
+
 ## <a name="section-data"></a>Optionnaly export detailed link geometries
 
 When creating the matsim network from the OSM data, the `pt2matsim` project simplifies link geometries.

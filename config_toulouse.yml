@@ -29,6 +29,9 @@ config:
   # Only interesting if you run the simulation
   java_memory: 14G
 
+  # Activate if you want to run mode choice
+  mode_choice: false
+
   # Toulouse settings
   regions: []
   departments: ["09", "82", "81", "11", "31", "32"] # 12 30 34 46 48 65 66
