@@ -131,7 +131,7 @@ def execute(context):
 
     if context.config("mode_choice"):
         df_mode_choice = pd.read_csv(
-            "{}/ile_de_france_tripModes.csv".format(context.path("matsim.simulation.prepare")),
+            "{}/{}tripModes.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
             delimiter = ";")
         
         df_mode_choice = df_mode_choice.rename(columns = {
