@@ -2,6 +2,7 @@
 
 **Under development**
 
+- Fix read order when exploring files using `glob`
 - Modes are only written now to `trips.csv` if `mode_choice` is activated
 - Update to `eqasim-java` commit `7cbe85b`
 - Adding optional `eqasim-java`-based mode choice step using the `mode_choice` configuration option

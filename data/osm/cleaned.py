@@ -99,8 +99,8 @@ def execute(context):
     return "output.osm.gz"
 
 def get_input_files(base_path):
-    osm_paths = list(glob.glob("{}/*.osm.pbf".format(base_path)))
-    osm_paths += list(glob.glob("{}/*.osm.xml".format(base_path)))
+    osm_paths = sorted(list(glob.glob("{}/*.osm.pbf".format(base_path))))
+    osm_paths += sorted(list(glob.glob("{}/*.osm.xml".format(base_path))))
 
     if len(osm_paths) == 0:
         raise RuntimeError("Did not find any OSM data (.osm.pbf) in {}".format(base_path))
