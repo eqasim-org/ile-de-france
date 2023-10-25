@@ -52,7 +52,7 @@ def execute(context):
     return df_ban[["geometry"]]
 
 def find_ban(path):
-    candidates = list(glob.glob("{}/*.csv.gz".format(path)))
+    candidates = sorted(list(glob.glob("{}/*.csv.gz".format(path))))
 
     if len(candidates) == 0:
         raise RuntimeError("BAN data is not available in {}".format(path))
