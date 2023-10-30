@@ -21,8 +21,22 @@ def execute(context):
             
     df = df[["CODGEO","STATUT_2017"]].copy()
     df = df.set_axis(["commune_id","type_uu"],axis='columns')
-    
-    # Clean unités urbaines    
+
+    # Cities that have districts are not detailed in the UU file, only the whole city is mentioned
+    # However the municipalities file details the districts with their respective INSEE codes
+    cities_with_districts = {"75056": [str(75101 + i) for i in (range(20))],  # Paris
+                             "69123": [str(69001 + i) for i in range(9)],  # Lyon
+                             "13055": [str(13201) for i in range(15)]}  # Marseilles
+
+    # Replacing each line of the UU file corresponding to a city with districts by multiple lines one for each districts
+    for city_code in cities_with_districts:
+        uu_type = df[df["commune_id"] == city_code].iloc[0].loc["type_uu"]
+        df.drop(df[df["commune_id"] == city_code].index, inplace=True)
+        new_lines = {"commune_id": [district_id for district_id in cities_with_districts[city_code]],
+                     "type_uu": [uu_type for i in range(len(cities_with_districts[city_code]))]}
+        df = pd.concat([df, pd.DataFrame.from_dict(new_lines)])
+
+    # Clean unités urbaines
     df["type_uu"] = df["type_uu"].replace({"B":"suburb","C":"central_city","I":"isolated_city","H":"rural"})
     assert np.all(~df["type_uu"].isna())
     df["type_uu"] = df["type_uu"].astype("category")
