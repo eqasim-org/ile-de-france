@@ -30,7 +30,7 @@ def configure(context):
     hts = context.config("hts")
     context.stage("data.hts.selected", alias = "hts")
 
-@numba.jit(nopython = True, parallel = True)
+@numba.jit(nopython = True) # Already parallelized parallel = True)
 def sample_indices(uniform, cdf, selected_indices):
     indices = np.arange(len(uniform))
 
@@ -69,9 +69,9 @@ def statistical_matching(progress, df_source, source_identifier, weight, df_targ
 
     # Perform matching
     weights = df_source[weight].values
-    assigned_indices = np.ones((len(df_target),), dtype = np.int) * -1
-    unassigned_mask = np.ones((len(df_target),), dtype = np.bool)
-    assigned_levels = np.ones((len(df_target),), dtype = np.int) * -1
+    assigned_indices = np.ones((len(df_target),), dtype = int) * -1
+    unassigned_mask = np.ones((len(df_target),), dtype = bool)
+    assigned_levels = np.ones((len(df_target),), dtype = int) * -1
     uniform = random.random_sample(size = (len(df_target),))
 
     column_indices = [np.arange(len(unique_values[column])) for column in columns]

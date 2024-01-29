@@ -1,5 +1,7 @@
 import numpy as np
 import pandas as pd
+import mock
+from openpyxl.reader import excel
 
 """
 This stage loads the raw data of the specified vehicle fleet data
@@ -17,12 +19,16 @@ def execute(context):
 
     df_codes = context.stage("data.spatial.codes")
 
-    df_vehicle_com_counts = pd.read_excel(
-        "%s/vehicles_%s/Parc_VP_Communes_%s.xlsx" % (context.config("data_path"), year, year)
-    )
-    df_vehicle_reg_counts = pd.read_excel(
-        "%s/vehicles_%s/Parc_VP_Regions_%s.xlsx" % (context.config("data_path"), year, year)
-    )
+    # the downloaded excel files meta-data are actually have a badly formatted ISO datetime
+    # https://foss.heptapod.net/openpyxl/openpyxl/-/issues/1659 
+    with mock.patch.object(excel.ExcelReader, 'read_properties', lambda self: None):
+        df_vehicle_com_counts = pd.read_excel(
+            "%s/vehicles_%s/Parc_VP_Communes_%s.xlsx" % (context.config("data_path"), year, year)
+        )
+        df_vehicle_reg_counts = pd.read_excel(
+            "%s/vehicles_%s/Parc_VP_Regions_%s.xlsx" % (context.config("data_path"), year, year)
+        )
+    
     df_vehicle_com_counts["region_id"] = df_vehicle_com_counts["Code région"].astype("category")
     df_vehicle_com_counts["departement_id"] = df_vehicle_com_counts["Code départment"].astype("category")
     df_vehicle_com_counts["commune_id"] = df_vehicle_com_counts["Code commune"].astype("category")

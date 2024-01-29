@@ -1,7 +1,5 @@
-from tqdm import tqdm
 import pandas as pd
 import numpy as np
-import simpledbf
 
 """
 Cleans OD data to arrive at OD flows between municipalities for work
@@ -15,9 +13,10 @@ def configure(context):
 RENAME = { "COMMUNE" : "origin_id", "DCLT" : "destination_id", "IPONDI" : "weight", "DCETUF" : "destination_id" }
 
 def execute(context):
+    
+    
     # Load data
-    df_work = pd.read_hdf("%s/work.hdf" % context.path("data.od.raw"))
-    df_education = pd.read_hdf("%s/education.hdf" % context.path("data.od.raw"))
+    df_work, df_education = context.stage("data.od.raw")
 
     # Renaming
     df_work = df_work.rename(RENAME, axis = 1)
@@ -49,19 +48,22 @@ def execute(context):
 
     # Clean commute mode for work
     df_work["commute_mode"] = np.nan
-    df_work.loc[df_work["TRANS"] == "1", "commute_mode"] = "no transport"
-    df_work.loc[df_work["TRANS"] == "2", "commute_mode"] = "walk"
-    df_work.loc[df_work["TRANS"] == "3", "commute_mode"] = "bike"
-    df_work.loc[df_work["TRANS"] == "4", "commute_mode"] = "car"
-    df_work.loc[df_work["TRANS"] == "5", "commute_mode"] = "pt"
+    df_work.loc[df_work["TRANS"] == 1, "commute_mode"] = "no transport"
+    df_work.loc[df_work["TRANS"] == 2, "commute_mode"] = "walk"
+    df_work.loc[df_work["TRANS"] == 3, "commute_mode"] = "bike"
+    df_work.loc[df_work["TRANS"] == 4, "commute_mode"] = "car"
+    df_work.loc[df_work["TRANS"] == 5, "commute_mode"] = "car"
+    df_work.loc[df_work["TRANS"] == 6, "commute_mode"] = "pt"
     df_work["commute_mode"] = df_work["commute_mode"].astype("category")
+    
+    assert not np.any(df_work["commute_mode"].isna())
 
     # Aggregate the flows
     print("Aggregating work ...")
-    df_work = df_work.groupby(["origin_id", "destination_id", "commute_mode"]).sum().reset_index()
+    df_work = df_work.groupby(["origin_id", "destination_id", "commute_mode"])["weight"].sum().reset_index()
 
     print("Aggregating education ...")
-    df_education = df_education.groupby(["origin_id", "destination_id"]).sum().reset_index()
+    df_education = df_education.groupby(["origin_id", "destination_id"])["weight"].sum().reset_index()
 
     df_work["weight"] = df_work["weight"].fillna(0.0)
     df_education["weight"] = df_education["weight"].fillna(0.0)

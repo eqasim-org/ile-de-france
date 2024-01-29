@@ -8,55 +8,65 @@ on:
 
 jobs:
   build:
+    runs-on: ${{ matrix.os }}
 
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ "ubuntu-latest", "windows-latest" ]
 
     steps:
     - uses: actions/checkout@v2
-
-    - name: Set up Anaconda
-      run: |
-        wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh;
-        bash miniconda.sh -b -p $HOME/miniconda
-        source "$HOME/miniconda/etc/profile.d/conda.sh"
-        conda config --set always_yes yes --set changeps1 no
-        conda update -q conda
-        conda env create -f environment.yml
-
-    - name: Set up JAVA
-      run: |
-        wget https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u252-b09/OpenJDK8U-jdk_x64_linux_hotspot_8u252b09.tar.gz -O java.tar.gz
-        tar xf java.tar.gz
-        echo $HOME/jdk8u252-b09/bin >> $GITHUB_PATH
-        #export PATH=$HOME/jdk8u252-b09/bin:$PATH
-
-    - name: Set up Maven
-      run: |
-        wget http://mirror.easyname.ch/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz -O maven.tar.gz
-        tar xf maven.tar.gz
-        echo $HOME/apache-maven-3.6.3/bin >> $GITHUB_PATH
-        #export PATH=$HOME/apache-maven-3.6.3/bin:$PATH
-
-    - name: Osmosis
+    - uses: actions/setup-java@v2
+      with:
+        distribution: "adopt"
+        java-version: "11"
+    - uses: actions/cache@v2
+      env:
+        CACHE_NUMBER: 0
+      with:
+        path: ~/conda_pkgs_dir
+        key:
+          ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{
+          hashFiles('environment.yml') }}
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: "ile-de-france"
+        environment-file: environment.yml
+        python-version: "3.10"
+        channels: conda-forge
+    - name: Set up osmosis (Linux)
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash -el {0}
       run: |
         wget https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.tgz -O osmosis.tgz
         mkdir $HOME/osmosis
         tar xf osmosis.tgz -C $HOME/osmosis
         echo $HOME/osmosis/bin >> $GITHUB_PATH
-        #export PATH=$HOME/osmosis/bin:$PATH
-
-    - name: Test versions
+    - name: Set up osmosis (Windows)
+      if: matrix.os == 'windows-latest'
+      shell: bash -el {0}
       run: |
-        source "$HOME/miniconda/etc/profile.d/conda.sh"
-        conda activate ile-de-france
+        powershell -command "& { iwr https://github.com/openstreetmap/osmosis/releases/download/0.48.2/osmosis-0.48.2.zip -OutFile osmosis.zip }"
+        mkdir $HOME/osmosis
+        unzip osmosis.zip -d $HOME/osmosis
+        echo $HOME/osmosis/bin >> $GITHUB_PATH
+    - name: Prepare git for Windows
+      if: matrix.os == 'windows-latest'
+      shell: bash -el {0}
+      run: |
+        git config --global user.email "you@example.com"
+        git config --global user.name "Your Name"
+        git config --system core.longpaths true
+    - name: Test versions
+      shell: bash -el {0}
+      run: |
         java -version
         mvn -v
-        python3 --version
+        python --version
         osmosis -v
         git --version
-
+        python -c "import fiona"
     - name: Run pipeline tests
+      shell: bash -el {0}
       run: |
-        source "$HOME/miniconda/etc/profile.d/conda.sh"
-        conda activate ile-de-france
         MKL_CBWR=AUTO pytest tests/

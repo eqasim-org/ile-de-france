@@ -1,6 +1,6 @@
-import numpy as np
-import pandas as pd
 import os
+import pandas as pd
+import zipfile
 
 """
 This stages loads a file containing all spatial codes in France and how
@@ -8,26 +8,27 @@ they can be translated into each other. These are mainly IRIS, commune,
 departement and région.
 """
 
-YEAR = 2017
-SOURCE = "codes_%d/reference_IRIS_geo%d.xls" % (YEAR, YEAR)
-
 def configure(context):
     context.config("data_path")
 
     context.config("regions", [11])
     context.config("departments", [])
+    context.config("codes_path", "codes_2021/reference_IRIS_geo2021.zip")
+    context.config("codes_xlsx", "reference_IRIS_geo2021.xlsx")
 
 def execute(context):
     # Load IRIS registry
-    df_codes = pd.read_excel(
-        "%s/%s" % (context.config("data_path"), SOURCE),
-        skiprows = 5, sheet_name = "Emboitements_IRIS"
-    )[["CODE_IRIS", "DEPCOM", "DEP", "REG"]].rename(columns = {
-        "CODE_IRIS": "iris_id",
-        "DEPCOM": "commune_id",
-        "DEP": "departement_id",
-        "REG": "region_id"
-    })
+    with zipfile.ZipFile(
+        "{}/{}".format(context.config("data_path"), context.config("codes_path"))) as archive:
+        with archive.open(context.config("codes_xlsx")) as f:
+            df_codes = pd.read_excel(f,
+                skiprows = 5, sheet_name = "Emboitements_IRIS"
+            )[["CODE_IRIS", "DEPCOM", "DEP", "REG"]].rename(columns = {
+                "CODE_IRIS": "iris_id",
+                "DEPCOM": "commune_id",
+                "DEP": "departement_id",
+                "REG": "region_id"
+            })
 
     df_codes["iris_id"] = df_codes["iris_id"].astype("category")
     df_codes["commune_id"] = df_codes["commune_id"].astype("category")
@@ -51,7 +52,7 @@ def execute(context):
     return df_codes
 
 def validate(context):
-    if not os.path.exists("%s/%s" % (context.config("data_path"), SOURCE)):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("codes_path"))):
         raise RuntimeError("Spatial reference codes are not available")
 
-    return os.path.getsize("%s/%s" % (context.config("data_path"), SOURCE))
+    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("codes_path")))

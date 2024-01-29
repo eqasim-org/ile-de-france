@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
 from sklearn.neighbors import KDTree
 import os
+import zipfile
 
 """
 Loads and prepares income distributions by municipality:
@@ -14,15 +14,22 @@ Loads and prepares income distributions by municipality:
 def configure(context):
     context.config("data_path")
     context.stage("data.spatial.municipalities")
+    context.config("income_com_path", "filosofi_2019/indic-struct-distrib-revenu-2019-COMMUNES.zip")
+    context.config("income_com_xlsx", "FILO2019_DISP_COM.xlsx")
+    context.config("income_year", 19)
 
 def execute(context):
     # Load income distribution
-    df = pd.read_excel(
-        "%s/filosofi_2015/FILO_DISP_COM.xls" % context.config("data_path"),
-        sheet_name = "ENSEMBLE", skiprows = 5
-    )[["CODGEO"] + ["D%d15" % q if q != 5 else "Q215" for q in range(1, 10)]]
-    df.columns = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
-    df["reference_median"] = df["q5"].values
+    year = str(context.config("income_year"))
+
+    with zipfile.ZipFile("{}/{}".format(
+        context.config("data_path"), context.config("income_com_path"))) as archive:
+        with archive.open(context.config("income_com_xlsx")) as f:
+            df = pd.read_excel(f,
+                sheet_name = "ENSEMBLE", skiprows = 5
+            )[["CODGEO"] + [("D%d" % q) + year if q != 5 else "Q2" + year for q in range(1, 10)]]
+            df.columns = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
+            df["reference_median"] = df["q5"].values
 
     # Verify spatial data for education
     df_municipalities = context.stage("data.spatial.municipalities")
@@ -82,7 +89,7 @@ def execute(context):
     return df[["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "is_imputed", "is_missing", "reference_median"]]
 
 def validate(context):
-    if not os.path.exists("%s/filosofi_2015/FILO_DISP_COM.xls" % context.config("data_path")):
-        raise RuntimeError("Filosofi data is not available")
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("income_com_path"))):
+        raise RuntimeError("Municipality Filosofi data is not available")
 
-    return os.path.getsize("%s/filosofi_2015/FILO_DISP_COM.xls" % context.config("data_path"))
+    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("income_com_path")))

@@ -43,12 +43,12 @@ def execute(context):
     df_trips = pd.DataFrame(df_trips, copy = True)
 
     # Transform original IDs to integer (they are hierarchichal)
-    df_households["egt_household_id"] = df_households["NQUEST"].astype(np.int)
-    df_persons["egt_person_id"] = df_persons["NP"].astype(np.int)
-    df_persons["egt_household_id"] = df_persons["NQUEST"].astype(np.int)
-    df_trips["egt_person_id"] = df_trips["NP"].astype(np.int)
-    df_trips["egt_household_id"] = df_trips["NQUEST"].astype(np.int)
-    df_trips["egt_trip_id"] = df_trips["ND"].astype(np.int)
+    df_households["egt_household_id"] = df_households["NQUEST"].astype(int)
+    df_persons["egt_person_id"] = df_persons["NP"].astype(int)
+    df_persons["egt_household_id"] = df_persons["NQUEST"].astype(int)
+    df_trips["egt_person_id"] = df_trips["NP"].astype(int)
+    df_trips["egt_household_id"] = df_trips["NQUEST"].astype(int)
+    df_trips["egt_trip_id"] = df_trips["ND"].astype(int)
 
     # Construct new IDs for households, persons and trips (which are unique globally)
     df_households["household_id"] = np.arange(len(df_households))
@@ -69,11 +69,11 @@ def execute(context):
     df_trips = hts.compute_first_last(df_trips)
 
     # Weight
-    df_persons["person_weight"] = df_persons["POIDSP"].astype(np.float)
-    df_households["household_weight"] = df_households["POIDSM"].astype(np.float)
+    df_persons["person_weight"] = df_persons["POIDSP"].astype(float)
+    df_households["household_weight"] = df_households["POIDSM"].astype(float)
 
     # Clean age
-    df_persons["age"] = df_persons["AGE"].astype(np.int)
+    df_persons["age"] = df_persons["AGE"].astype(int)
 
     # Clean sex
     df_persons.loc[df_persons["SEXE"] == 1, "sex"] = "male"
@@ -81,7 +81,7 @@ def execute(context):
     df_persons["sex"] = df_persons["sex"].astype("category")
 
     # Household size
-    df_households["household_size"] = df_households["MNP"].astype(np.int)
+    df_households["household_size"] = df_households["MNP"].astype(int)
 
     # Clean departement
     df_persons["departement_id"] = df_persons["RESDEP"].astype(str).astype("category")
@@ -97,8 +97,8 @@ def execute(context):
 
     # Number of vehicles
     df_households["number_of_vehicles"] = df_households["NB_2RM"] + df_households["NB_VD"]
-    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(np.int)
-    df_households["number_of_bikes"] = df_households["NB_VELO"].astype(np.int)
+    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(int)
+    df_households["number_of_bikes"] = df_households["NB_VELO"].astype(int)
 
     # License
     df_persons["has_license"] = (df_persons["PERMVP"] == 1) | (df_persons["PERM2RM"] == 1)
@@ -109,7 +109,7 @@ def execute(context):
     # Household income
     df_households["income_class"] = df_households["REVENU"] - 1
     df_households.loc[df_households["income_class"].isin([10.0, 11.0, np.nan]), "income_class"] = -1
-    df_households["income_class"] = df_households["income_class"].astype(np.int)
+    df_households["income_class"] = df_households["income_class"].astype(int)
 
     # Trip purpose
     df_trips["following_purpose"] = "other"
@@ -149,7 +149,7 @@ def execute(context):
     df_persons["trip_weight"] = df_persons["person_weight"]
 
     # Chain length
-    df_persons["number_of_trips"] = df_persons["NBDEPL"].fillna(0).astype(np.int)
+    df_persons["number_of_trips"] = df_persons["NBDEPL"].fillna(0).astype(int)
 
     # Passenger attribute
     df_persons["is_passenger"] = df_persons["person_id"].isin(

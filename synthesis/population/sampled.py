@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import itertools
 
 """
 This stage has the census data as input and samples households according to the
@@ -23,14 +24,20 @@ def execute(context):
     df_rounding = df_census[["household_id", "weight", "household_size"]].drop_duplicates("household_id")
     df_rounding["multiplicator"] = np.floor(df_rounding["weight"])
     df_rounding["multiplicator"] += random.random_sample(len(df_rounding)) <= (df_rounding["weight"] - df_rounding["multiplicator"])
-    df_rounding["multiplicator"] = df_rounding["multiplicator"].astype(np.int)
+    df_rounding["multiplicator"] = df_rounding["multiplicator"].astype(int)
 
     # Multiply households (use same multiplicator for all household members)
     household_multiplicators = df_rounding["multiplicator"].values
     household_sizes = df_rounding["household_size"].values
 
-    person_muliplicators = np.repeat(household_multiplicators, household_sizes)
-    df_census = df_census.iloc[np.repeat(np.arange(len(df_census)), person_muliplicators)]
+    # create index to replicate all households members by their household weight
+    # the order ([0, 1, 0, 1, 2, 2, ...]) is important here as they will be reassigned to new housholds later with that assumption
+    expandor = np.split(np.arange(len(df_census)), np.cumsum(household_sizes))
+    expandor = [x for x in expandor if x.size > 0]
+    expandor = np.repeat(expandor, household_multiplicators, axis=0)
+    expandor = list(itertools.chain(*expandor))
+
+    df_census = df_census.iloc[expandor]
 
     # Create new household and person IDs
     df_census["census_person_id"] = df_census["person_id"]

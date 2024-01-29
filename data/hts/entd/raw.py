@@ -1,4 +1,3 @@
-import simpledbf
 from tqdm import tqdm
 import pandas as pd
 import os
@@ -68,7 +67,7 @@ def execute(context):
     df_deploc = pd.read_csv(
         "%s/entd_2008/K_deploc.csv" % context.config("data_path"),
         sep = ";", encoding = "latin1", usecols = K_DEPLOC_COLUMNS,
-        dtype = { "DEP": str }
+        dtype = { "DEP": str, "V2_MTP": str }
     )
 
     return df_individu, df_tcm_individu, df_menage, df_tcm_menage, df_deploc

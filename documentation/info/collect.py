@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import json
 
 def configure(context):
@@ -11,7 +10,6 @@ def configure(context):
     context.stage("data.income.municipality")
     context.stage("data.income.region")
     context.stage("data.census.filtered")
-    context.stage("data.bdtopo.cleaned")
     context.stage("data.sirene.localized")
 
 def execute(context):
@@ -71,26 +69,13 @@ def execute(context):
     df_income_region = context.stage("data.income.region")
 
     info["income"] = {
-        "minimum_median": df_income_municipality["q5"].min(),
-        "maximum_median": df_income_municipality["q5"].max(),
-        "median_region": df_income_region[4],
+        "minimum_median": int(df_income_municipality["q5"].min()),
+        "maximum_median": int(df_income_municipality["q5"].max()),
+        "median_region": int(df_income_region[4]),
         "number_of_incomplete_distributions": int(np.sum(~df_income_municipality["is_missing"] & df_income_municipality["is_imputed"])),
         "number_of_missing_distributions": int(np.sum(df_income_municipality["is_missing"]))
     }
 
-    # BDTOPO
-    info["bdtopo"] = {
-        "initial_count": context.get_info("data.bdtopo.cleaned", "initial_count"),
-        "final_count": context.get_info("data.bdtopo.cleaned", "final_count"),
-    }
-
-    # SIRENE
-    info["sirene"] = {
-        "initial_count": context.get_info("data.sirene.localized", "initial_count"),
-        "exact_count": context.get_info("data.sirene.localized", "exact_count"),
-        "no_municipality_count": context.get_info("data.sirene.localized", "no_municipality_count"),
-        "levenshtein_count": context.get_info("data.sirene.localized", "levenshtein_count"),
-    }
 
     # Output
     with open("%s/info.json" % context.cache_path, "w+") as f:

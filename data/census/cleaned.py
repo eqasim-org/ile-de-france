@@ -14,7 +14,7 @@ def configure(context):
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df = pd.read_hdf("%s/census.hdf" % context.path("data.census.raw"))
+    df = context.stage("data.census.raw")
 
     # Construct household IDs for persons with NUMMI != Z
     df_household_ids = df[["CANTVILLE", "NUMMI"]]
@@ -27,7 +27,7 @@ def execute(context):
     # Fill up undefined household ids (those where NUMMI == Z)
     f = np.isnan(df["household_id"])
     df.loc[f, "household_id"] = np.arange(np.count_nonzero(f)) + df["household_id"].max()
-    df["household_id"] = df["household_id"].astype(np.int)
+    df["household_id"] = df["household_id"].astype(int)
 
     # Put person IDs
     df["person_id"] = np.arange(len(df))
@@ -60,7 +60,7 @@ def execute(context):
         raise RuntimeError("Found additional IRIS: %s" % excess_iris)
 
     # Age
-    df["age"] = df["AGED"].apply(lambda x: "0" if x == "000" else x.lstrip("0")).astype(np.int)
+    df["age"] = df["AGED"].apply(lambda x: "0" if x == "000" else x.lstrip("0")).astype(int)
 
     # Clean COUPLE
     df["couple"] = df["COUPLE"] == "1"
@@ -75,7 +75,7 @@ def execute(context):
     df["commute_mode"] = df["commute_mode"].astype("category")
 
     # Weight
-    df["weight"] = df["IPONDI"].astype(np.float)
+    df["weight"] = df["IPONDI"].astype(float)
 
     # Clean SEXE
     df.loc[df["SEXE"] == "1", "sex"] = "male"
@@ -91,18 +91,18 @@ def execute(context):
     # Number of vehicles
     df["number_of_vehicles"] = df["VOIT"].apply(
         lambda x: str(x).replace("Z", "0").replace("X", "0")
-    ).astype(np.int)
+    ).astype(int)
 
     df["number_of_vehicles"] += df["DEROU"].apply(
         lambda x: str(x).replace("U", "0").replace("Z", "0").replace("X", "0")
-    ).astype(np.int)
+    ).astype(int)
 
     # Household size
     df_size = df[["household_id"]].groupby("household_id").size().reset_index(name = "household_size")
     df = pd.merge(df, df_size)
 
     # Socioprofessional category
-    df["socioprofessional_class"] = df["CS1"].astype(np.int)
+    df["socioprofessional_class"] = df["CS1"].astype(int)
 
     # Place of work or education
     df["work_outside_region"] = df["ILT"].isin(("4", "5", "6"))

@@ -1,4 +1,4 @@
-## Synthetic population pipeline for Lyon
+## Synthetic population pipeline for Toulouse
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
@@ -24,7 +24,7 @@ config:
   # Paths to the input data and where the output should be stored
   data_path: /path/to/my/data
   output_path: output
-  output_prefix: lyon_
+  output_prefix: toulouse_
 
   # Only interesting if you run the simulation
   java_memory: 14G
@@ -32,10 +32,10 @@ config:
   # Activate if you want to run mode choice
   mode_choice: false
 
-  # Lyon settings
+  # Toulouse settings
   regions: []
-  departments: ["01", "38", "42", "69"]
-  gtfs_path: gtfs_lyon
-  osm_path: osm_lyon
-  ban_path: ban_lyon
-  bdtopo_path: bdtopo_lyon
+  departments: ["09", "82", "81", "11", "31", "32"] # 12 30 34 46 48 65 66
+  gtfs_path: gtfs_toulouse
+  osm_path: osm_toulouse
+  ban_path: ban_toulouse
+  bdtopo_path: bdtopo_toulouse

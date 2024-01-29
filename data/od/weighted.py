@@ -1,7 +1,6 @@
 from tqdm import tqdm
 import pandas as pd
 import numpy as np
-import simpledbf
 
 """
 Transforms absolute OD flows from French census into a weighted destination
@@ -27,7 +26,7 @@ def fix_origins(df, commune_ids, purpose):
 
     return pd.concat([df, pd.DataFrame.from_records(
         rows, columns = ["origin_id", "destination_id", "weight"]
-    )])
+    )]).sort_values(["origin_id", "destination_id"])
 
 def execute(context):
     df_codes = context.stage("data.spatial.codes")

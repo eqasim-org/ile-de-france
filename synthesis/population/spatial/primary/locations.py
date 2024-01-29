@@ -21,6 +21,7 @@ def define_distance_ordering(df_persons, df_candidates, progress):
     ]).T
 
     for home_coordinate, commute_distance in zip(df_persons["home_location"], df_persons["commute_distance"]):
+        home_coordinate = np.array([home_coordinate.x, home_coordinate.y])
         distances = np.sqrt(np.sum((commute_coordinates[f_available] - home_coordinate)**2, axis = 1))
         costs[f_available] = np.abs(distances - commute_distance)
 
@@ -72,7 +73,7 @@ def process(context, purpose, df_persons, df_candidates):
             for df_partial in parallel.imap_unordered(process_municipality, unique_ids):
                 df_result.append(df_partial)
 
-    return pd.concat(df_result)
+    return pd.concat(df_result).sort_index()
 
 def execute(context):
     data = context.stage("synthesis.population.spatial.primary.candidates")

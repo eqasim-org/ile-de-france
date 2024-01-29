@@ -9,40 +9,33 @@ simulation for **Lyon** and surroundings.
 
 ## Additional data
 
-### A) Regional census data
+### A) Buildings database (BD TOPO)
 
-Lyon is not included in the census data set that is uesd for Île-de-France
-(*Zone A*). Instead, *Zone E* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone E* and put the
-respective file (*FD_INDCVIZE_2015.dbf*) into the `data/rp_2015` folder.
+You need to download the region-specific buildings database.
 
-### B) Address database (BD-TOPO)
+- [Buildings database](https://geoservices.ign.fr/bdtopo)
+- In the sidebar on the right, under *Téléchargement anciennes éditions*, click on *BD TOPO® 2022 GeoPackage Départements* to go to the saved data publications from 2022.
+- The data is split by department and they are identified with a number. For the departments around Lyon, download:
+  - Ain (01)
+  - Isère (38)
+  - Loire (42)
+  - Rhône (69)
+- Copy the four *7z* files into `data/bdtopo_lyon`.
+- If you decide to add additional departments to the simulation (for instance, to simulate the whole Auvergne-Rhône-Alpes region) make sure to download the respective data sets.
 
-You need to download the region-specific address database.
-
-- [Address database](https://geoservices.ign.fr/bdtopo)
-- Use a ftp client to download the *Région Auvergne-Rhône-Alpes - R 84* . Most browsers will not be able to download the data.
-- Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R84_2020-12-15`
-  - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_2021-01-00120`
-  - `BDT_3-0_SHP_LAMB93_R84-ED2020-12-15`
-  - `ADRESSES`
-- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
-
-### C) OpenStreetMap data
+### B) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
 Geofabrik provides a cut-out for the former [Rhône-Alpes](https://download.geofabrik.de/europe/france/rhone-alpes.html) region: [rhone-alpes-220101.osm.pbf](https://download.geofabrik.de/europe/france/rhone-alpes-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
-folder `data/osm`.
+folder `data/osm_lyon`.
 
-### D) GTFS data
+### C) GTFS data
 
 Again, only if you want to run simulations, the digital transit schedule is required.
 Unfortunately, there is no consolidated GTFS schedule avaiable for the region of interest. Hence,
 it is necessary to collect all relevant GTFS schedules one by one. Here, we
-provide a selection of links, which is not necessarily exhaustive (for instance,
-it would be possible to add schedules for Saint Etienne or Grenoble)
+provide a selection of links, which is not necessarily exhaustive:
 
 - [TCL (Lyon)](https://transport.data.gouv.fr/datasets/horaires-theoriques-du-reseau-transports-en-commun-lyonnais-1/)
 - [SNCF TER](https://ressources.data.sncf.com/explore/dataset/sncf-ter-gtfs/information/)
@@ -54,7 +47,17 @@ it would be possible to add schedules for Saint Etienne or Grenoble)
 - [STAS (St. Etienne)](https://transport.data.gouv.fr/datasets/donnees-horaires-theoriques-gtfs-du-reseau-de-transport-de-la-metropole-de-saint-etienne-stas/?locale=fr&slug=donnees-horaires-theoriques-gtfs-du-reseau-de-transport-de-la-metropole-de-saint-etienne-stas)
 - [Rhône Express](https://transport.data.gouv.fr/datasets/horaires-theoriques-du-service-rhonexpress-de-la-metropole-de-lyon-et-du-departement-du-rhone/)
 
-Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`.
+Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_lyon`.
+
+
+### D) Adresses database (BAN)
+
+You need to download the region-specific adresses database :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (01,38,42,69) 
+- Copy the *gz* files into `data/ban_lyon`.
+
 
 ### E) *Optional*: Regional Household Travel Survey 2015
 
@@ -62,7 +65,7 @@ For Lyon, a regional household travel survey (EDGT Lyon 2015) is available on re
 from the authorities. If you have the data available, you can use it in the pipeline.
 To do so, put the relevant files into `data/edgt_lyon_2015`.
 
-The data can be obtained either directly from the CEREMA or through the ADISP portal (http://www.progedo-adisp.fr/serie_emd.php).
+The data can be obtained either directly from the CEREMA or through the [ADISP portal](http://www.progedo-adisp.fr/serie_emd.php).
 
 #### E.a) Data from CEREMA
 
@@ -95,44 +98,43 @@ If you get the EDGT data from the ADISP portal, the following files should be pr
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.MAP`
 - `data/edgt_lyon_2015/EDGT_AML2015_ZF_GT.TAB`
 
+
+
 ### Overview
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2015/FD_INDCVIZE_2015.dbf`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D001_2022-03-15.7z`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D038_2022-03-15.7z`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D042_2022-03-15.7z`
+- `data/bdtopo_lyon/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D069_2022-03-15.7z`
+- `data/ban_lyon/adresses-01.csv.gz`
+- `data/ban_lyon/adresses-38.csv.gz`
+- `data/ban_lyon/adresses-42.csv.gz`
+- `data/ban_lyon/adresses-69.csv.gz`
+
 - Plus the files from the EDGT if you want / can use them in `data/edgt_lyon_2015`
 
 *Only for simulation:*
 
-- `osm/rhone-alpes-latest.osm.pbf`
-- `gtfs/GTFS_TCL.ZIP`
-- `gtfs/CAPI.GTFS.zip`
-- `gtfs/GTFS_RX.ZIP`
-- `gtfs/SEM-GTFS.zip`
-- `gtfs/stas.gtfs.zip`
-- `gtfs/VIENNE.GTFS.zip`
-- `gtfs/export_gtfs_voyages.zip`
-- `gtfs/export-intercites-gtfs-last.zip`
-- `gtfs/export-ter-gtfs-last.zip`
+- `data/osm_lyon/rhone-alpes-latest.osm.pbf`
+- `data/gtfs_lyon/GTFS_TCL.ZIP`
+- `data/gtfs_lyon/CAPI.GTFS.zip`
+- `data/gtfs_lyon/GTFS_RX.ZIP`
+- `data/gtfs_lyon/SEM-GTFS.zip`
+- `data/gtfs_lyon/stas.gtfs.zip`
+- `data/gtfs_lyon/VIENNE.GTFS.zip`
+- `data/gtfs_lyon/export_gtfs_voyages.zip`
+- `data/gtfs_lyon/export-intercites-gtfs-last.zip`
+- `data/gtfs_lyon/export-ter-gtfs-last.zip`
 
 Note that the file names may change slightly over time as GTFS schedule are
 updated continuously.
 
 ## Generating the population
 
-To generate the synthetic population, the `config.yml` needs to be updated. While
-the relevant code points to the Île-de-France data sets by default, you can
-adjust the paths inidividually. To let the pipeline use the *Zone E* census
-data set, add the following to `config.yml` in the `config` section:
-
-```yaml
-config:
-  # ...
-  census_path: rp_2015/FD_INDCVIZE_2015.dbf
-  # ...
-```
-
-Furthermore, by default the pipeline will filter all other data sets for the
+To generate the synthetic population, the `config.yml` needs to be updated. 
+By default the pipeline will filter all other data sets for the
 Île-de-France region. To make it use the selected region, adjust the
 configuration as follows:
 
@@ -140,14 +142,14 @@ configuration as follows:
 config:
   # ...
   regions: []
-  departments: ["01", 38, 42, 69, 69M] # 26 "07"
+  departments: ["01", "38", "42", "69"] # 26 "07"
   # ...
 ```
 
 This will make the pipeline filter all data sets for the departments noted
 in the list above, which is a set of the closest departments around Lyon.
 If you want to generate the whole (ancient) Rhône-Alpes region, add the commented out
-department identifiers to the list.
+department identifiers to the list (and make sure to download the buildings database)
 
 In case you want to *optionally* use the regional HTS (otherwise the national ENTD)
 is used, choose the updated HTS in the config file.
@@ -182,8 +184,10 @@ To prepare the pipeline for a simulation of Lyon, the paths to the OSM data sets
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/GTFS_TCL.ZIP;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/CAPI.GTFS.zip;gtfs/GTFS_RX.ZIP;gtfs/SEM-GTFS.zip;gtfs/stas.gtfs.zip;gtfs/VIENNE.GTFS.zip
-  osm_path: osm/rhone-alpes-220101.osm.pbf
+  gtfs_path: gtfs_lyon
+  osm_path: osm_lyon
+  ban_path: ban_lyon
+  bdtopo_path: bdtopo_lyon
   # ...
 ```
 

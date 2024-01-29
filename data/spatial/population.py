@@ -1,26 +1,31 @@
-import numpy as np
-import pandas as pd
 import os
+import pandas as pd
+import zipfile
 
 """
 Loads aggregate population data.
 """
 
-YEAR = 2015
-SOURCE = "rp_%d/base-ic-evol-struct-pop-%d.xls" % (YEAR, YEAR)
-
 def configure(context):
     context.config("data_path")
     context.stage("data.spatial.codes")
+    context.config("population_path", "rp_2019/base-ic-evol-struct-pop-2019.zip")
+    context.config("population_xlsx", "base-ic-evol-struct-pop-2019.xlsx")
+    context.config("population_year", 19)
 
 def execute(context):
-    df_population = pd.read_excel(
-        "%s/%s" % (context.config("data_path"), SOURCE),
-        skiprows = 5, sheet_name = "IRIS", usecols = ["IRIS", "COM", "DEP", "REG", "P15_POP"]
-    ).rename(columns = {
-        "IRIS": "iris_id", "COM": "commune_id", "DEP": "departement_id", "REG": "region_id",
-        "P15_POP": "population"
-    })
+    year = str(context.config("population_year"))
+
+    with zipfile.ZipFile(
+        "{}/{}".format(context.config("data_path"), context.config("population_path"))) as archive:
+        with archive.open(context.config("population_xlsx")) as f:
+            df_population = pd.read_excel(
+                f,
+                skiprows = 5, sheet_name = "IRIS", usecols = ["IRIS", "COM", "DEP", "REG", "P%s_POP" % year]
+            ).rename(columns = {
+                "IRIS": "iris_id", "COM": "commune_id", "DEP": "departement_id", "REG": "region_id",
+                "P%s_POP" % year: "population"
+            })
 
     df_population["iris_id"] = df_population["iris_id"].astype("category")
     df_population["commune_id"] = df_population["commune_id"].astype("category")
@@ -40,7 +45,8 @@ def execute(context):
     return df_population[["region_id", "departement_id", "commune_id", "iris_id", "population"]]
 
 def validate(context):
-    if not os.path.exists("%s/%s" % (context.config("data_path"), SOURCE)):
+    if not os.path.exists("{}/{}".format(context.config("data_path"), context.config("population_path"))):
         raise RuntimeError("Aggregated census data is not available")
 
-    return os.path.getsize("%s/%s" % (context.config("data_path"), SOURCE))
+    return os.path.getsize("{}/{}".format(context.config("data_path"), context.config("population_path")))
+     

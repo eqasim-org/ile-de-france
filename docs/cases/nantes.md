@@ -5,38 +5,28 @@ for other regions than Île-de-France. In any case, we recommend to first
 follow instructions to set up a [synthetic population for Île-de-France](../population.md)
 and (if desired) the [respective simulation](../simulation.md). The following
 describes the steps and additional data sets necessary to create a population and
-simulation for **Nantes** and its surrounding department Loire Atlantique.
+simulation for **Nantes** and its surrounding department Loire-Atlantique.
 
 ## Additional data
 
-### A) Regional census data
+### A) Buildings database (BD TOPO)
 
-Nantes is not included in the census data set that is uesd for Île-de-France
-(*Zone A*). Instead, *Zone C* needs to be obtained from the [same source](https://www.insee.fr/fr/statistiques/3625223). Download the *dbase* version of *Zone C* and put the
-respective file (*FD_INDCVIZC_2015.dbf*) into the `data/rp_2015` folder.
+You need to download the region-specific buildings database.
 
-### B) Address database (BD-TOPO)
+- [Buildings database](https://geoservices.ign.fr/bdtopo)
+- In the sidebar on the right, under *Téléchargement anciennes éditions*, click on *BD TOPO® 2022 GeoPackage Départements* to go to the saved data publications from 2022.
+- The data is split by department and they are identified with a number. For the Loire-Atlantique department around Nantes, download:
+  - Loire-Atlantique (44)
+- Copy the *7z* file into `data/bdtopo_nantes`.
 
-You need to download the region-specific address database.
-
-- [Address database](https://geoservices.ign.fr/bdtopo)
-- Use a ftp client to download the *Région Pays de la Loire - R 52* . Most browsers will not be able to download the data.
-- Open the downloaded archive and open/unpack it to to access the folder
-  - `BDTOPO_3-0_TOUSTHEMES_SHP_LAMB93_R52_2020-12-15`
-  - `BDTOPO`
-  - `1_DONNEES_LIVRAISON_2021-01-00120`
-  - `BDT_3-0_SHP_LAMB93_R52-ED2020-12-15`
-  - `ADRESSES`
-- Copy the files `ADRESSE.*` from the folder `ADDRESSES` in *shape file* format into `data/bdtopo`.
-
-### C) OpenStreetMap data
+### B) OpenStreetMap data
 
 Only if you plan to run a simulation (and not just generate a synthetic population),
 you need to obtain additional data from OpenStreetMap.
 Geofabrik provides a cut-out for the [Pays de la Loire](https://download.geofabrik.de/europe/france/pays-de-la-loire.html) region: [pays-de-la-loire-220101.osm.pbf](https://download.geofabrik.de/europe/france/pays-de-la-loire-220101.osm.pbf). Download the region file in *.osm.pbf* format and put the file into the
-folder `data/osm`.
+folder `data/osm_nantes`.
 
-### D) GTFS data
+### C) GTFS data
 
 Again, only if you want to run simulations, the digital transit schedule is required.
 Unfortunately, there is no consolidated GTFS schedule avaiable for the region of interest. Hence,
@@ -53,7 +43,15 @@ provide a selection of links, which is not necessarily exhaustive:
 - [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
 - [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
 
-Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs`.
+Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_nantes`.
+
+### D) Adresses database (BAN)
+
+You need to download the region-specific adresses database :
+
+- [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (01,38,42,69) 
+- Copy the *gz* files into `data/ban_nantes`.
 
 ### E) *Optional*: Regional Household Travel Survey 2015
 
@@ -68,40 +66,30 @@ should be present:
 
 Afterwards, you should have the following additional files in your directory structure:
 
-- `data/rp_2015/FD_INDCVIZCs_2015.dbf`
+- `data/bdtopo_nantes/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D044_2022-03-15.7z`
+- `data/ban_nantes/adresses-44.csv.gz`
 - Plus the files from the EDGT if you want / can use them in `data/edgt_44_2015`
 
 *Only for simulation:*
 
-- `osm/pays-de-la-loire-latest.osm.pbf`
-- `gtfs/gtfs-tan.zip`
-- `gtfs/pdl44.zip`
-- `gtfs/stran-merge.gtfs.zip`
-- `gtfs/brevibus.gtfs.zipp`
-- `gtfs/lilapresquile.gtfs.zip`
-- `gtfs/loire-atlantique915785.zip`
-- `gtfs/export-ter-gtfs-last.zip`
-- `gtfs/export_gtfs_voyages.zip`
-- `gtfs/export-intercites-gtfs-last.zip`
+- `data/osm_nantes/pays-de-la-loire-latest.osm.pbf`
+- `data/gtfs_nantes/gtfs-tan.zip`
+- `data/gtfs_nantes/pdl44.zip`
+- `data/gtfs_nantes/stran-merge.gtfs.zip`
+- `data/gtfs_nantes/brevibus.gtfs.zipp`
+- `data/gtfs_nantes/lilapresquile.gtfs.zip`
+- `data/gtfs_nantes/loire-atlantique915785.zip`
+- `data/gtfs_nantes/export-ter-gtfs-last.zip`
+- `data/gtfs_nantes/export_gtfs_voyages.zip`
+- `data/gtfs_nantes/export-intercites-gtfs-last.zip`
 
 Note that the file names may change slightly over time as GTFS schedule are
 updated continuously.
 
 ## Generating the population
 
-To generate the synthetic population, the `config.yml` needs to be updated. While
-the relevant code points to the Île-de-France data sets by default, you can
-adjust the paths inidividually. To let the pipeline use the *Zone C* census
-data set, add the following to `config.yml` in the `config` section:
-
-```yaml
-config:
-  # ...
-  census_path: rp_2015/FD_INDCVIZC_2015.dbf
-  # ...
-```
-
-Furthermore, by default the pipeline will filter all other data sets for the
+To generate the synthetic population, the `config.yml` needs to be updated.
+By default the pipeline will filter all other data sets for the
 Île-de-France region. To make it use the selected region, adjust the
 configuration as follows:
 
@@ -145,8 +133,10 @@ To prepare the pipeline for a simulation of Nantes, the paths to the OSM data se
 ```yaml
 config:
   # ...
-  gtfs_path: gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/brevibus.gtfs.zip;gtfs/gtfs-tan.zip;gtfs/lilapresquile.gtfs.zip;gtfs/loire-atlantique915785.zip;gtfs/pdl44.zip;gtfs/stran-merge.gtfs.zip
-  osm_path: osm/pays-de-la-loire-220101.osm.pbf
+  gtfs_path: gtfs_nantes
+  osm_path: osm_nantes
+  ban_path: ban_nantes
+  bdtopo_path: bdtopo_nantes
   # ...
 ```
 
