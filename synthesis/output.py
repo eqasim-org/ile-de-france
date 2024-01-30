@@ -131,14 +131,21 @@ def execute(context):
 
     if context.config("mode_choice"):
         df_mode_choice = pd.read_csv(
-            "{}/ile_de_france_tripModes.csv".format(context.path("matsim.simulation.prepare")),
+            "{}/{}tripModes.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
             delimiter = ";")
         
         df_mode_choice = df_mode_choice.rename(columns = {
-            "personId": "person_id", "tripId": "trip_index", "mode" : "mode"})
+            "personId": "person_id", "mode" : "mode","person_trip_id": "trip_index"})
         
-        df_trips = pd.merge(df_trips, df_mode_choice, on = [
-            "person_id", "trip_index"], how="left", validate = "one_to_one")
+        merging_columns = ["person_id", "trip_index"]
+        columns_to_keep  = [column for column in df_trips.columns if column not in df_mode_choice.columns]
+        columns_to_keep.extend(merging_columns)
+        df_trips = df_trips[columns_to_keep]
+            
+       # df_mode_choice = df_mode_choice[["person_id", "trip_index"]]
+        # "tripId": "trip_index"
+        
+        df_trips = pd.merge(df_trips, df_mode_choice, on = merging_columns, how="left", validate = "one_to_one")
 
         assert not np.any(df_trips["mode"].isna())                                 
 

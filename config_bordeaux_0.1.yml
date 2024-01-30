@@ -2,18 +2,18 @@
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
-working_directory: C:/Users/arthur.burianne/Documents/tech_Lab/UU_tmp_0.1
+working_directory: C:/Users/arthur.burianne/Documents/techlab/simulations/bordeaux_uu_10_tmp
 
 # This section defines which parts of the pipeline should be run
 run:
   - synthesis.output # To create the output population in the output_path (see below)
   #- documentation.paper # to create plots
-  - matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
+  #- matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
 
 # Here the configuraiton of the pipeline starts
 config:
   # Some general configuration
-  processes: 4
+  processes: 8
 
   # Define whether to use ENTD or EGT as the household travel survey (HTS)
   hts: entd
@@ -28,8 +28,8 @@ config:
   mode_choice: true
 
   # Paths to the input data and where the output should be stored
-  data_path: C:/Users/arthur.burianne/Documents/tech_Lab/bordeaux_data
-  output_path: C:/Users/arthur.burianne/Documents/tech_Lab/UU_output_0.1
+  data_path: C:/Users/arthur.burianne/Documents/sources_data/bordeaux_data
+  output_path: C:/Users/arthur.burianne/Documents/techlab/simulations/bordeaux_uu_10_output
   
   # Data exceptions
   population_year: 19
