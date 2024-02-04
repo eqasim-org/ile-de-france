@@ -92,7 +92,6 @@ def execute(context):
     # Perform IPU to obtain update weights
     update = np.ones((len(df_households),))
 
-    iteration = 0
     minimum_factors = []
     maximum_factors = []
 
@@ -106,9 +105,6 @@ def execute(context):
         
             factor = target / current
             factors.append(factor)
-            
-            if factor > 10:
-                print(attributes[k], factor)
                 
             update[selection] *= factor
 
@@ -122,6 +118,9 @@ def execute(context):
 
     # Check that the applied factors in the last iteration are sufficiently small
     assert criterion > 0.01
+
+    for q in np.arange(10):
+        print("Q", q, np.quantile(update, q / 10.0))
 
     # For a sanity check, we check for the obtained distribution in 2019, but this
     # may evolve in the future. 
