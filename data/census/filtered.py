@@ -8,11 +8,15 @@ This stage filters out census observations which live or work outside of
 """
 
 def configure(context):
-    context.stage("data.census.cleaned")
+    if context.config("projection_year", None) is None:
+        context.stage("data.census.cleaned", alias = "source")
+    else:
+        context.stage("data.census.projected", alias = "source")
+
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df = context.stage("data.census.cleaned")
+    df = context.stage("source")
 
     # We remove people who study or work in another region
     f = df["work_outside_region"] | df["education_outside_region"]
