@@ -24,8 +24,11 @@ def execute(context):
     initial_persons = len(df["person_id"].unique())
     removed_persons = np.count_nonzero(df["household_id"].isin(remove_ids))
 
-    # Verify with requested codes
+    # Filter requested codes
     df_codes = context.stage("data.spatial.codes")
+
+    requested_departements = df_codes["departement_id"].unique()
+    df = df[df["departement_id"].isin(requested_departements)]
 
     excess_communes = set(df["commune_id"].unique()) - set(df_codes["commune_id"].unique())
     if not excess_communes == {"undefined"}:
