@@ -8,15 +8,11 @@ This stage filters out census observations which live or work outside of
 """
 
 def configure(context):
-    if context.config("projection_year", None) is None:
-        context.stage("data.census.cleaned", alias = "source")
-    else:
-        context.stage("data.census.projected", alias = "source")
-
+    context.stage("data.census.cleaned")
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df = context.stage("source")
+    df = context.stage("data.census.cleaned")
 
     # We remove people who study or work in another region
     f = df["work_outside_region"] | df["education_outside_region"]
@@ -27,6 +23,17 @@ def execute(context):
 
     initial_persons = len(df["person_id"].unique())
     removed_persons = np.count_nonzero(df["household_id"].isin(remove_ids))
+
+    # Verify with requested codes
+    df_codes = context.stage("data.spatial.codes")
+
+    excess_communes = set(df["commune_id"].unique()) - set(df_codes["commune_id"].unique())
+    if not excess_communes == {"undefined"}:
+        raise RuntimeError("Found additional communes: %s" % excess_communes)
+
+    excess_iris = set(df["iris_id"].unique()) - set(df_codes["iris_id"].unique())
+    if not excess_iris == {"undefined"}:
+        raise RuntimeError("Found additional IRIS: %s" % excess_iris)
 
     # TODO: This filtering is not really compatible with defining multiple regions
     # or departments. This used to be a filter to avoid people going outside of

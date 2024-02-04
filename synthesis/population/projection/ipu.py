@@ -130,4 +130,4 @@ def execute(context):
     # Update the weights
     df_census["weight"] *= update
     
-    return df_census
+    return df_census[["household_id", "weight"]]
