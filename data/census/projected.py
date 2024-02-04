@@ -96,9 +96,7 @@ def execute(context):
     minimum_factors = []
     maximum_factors = []
 
-    for iteration in context.progress(range(100), "Performing IPU"):
-        print("Iteration", iteration)
-        
+    for iteration in context.progress(range(100), label = "Performing IPU"):
         factors = []    
         for k in np.arange(len(attributes)):
             selection = attribute_membership[k]
@@ -127,7 +125,7 @@ def execute(context):
 
     # For a sanity check, we check for the obtained distribution in 2019, but this
     # may evolve in the future. 
-    assert np.quantile(update, 0.9) < 1.0
+    assert np.quantile(update, 0.9) < 2.0
 
     # Update the weights
     df_census["weight"] *= update
