@@ -119,13 +119,11 @@ def execute(context):
     # Check that the applied factors in the last iteration are sufficiently small
     assert criterion > 0.01
 
-    for q in np.arange(10):
-        print("Q", q, np.quantile(update, q / 10.0))
-
     # For a sanity check, we check for the obtained distribution in 2019, but this
     # may evolve in the future. 
-    assert np.quantile(update, 0.9) < 1.0
-    exit()
+    assert np.quantile(update, 0.1) > 0.35
+    assert np.quantile(update, 0.8) < 2.0
+    assert np.quantile(update, 0.9) < 2.5
 
     # Update the weights
     df_census["weight"] *= update
