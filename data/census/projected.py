@@ -31,7 +31,7 @@ def execute(context):
 
     # Proccesing age ...
     df_marginal = projection["age"]
-    for index, row in context.progress(df_marginal.iterrows(), desc = "Processing attribute: age", total = len(df_marginal)):
+    for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: age", total = len(df_marginal)):
         f = df_census["age"] == row["age"]
 
         if row["age"] == 0:
@@ -50,7 +50,7 @@ def execute(context):
     
     # Processing sex ...
     df_marginal = projection["sex"]
-    for index, row in context.progress(df_marginal.iterrows(), desc = "Processing attribute: sex", total = len(df_marginal)):
+    for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: sex", total = len(df_marginal)):
         f = df_census["sex"] == row["sex"]
         
         if np.count_nonzero(f) == 0:
@@ -66,7 +66,7 @@ def execute(context):
 
     # Processing age x sex ...
     df_marginal = projection["cross"]
-    for index, row in context.progress(df_marginal.iterrows(), desc = "Processing attributes: sex x age", total = len(df_marginal)):
+    for index, row in context.progress(df_marginal.iterrows(), label = "Processing attributes: sex x age", total = len(df_marginal)):
         f = (df_census["sex"] == row["sex"]) & (df_census["age"] == row["age"])
 
         if row["age"] == 0:
