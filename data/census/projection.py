@@ -13,17 +13,22 @@ def configure(context):
     context.config("projection_year", None)
 
 def execute(context):
+    source_path = "{}/{}/{}.xlsx".format(
+        context.config("data_path"), 
+        context.config("projection_path"), 
+        context.config("projection_scenario"))
+    
     base_year = int(context.config("projection_base_year"))
     projection_year = int(context.config("projection_year"))
 
     df_all = pd.read_excel(
-        "/home/shoerl/Downloads/00_central.xlsx", sheet_name = "population", skiprows = 1).iloc[:107]
+        source_path, sheet_name = "population", skiprows = 1).iloc[:107]
     
     df_male = pd.read_excel(
-        "/home/shoerl/Downloads/00_central.xlsx", sheet_name = "populationH", skiprows = 1).iloc[:107]
+        source_path, sheet_name = "populationH", skiprows = 1).iloc[:107]
     
     df_female = pd.read_excel(
-        "/home/shoerl/Downloads/00_central.xlsx", sheet_name = "populationF", skiprows = 1).iloc[:107]
+        source_path, sheet_name = "populationF", skiprows = 1).iloc[:107]
 
     df_male["sex"] = "male"
     df_female["sex"] = "female"
