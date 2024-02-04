@@ -125,6 +125,7 @@ def execute(context):
     # For a sanity check, we check for the obtained distribution in 2019, but this
     # may evolve in the future. 
     assert np.quantile(update, 0.9) < 1.0
+    exit()
 
     # Update the weights
     df_census["weight"] *= update
