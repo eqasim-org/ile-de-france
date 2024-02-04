@@ -43,7 +43,7 @@ def execute(context):
         else:
             df_counts = df_census.loc[f, "household_index"].value_counts()
         
-            attribute_targets.append(row["projection_year"])
+            attribute_targets.append(row["projection"])
             attribute_membership.append(df_counts.index.values)
             attribute_counts.append(df_counts.values)
             attributes.append("age={}".format(row["age"]))
@@ -59,7 +59,7 @@ def execute(context):
         else:
             df_counts = df_census.loc[f, "household_index"].value_counts()
         
-            attribute_targets.append(row["projection_year"])
+            attribute_targets.append(row["projection"])
             attribute_membership.append(df_counts.index.values)
             attribute_counts.append(df_counts.values)
             attributes.append("sex={}".format(row["sex"]))
@@ -78,13 +78,13 @@ def execute(context):
         else:
             df_counts = df_census.loc[f, "household_index"].value_counts()
         
-            attribute_targets.append(row["projection_year"])
+            attribute_targets.append(row["projection"])
             attribute_membership.append(df_counts.index.values)
             attribute_counts.append(df_counts.values)
             attributes.append("sex={},age={}".format(row["sex"], row["age"]))
 
     # Processing total ...
-    attribute_targets.append(projection["total"]["projection_year"].values[0])
+    attribute_targets.append(projection["total"]["projection"].values[0])
     attribute_membership.append(np.arange(len(household_sizes)))
     attribute_counts.append(household_sizes)
     attributes.append("total")
@@ -124,7 +124,7 @@ def execute(context):
 
     # For a sanity check, we check for the obtained distribution in 2019, but this
     # may evolve in the future. 
-    assert np.quantile(update, 0.9) < 2.0
+    assert np.quantile(update, 0.9) < 1.0
 
     # Update the weights
     df_census["weight"] *= update

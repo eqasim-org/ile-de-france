@@ -9,7 +9,6 @@ def configure(context):
     context.config("data_path")
     context.config("projection_path", "projection_2021")
     context.config("projection_scenario", "00_central")
-    context.config("projection_base_year", 2019)
     context.config("projection_year", None)
 
 def execute(context):
@@ -18,7 +17,6 @@ def execute(context):
         context.config("projection_path"), 
         context.config("projection_scenario"))
     
-    base_year = int(context.config("projection_base_year"))
     projection_year = int(context.config("projection_year"))
 
     df_all = pd.read_excel(
@@ -40,23 +38,23 @@ def execute(context):
     df_sex = pd.concat([
         df_male.iloc[-1:],
         df_female.iloc[-1:]
-    ]).drop(columns = ["Âge au 1er janvier"])[["sex", base_year, projection_year]]
-    df_sex.columns = ["sex", "base_year", "projection_year"]
+    ]).drop(columns = ["Âge au 1er janvier"])[["sex", projection_year]]
+    df_sex.columns = ["sex", "projection"]
 
-    df_age = df_all[["Âge au 1er janvier", base_year, projection_year]].iloc[:-1]
-    df_age.columns = ["age", "base_year", "projection_year"]
+    df_age = df_all[["Âge au 1er janvier", projection_year]].iloc[:-1]
+    df_age.columns = ["age", "projection"]
 
-    df_male = df_male[["Âge au 1er janvier", "sex", base_year, projection_year]].iloc[:-1]
-    df_female = df_female[["Âge au 1er janvier", "sex", base_year, projection_year]].iloc[:-1]
+    df_male = df_male[["Âge au 1er janvier", "sex", projection_year]].iloc[:-1]
+    df_female = df_female[["Âge au 1er janvier", "sex", projection_year]].iloc[:-1]
 
-    df_male.columns = ["age", "sex", "base_year", "projection_year"]
-    df_female.columns = ["age","sex", "base_year", "projection_year"]
+    df_male.columns = ["age", "sex", "projection"]
+    df_female.columns = ["age","sex", "projection"]
 
     df_cross = pd.concat([df_male, df_female])
     df_cross["sex"] = df_cross["sex"].astype("category")
 
-    df_total = df_all.iloc[-1:].drop(columns = ["Âge au 1er janvier"])[[base_year, projection_year]]
-    df_total.columns = ["base_year", "projection_year"]
+    df_total = df_all.iloc[-1:].drop(columns = ["Âge au 1er janvier"])[[projection_year]]
+    df_total.columns = ["projection"]
 
     return {
         "total": df_total, "sex": df_sex, "age": df_age, "cross": df_cross
