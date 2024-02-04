@@ -20,7 +20,7 @@ def execute(context):
 
     # Obtain weights and sizes as arrays
     household_weights = df_households["weight"].values
-    household_sizes = df_households["size"].values
+    household_sizes = df_households["household_size"].values
 
     # Obtain the attribute levels and membership of attributes for all households
     attributes = []
