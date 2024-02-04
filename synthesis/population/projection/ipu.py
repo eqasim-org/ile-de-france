@@ -126,6 +126,6 @@ def execute(context):
     assert np.quantile(update, 0.9) < 2.5
 
     # Update the weights
-    df_census["weight"] *= update
+    df_households["weight"] *= update
     
-    return df_census[["household_id", "weight"]]
+    return df_households[["household_id", "weight"]]
