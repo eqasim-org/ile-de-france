@@ -15,9 +15,8 @@ def execute(context):
     df = context.stage("data.census.cleaned")
 
     # Household size
-    df_codes = context.stage("data.spatial.codes")
     df_size = df[["household_id"]].groupby("household_id").size().reset_index(name = "household_size2")
-    df = pd.merge(df_codes, df_size)
+    df = pd.merge(df, df_size)
 
     assert np.all(df["household_size"] == df["household_size2"])
     print("all good")
