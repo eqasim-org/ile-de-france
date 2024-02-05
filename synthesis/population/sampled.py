@@ -25,6 +25,14 @@ def execute(context):
     sampling_rate = context.config("sampling_rate")
     random = np.random.RandomState(context.config("random_seed"))
 
+    # Household size
+    df_size = df_census[["household_id"]].groupby("household_id").size().reset_index(name = "household_size2")
+    df_census = pd.merge(df_census, df_size)
+
+    assert np.all(df_census["household_size"] == df_census["household_size2"])
+    print("all good")
+    exit()
+
     # Perform stochastic rounding for the population (and scale weights)
     df_rounding = df_census[["household_id", "weight", "household_size"]].drop_duplicates("household_id")
     df_rounding["multiplicator"] = np.floor(df_rounding["weight"])
@@ -38,7 +46,7 @@ def execute(context):
     # create index to replicate all households members by their household weight
     # the order ([0, 1, 0, 1, 2, 2, ...]) is important here as they will be reassigned to new housholds later with that assumption
     expandor = np.split(np.arange(len(df_census)), np.cumsum(household_sizes))
-    # expandor = [x for x in expandor if x.size > 0] # sh: not sure why this was needed
+    expandor = [x for x in expandor if x.size > 0]
     expandor = np.repeat(expandor, household_multiplicators, axis=0)
     expandor = list(itertools.chain(*expandor))
 
