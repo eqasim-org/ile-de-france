@@ -13,7 +13,6 @@ def configure(context):
 
 def execute(context):
     df = context.stage("data.census.cleaned")
-    print(df[df["household_id"] == 8958513])
 
     # We remove people who study or work in another region
     f = df["work_outside_region"] | df["education_outside_region"]

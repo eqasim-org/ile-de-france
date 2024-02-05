@@ -26,7 +26,7 @@ def execute(context):
 
     # Fill up undefined household ids (those where NUMMI == Z)
     f = np.isnan(df["household_id"])
-    df.loc[f, "household_id"] = np.arange(np.count_nonzero(f)) + df["household_id"].max()
+    df.loc[f, "household_id"] = np.arange(np.count_nonzero(f)) + df["household_id"].max() + 1
     df["household_id"] = df["household_id"].astype(int)
 
     # Put person IDs
