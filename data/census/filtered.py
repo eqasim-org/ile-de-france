@@ -14,6 +14,15 @@ def configure(context):
 def execute(context):
     df = context.stage("data.census.cleaned")
 
+    # Household size
+    df_size = df[["household_id"]].groupby("household_id").size().reset_index(name = "household_size2")
+    df = pd.merge(df_codes, df_size)
+
+    assert np.all(df["household_size"] == df["household_size2"])
+    print("all good")
+    exit()
+
+
     # We remove people who study or work in another region
     f = df["work_outside_region"] | df["education_outside_region"]
     remove_ids = df[f]["household_id"].unique()
