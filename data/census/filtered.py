@@ -13,6 +13,7 @@ def configure(context):
 
 def execute(context):
     df = context.stage("data.census.cleaned")
+    print(df[df["household_id"] == 8958513])
 
     # We remove people who study or work in another region
     f = df["work_outside_region"] | df["education_outside_region"]
@@ -71,6 +72,8 @@ def execute(context):
     f = df["household_size"] != df["household_size2"]
     print(np.count_nonzero(f))
     print(df[f])
+
+    print(df[df["household_id"] == 8958513])
 
     assert np.all(df["household_size"] == df["household_size2"])
     print("all good")
