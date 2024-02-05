@@ -68,6 +68,10 @@ def execute(context):
     df_size = df[["household_id"]].groupby("household_id").size().reset_index(name = "household_size2")
     df = pd.merge(df, df_size)
 
+    f = df["household_size"] != df["household_size2"]
+    print(np.count_nonzero(f))
+    print(df[f])
+
     assert np.all(df["household_size"] == df["household_size2"])
     print("all good")
     exit()
