@@ -25,14 +25,6 @@ def execute(context):
     sampling_rate = context.config("sampling_rate")
     random = np.random.RandomState(context.config("random_seed"))
 
-    # Household size
-    df_size = df_census[["household_id"]].groupby("household_id").size().reset_index(name = "household_size2")
-    df_census = pd.merge(df_census, df_size)
-
-    assert np.all(df_census["household_size"] == df_census["household_size2"])
-    print("all good")
-    exit()
-
     # Perform stochastic rounding for the population (and scale weights)
     df_rounding = df_census[["household_id", "weight", "household_size"]].drop_duplicates("household_id")
     df_rounding["multiplicator"] = np.floor(df_rounding["weight"])

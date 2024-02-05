@@ -93,10 +93,6 @@ def execute(context):
     # Socioprofessional category
     df["socioprofessional_class"] = df["CS1"].astype(int)
 
-    # Place of work or education
-    df["work_outside_region"] = df["ILT"].isin(("4", "5", "6"))
-    df["education_outside_region"] = df["ILETUD"].isin(("4", "5", "6"))
-
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
@@ -106,6 +102,5 @@ def execute(context):
         "age", "sex", "couple",
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
-        "work_outside_region", "education_outside_region",
         "consumption_units", "socioprofessional_class"
     ]]
