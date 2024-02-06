@@ -3,6 +3,7 @@ import os
 import hashlib, gzip
 from . import testdata
 import sqlite3
+import shutil
 
 def hash_sqlite_db(path):
     """
@@ -84,6 +85,9 @@ def _test_determinism(index, data_path, tmpdir):
     generated_gpkg_hashes = {
         file: hash_sqlite_db("%s/%s" % (output_path, file)) for file in REFERENCE_GPKG_HASHES.keys()
     }
+
+    for file in REFERENCE_GPKG_HASHES.keys():
+        shutil.copy("%s/%s" % (output_path, file), "/home/shoerl/temp")
 
     print("Generated CSV hashes: ", generated_csv_hashes)
     print("Generated GPKG hashes: ", generated_gpkg_hashes)
