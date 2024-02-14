@@ -26,7 +26,7 @@ def execute(context):
 
     # Fill up undefined household ids (those where NUMMI == Z)
     f = np.isnan(df["household_id"])
-    df.loc[f, "household_id"] = np.arange(np.count_nonzero(f)) + df["household_id"].max()
+    df.loc[f, "household_id"] = np.arange(np.count_nonzero(f)) + df["household_id"].max() + 1
     df["household_id"] = df["household_id"].astype(int)
 
     # Put person IDs
@@ -47,17 +47,6 @@ def execute(context):
     f_undefined = df["iris_id"].str.contains("Z") | df["iris_id"].str.contains("X")
     df.loc[f_undefined, "iris_id"] = "undefined"
     df["iris_id"] = df["iris_id"].astype("category")
-
-    # Verify with requested codes
-    df_codes = context.stage("data.spatial.codes")
-
-    excess_communes = set(df["commune_id"].unique()) - set(df_codes["commune_id"].unique())
-    if not excess_communes == {"undefined"}:
-        raise RuntimeError("Found additional communes: %s" % excess_communes)
-
-    excess_iris = set(df["iris_id"].unique()) - set(df_codes["iris_id"].unique())
-    if not excess_iris == {"undefined"}:
-        raise RuntimeError("Found additional IRIS: %s" % excess_iris)
 
     # Age
     df["age"] = df["AGED"].apply(lambda x: "0" if x == "000" else x.lstrip("0")).astype(int)
@@ -104,10 +93,6 @@ def execute(context):
     # Socioprofessional category
     df["socioprofessional_class"] = df["CS1"].astype(int)
 
-    # Place of work or education
-    df["work_outside_region"] = df["ILT"].isin(("4", "5", "6"))
-    df["education_outside_region"] = df["ILETUD"].isin(("4", "5", "6"))
-
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
@@ -117,6 +102,5 @@ def execute(context):
         "age", "sex", "couple",
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
-        "work_outside_region", "education_outside_region",
         "consumption_units", "socioprofessional_class"
     ]]
