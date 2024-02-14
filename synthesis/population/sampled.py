@@ -9,8 +9,6 @@ through the 'sampling_rate' configuration option.
 """
 
 def configure(context):
-    context.stage("data.census.filtered")
-
     if context.config("projection_year", None) is None:
         context.stage("data.census.filtered", alias = "source")
     else:
