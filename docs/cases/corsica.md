@@ -35,7 +35,7 @@ it is necessary to collect all relevant GTFS schedules one by one.
 
 - [Chemins de fer de Corse](https://www.data.corsica/explore/dataset/horaires-cfc-gtfs/export/)
 - [Cars Corse du Sud](https://www.data.corsica/explore/dataset/horaires-cars2a-gtfs/export/)
-- [Cars Haute Corse](https://www.data.corsica/explore/dataset/horaires-cars2b-gtfs/export/)
+- [Cars Haute Corse](https://www.data.corsica/explore/dataset/gtfs-transport-horaires-cars-de-haute-corse/export/)
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_corsica`.
 
