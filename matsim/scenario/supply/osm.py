@@ -12,7 +12,7 @@ def configure(context):
 def execute(context):
     osm_path = "%s/output.osm.gz" % context.path("data.osm.cleaned")
 
-    pt2matsim.run(context, "org.matsim.pt2matsim.run.CreateDefaultOsmConfig", 
+    pt2matsim.run(context, "org.matsim.pt2matsim.run.CreateDefaultOsmConfig",
         arguments=["config_template.xml"]
     )
 
@@ -54,7 +54,7 @@ def execute(context):
         with open("%s/config.xml" % context.path(), "w+") as f_write:
             f_write.write(content)
 
-    pt2matsim.run(context, "org.matsim.pt2matsim.run.Osm2MultimodalNetwork", 
+    pt2matsim.run(context, "org.matsim.pt2matsim.run.Osm2MultimodalNetwork",
         arguments=["config.xml"]
     )
 

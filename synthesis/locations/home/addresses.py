@@ -6,12 +6,12 @@ import numpy as np
 """
 This stage assigns adresses from BAN to residential buildings from BD TOPO.
 
-The match is based on distance from building shape perimeter in every direction 
-(buffer expressed as meters). The distance value is set to 5 meters by default 
+The match is based on distance from building shape perimeter in every direction
+(buffer expressed as meters). The distance value is set to 5 meters by default
 and in most case is between 1 to 20 meters in the data.
 
-The output is one or several rows per building depending on the match (one or 
-many adresses). For every building the housing count is distributed to the matching 
+The output is one or several rows per building depending on the match (one or
+many adresses). For every building the housing count is distributed to the matching
 adresses. For instance, the assigned addresses of a building with 10 housing units
 and two addresses will have a weight of 5.
 
@@ -20,8 +20,10 @@ If no adresses matches a buidling, its centroid is taken as the unique address.
 
 def configure(context):
     context.stage("data.bdtopo.raw")
-    
+
     context.config("home_address_buffer", 5.0)
+
+    context.config("crs", 2154)
 
     context.config("home_location_weight", "housing")
     if context.config("home_location_source", "addresses") == "addresses":
@@ -49,7 +51,7 @@ def execute(context):
         # Find close-by addresses
         df_addresses = gpd.sjoin(df_addresses, df_buffer, predicate = "within")[[
             "building_id", "housing", "geometry"]]
-    
+
     # Create missing addresses by using centroids
     df_missing = df_buildings[~df_buildings["building_id"].isin(df_addresses["building_id"])].copy()
     df_missing["geometry"] = df_missing["geometry"].centroid
@@ -57,7 +59,7 @@ def execute(context):
 
     # Put together matched and missing addresses
     df_addresses = pd.concat([df_addresses, df_missing])
-    df_addresses = gpd.GeoDataFrame(df_addresses, crs = "EPSG:2154")
+    df_addresses = gpd.GeoDataFrame(df_addresses, crs = context.config("crs"))
 
     # Obtain weights for all addresses
     if context.config("home_location_weight") == "housing":
@@ -66,7 +68,7 @@ def execute(context):
         df_addresses["weight"] = df_addresses["housing"] / df_addresses["count"]
     else:
         df_addresses["weight"] = 1.0
-    
+
     return df_addresses[["building_id", "weight", "geometry"]]
 
 def validate(context):

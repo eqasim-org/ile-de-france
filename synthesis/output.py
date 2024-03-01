@@ -21,7 +21,9 @@ def configure(context):
 
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
-    
+    context.config("crs", 2154)
+
+
     if context.config("mode_choice", False):
         context.stage("matsim.simulation.prepare")
 
@@ -133,14 +135,14 @@ def execute(context):
         df_mode_choice = pd.read_csv(
             "{}/{}tripModes.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
             delimiter = ";")
-        
+
         df_mode_choice = df_mode_choice.rename(columns = {
             "personId": "person_id", "tripId": "trip_index", "mode" : "mode"})
-        
+
         df_trips = pd.merge(df_trips, df_mode_choice, on = [
             "person_id", "trip_index"], how="left", validate = "one_to_one")
 
-        assert not np.any(df_trips["mode"].isna())                                 
+        assert not np.any(df_trips["mode"].isna())
 
     df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
@@ -161,10 +163,10 @@ def execute(context):
     ]], how = "left", on = ["person_id", "activity_index"])
 
     # Write spatial activities
-    df_spatial = gpd.GeoDataFrame(df_activities, crs = "EPSG:2154")
+    df_spatial = gpd.GeoDataFrame(df_activities, crs = context.config("crs"))
     df_spatial["purpose"] = df_spatial["purpose"].astype(str)
     path = "%s/%sactivities.gpkg" % (output_path, output_prefix)
-    df_spatial.to_file(path, driver = "GPKG")
+    df_spatial.set_crs(context.config("crs")).to_file(path, driver = "GPKG")
     clean_gpkg(path)
 
     # Write spatial homes
@@ -173,7 +175,7 @@ def execute(context):
         df_spatial["purpose"] == "home"
     ].drop_duplicates("household_id")[[
         "household_id", "geometry"
-    ]].to_file(path, driver = "GPKG")
+    ]].set_crs(context.config("crs")).to_file(path, driver = "GPKG")
     clean_gpkg(path)
 
     # Write spatial commutes
@@ -189,7 +191,7 @@ def execute(context):
 
     df_spatial = df_spatial.drop(columns = ["home_geometry", "work_geometry"])
     path = "%s/%scommutes.gpkg" % (output_path, output_prefix)
-    df_spatial.to_file(path, driver = "GPKG")
+    df_spatial.set_crs(context.config("crs")).to_file(path, driver = "GPKG")
     clean_gpkg(path)
 
     # Write spatial trips
@@ -214,13 +216,13 @@ def execute(context):
 
     df_spatial = df_spatial.drop(columns = ["preceding_geometry", "following_geometry"])
 
-    df_spatial = gpd.GeoDataFrame(df_spatial, crs = "EPSG:2154")
+    df_spatial = gpd.GeoDataFrame(df_spatial, crs = context.config("crs"))
     df_spatial["following_purpose"] = df_spatial["following_purpose"].astype(str)
     df_spatial["preceding_purpose"] = df_spatial["preceding_purpose"].astype(str)
 
     if "mode" in df_spatial:
         df_spatial["mode"] = df_spatial["mode"].astype(str)
-    
+
     path = "%s/%strips.gpkg" % (output_path, output_prefix)
-    df_spatial.to_file(path, driver = "GPKG")
+    df_spatial.set_crs(context.config("crs")).to_file(path, driver = "GPKG")
     clean_gpkg(path)

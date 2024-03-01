@@ -150,8 +150,8 @@ def create(output_path):
                         ))
 
     df = pd.DataFrame.from_records(df)
-    df = gpd.GeoDataFrame(df, crs = "EPSG:2154")
-   
+    df = gpd.GeoDataFrame(df, crs = 2154)
+
     # Dataset: IRIS zones
     # Required attributes: CODE_IRIS, INSEE_COM, geometry
     print("Creating IRIS zones ...")
@@ -556,9 +556,9 @@ def create(output_path):
     z = random.randint(100, 400, observations) # Not used but keeping unit test hashes constant
 
     ids = [
-        "BATIMENT{:016d}".format(n) for n in random.randint(1000, 1000000, observations) 
+        "BATIMENT{:016d}".format(n) for n in random.randint(1000, 1000000, observations)
     ]
-    
+
     ids[0] = ids[1] # setting multiple adresses for 1 building usecase
 
     df_bdtopo = gpd.GeoDataFrame({
@@ -570,7 +570,7 @@ def create(output_path):
     }, crs = "EPSG:2154")
 
     # polygons as buildings from iris centroid points
-    df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs="EPSG:2154")
+    df_bdtopo.set_geometry(df_bdtopo.buffer(40),inplace=True,drop=True,crs=2154)
 
     os.mkdir("{}/bdtopo_idf".format(output_path))
     df_bdtopo.to_file("{}/bdtopo_idf/content.gpkg".format(output_path), layer = "batiment")
@@ -581,15 +581,15 @@ def create(output_path):
     with py7zr.SevenZipFile("{}/bdtopo_idf/bdtopo.7z".format(output_path), "w") as archive:
         archive.write("{}/bdtopo_idf/content.gpkg".format(output_path), "content/content.gpkg")
         os.remove("{}/bdtopo_idf/content.gpkg".format(output_path))
-    
+
     for department in bdtopo_departments:
         shutil.copyfile(
-            "{}/bdtopo_idf/bdtopo.7z".format(output_path), 
+            "{}/bdtopo_idf/bdtopo.7z".format(output_path),
             "{}/bdtopo_idf/BDTOPO_3-0_TOUSTHEMES_GPKG_LAMB93_D0{}_{}.7z".format(
                 output_path, department, bdtopo_date))
-        
+
     os.remove("{}/bdtopo_idf/bdtopo.7z".format(output_path))
-        
+
     # Data set: BAN
     print("Creating BAN ...")
 
@@ -654,10 +654,10 @@ def create(output_path):
         "y": y,
         "plg_code_commune":codes_com,
     })
-    
+
     df_sirene_geoloc.to_csv("%s/sirene/GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.zip" % output_path, index = False, sep=";", compression={'method': 'zip', 'archive_name': 'GeolocalisationEtablissement_Sirene_pour_etudes_statistiques_utf8.csv'})
 
-    
+
     # Data set: OSM
     # We add add a road grid of 500m
     print("Creating OSM ...")
@@ -690,7 +690,7 @@ def create(output_path):
 
             node_index += 1
 
-    df_nodes = gpd.GeoDataFrame(df_nodes, crs = "EPSG:2154")
+    df_nodes = gpd.GeoDataFrame(df_nodes, crs = 2154)
     df_nodes = df_nodes.to_crs("EPSG:4326")
 
     for row in df_nodes.itertuples():

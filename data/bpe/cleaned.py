@@ -17,6 +17,8 @@ def configure(context):
     context.stage("data.spatial.municipalities")
 
     context.config("bpe_random_seed", 0)
+    context.config("crs", 2154)
+
 
 ACTIVITY_TYPE_MAP = [
     ("A", "other"),         # Police, post office, etc ...
@@ -136,6 +138,6 @@ def execute(context):
     # Package up data set
     df = df[["enterprise_id", "activity_type", "commune_id", "imputed", "x", "y"]]
 
-    df = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.x, df.y),crs="EPSG:2154")
+    df = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.x, df.y),crs= context.config("crs"))
 
     return df

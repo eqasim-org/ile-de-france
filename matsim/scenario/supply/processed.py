@@ -11,6 +11,8 @@ def configure(context):
 
     context.config("data_path")
     context.config("processes")
+    context.config("crs", 2154)
+
 
 def execute(context):
     # Prepare input paths
@@ -74,7 +76,7 @@ def execute(context):
 
     # Run plausibility checks
     #pt2matsim.run(context, "org.matsim.pt2matsim.run.CheckMappedSchedulePlausibility", [
-    #    "schedule.xml.gz", "network.xml.gz", "EPSG:2154", context.path()
+    #    "schedule.xml.gz", "network.xml.gz",     context.config("crs"), context.path()
     #])
     #assert(os.path.exists("%s/allPlausibilityWarnings.csv" % context.path()))
 

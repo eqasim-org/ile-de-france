@@ -11,10 +11,11 @@ import numpy as np
 """
 This stage loads the raw data from the French building registry (BD-TOPO).
 """
- 
+
 def configure(context):
     context.config("data_path")
     context.config("bdtopo_path", "bdtopo_idf")
+    context.config("crs", 2154)
 
     context.stage("data.spatial.departments")
 
@@ -31,7 +32,7 @@ def get_department_string(department_id):
 def execute(context):
     df_departments = context.stage("data.spatial.departments")
     print("Expecting data for {} departments".format(len(df_departments)))
-    
+
     source_paths = find_bdtopo("{}/{}".format(context.config("data_path"), context.config("bdtopo_path")))
 
     df_bdtopo = []
@@ -44,7 +45,7 @@ def execute(context):
         with py7zr.SevenZipFile(source_path) as archive:
             # Find the path inside the archive
             internal_path = [path for path in archive.getnames() if path.endswith(".gpkg")]
-            
+
             if len(internal_path) != 1:
                 print("  Skipping: No unambiguous geometry source found!")
 
@@ -64,8 +65,8 @@ def execute(context):
                         progress.update()
 
                 df_buildings = pd.DataFrame(data)
-                df_buildings = gpd.GeoDataFrame(df_buildings, crs = "EPSG:2154")
-            
+                df_buildings = gpd.GeoDataFrame(df_buildings, crs = context.config("crs"))
+
             df_buildings["building_id"] = df_buildings["cleabs"].apply(lambda x: int(x[8:]))
             df_buildings["housing"] = df_buildings["nombre_de_logements"].fillna(0).astype(int)
 
@@ -109,7 +110,7 @@ def find_bdtopo(path):
 
     if len(candidates) == 0:
         raise RuntimeError("BD TOPO data is not available in {}".format(path))
-    
+
     return candidates
 
 def validate(context):

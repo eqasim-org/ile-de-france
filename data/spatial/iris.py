@@ -12,6 +12,8 @@ def configure(context):
     context.config("data_path")
     context.config("iris_path", "iris_2021")
     context.stage("data.spatial.codes")
+    context.config("crs", 2154)
+
 
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
@@ -25,7 +27,7 @@ def execute(context):
         ]
 
         archive.extract(context.path(), contour_paths)
-    
+
     shp_path = [path for path in contour_paths if path.endswith(".shp")]
 
     if len(shp_path) != 1:
@@ -38,7 +40,7 @@ def execute(context):
         "INSEE_COM": "commune_id"
     })
 
-    df_iris.crs = "EPSG:2154"
+    df_iris.crs = context.config("crs")
 
     df_iris["iris_id"] = df_iris["iris_id"].astype("category")
     df_iris["commune_id"] = df_iris["commune_id"].astype("category")
@@ -59,10 +61,10 @@ def find_iris(path):
 
     if len(candidates) == 0:
         raise RuntimeError("IRIS data is not available in {}".format(path))
-    
+
     if len(candidates) > 1:
         raise RuntimeError("Multiple candidates for IRIS are available in {}".format(path))
-    
+
     return candidates[0]
 
 

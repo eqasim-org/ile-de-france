@@ -9,6 +9,7 @@ Should we consider using location accuracy variable to optimize process?
 def configure(context):
     context.stage("data.sirene.cleaned")
     context.stage("data.sirene.raw_geoloc")
+    context.config("crs", 2154)
 
 
 def execute(context):
@@ -26,8 +27,8 @@ def execute(context):
     df_sirene.dropna(subset=['x', 'y'],inplace=True)
 
 
-    # convert to geopandas dataframe with Lambert 93, EPSG:2154 french official projection
-    df_sirene = gpd.GeoDataFrame(df_sirene, geometry=gpd.points_from_xy(df_sirene.x, df_sirene.y),crs="EPSG:2154")
+    # convert to geopandas dataframe with appropriate projection
+    df_sirene = gpd.GeoDataFrame(df_sirene, geometry=gpd.points_from_xy(df_sirene.x, df_sirene.y), crs = context.config("crs"))
 
 
     return df_sirene

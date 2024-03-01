@@ -3,16 +3,16 @@ import numpy as np
 import geopandas as gpd
 import pandas as pd
 
-def to_gpd(context, df, x = "x", y = "y", crs = "EPSG:2154", column = "geometry"):
+def to_gpd(context, df, x = "x", y = "y", column = "geometry"):
     df[column] = [
         geo.Point(*coord) for coord in context.progress(
             zip(df[x], df[y]), total = len(df),
             label = "Converting coordinates"
         )]
-    df = gpd.GeoDataFrame(df, crs = "EPSG:2154", geometry = column)
+    df = gpd.GeoDataFrame(df, crs = context.config("crs"), geometry = column)
 
-    if not df.crs == "EPSG:2154":
-        df = df.to_crs("EPSG:2154")
+    if not df.crs ==     context.config("crs"):
+        df = df.to_crs(    context.config("crs"))
 
     return df
 

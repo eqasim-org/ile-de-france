@@ -10,6 +10,9 @@ def configure(context):
     context.stage("synthesis.population.activities")
     context.stage("synthesis.population.sampled")
 
+    context.config("crs", 2154)
+
+
 def execute(context):
     df_home = context.stage("synthesis.population.spatial.home.locations")
     df_work, df_education = context.stage("synthesis.population.spatial.primary.locations")
@@ -55,6 +58,6 @@ def execute(context):
     assert initial_count == final_count
 
     assert not df_locations["geometry"].isna().any()
-    df_locations = gpd.GeoDataFrame(df_locations, crs = "EPSG:2154")
+    df_locations = gpd.GeoDataFrame(df_locations, crs = context.config("crs"))
 
     return df_locations
