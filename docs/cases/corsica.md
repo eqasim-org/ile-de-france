@@ -45,7 +45,7 @@ Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_
 You need to download the region-specific adresses database :
 
 - [Adresses database](https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/)
-- Click on the link *adresses-xx.csv.gz* where xx = departments codes (09, 11, 31, 32, 81, 82) 
+- Click on the link *adresses-xx.csv.gz* where xx = departments codes (2A and 2B) 
 - Copy the *gz* files into `data/ban_corsica`.
 
 
