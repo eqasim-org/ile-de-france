@@ -67,6 +67,7 @@ def resample_cdf(cdf, factor):
 def resample_distributions(distributions, factors):
     for mode, mode_distributions in distributions.items():
         for distribution in mode_distributions["distributions"]:
+
             distribution["cdf"] = resample_cdf(distribution["cdf"], factors[mode])
 
 from synthesis.population.spatial.secondary.rda import AssignmentSolver, DiscretizationErrorObjective, GravityChainSolver, AngularTailSolver, GeneralRelaxationSolver
