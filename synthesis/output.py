@@ -21,7 +21,7 @@ def configure(context):
 
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
-    
+
     if context.config("mode_choice", False):
         context.stage("matsim.simulation.prepare")
 
@@ -133,14 +133,18 @@ def execute(context):
         df_mode_choice = pd.read_csv(
             "{}/{}tripModes.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
             delimiter = ";")
-        
-        df_mode_choice = df_mode_choice.rename(columns = {
-            "personId": "person_id", "tripId": "trip_index", "mode" : "mode"})
-        
-        df_trips = pd.merge(df_trips, df_mode_choice, on = [
-            "person_id", "trip_index"], how="left", validate = "one_to_one")
 
-        assert not np.any(df_trips["mode"].isna())                                 
+        df_mode_choice = df_mode_choice.rename(columns = {
+            "personId": "person_id", "person_trip_id": "trip_index", "mode" : "mode"})
+
+        merged_columns = ["person_id", "trip_index"]
+        excluded_columns = [c for c in df_trips.columns  if c not in merged_columns and c!="mode"]
+        df_mode_choice = df_mode_choice[[c for c in df_mode_choice.columns if c not in excluded_columns]]
+
+        df_trips = pd.merge(df_trips, df_mode_choice, on =
+            merged_columns, how="left", validate = "one_to_one")
+
+        assert not np.any(df_trips["mode"].isna())
 
     df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
@@ -220,7 +224,7 @@ def execute(context):
 
     if "mode" in df_spatial:
         df_spatial["mode"] = df_spatial["mode"].astype(str)
-    
+
     path = "%s/%strips.gpkg" % (output_path, output_prefix)
     df_spatial.to_file(path, driver = "GPKG")
     clean_gpkg(path)
