@@ -23,7 +23,7 @@ def configure(context):
     context.stage("data.spatial.municipalities")
 
     context.config("data_path")
-    context.config("urban_type_path", "uu/UU2020_au_01-01-2023.zip")
+    context.config("urban_type_path", "urban_type/UU2020_au_01-01-2023.zip")
 
 def execute(context):
     with zipfile.ZipFile("{}/{}".format(
@@ -33,7 +33,7 @@ def execute(context):
             df = pd.read_excel(f, sheet_name = "Composition_communale", skiprows = 5)
             
     df = df[["CODGEO", "STATUT_2017"]].copy()
-    df = df.set_axis(["commune_id", "type_uu"], axis = "columns")
+    df = df.set_axis(["commune_id", "urban_type"], axis = "columns")
 
     # Cities that have districts are not detailed in the UU file, only the whole city is mentioned
     # However the municipalities file details the districts with their respective INSEE codes
@@ -43,21 +43,27 @@ def execute(context):
 
     # Replacing each line of the UU file corresponding to a city with districts by multiple lines one for each districts
     for city_code in cities_with_districts:
-        uu_type = df[df["commune_id"] == city_code].iloc[0].loc["type_uu"]
-        df.drop(df[df["commune_id"] == city_code].index, inplace=True)
-        new_lines = {"commune_id": [district_id for district_id in cities_with_districts[city_code]],
-                     "type_uu": [uu_type for i in range(len(cities_with_districts[city_code]))]}
-        df = pd.concat([df, pd.DataFrame.from_dict(new_lines)])
+        base_type = df[df["commune_id"] == city_code].iloc[0]["urban_type"]
+        replacement_codes = cities_with_districts[city_code]
+
+        df = pd.concat([df, pd.DataFrame({
+            "commune_id": replacement_codes,
+            "urban_type": [base_type] * len(replacement_codes)
+        })])
+    
+    df = df[~df["commune_id"].isin(cities_with_districts.keys())]
 
     # Clean unités urbaines
-    df["type_uu"] = df["type_uu"].replace({"B":"suburb","C":"central_city","I":"isolated_city","H":"none"})
-    assert np.all(~df["type_uu"].isna())
-    df["type_uu"] = df["type_uu"].astype("category")
+    df["urban_type"] = df["urban_type"].replace({"B":"suburb","C":"central_city","I":"isolated_city","H":"none"})
+    assert np.all(~df["urban_type"].isna())
+    df["urban_type"] = df["urban_type"].astype("category")
 
     df_municipalities = context.stage("data.spatial.municipalities")
     requested_communes = set(df_municipalities["commune_id"].unique())
     df = df[df["commune_id"].isin(requested_communes)]
-    
+
+    assert len(df["commune_id"].unique()) == len(df)
+
     return df
 
 def validate(context):

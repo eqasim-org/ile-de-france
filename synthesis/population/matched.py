@@ -20,7 +20,8 @@ INCOME_CLASS = {
 }
 
 DEFAULT_MATCHING_ATTRIBUTES = [
-    "sex", "any_cars", "age_class", "socioprofessional_class"
+    "sex", "any_cars", "age_class", "socioprofessional_class",
+    "departement_id"
 ]
 
 def configure(context):
@@ -117,6 +118,9 @@ def statistical_matching(progress, df_source, source_identifier, weight, df_targ
 
     progress.update(np.count_nonzero(unassigned_mask))
 
+    if np.count_nonzero(unassigned_mask) > 0:
+        raise RuntimeError("Some target observations could not be matched. Minimum observations configured too high?")
+
     assert np.count_nonzero(unassigned_mask) == 0
     assert np.count_nonzero(assigned_indices == -1) == 0
 
@@ -174,8 +178,7 @@ def execute(context):
     
     try:
         default_index = columns.index("*default*")
-        del columns[default_index]
-        columns.insert(default_index, DEFAULT_MATCHING_ATTRIBUTES)
+        columns[default_index:default_index + 1] = DEFAULT_MATCHING_ATTRIBUTES
     except ValueError: pass
 
     # Define matching attributes
@@ -199,9 +202,12 @@ def execute(context):
     df_source = df_source.rename(columns = { "person_id": "hts_id" })
 
     for column in columns:
-        assert column in df_source
-        assert column in df_target
-     
+        if not column in df_source:
+            raise RuntimeError("Attribute not available in source (HTS) for matching: {}".format(column))
+        
+        if not column in df_target:
+            raise RuntimeError("Attribute not available in target (census) for matching: {}".format(column))
+
     df_assignment, levels = parallel_statistical_matching(
         context,
         df_source, "hts_id", "person_weight",

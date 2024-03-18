@@ -10,6 +10,9 @@ This stage cleans the regional HTS.
 def configure(context):
     context.stage("data.hts.egt.raw")
 
+    if context.config("use_urban_type", False):
+        context.stage("data.spatial.urban_type")
+
 INCOME_CLASS_BOUNDS = [800, 1200, 1600, 2000, 2400, 3000, 3500, 4500, 5500, 1e6]
 
 PURPOSE_MAP = {
@@ -110,6 +113,24 @@ def execute(context):
     df_households["income_class"] = df_households["REVENU"] - 1
     df_households.loc[df_households["income_class"].isin([10.0, 11.0, np.nan]), "income_class"] = -1
     df_households["income_class"] = df_households["income_class"].astype(int)
+
+    # Impute urban type
+    if context.config("use_urban_type"):
+        df_urban_type = context.stage("data.spatial.urban_type")[[
+            "commune_id", "urban_type"
+        ]]
+
+        # Household municipality
+        df_households["commune_id"] = df_households["RESCOMM"].astype("category")
+        df_persons = pd.merge(df_persons, df_households[["household_id", "commune_id"]], how = "left")
+        assert np.all(~df_persons["commune_id"].isna())
+        
+        # Impute urban type
+        df_persons = pd.merge(df_persons, df_urban_type, on = "commune_id", how = "left")
+        df_persons["urban_type"] = df_persons["urban_type"].fillna("none").astype("category")
+
+        df_households.drop(columns = ["commune_id"])
+        df_persons.drop(columns = ["commune_id"])
 
     # Trip purpose
     df_trips["following_purpose"] = "other"
