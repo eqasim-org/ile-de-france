@@ -301,7 +301,7 @@ def create(output_path):
                 "De 1 000", "De 1 200", "De 1 500", "De 1800",
                 "De 2 000", "De 2 500", "De 3 000", "De 4 000",
                 "De 6 000", "10 000"
-            ])
+            ]), numcom_UU2010 = random.choice(["B", "C", "I", "R"])
         ))
 
         for person_index in range(HTS_HOUSEHOLD_MEMBERS):
