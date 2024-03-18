@@ -2,6 +2,10 @@
 
 **Under development**
 
+- feat: functionality to make use of INSEE population projection data
+- update: don't remove households with people not living/studying in Île-de-France anymore to be more consistent with other use cases
+- fix bug where always one household_id existed twice
+- Fix read order when exploring files using `glob`
 - Modes are only written now to `trips.csv` if `mode_choice` is activated
 - Update to `eqasim-java` commit `7cbe85b`
 - Adding optional `eqasim-java`-based mode choice step using the `mode_choice` configuration option

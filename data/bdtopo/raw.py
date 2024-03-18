@@ -105,7 +105,7 @@ def execute(context):
     return df_bdtopo[["building_id", "housing", "geometry"]]
 
 def find_bdtopo(path):
-    candidates = list(glob.glob("{}/*.7z".format(path)))
+    candidates = sorted(list(glob.glob("{}/*.7z".format(path))))
 
     if len(candidates) == 0:
         raise RuntimeError("BD TOPO data is not available in {}".format(path))

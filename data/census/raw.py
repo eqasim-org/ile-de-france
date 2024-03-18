@@ -13,6 +13,8 @@ def configure(context):
     context.config("census_path", "rp_2019/RP2019_INDCVI_csv.zip")
     context.config("census_csv", "FD_INDCVI_2019.csv")
 
+    context.config("projection_year", None)
+
 COLUMNS_DTYPES = {
     "CANTVILLE":"str", 
     "NUMMI":"str", 
@@ -20,9 +22,7 @@ COLUMNS_DTYPES = {
     "COUPLE":"str", 
     "CS1":"str",
     "DEPT":"str", 
-    "ETUD":"str", 
-    "ILETUD":"str",
-    "ILT":"str", 
+    "ETUD":"str",
     "IPONDI":"str", 
     "IRIS":"str",
     "REGION":"str", 
@@ -39,6 +39,9 @@ def execute(context):
 
     requested_departements = df_codes["departement_id"].unique()
 
+    # only pre-filter if we don't need to reweight the census later
+    prefilter_departments = context.config("projection_year") is None
+
     with context.progress(label = "Reading census ...") as progress:
         with zipfile.ZipFile(
             "{}/{}".format(context.config("data_path"), context.config("census_path"))) as archive:
@@ -50,8 +53,9 @@ def execute(context):
     
                 for df_chunk in csv:
                     progress.update(len(df_chunk))
-
-                    df_chunk = df_chunk[df_chunk["DEPT"].isin(requested_departements)]
+                    
+                    if prefilter_departments:
+                        df_chunk = df_chunk[df_chunk["DEPT"].isin(requested_departements)]
 
                     if len(df_chunk) > 0:
                         df_records.append(df_chunk)
