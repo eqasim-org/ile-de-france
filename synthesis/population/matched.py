@@ -179,7 +179,7 @@ def execute(context):
     df_target["any_cars"] = df_target["number_of_vehicles"] > 0
     df_source["any_cars"] = df_source["number_of_vehicles"] > 0
 
-    columns = ["urban_type","sex", "any_cars", "age_class", "socioprofessional_class"]
+    columns = ["urban_type", "sex", "any_cars", "age_class", "socioprofessional_class"]
     if "income_class" in df_source: columns += ["income_class"]
 
     # Perform statistical matching
