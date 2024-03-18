@@ -19,10 +19,15 @@ INCOME_CLASS = {
     "entd": data.hts.entd.cleaned.calculate_income_class,
 }
 
+DEFAULT_MATCHING_ATTRIBUTES = [
+    "urban_type", "sex", "any_cars", "age_class", "socioprofessional_class"
+]
+
 def configure(context):
     context.config("processes")
     context.config("random_seed")
     context.config("matching_minimum_observations", 20)
+    context.config("matching_attributes", DEFAULT_MATCHING_ATTRIBUTES)
 
     context.stage("synthesis.population.sampled")
     context.stage("synthesis.population.income")
@@ -165,22 +170,24 @@ def execute(context):
 
     df_target = context.stage("synthesis.population.sampled")
 
+    columns = context.config("matching_attributes")
+
     # Define matching attributes
     AGE_BOUNDARIES = [14, 29, 44, 59, 74, 1000]
-    df_target["age_class"] = np.digitize(df_target["age"], AGE_BOUNDARIES, right = True)
-    df_source["age_class"] = np.digitize(df_source["age"], AGE_BOUNDARIES, right = True)
+    
+    if "age_class" in columns:
+        df_target["age_class"] = np.digitize(df_target["age"], AGE_BOUNDARIES, right = True)
+        df_source["age_class"] = np.digitize(df_source["age"], AGE_BOUNDARIES, right = True)
 
-    if "income_class" in df_source:
+    if "income_class" in columns:
         df_income = context.stage("synthesis.population.income")[["household_id", "household_income"]]
 
         df_target = pd.merge(df_target, df_income)
         df_target["income_class"] = INCOME_CLASS[hts](df_target)
 
-    df_target["any_cars"] = df_target["number_of_vehicles"] > 0
-    df_source["any_cars"] = df_source["number_of_vehicles"] > 0
-
-    columns = ["urban_type", "sex", "any_cars", "age_class", "socioprofessional_class"]
-    if "income_class" in df_source: columns += ["income_class"]
+    if "any_cars" in columns:
+        df_target["any_cars"] = df_target["number_of_vehicles"] > 0
+        df_source["any_cars"] = df_source["number_of_vehicles"] > 0
 
     # Perform statistical matching
     df_source = df_source.rename(columns = { "person_id": "hts_id" })
