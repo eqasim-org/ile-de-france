@@ -33,7 +33,7 @@ def execute(context):
     df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
 
     # Finish up
-    df_households = df_households[hts.HOUSEHOLD_COLUMNS + ["income_class"]]
+    df_households = df_households[hts.HOUSEHOLD_COLUMNS + ["urban_type", "income_class"]]
     df_persons = df_persons[hts.PERSON_COLUMNS]
     df_trips = df_trips[hts.TRIP_COLUMNS + ["routed_distance"]]
 

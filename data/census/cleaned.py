@@ -12,11 +12,12 @@ This stage cleans the French population census:
 def configure(context):
     context.stage("data.census.raw")
     context.stage("data.spatial.codes")
-    context.stage("data.spatial.urban_type")
+
+    if context.config("use_urban_type", False):
+        context.stage("data.spatial.urban_type")
 
 def execute(context):
     df = context.stage("data.census.raw")
-    df_urban_type = context.stage("data.spatial.urban_type")
 
     # Construct household IDs for persons with NUMMI != Z
     df_household_ids = df[["CANTVILLE", "NUMMI"]]
@@ -98,11 +99,15 @@ def execute(context):
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
-    # Impute urban type
-    df = pd.merge(df, df_urban_type, on = "commune_id", how = "left")
-    df.loc[df["commune_id"] == "undefined", "urban_type"] = "none"
-    df["commune_id"] = df["commune_id"].astype("category")
-    assert ~np.any(df["urban_type"].isna()) 
+
+    if context.config("use_urban_type", False):
+        df_urban_type = context.stage("data.spatial.urban_type")
+        
+        # Impute urban type
+        df = pd.merge(df, df_urban_type, on = "commune_id", how = "left")
+        df.loc[df["commune_id"] == "undefined", "urban_type"] = "none"
+        df["commune_id"] = df["commune_id"].astype("category")
+        assert ~np.any(df["urban_type"].isna()) 
 
     return df[[
         "person_id", "household_id", "weight",

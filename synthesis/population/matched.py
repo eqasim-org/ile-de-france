@@ -171,6 +171,12 @@ def execute(context):
     df_target = context.stage("synthesis.population.sampled")
 
     columns = context.config("matching_attributes")
+    
+    try:
+        default_index = columns.index("*default*")
+        del columns[default_index]
+        columns.insert(default_index, DEFAULT_MATCHING_ATTRIBUTES)
+    except ValueError: pass
 
     # Define matching attributes
     AGE_BOUNDARIES = [14, 29, 44, 59, 74, 1000]
