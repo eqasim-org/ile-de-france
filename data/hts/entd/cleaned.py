@@ -115,6 +115,17 @@ def execute(context):
     df_trips["origin_departement_id"] = df_trips["V2_MORIDEP"].fillna("undefined").astype("category")
     df_trips["destination_departement_id"] = df_trips["V2_MDESDEP"].fillna("undefined").astype("category")
 
+    # Clean urban type
+    df_households["urban_type"] = df_households["numcom_UU2010"].replace({
+        "B": "suburb",
+        "C": "central_city",
+        "I": "isolated_city",
+        "R": "none"
+    })
+
+    assert np.all(~df_households["urban_type"].isna())
+    df_households["urban_type"] = df_households["urban_type"].astype("category")
+
     # Clean employment
     df_persons["employed"] = df_persons["SITUA"].isin([1, 2])
 
