@@ -20,7 +20,7 @@ INCOME_CLASS = {
 }
 
 DEFAULT_MATCHING_ATTRIBUTES = [
-    "urban_type", "sex", "any_cars", "age_class", "socioprofessional_class"
+    "sex", "any_cars", "age_class", "socioprofessional_class"
 ]
 
 def configure(context):

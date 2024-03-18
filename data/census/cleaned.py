@@ -99,9 +99,19 @@ def execute(context):
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
+    df = df[[
+        "person_id", "household_id", "weight",
+        "iris_id", "commune_id", "departement_id",
+        "age", "sex", "couple",
+        "commute_mode", "employed",
+        "studies", "number_of_vehicles", "household_size",
+        "consumption_units", "socioprofessional_class"
+    ]]
 
-    if context.config("use_urban_type", False):
-        df_urban_type = context.stage("data.spatial.urban_type")
+    if context.config("use_urban_type"):
+        df_urban_type = context.stage("data.spatial.urban_type")[[
+            "commune_id", "urban_type"
+        ]]
         
         # Impute urban type
         df = pd.merge(df, df_urban_type, on = "commune_id", how = "left")
@@ -109,11 +119,4 @@ def execute(context):
         df["commune_id"] = df["commune_id"].astype("category")
         assert ~np.any(df["urban_type"].isna()) 
 
-    return df[[
-        "person_id", "household_id", "weight",
-        "iris_id", "commune_id", "departement_id",
-        "age", "sex", "couple",
-        "commute_mode", "employed",
-        "studies", "number_of_vehicles", "household_size",
-        "consumption_units", "socioprofessional_class", "urban_type"
-    ]]
+    return df
