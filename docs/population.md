@@ -313,3 +313,25 @@ config:
   # [...]
   projection_scenario: 00_central
 ```
+
+### Urban type
+
+The pipeline allows to work with INSEE's urban type classification (unité urbaine) that distinguishes municipalities in *center cities*, *suburbs*, *isolated cities*, and unclassified ones. To impute the data (currently only for some HTS), activate it via the configuration:
+
+```yaml
+config:
+  # [...]
+  use_urban_type: true
+```
+
+In order to make use of it for activity chain matching, you can set a custom list of matching attributes like so:
+
+```yaml
+config:
+  # [...]
+  matching_attributes: ["urban_type", "*default*"]
+```
+
+The `*default*` trigger will be replaced by the default list of matching attributes.
+
+Note that not all HTS implement the urban type, so matching may not work with some implementations. Most of them, however, contain the data, we just need to update the code to read them in.
