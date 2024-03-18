@@ -162,7 +162,7 @@ def execute(context):
     # Load data
     df_source_households, df_source_persons, df_source_trips = context.stage("hts")
     df_source = pd.merge(df_source_persons, df_source_households)
-   
+
     df_target = context.stage("synthesis.population.sampled")
 
     # Define matching attributes
@@ -179,9 +179,8 @@ def execute(context):
     df_target["any_cars"] = df_target["number_of_vehicles"] > 0
     df_source["any_cars"] = df_source["number_of_vehicles"] > 0
 
-    columns = ["type_uu","sex", "any_cars", "age_class", "socioprofessional_class"]
+    columns = ["urban_type","sex", "any_cars", "age_class", "socioprofessional_class"]
     if "income_class" in df_source: columns += ["income_class"]
-
 
     # Perform statistical matching
     df_source = df_source.rename(columns = { "person_id": "hts_id" })
@@ -190,14 +189,12 @@ def execute(context):
         assert column in df_source
         assert column in df_target
      
-
     df_assignment, levels = parallel_statistical_matching(
         context,
         df_source, "hts_id", "person_weight",
         df_target, "person_id",
         columns,
         minimum_observations = context.config("matching_minimum_observations"))
-
 
     df_target = pd.merge(df_target, df_assignment, on = "person_id")
     assert len(df_target) == len(df_assignment)

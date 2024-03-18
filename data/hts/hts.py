@@ -181,7 +181,7 @@ def check_activity_types(df_trips):
     error_count = np.count_nonzero(f)
     print("Trips with inconsistent activity types: %d" % error_count)
 
-    return error_count == 1
+    return error_count == 0
 
 def compute_first_last(df_trips):
     assert "person_id" in df_trips
@@ -222,7 +222,7 @@ def calculate_consumption_units(df_persons):
 HOUSEHOLD_COLUMNS = [
     "household_id", "household_weight", "household_size",
     "number_of_vehicles", "number_of_bikes", "departement_id",
-    "consumption_units", "type_uu" # "income_class"
+    "consumption_units", "urban_type" # "income_class"
 ]
 
 PERSON_COLUMNS = [

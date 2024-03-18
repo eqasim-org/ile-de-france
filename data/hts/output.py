@@ -11,7 +11,6 @@ pipeline.
 
 def configure(context):
     context.stage("data.hts.selected")
-    context.stage("data.hts.entd.reweighted")
 
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")

@@ -12,11 +12,11 @@ This stage cleans the French population census:
 def configure(context):
     context.stage("data.census.raw")
     context.stage("data.spatial.codes")
-    context.stage("data.spatial.uu")
+    context.stage("data.spatial.urban_type")
 
 def execute(context):
     df = context.stage("data.census.raw")
-    uu = context.stage("data.spatial.uu")
+    df_urban_type = context.stage("data.spatial.urban_type")
 
     # Construct household IDs for persons with NUMMI != Z
     df_household_ids = df[["CANTVILLE", "NUMMI"]]
@@ -98,11 +98,11 @@ def execute(context):
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
-    # UU match
-    df = pd.merge(df,uu,on="commune_id",how="left")
-    df.loc[df["commune_id"] == "undefined","type_uu"] = "rural"
+    # Impute urban type
+    df = pd.merge(df, df_urban_type, on = "commune_id", how = "left")
+    df.loc[df["commune_id"] == "undefined", "urban_type"] = "none"
     df["commune_id"] = df["commune_id"].astype("category")
-    assert ~np.any(df["type_uu"].isna()) 
+    assert ~np.any(df["urban_type"].isna()) 
 
     return df[[
         "person_id", "household_id", "weight",
@@ -110,5 +110,5 @@ def execute(context):
         "age", "sex", "couple",
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
-        "consumption_units", "socioprofessional_class","type_uu"
+        "consumption_units", "socioprofessional_class", "urban_type"
     ]]
