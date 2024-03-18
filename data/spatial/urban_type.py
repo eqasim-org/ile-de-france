@@ -3,6 +3,20 @@ import os
 import zipfile
 import numpy as np
 
+# START Money patching openpyxl to parse INSEE file
+from openpyxl.styles.colors import WHITE, RGB
+__old_rgb_set__ = RGB.__set__
+
+def __rgb_set_fixed__(self, instance, value):
+    try:
+        __old_rgb_set__(self, instance, value)
+    except ValueError as e:
+        if e.args[0] == 'Colors must be aRGB hex values':
+            __old_rgb_set__(self, instance, WHITE)
+
+RGB.__set__ = __rgb_set_fixed__
+# END Monkey patching openpyxl
+
 # Loads the input data for the urban type (unité urbain)
 
 def configure(context):
@@ -10,12 +24,12 @@ def configure(context):
 
     context.config("data_path")
     context.config("urban_type_path", "uu/UU2020_au_01-01-2023.zip")
-    context.config("urban_type_file", "UU2020_au_01-01-2023.xlsx")
 
 def execute(context):
     with zipfile.ZipFile("{}/{}".format(
         context.config("data_path"), context.config("urban_type_path"))) as archive:
-        with archive.open(context.config("urban_type_file")) as f:
+        assert len(archive.filelist) == 1
+        with archive.open(archive.filelist[0]) as f:
             df = pd.read_excel(f, sheet_name = "Composition_communale", skiprows = 5)
             
     df = df[["CODGEO", "STATUT_2017"]].copy()
@@ -45,3 +59,9 @@ def execute(context):
     df = df[df["commune_id"].isin(requested_communes)]
     
     return df
+
+def validate(context):
+    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("urban_type_path"))):
+        raise RuntimeError("Urban type data is not available")
+
+    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("urban_type_path")))
