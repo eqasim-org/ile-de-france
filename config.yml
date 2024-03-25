@@ -1,4 +1,4 @@
-## Synthetic population pipeline for Nantes
+## Synthetic population pipeline for Île-de-France
 ## based on the synpp package
 
 # This is the path to a directory where the pipeline can store temporary data
@@ -6,9 +6,8 @@ working_directory: cache
 
 # This section defines which parts of the pipeline should be run
 run:
-  # - synthesis.output # To create the output population in the output_path (see below)
+  - synthesis.output # To create the output population in the output_path (see below)
   #- matsim.output # Uncomment, if you want to run the full simulation (you'll need Java for that)
-  - synthesis.population.income.compare_methods
 
 # Here the configuraiton of the pipeline starts
 config:
@@ -16,23 +15,23 @@ config:
   processes: 4
 
   # Define whether to use ENTD or EGT as the household travel survey (HTS)
-  hts: edgt_44
-
-  income_assignation_method: "bhepop2"
+  hts: entd
 
   # Define sampling rate and random seed for the output population
-  sampling_rate: 1
+  sampling_rate: 0.001
   random_seed: 1234
 
   # Paths to the input data and where the output should be stored
-  data_path: /home/leo/Documents/Tellae/eqasim_data
+  data_path: /path/to/my/data
   output_path: output
-  output_prefix: nantes_
 
   # Only interesting if you run the simulation
   java_memory: 14G
 
-  # Nantes settings
-  census_path: rp_2019/FD_INDCVIZC_2019.csv
-  regions: []
-  departments: [44]
+  # Activate if you want to run mode choice
+  mode_choice: false
+
+  # Uncommented below to enable vehicle fleet generation
+  # generate_vehicles_file: True
+  # generate_vehicles_method: fleet_sample
+  # vehicles_data_year: 2015
