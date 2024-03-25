@@ -88,9 +88,7 @@ def _read_filosofi_excel(context, sheet_name="ENSEMBLE"):
         with archive.open(context.config("income_com_xlsx")) as f:
             df = pd.read_excel(f,
                 sheet_name = sheet_name, skiprows = 5
-            )[["CODGEO"] + [("D%d" % q) + year if q != 5 else "Q2" + year for q in range(1, 10)]]
-            df.columns = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
-            df["reference_median"] = df["q5"].values
+            )
 
     return df
 
