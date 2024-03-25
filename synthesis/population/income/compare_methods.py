@@ -29,7 +29,7 @@ def configure(context):
     context.config("output_path")
     context.stage("data.income.municipality_attributes")
     context.stage("synthesis.population.income.uniform", alias="uniform")
-    context.stage("synthesis.population.income.bhepop2", alias="bhepop2")
+    context.stage("synthesis.population.income.bhepop2_income", alias="bhepop2")
     context.stage("synthesis.population.sampled")
 
 

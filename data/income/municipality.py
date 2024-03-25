@@ -81,6 +81,19 @@ def _income_distributions_from_filosofi_ensemble_sheet(ensemble_sheet, year, df_
     return df[["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "is_imputed", "is_missing", "reference_median"]]
 
 
+def _read_filosofi_excel(context, sheet_name="ENSEMBLE"):
+    year = str(context.config("income_year"))
+    with zipfile.ZipFile("{}/{}".format(
+        context.config("data_path"), context.config("income_com_path"))) as archive:
+        with archive.open(context.config("income_com_xlsx")) as f:
+            df = pd.read_excel(f,
+                sheet_name = sheet_name, skiprows = 5
+            )[["CODGEO"] + [("D%d" % q) + year if q != 5 else "Q2" + year for q in range(1, 10)]]
+            df.columns = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
+            df["reference_median"] = df["q5"].values
+
+    return df
+
 
 def execute(context):
     # Verify spatial data for education
@@ -88,12 +101,10 @@ def execute(context):
 
     # Load income distribution
     year = str(context.config("income_year"))
-    df = pd.read_excel(
-        "%s/%s" % (context.config("data_path"), context.config("income_com_path")),
-        sheet_name = "ENSEMBLE", skiprows = 5
-    )
 
-    return _income_distributions_from_filosofi_ensemble_sheet(df, year, df_municipalities)
+    filosofi_excel = _read_filosofi_excel(context)
+
+    return _income_distributions_from_filosofi_ensemble_sheet(filosofi_excel, year, df_municipalities)
 
 
 def validate(context):

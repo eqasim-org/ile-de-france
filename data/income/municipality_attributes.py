@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import KDTree
 import os
-from data.income.municipality import _income_distributions_from_filosofi_ensemble_sheet
-from bhepop2.tools import read_filosofi_excel, read_filosofi_attributes, filosofi_attributes
+from data.income.municipality import _read_filosofi_excel, _income_distributions_from_filosofi_ensemble_sheet
+from bhepop2.tools import read_filosofi_attributes, filosofi_attributes
 
 """
 Loads and prepares income distributions by municipality and by household attributes (size, type):
@@ -11,11 +11,12 @@ Loads and prepares income distributions by municipality and by household attribu
 - For attribute distributions, read the adequate Filosofi sheet and get the percentiles
 """
 
+
 def configure(context):
     context.config("data_path")
     context.stage("data.spatial.municipalities")
-    context.config("income_com_path", "filosofi_2019/FILO2019_DISP_COM.xlsx")
     context.config("income_year", 19)
+
 
 def execute(context):
     # get income year used
@@ -37,17 +38,9 @@ def execute(context):
     sheet_list = ["ENSEMBLE"]
     for attribute in attributes:
         sheet_list = sheet_list + [x["sheet"] for x in attribute["modalities"]]
-    excel = read_filosofi_excel("%s/%s" % (context.config("data_path"), context.config("income_com_path")), sheet_list)
 
-    # with zipfile.ZipFile("{}/{}".format(
-    #     context.config("data_path"), context.config("income_com_path"))) as archive:
-    #     with archive.open(context.config("income_com_xlsx")) as f:
-    #         df = pd.read_excel(f,
-    #             sheet_name = "ENSEMBLE", skiprows = 5
-    #         )[["CODGEO"] + [("D%d" % q) + year if q != 5 else "Q2" + year for q in range(1, 10)]]
-    #         df.columns = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
-    #         df["reference_median"] = df["q5"].values
-
+    # read Filosofi sheets
+    excel = _read_filosofi_excel(context, sheet_name=sheet_list)
 
     # read global income distributions with eqasim function (infer missing distributions, etc)
     df = _income_distributions_from_filosofi_ensemble_sheet(excel["ENSEMBLE"], year, df_municipalities)
