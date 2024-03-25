@@ -33,20 +33,12 @@ def _sample_income(context, args):
     df_selected = df_households[f]
     distribs = df_income[df_income["commune_id"] == commune_id]
 
-    #
-    attribute_selection = ["size", "family_comp"]
-    parameters = {
-        "abs_minimum": 0,
-        "relative_maximum": MAXIMUM_INCOME_FACTOR,
-        "delta_min": 1000,
-    }
-
     enrich_class = None
     try:
         source = QuantitativeMarginalDistributions(
             distribs,
             "Filosofi",
-            attribute_selection=attribute_selection,
+            attribute_selection=["size", "family_comp"],
             abs_minimum=0,
             relative_maximum=MAXIMUM_INCOME_FACTOR,
             delta_min=1000
