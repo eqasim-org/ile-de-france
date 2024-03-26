@@ -41,7 +41,7 @@ def execute(context):
     df_population = add_household_type_attribute(df_population)
 
     # get most populated commune
-    commune_id = df_population.groupby(["commune_id"])["commune_id"].count().drop("undefined").idxmax()
+    commune_id = df_population.groupby(["commune_id"], observed=True)["commune_id"].count().drop("undefined").idxmax()
 
     # get income distributions by attributes
     income_df = context.stage("data.income.municipality_attributes").query(f"commune_id == '{commune_id}'")
