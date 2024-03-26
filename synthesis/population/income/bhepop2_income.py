@@ -55,6 +55,7 @@ def _sample_income(context, args):
             print("Enriched synpop on commune ", commune_id)
             # convert to monthly income
             pop[INCOME_COLUMN] = pop[INCOME_COLUMN] / 12
+            pop[INCOME_COLUMN] = pop[INCOME_COLUMN].astype(int)
             incomes = pop[INCOME_COLUMN].values
             return f, incomes, "bhepop2"
         except Exception:
