@@ -12,12 +12,14 @@ def configure(context):
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
     df_households, df_persons, df_trips = context.stage("data.hts.emc2.cleaned")
-
+    print(len(df_persons))
     # Filter for non-residents
     requested_departments = df_codes["departement_id"].unique()
+
     f = df_persons["departement_id"].astype(str).isin(requested_departments)
     df_persons = df_persons[f]
 
+    print(df_trips["origin_departement_id"].unique())
     # Filter for people going outside of the area
     remove_ids = set()
 
@@ -27,11 +29,13 @@ def execute(context):
 
     df_persons = df_persons[~df_persons["person_id"].isin(remove_ids)]
 
+    print(len(df_persons))
 
 
     # Only keep trips and households that still have a person
     df_trips = df_trips[df_trips["person_id"].isin(df_persons["person_id"].unique())]
     df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
+    print(len(df_persons))
 
     # Finish up
     df_households = df_households[hts.HOUSEHOLD_COLUMNS]

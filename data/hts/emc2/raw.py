@@ -41,8 +41,8 @@ PERSON_COLUMNS = {
 
 TRIP_COLUMNS = {
     "ECH": str, "PER": int, "NDEP": int, "DP2": str,
-    "D2A": int, "D5A": int, "D3": str, "D4": str,
-    "D7": str, "D8": str,
+    "D2A": int, "D5A": int, "D3": int, "D4": str,
+    "D7": int, "D8": str,
     "D8C": int, "MODP": int, "DOIB": int, "DIST": int
 }
 # Loire Atlantique EDGT => EMC2 Gironde

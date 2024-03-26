@@ -29,23 +29,27 @@ MODES_MAP = {
 }
 # remaping complet (logique)
 
-DEP = "33"
 
 def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.emc2.raw")
 
+    # unique constant length ID = PP2*100000000+ECH*1000+PER*100+NDEP
+
     # Merge departement into households
-    df_households["departement_id"] = DEP
+    df_households["departement_id"] = "33"
     # Transform original IDs to integer (they are hierarchichal)
 
-    df_households["edgt_household_id"] = (df_households["ECH"].astype(int) + df_households["MP2"].astype("int64")*100)
-    df_persons["edgt_person_id"] = df_persons["PER"].astype(int)
+    df_households["edgt_household_id"] = df_households["MP2"].astype("int64")*100000000 + df_households["ECH"].astype(int)*1000
 
-    df_persons["edgt_household_id"] = (df_persons["ECH"].astype(int) + df_persons["PP2"].astype("int64")*100)
-    df_trips["edgt_person_id"] = df_trips["PER"].astype(int)
 
-    df_trips["edgt_household_id"] = (df_trips["ECH"].astype(int) + df_trips["DP2"].astype("int64")*100)
-    df_trips["edgt_trip_id"] = df_trips["NDEP"].astype(int)
+    df_persons["edgt_household_id"] =  df_persons["PP2"].astype("int64")*100000000 + df_persons["ECH"].astype(int)*1000
+    df_persons["edgt_person_id"] = df_persons["PP2"].astype("int64")*100000000 + df_persons["ECH"].astype(int)*1000 + df_persons["PER"].astype(int)*100
+
+
+    df_trips["edgt_household_id"] = df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000
+    df_trips["edgt_person_id"] =  df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000 + df_trips["PER"].astype(int)*100
+    df_trips["edgt_trip_id"] = df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000 + df_trips["PER"].astype(int)*100 + df_trips["NDEP"].astype(int)
+
 
     # Construct new IDs for households, persons and trips (which are unique globally)
     df_households["household_id"] = np.arange(len(df_households))
@@ -82,8 +86,12 @@ def execute(context):
     df_households = pd.merge(df_households, df_size, on = "household_id")
 
     # Clean departement
-    df_trips["origin_departement_id"] = DEP
-    df_trips["destination_departement_id"] = DEP
+    df_trips.loc[df_trips["D3"] <900000000,"origin_departement_id"] = "33" #
+    df_trips.loc[df_trips["D3"] >=900000000,"origin_departement_id"] = "99" #
+
+    df_trips.loc[df_trips["D7"] <900000000,"destination_departement_id"] = "33" #
+    df_trips.loc[df_trips["D7"] >900000000,"destination_departement_id"] = "99" #
+
 
     df_households["departement_id"] = df_households["departement_id"].astype("category")
     df_persons["departement_id"] = df_persons["departement_id"].astype("category")
@@ -165,6 +173,13 @@ def execute(context):
     ).rename(columns = { "COEQ": "trip_weight" })
     df_persons["trip_weight"] = df_persons["COEQ"]
 
+    # # Add weight to trips
+    # df_trips = pd.merge(
+    #     df_trips, df_persons[["person_id", "COEP"]], on = "person_id", how = "left"
+    # ).rename(columns = { "COEP": "trip_weight" })
+    # df_persons["trip_weight"] = df_persons["COEP"]
+
+
     # Chain length
     df_count = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "number_of_trips")
     # People with at least one trip (number_of_trips > 0)
@@ -194,5 +209,8 @@ def execute(context):
 
     # Fix activity types (because of inconsistent EGT data and removing in the timing fixing step)
     hts.fix_activity_types(df_trips)
+
+
+
 
     return df_households, df_persons, df_trips
