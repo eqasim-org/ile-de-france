@@ -10,18 +10,6 @@ Compare income assignation methods available in Eqasim.
 Comparison is realised on the synthetic population of the most populated commune.
 """
 
-MODALITIES = {
-    "size": ["1_pers", "2_pers", "3_pers", "4_pers", "5_pers_or_more"],
-    "family_comp": [
-        "Single_man",
-        "Single_wom",
-        "Couple_without_child",
-        "Couple_with_child",
-        "Single_parent",
-        "complex_hh",
-    ],
-}
-
 COMPARE_INCOME_FOLDER = "compare_income_methods"
 
 

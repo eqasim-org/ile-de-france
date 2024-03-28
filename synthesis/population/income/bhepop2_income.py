@@ -39,7 +39,10 @@ def _sample_income(context, args):
         source = QuantitativeMarginalDistributions(
             distribs,
             "Filosofi",
-            attribute_selection=["size", "family_comp"],
+            attribute_selection=[
+                "size",  # modalities: ["1_pers", "2_pers", "3_pers", "4_pers", "5_pers_or_more"]
+                "family_comp"  # modalities: ["Single_man", "Single_wom", "Couple_without_child", "Couple_with_child", "Single_parent", "complex_hh"]
+            ],
             abs_minimum=0,
             relative_maximum=MAXIMUM_INCOME_FACTOR,
             delta_min=1000
