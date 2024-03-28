@@ -4,6 +4,7 @@ from synthesis.population.income.uniform import _income_uniform_sample, MAXIMUM_
 from bhepop2.tools import add_household_size_attribute, add_household_type_attribute
 from bhepop2.sources.marginal_distributions import QuantitativeMarginalDistributions
 from bhepop2.enrichment.bhepop2 import Bhepop2Enrichment
+from bhepop2.utils import PopulationValidationError, SourceValidationError
 
 """
 This stage assigns a household income to each household of the synthesized
@@ -30,11 +31,11 @@ def _sample_income(context, args):
 
     # selection of commune population and distributions
     f = df_households["commune_id"] == commune_id
-    df_selected = df_households[f]
+    df_selected = df_households[f].reset_index(drop=True)
     distribs = df_income[df_income["commune_id"] == commune_id]
 
-    enrich_class = None
     try:
+        # create source class from marginal distributions
         source = QuantitativeMarginalDistributions(
             distribs,
             "Filosofi",
@@ -44,33 +45,33 @@ def _sample_income(context, args):
             delta_min=1000
         )
 
+        # create enrichment class
         enrich_class = Bhepop2Enrichment(df_selected, source, feature_name=INCOME_COLUMN, seed=random_seed)
 
-    except AssertionError:
-        pass
+        # evaluate feature values on the population
+        pop = enrich_class.assign_feature_values()
 
-    if enrich_class is not None:
-        try:
-            pop = enrich_class.assign_feature_values()
-            print("Enriched synpop on commune ", commune_id)
-            # convert to monthly income
-            pop[INCOME_COLUMN] = pop[INCOME_COLUMN] / 12
-            pop[INCOME_COLUMN] = pop[INCOME_COLUMN].astype(int)
-            incomes = pop[INCOME_COLUMN].values
-            return f, incomes, "bhepop2"
-        except Exception:
-            print("Synpop enrichment on commune {} failed".format(commune_id))
+        # convert to monthly income
+        pop[INCOME_COLUMN] = pop[INCOME_COLUMN] / 12
+        pop[INCOME_COLUMN] = pop[INCOME_COLUMN].astype(int)
+        incomes = pop[INCOME_COLUMN].values
 
-    print("evaluate incomes on commune {} with original method".format(commune_id))
+        # print(f"Successfully enriched population on commune {commune_id} using bhepop2")
 
-    # get global distribution of the commune
-    distrib_all = distribs[distribs["modality"] == "all"]
-    assert len(distrib_all) == 1
-    centiles = list(distrib_all[["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"]].iloc[0].values / 12)
+        return f, incomes, "bhepop2"
 
-    incomes = _income_uniform_sample(random, centiles, len(df_selected))
+    # if those exceptions are raised, it is likely that some distributions were missing
+    except (PopulationValidationError, SourceValidationError) as e:
+        # print(f"Bhepop2 enrichment init on commune {commune_id} failed: {e}. Evaluate with original method."
 
-    return f, incomes, "eqasim"
+        # get global distribution of the commune
+        distrib_all = distribs[distribs["modality"] == "all"]
+        assert len(distrib_all) == 1
+        centiles = list(distrib_all[["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"]].iloc[0].values / 12)
+
+        incomes = _income_uniform_sample(random, centiles, len(df_selected))
+
+        return f, incomes, "eqasim"
 
 
 def execute(context):
