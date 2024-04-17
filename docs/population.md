@@ -104,7 +104,7 @@ The IRIS zoning system is available from IGN:
 We make use of a zoning registry by INSEE that establishes a connection between
 the identifiers of IRIS, municipalities, departments and regions:
 
-- [Zoning data](https://www.insee.fr/fr/information/2017499)
+- [Zoning data](https://www.insee.fr/fr/information/7708995)
 - Download the **2021** edition as a *zip* file.
 - Copy the *zip* file into `data/codes_2021`.
 
