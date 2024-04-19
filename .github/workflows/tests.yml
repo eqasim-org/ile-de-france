@@ -70,3 +70,9 @@ jobs:
       shell: bash -el {0}
       run: |
         MKL_CBWR=AUTO pytest tests/
+    - name: Verify availability of open data
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash -el {0}
+      run: |
+        python scripts/verify_data.py
+
