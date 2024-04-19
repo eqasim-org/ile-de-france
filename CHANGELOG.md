@@ -2,6 +2,7 @@
 
 **Under development**
 
+- feat: check availability of open data sources for every PR
 - feat: make statistical matching attribute list configurable
 - feat: add urban type classifiation (unité urbaine)
 - feat: functionality to make use of INSEE population projection data
