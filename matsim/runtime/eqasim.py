@@ -40,7 +40,7 @@ def execute(context):
         branch = context.config("eqasim_branch")
 
         git.run(context, [
-            "clone", "--depth", "1", "-b", branch,
+            "clone", "--single-branch", "-b", branch,
             context.config("eqasim_repository"), "eqasim-java"
         ])
 
