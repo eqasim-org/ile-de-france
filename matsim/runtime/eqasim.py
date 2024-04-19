@@ -6,6 +6,7 @@ import matsim.runtime.java as java
 import matsim.runtime.maven as maven
 
 DEFAULT_EQASIM_VERSION = "1.3.1"
+DEFAULT_EQASIM_BRANCH = "develop"
 DEFAULT_EQASIM_COMMIT = "7cbe85b"
 
 def configure(context):
@@ -14,8 +15,8 @@ def configure(context):
     context.stage("matsim.runtime.maven")
 
     context.config("eqasim_version", DEFAULT_EQASIM_VERSION)
+    context.config("eqasim_branch", DEFAULT_EQASIM_BRANCH)
     context.config("eqasim_commit", DEFAULT_EQASIM_COMMIT)
-    context.config("eqasim_tag", None)
     context.config("eqasim_repository", "https://github.com/eqasim-org/eqasim-java.git")
     context.config("eqasim_path", "")
 
@@ -36,19 +37,18 @@ def execute(context):
     # Normal case: we clone eqasim
     if context.config("eqasim_path") == "":
         # Clone repository and checkout version
+        branch = context.config("eqasim_branch")
+
         git.run(context, [
-            "clone", context.config("eqasim_repository"),
-            "--depth", "1", "eqasim-java"
+            "clone", "--depth", "1", "-b", branch,
+            context.config("eqasim_repository"), "eqasim-java"
         ])
 
         # Select the configured commit or tag
         commit = context.config("eqasim_commit")
-        tag = context.config("eqasim_tag")
-        checkout = commit if commit is not None else tag
-        assert checkout is not None
 
         git.run(context, [
-            "checkout", checkout
+            "checkout", commit
         ], cwd = "{}/eqasim-java".format(context.path()))
 
         # Build eqasim
