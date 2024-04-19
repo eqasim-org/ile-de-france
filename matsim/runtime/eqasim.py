@@ -38,7 +38,7 @@ def execute(context):
         # Clone repository and checkout version
         git.run(context, [
             "clone", context.config("eqasim_repository"),
-            "--filter=tree:0", "eqasim-java"
+            "--depth", "1", "eqasim-java"
         ])
 
         # Select the configured commit or tag
