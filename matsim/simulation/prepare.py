@@ -144,15 +144,22 @@ def execute(context):
     
     # Optionally, perform mode choice
     if context.config("mode_choice"):
-        eqasim.run(context, "org.eqasim.ile_de_france.RunModeChoice", [
+        eqasim.run(context, "org.eqasim.ile_de_france.standalone_mode_choice.RunStandaloneModeChoice", [
             "--config-path", "%sconfig.xml" % context.config("output_prefix"),
-            "--output-plans-path", "%spopulation.xml.gz" % context.config("output_prefix"),
+            "--config:standaloneModeChoice.outputDirectory", "mode_choice",
+            "--config:standaloneModeChoice.removePersonsWithNoValidAlternatives", "true",
             "--config:global.numberOfThreads", context.config("processes"),
-            "--output-csv-path", "%stripModes.csv" % context.config("output_prefix")
+            "--write-output-csv-trips", "true"
         ])
 
-        assert os.path.exists("%s/%stripModes.csv" % (context.path(), context.config("output_prefix")))
-        assert os.path.exists("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
+        assert os.path.exists("%s/mode_choice/output_plans.xml.gz" % context.path())
+        assert os.path.exists("%s/mode_choice/output_trips.csv" % context.path())
+        assert os.path.exists("%s/mode_choice/output_pt_legs.csv" % context.path())
+
+        shutil.move("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")),
+                    "%s/%spopulation_pre_mode_choice.xml.gz" % (context.path(), context.config("output_prefix")))
+        shutil.copy("%s/mode_choice/output_plans.xml.gz" % context.path(),
+                    "%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
 
     # Validate scenario
     eqasim.run(context, "org.eqasim.core.scenario.validation.RunScenarioValidator", [
