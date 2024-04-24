@@ -54,7 +54,11 @@ def _test_determinism(index, data_path, tmpdir):
         regions = [10, 11], sampling_rate = 1.0, hts = "entd",
         random_seed = 1000, processes = 1,
         secloc_maximum_iterations = 10,
-        maven_skip_tests = True
+        maven_skip_tests = True,
+        matching_attributes = [
+            "sex", "any_cars", "age_class", "socioprofessional_class",
+            "income_class", "departement_id"
+        ]
     )
 
     stages = [
@@ -111,7 +115,11 @@ def _test_determinism_matsim(index, data_path, tmpdir):
         regions = [10, 11], sampling_rate = 1.0, hts = "entd",
         random_seed = 1000, processes = 1,
         secloc_maximum_iterations = 10,
-        maven_skip_tests = True
+        maven_skip_tests = True,
+        matching_attributes = [
+            "sex", "any_cars", "age_class", "socioprofessional_class",
+            "income_class", "departement_id"
+        ]
     )
 
     stages = [

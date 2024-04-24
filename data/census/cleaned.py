@@ -13,6 +13,9 @@ def configure(context):
     context.stage("data.census.raw")
     context.stage("data.spatial.codes")
 
+    if context.config("use_urban_type", False):
+        context.stage("data.spatial.urban_type")
+
 def execute(context):
     df = context.stage("data.census.raw")
 
@@ -96,7 +99,7 @@ def execute(context):
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
-    return df[[
+    df = df[[
         "person_id", "household_id", "weight",
         "iris_id", "commune_id", "departement_id",
         "age", "sex", "couple",
@@ -104,3 +107,16 @@ def execute(context):
         "studies", "number_of_vehicles", "household_size",
         "consumption_units", "socioprofessional_class"
     ]]
+
+    if context.config("use_urban_type"):
+        df_urban_type = context.stage("data.spatial.urban_type")[[
+            "commune_id", "urban_type"
+        ]]
+        
+        # Impute urban type
+        df = pd.merge(df, df_urban_type, on = "commune_id", how = "left")
+        df.loc[df["commune_id"] == "undefined", "urban_type"] = "none"
+        df["commune_id"] = df["commune_id"].astype("category")
+        assert ~np.any(df["urban_type"].isna()) 
+
+    return df
