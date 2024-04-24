@@ -133,14 +133,6 @@ def execute(context):
             "--factor", str(0.8)
         ])
 
-    # Route population
-    eqasim.run(context, "org.eqasim.core.scenario.routing.RunPopulationRouting", [
-        "--config-path", "%sconfig.xml" % context.config("output_prefix"),
-        "--output-path", "%spopulation.xml.gz" % context.config("output_prefix"),
-        "--threads", context.config("processes"),
-        "--config:plans.inputPlansFile", "prepared_population.xml.gz"
-    ])
-    assert os.path.exists("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
     
     # Optionally, perform mode choice
     if context.config("mode_choice"):
@@ -149,17 +141,27 @@ def execute(context):
             "--config:standaloneModeChoice.outputDirectory", "mode_choice",
             "--config:standaloneModeChoice.removePersonsWithNoValidAlternatives", "true",
             "--config:global.numberOfThreads", context.config("processes"),
-            "--write-output-csv-trips", "true"
+            "--write-output-csv-trips", "true",
+            "--skip-scenario-check", "true",
+            "--config:plans.inputPlansFile", "prepared_population.xml.gz"
         ])
 
         assert os.path.exists("%s/mode_choice/output_plans.xml.gz" % context.path())
         assert os.path.exists("%s/mode_choice/output_trips.csv" % context.path())
         assert os.path.exists("%s/mode_choice/output_pt_legs.csv" % context.path())
 
-        shutil.move("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")),
-                    "%s/%spopulation_pre_mode_choice.xml.gz" % (context.path(), context.config("output_prefix")))
         shutil.copy("%s/mode_choice/output_plans.xml.gz" % context.path(),
                     "%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
+    else:
+        # Route population
+        eqasim.run(context, "org.eqasim.core.scenario.routing.RunPopulationRouting", [
+            "--config-path", "%sconfig.xml" % context.config("output_prefix"),
+            "--output-path", "%spopulation.xml.gz" % context.config("output_prefix"),
+            "--threads", context.config("processes"),
+            "--config:plans.inputPlansFile", "prepared_population.xml.gz"
+        ])
+
+    assert os.path.exists("%s/%spopulation.xml.gz" % (context.path(), context.config("output_prefix")))
 
     # Validate scenario
     eqasim.run(context, "org.eqasim.core.scenario.validation.RunScenarioValidator", [
