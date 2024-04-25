@@ -139,7 +139,6 @@ def execute(context):
         eqasim.run(context, "org.eqasim.ile_de_france.standalone_mode_choice.RunStandaloneModeChoice", [
             "--config-path", "%sconfig.xml" % context.config("output_prefix"),
             "--config:standaloneModeChoice.outputDirectory", "mode_choice",
-            "--config:standaloneModeChoice.removePersonsWithNoValidAlternatives", "true",
             "--config:global.numberOfThreads", context.config("processes"),
             "--write-output-csv-trips", "true",
             "--skip-scenario-check", "true",
