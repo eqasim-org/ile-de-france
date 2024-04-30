@@ -1,3 +1,4 @@
+import shutil
 import geopandas as gpd
 import pandas as pd
 import shapely.geometry as geo
@@ -131,14 +132,18 @@ def execute(context):
 
     if context.config("mode_choice"):
         df_mode_choice = pd.read_csv(
-            "{}/{}tripModes.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
+            "{}/mode_choice/output_trips.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
             delimiter = ";")
-        
-        df_mode_choice = df_mode_choice.rename(columns = {
-            "personId": "person_id", "tripId": "trip_index", "mode" : "mode"})
-        
+
+        df_mode_choice = df_mode_choice.rename(columns={"person_trip_id": "trip_index"})
+        columns_to_keep = ["person_id", "trip_index"]
+        columns_to_keep.extend([c for c in df_trips.columns if c not in df_mode_choice.columns])
+        df_trips = df_trips[columns_to_keep]
         df_trips = pd.merge(df_trips, df_mode_choice, on = [
             "person_id", "trip_index"], how="left", validate = "one_to_one")
+
+        shutil.copy("%s/mode_choice/output_pt_legs.csv" % (context.path("matsim.simulation.prepare")),
+                    "%s/%spt_legs.csv" % (output_path, output_prefix))
 
         assert not np.any(df_trips["mode"].isna())                                 
 

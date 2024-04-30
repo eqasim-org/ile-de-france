@@ -94,15 +94,18 @@ class PopulationWriter(XmlWriter):
         self._write_line('</person>')
 
     def start_attributes(self):
-        self._require_scope(self.PERSON_SCOPE)
+        # We don't require any scope here because attributes can be almost anywhere
         self._write_line('<attributes>')
         self.indent += 1
+        # And we need to remember which scope we were in before starting the attributes
+        self._pre_attributes_scope = self.scope
         self.scope = self.ATTRIBUTES_SCOPE
 
     def end_attributes(self):
         self._require_scope(self.ATTRIBUTES_SCOPE)
         self.indent -= 1
-        self.scope = self.PERSON_SCOPE
+        # Resetting the scope that we were in before starting the attributes
+        self.scope = self._pre_attributes_scope
         self._write_line('</attributes>')
 
     def add_attribute(self, name, type, value):
@@ -143,7 +146,11 @@ class PopulationWriter(XmlWriter):
         self._write('mode="%s" ' % mode)
         self._write('dep_time="%s" ' % self.time(departure_time))
         self._write('trav_time="%s" ' % self.time(travel_time))
-        self._write('/>\n')
+        self._write('>\n')
+        self.start_attributes()
+        self.add_attribute('routingMode', 'java.lang.String', mode)
+        self.end_attributes()
+        self._write_line('</leg>')
 
 class HouseholdsWriter(XmlWriter):
     HOUSEHOLDS_SCOPE = 0
