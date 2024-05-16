@@ -198,10 +198,17 @@ def execute(context):
     hts.check_household_size(df_households, df_persons)
     df_households = pd.merge(df_households, hts.calculate_consumption_units(df_persons), on = "household_id")
 
-    # Socioprofessional class
+    # # Socioprofessional class
     df_persons["socioprofessional_class"] = df_persons["P9"].fillna(8).astype(int)
     df_persons.loc[df_persons["socioprofessional_class"] > 6, "socioprofessional_class"] = 8
     df_persons.loc[df_persons["P7"] == "7", "socioprofessional_class"] = 7
+
+
+    # # Socioprofessional class
+    # df_persons["socioprofessional_class"] = df_persons["P9"].fillna(8).astype(int)
+    # df_persons.loc[df_persons["socioprofessional_class"] > 6, "socioprofessional_class"] = 8
+    # df_persons.loc[df_persons["P7"] == "7", "socioprofessional_class"] = 7
+
 
     # Check departure and arrival times
     assert np.count_nonzero(df_trips["departure_time"].isna()) == 0

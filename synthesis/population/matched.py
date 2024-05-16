@@ -180,13 +180,15 @@ def execute(context):
     df_source["any_cars"] = df_source["number_of_vehicles"] > 0
 
     columns = ["sex", "any_cars", "age_class", "socioprofessional_class"]
+    # columns = []
+
     if "income_class" in df_source: columns += ["income_class"]
     columns += ["departement_id"]
 
     # Perform statistical matching
     df_source = df_source.rename(columns = { "person_id": "hts_id" })
 
-    df_assignment, levels = parallel_statistical_matching(
+    df_assignment, levels = parallel_statistical_matching( 
         context,
         df_source, "hts_id", "person_weight",
         df_target, "person_id",

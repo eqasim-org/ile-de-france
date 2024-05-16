@@ -25,7 +25,7 @@ config:
   home_location_sampling: weighted
   departments: ["33"]
   regions: []
-  mode_choice: true
+  mode_choice: false
   output_prefix: emc2_
 
   # Paths to the input data and where the output should be stored

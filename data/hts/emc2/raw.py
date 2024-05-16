@@ -39,6 +39,7 @@ PERSON_COLUMNS = {
 # P12 formatté étrangemen( oui, non, nan?)
 # P10 abo TC
 
+
 TRIP_COLUMNS = {
     "ECH": str, "PER": int, "NDEP": int, "DP2": str,
     "D2A": int, "D5A": int, "D3": int, "D4": str,
