@@ -1,7 +1,4 @@
-from pandas.core.frame import DataFrame
-import numpy as np
 import pandas as pd
-import geopandas as gpd
 import os
 
 """
@@ -14,17 +11,10 @@ and second implementation by Sebastian Hoërl
 def configure(context):
     context.config("data_path")
 
-from .format import HOUSEHOLD_FORMAT, PERSON_FORMAT, TRIP_FORMAT
-
 HOUSEHOLD_COLUMNS = {
     "MP2": str, "ECH": str, "COEM": float,
     "M14": int, "M20": int, "M5": int
 }
-# Loire Atlantique EDGT => EMC2 Gironde
-# MTIR+MP2  =>   MP2 (MP2 +  MTIR + 000)  # zone de tirage et zone de résidence
-# M7    =>   M20 # nombre de vélos à disposition du ménage
-# M6    =>   M14 # nombre de 2RM (+3RM) à disposition du ménage
-
 
 PERSON_COLUMNS = {
     "ECH": str, "PER": int, "PP2": str, "PENQ": int,
@@ -33,12 +23,6 @@ PERSON_COLUMNS = {
     "P9": str, "P5": str,
     "COEP": float, "COEQ": float
 }
-# Loire Atlantique EDGT => EMC2 Gironde
-# PTIR+PP2  =>   PP2 (PTIR +  PP2 + 000)  # zone de tirage et zone de résidence
-# P1 => ?
-# P12 formatté étrangemen( oui, non, nan?)
-# P10 abo TC
-
 
 TRIP_COLUMNS = {
     "ECH": str, "PER": int, "NDEP": int, "DP2": str,
@@ -46,12 +30,6 @@ TRIP_COLUMNS = {
     "D7": int, "D8": str,
     "D8C": int, "MODP": int, "DOIB": int, "DIST": int
 }
-# Loire Atlantique EDGT => EMC2 Gironde
-# DTIR+DP2  =>  DP2 (DTIR +  DP2 + 000)  # zone de tirage et zone de résidence
-# D4A+D4B   =>  D4 (1630 = 16h30) heure de départ
-# D8A+D8B   =>  D8 (1630 = 16h30) heure d'arrivée
-
-
 
 def execute(context):
     # Load households

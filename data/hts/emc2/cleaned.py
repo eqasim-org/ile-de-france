@@ -3,12 +3,13 @@ import numpy as np
 import data.hts.hts as hts
 
 """
-This stage cleans the Loire Atlantique EDGT.
+This stage cleans the Gironde EMC2.
 """
 
 def configure(context):
     context.stage("data.hts.emc2.raw")
-
+    context.config("departments", [])
+    
 PURPOSE_MAP = {
     "home": [1, 2],
     "work": [11, 12, 13, 81],
@@ -17,34 +18,26 @@ PURPOSE_MAP = {
     "leisure": [51, 52, 53, 54],
     "other": [41, 42, 43, 61, 62, 63, 64, 71, 72, 73, 74, 91]
 }
-# motifs 44 et 45 suppprimés
-# 81 tournée pro
 
 MODES_MAP = {
     "car": [13, 15, 21, 81],
     "car_passenger": [14, 16, 22, 82],
     "pt": [31, 32, 34, 36, 37, 39, 39, 41, 42, 51, 52, 53, 61, 62, 71],
     "bike": [11, 12, 17, 18, 93, 96, 97],
-    "walk": [1] # Actually, 2 is not really explained, but we assume it is walk
+    "walk": [1]
 }
-# remaping complet (logique)
 
 
 def execute(context):
     df_households, df_persons, df_trips = context.stage("data.hts.emc2.raw")
+    requested_department = context.config("departments")[0]
 
-    # unique constant length ID = PP2*100000000+ECH*1000+PER*100+NDEP
-
-    # Merge departement into households
-    df_households["departement_id"] = "33"
-    # Transform original IDs to integer (they are hierarchichal)
-
+    # set ids for households, persons, trips
+    df_households["departement_id"] = requested_department
     df_households["edgt_household_id"] = df_households["MP2"].astype("int64")*100000000 + df_households["ECH"].astype(int)*1000
-
 
     df_persons["edgt_household_id"] =  df_persons["PP2"].astype("int64")*100000000 + df_persons["ECH"].astype(int)*1000
     df_persons["edgt_person_id"] = df_persons["PP2"].astype("int64")*100000000 + df_persons["ECH"].astype(int)*1000 + df_persons["PER"].astype(int)*100
-
 
     df_trips["edgt_household_id"] = df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000
     df_trips["edgt_person_id"] =  df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000 + df_trips["PER"].astype(int)*100
@@ -86,10 +79,10 @@ def execute(context):
     df_households = pd.merge(df_households, df_size, on = "household_id")
 
     # Clean departement
-    df_trips.loc[df_trips["D3"] <900000000,"origin_departement_id"] = "33" #
+    df_trips.loc[df_trips["D3"] <900000000,"origin_departement_id"] = requested_department #
     df_trips.loc[df_trips["D3"] >=900000000,"origin_departement_id"] = "99" #
 
-    df_trips.loc[df_trips["D7"] <900000000,"destination_departement_id"] = "33" #
+    df_trips.loc[df_trips["D7"] <900000000,"destination_departement_id"] = requested_department #
     df_trips.loc[df_trips["D7"] >900000000,"destination_departement_id"] = "99" #
 
 
@@ -143,7 +136,6 @@ def execute(context):
     for mode, values in MODES_MAP.items():
         df_trips.loc[df_trips["MODP"].isin(values), "mode"] = mode
 
-    # df_trips = df_trips[df_trips["mode"] != "invalid"].copy()
     df_trips.loc[df_trips["mode"] == "invalid","mode"] = "car"
 
     assert np.count_nonzero(df_trips["mode"] == "invalid") == 0
@@ -173,13 +165,6 @@ def execute(context):
     ).rename(columns = { "COEQ": "trip_weight" })
     df_persons["trip_weight"] = df_persons["COEQ"]
 
-    # # Add weight to trips
-    # df_trips = pd.merge(
-    #     df_trips, df_persons[["person_id", "COEP"]], on = "person_id", how = "left"
-    # ).rename(columns = { "COEP": "trip_weight" })
-    # df_persons["trip_weight"] = df_persons["COEP"]
-
-
     # Chain length
     df_count = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "number_of_trips")
     # People with at least one trip (number_of_trips > 0)
@@ -203,21 +188,11 @@ def execute(context):
     df_persons.loc[df_persons["socioprofessional_class"] > 6, "socioprofessional_class"] = 8
     df_persons.loc[df_persons["P7"] == "7", "socioprofessional_class"] = 7
 
-
-    # # Socioprofessional class
-    # df_persons["socioprofessional_class"] = df_persons["P9"].fillna(8).astype(int)
-    # df_persons.loc[df_persons["socioprofessional_class"] > 6, "socioprofessional_class"] = 8
-    # df_persons.loc[df_persons["P7"] == "7", "socioprofessional_class"] = 7
-
-
     # Check departure and arrival times
     assert np.count_nonzero(df_trips["departure_time"].isna()) == 0
     assert np.count_nonzero(df_trips["arrival_time"].isna()) == 0
 
     # Fix activity types (because of inconsistent EGT data and removing in the timing fixing step)
     hts.fix_activity_types(df_trips)
-
-
-
 
     return df_households, df_persons, df_trips

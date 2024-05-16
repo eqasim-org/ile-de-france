@@ -33,7 +33,7 @@ config:
   
   # Paths to the input data and where the output should be stored
   data_path: C:/Users/arthur.burianne/Documents/sources_data/bordeaux_data
-  output_path: C:/Users/arthur.burianne/Documents/dev_simulations/emc2_no_mode_choice_output
+  output_path: C:/Users/arthur.burianne/Documents/dev_simulations/emc2_output
   
   # Data exceptions
   population_year: 19
