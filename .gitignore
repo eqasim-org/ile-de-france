@@ -8,3 +8,4 @@ data/lyon_2015
 .vscode
 
 config_local_*.yml
+config_bordeaux_no_mode_choice.yml
