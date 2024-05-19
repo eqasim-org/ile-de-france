@@ -1,7 +1,10 @@
 import shutil
 
 def configure(context):
-    context.stage("matsim.simulation.run")
+    if context.config("run_matsim", True):
+        # allow disabling performing one run of the simulation
+        context.stage("matsim.simulation.run")
+    
     context.stage("matsim.simulation.prepare")
     context.stage("matsim.runtime.eqasim")
 
