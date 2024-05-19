@@ -80,7 +80,7 @@ tests = [
     },
    
     {
-        "name": "SIRET g�olocalis�",
+        "name": "SIRET géolocalisé",
         "urls": [
             "https://adresse.data.gouv.fr/donnees-nationales"
         ]
