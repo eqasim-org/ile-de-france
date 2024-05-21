@@ -9,13 +9,13 @@ through the 'sampling_rate' configuration option.
 """
 
 def configure(context):
-    context.stage("synthesis.population.personas")
-
+    context.stage("synthesis.population.personas", alias = "source")
+    
     context.config("random_seed")
     context.config("sampling_rate")
 
 def execute(context):
-    df_census = context.stage("synthesis.population.personas").sort_values(by = "household_id").copy()
+    df_census = context.stage("source").sort_values(by = "household_id").copy()
 
     sampling_rate = context.config("sampling_rate")
     random = np.random.RandomState(context.config("random_seed"))
@@ -24,7 +24,7 @@ def execute(context):
     df_rounding = df_census[["household_id", "weight", "household_size"]].drop_duplicates("household_id")
     df_rounding["multiplicator"] = np.floor(df_rounding["weight"])
     df_rounding["multiplicator"] += random.random_sample(len(df_rounding)) <= (df_rounding["weight"] - df_rounding["multiplicator"])
-    df_rounding["multiplicator"] = df_rounding["multiplicator"].astype(np.int)
+    df_rounding["multiplicator"] = df_rounding["multiplicator"].astype(int)
 
     # Multiply households (use same multiplicator for all household members)
     household_multiplicators = df_rounding["multiplicator"].values

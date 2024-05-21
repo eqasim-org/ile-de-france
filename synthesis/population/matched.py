@@ -19,10 +19,16 @@ INCOME_CLASS = {
     "entd": data.hts.entd.cleaned.calculate_income_class,
 }
 
+DEFAULT_MATCHING_ATTRIBUTES = [
+    "sex", "any_cars", "age_class", "socioprofessional_class",
+    "departement_id"
+]
+
 def configure(context):
     context.config("processes")
     context.config("random_seed")
     context.config("matching_minimum_observations", 20)
+    context.config("matching_attributes", DEFAULT_MATCHING_ATTRIBUTES)
 
     context.stage("synthesis.population.sampled")
     context.stage("synthesis.population.income")
@@ -30,7 +36,7 @@ def configure(context):
     hts = context.config("hts")
     context.stage("data.hts.selected", alias = "hts")
 
-@numba.jit(nopython = True, parallel = True)
+@numba.jit(nopython = True) # Already parallelized parallel = True)
 def sample_indices(uniform, cdf, selected_indices):
     indices = np.arange(len(uniform))
 
@@ -69,9 +75,9 @@ def statistical_matching(progress, df_source, source_identifier, weight, df_targ
 
     # Perform matching
     weights = df_source[weight].values
-    assigned_indices = np.ones((len(df_target),), dtype = np.int) * -1
-    unassigned_mask = np.ones((len(df_target),), dtype = np.bool)
-    assigned_levels = np.ones((len(df_target),), dtype = np.int) * -1
+    assigned_indices = np.ones((len(df_target),), dtype = int) * -1
+    unassigned_mask = np.ones((len(df_target),), dtype = bool)
+    assigned_levels = np.ones((len(df_target),), dtype = int) * -1
     uniform = random.random_sample(size = (len(df_target),))
 
     column_indices = [np.arange(len(unique_values[column])) for column in columns]
@@ -111,6 +117,9 @@ def statistical_matching(progress, df_source, source_identifier, weight, df_targ
     assigned_levels[unassigned_mask] = 0
 
     progress.update(np.count_nonzero(unassigned_mask))
+
+    if np.count_nonzero(unassigned_mask) > 0:
+        raise RuntimeError("Some target observations could not be matched. Minimum observations configured too high?")
 
     assert np.count_nonzero(unassigned_mask) == 0
     assert np.count_nonzero(assigned_indices == -1) == 0
@@ -165,26 +174,39 @@ def execute(context):
 
     df_target = context.stage("synthesis.population.sampled")
 
+    columns = context.config("matching_attributes")
+    
+    try:
+        default_index = columns.index("*default*")
+        columns[default_index:default_index + 1] = DEFAULT_MATCHING_ATTRIBUTES
+    except ValueError: pass
+
     # Define matching attributes
     AGE_BOUNDARIES = [14, 29, 44, 59, 74, 1000]
-    df_target["age_class"] = np.digitize(df_target["age"], AGE_BOUNDARIES, right = True)
-    df_source["age_class"] = np.digitize(df_source["age"], AGE_BOUNDARIES, right = True)
+    
+    if "age_class" in columns:
+        df_target["age_class"] = np.digitize(df_target["age"], AGE_BOUNDARIES, right = True)
+        df_source["age_class"] = np.digitize(df_source["age"], AGE_BOUNDARIES, right = True)
 
-    if "income_class" in df_source:
+    if "income_class" in columns:
         df_income = context.stage("synthesis.population.income")[["household_id", "household_income"]]
 
         df_target = pd.merge(df_target, df_income)
         df_target["income_class"] = INCOME_CLASS[hts](df_target)
 
-    df_target["any_cars"] = df_target["number_of_vehicles"] > 0
-    df_source["any_cars"] = df_source["number_of_vehicles"] > 0
-
-    columns = ["sex", "any_cars", "age_class", "socioprofessional_class"]
-    if "income_class" in df_source: columns += ["income_class"]
-    columns += ["departement_id"]
+    if "any_cars" in columns:
+        df_target["any_cars"] = df_target["number_of_vehicles"] > 0
+        df_source["any_cars"] = df_source["number_of_vehicles"] > 0
 
     # Perform statistical matching
     df_source = df_source.rename(columns = { "person_id": "hts_id" })
+
+    for column in columns:
+        if not column in df_source:
+            raise RuntimeError("Attribute not available in source (HTS) for matching: {}".format(column))
+        
+        if not column in df_target:
+            raise RuntimeError("Attribute not available in target (census) for matching: {}".format(column))
 
     df_assignment, levels = parallel_statistical_matching(
         context,

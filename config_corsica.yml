@@ -29,11 +29,15 @@ config:
   # Only interesting if you run the simulation
   java_memory: 14G
 
+  # Activate if you want to run mode choice
+  mode_choice: false
+
   # Corsica settings
-  census_path: rp_2015/FD_INDCVIZE_2015.dbf
   regions: [94]
-  gtfs_path: gtfs/corse/cars2a-gtfs.zip;gtfs/corse/cars2b-gtfs.zip;gtfs/corse/GTFS été 2021.zip
-  osm_path: osm/corse-latest.osm.pbf
+  gtfs_path: gtfs_corsica
+  osm_path: osm_corsica
+  ban_path: ban_corsica
+  bdtopo_path: bdtopo_corsica
   matching_minimum_observations: 5
 
   # Uncomment to generate a scenario for eqasim-java unit testing

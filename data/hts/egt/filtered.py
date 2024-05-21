@@ -12,7 +12,6 @@ def configure(context):
 
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
-    assert (df_codes["region_id"] == 11).all() # Otherwise EGT doesn't make sense
 
     df_households, df_persons, df_trips = context.stage("data.hts.egt.cleaned")
 
@@ -39,9 +38,15 @@ def execute(context):
     df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
 
     # Finish up
-    df_households = df_households[hts.HOUSEHOLD_COLUMNS + ["income_class"] + ["egt_household_id"]]
-    df_persons = df_persons[hts.PERSON_COLUMNS + ["egt_household_id", "egt_person_id"]]
-    df_trips = df_trips[hts.TRIP_COLUMNS + ["euclidean_distance"] + ["egt_household_id", "egt_person_id", "egt_trip_id"]]
+    household_columns = hts.HOUSEHOLD_COLUMNS + ["income_class"] + ["egt_household_id"]
+    df_households = df_households[household_columns]
+    
+    person_columns = hts.PERSON_COLUMNS + ["egt_household_id", "egt_person_id"]
+    if "urban_type" in df_persons: person_columns.append("urban_type")
+    df_persons = df_persons[person_columns]
+    
+    trip_columns = hts.TRIP_COLUMNS + ["euclidean_distance"] + ["egt_household_id", "egt_person_id", "egt_trip_id"]
+    df_trips = df_trips[trip_columns]
 
     hts.check(df_households, df_persons, df_trips)
 

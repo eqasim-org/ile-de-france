@@ -1,6 +1,5 @@
-import numpy as np
-import pandas as pd
 import os
+import pandas as pd
 
 """
 This stages loads a file containing all spatial codes in France and how
@@ -8,8 +7,8 @@ they can be translated into each other. This particular stage loads information
 on how old identifiers can be translated into newer ones.
 """
 
-YEAR = 2017
-SOURCE = "codes_%d/reference_IRIS_geo%d.xls" % (YEAR, YEAR)
+YEAR = 2021
+SOURCE = "codes_%d/reference_IRIS_geo%d.xlsx" % (YEAR, YEAR)
 
 def configure(context):
     context.config("data_path")

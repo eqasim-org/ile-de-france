@@ -1,6 +1,6 @@
-import numpy as np
 import pandas as pd
 import os
+import zipfile
 
 """
 Loads the regional aggregated income distribution.
@@ -8,14 +8,17 @@ Loads the regional aggregated income distribution.
 
 def configure(context):
     context.config("data_path")
-    context.config("income_reg_path", "filosofi_2015/FILO_DISP_REG.xls")
-    context.config("income_year", 15)
+    context.config("income_reg_path", "filosofi_2019/indic-struct-distrib-revenu-2019-SUPRA.zip")
+    context.config("income_reg_xlsx", "FILO2019_DISP_REG.xlsx")
+    context.config("income_year", 19)
 
 def execute(context):
-    df = pd.read_excel(
-        "%s/%s" % (context.config("data_path"), context.config("income_reg_path")),
-        sheet_name = "ENSEMBLE", skiprows = 5
-    )
+    with zipfile.ZipFile("{}/{}".format(
+        context.config("data_path"), context.config("income_reg_path"))) as archive:
+        with archive.open(context.config("income_reg_xlsx")) as f:
+            df = pd.read_excel(f,
+                sheet_name = "ENSEMBLE", skiprows = 5
+            )
 
     values = df[df["CODGEO"] == 11][
         [
@@ -28,6 +31,6 @@ def execute(context):
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("income_reg_path"))):
-        raise RuntimeError("Filosofi data is not available")
+        raise RuntimeError("Regional Filosofi data is not available")
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("income_reg_path")))

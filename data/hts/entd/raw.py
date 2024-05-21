@@ -1,4 +1,3 @@
-import simpledbf
 from tqdm import tqdm
 import pandas as pd
 import os
@@ -15,7 +14,7 @@ Q_MENAGE_COLUMNS = [
 
 Q_TCM_MENAGE_COLUMNS = [
     "NPERS", "PONDV1", "TrancheRevenuMensuel",
-    "DEP", "idENT_MEN", "RG"
+    "DEP", "idENT_MEN", "RG", "numcom_UU2010"
 ]
 
 Q_INDIVIDU_COLUMNS = [

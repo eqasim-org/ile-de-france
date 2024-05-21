@@ -41,11 +41,11 @@ def execute(context):
 
     # Transform original IDs to integer (they are hierarchichal)
     df_households["edgt_household_id"] = (df_households["ECH"] + df_households["MP2"]).astype(int)
-    df_persons["edgt_person_id"] = df_persons["PER"].astype(np.int)
+    df_persons["edgt_person_id"] = df_persons["PER"].astype(int)
     df_persons["edgt_household_id"] = (df_persons["ECH"] + df_persons["PP2"]).astype(int)
-    df_trips["edgt_person_id"] = df_trips["PER"].astype(np.int)
+    df_trips["edgt_person_id"] = df_trips["PER"].astype(int)
     df_trips["edgt_household_id"] = (df_trips["ECH"] + df_trips["DP2"]).astype(int)
-    df_trips["edgt_trip_id"] = df_trips["NDEP"].astype(np.int)
+    df_trips["edgt_trip_id"] = df_trips["NDEP"].astype(int)
 
     # Construct new IDs for households, persons and trips (which are unique globally)
     df_households["household_id"] = np.arange(len(df_households))
@@ -66,11 +66,11 @@ def execute(context):
     df_trips = hts.compute_first_last(df_trips)
 
     # Weight
-    df_persons["person_weight"] = df_persons["COEP"].astype(np.float)
-    df_households["household_weight"] = df_households["COEM"].astype(np.float)
+    df_persons["person_weight"] = df_persons["COEP"].astype(float)
+    df_households["household_weight"] = df_households["COEM"].astype(float)
 
     # Clean age
-    df_persons["age"] = df_persons["P4"].astype(np.int)
+    df_persons["age"] = df_persons["P4"].astype(int)
 
     # Clean sex
     df_persons.loc[df_persons["P2"] == 1, "sex"] = "male"
@@ -106,14 +106,22 @@ def execute(context):
 
     # Number of vehicles
     df_households["number_of_vehicles"] = df_households["M6"] + df_households["M5"]
-    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(np.int)
-    df_households["number_of_bikes"] = df_households["M7"].astype(np.int)
+    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(int)
+    df_households["number_of_bikes"] = df_households["M7"].astype(int)
 
     # License
     df_persons["has_license"] = df_persons["P5"] == "1"
 
     # Has subscription
     df_persons["has_pt_subscription"] = df_persons["P10"].isin(["1", "2", "3"])
+
+    # Survey respondents 
+    # PENQ 1 : fully awnsered the travel questionary section, having a chain or non-movers
+    # PENQ 2 : nonrespondent of travel questionary section
+    df_persons["PENQ"] = df_persons["PENQ"].fillna("2").astype(int)
+    df_persons.loc[df_persons["PENQ"] == 1, "travel_respondent"] = True
+    df_persons.loc[df_persons["PENQ"] == 2, "travel_respondent"] = False
+    assert np.count_nonzero(df_persons["travel_respondent"].isna()) == 0
 
     # Trip purpose
     df_trips["following_purpose"] = "invalid"
@@ -162,7 +170,14 @@ def execute(context):
 
     # Chain length
     df_count = df_trips[["person_id"]].groupby("person_id").size().reset_index(name = "number_of_trips")
+
+    # People with at least one trip (number_of_trips > 0)
     df_persons = pd.merge(df_persons, df_count, on = "person_id", how = "left")
+    
+    # People that awnsered the travel questionary section but stayed at home (number_of_trips = 0)
+    df_persons.loc[df_persons["travel_respondent"] & df_persons["number_of_trips"].isna(), "number_of_trips"] = 0
+
+    # Nonrespondent of travel questionary section (number_of_trips = -1)
     df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(int)
 
     # Passenger attribute
