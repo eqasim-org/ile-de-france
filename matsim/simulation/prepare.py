@@ -124,14 +124,14 @@ def execute(context):
             "--attribute", "isUrban"
         ])
 
-        eqasim.run(context, "org.eqasim.core.scenario.spatial.RunAdjustCapacity", [
-            "--input-path", "%snetwork.xml.gz" % context.config("output_prefix"),
-            "--output-path", "%snetwork.xml.gz" % context.config("output_prefix"),
-            "--shape-path", "departments.shp",
-            "--shape-attribute", "id",
-            "--shape-value", "75",
-            "--factor", str(0.8)
-        ])
+        #eqasim.run(context, "org.eqasim.core.scenario.spatial.RunAdjustCapacity", [
+        #    "--input-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+        #    "--output-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+        #    "--shape-path", "departments.shp",
+        #    "--shape-attribute", "id",
+        #    "--shape-value", "75",
+        #    "--factor", str(0.8)
+        #])
 
     
     # Optionally, perform mode choice
