@@ -15,8 +15,8 @@ def execute(context):
     # Attach 
     df_clusters = pd.read_csv(
         "%s/%s" % (context.config("data_path"), context.config("personas.clustering_path")),
-        usecols = ["kclust28$cluster"], sep = ",").rename(columns = {
-            "kclust28$cluster": "persona"
+        usecols = ["ID"], sep = ",").rename(columns = {
+            "ID": "persona"
         })
 
     assert len(df_clusters) == len(df)
