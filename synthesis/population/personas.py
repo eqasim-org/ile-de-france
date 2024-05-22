@@ -46,7 +46,7 @@ def execute(context):
     attribute_targets = []
 
     # Process personas
-    for persona, target_share in df_scenario.set_index("persona")["scenario_share"]:
+    for persona, target_share in zip(df_scenario["persona"], df_scenario["scenario_share"]):
         f = df_census["persona"] == persona
 
         df_counts = df_census.loc[f, "household_index"].value_counts()
