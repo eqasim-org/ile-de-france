@@ -31,6 +31,9 @@ def execute(context):
     })
     assert len(df_scenario) > 0
 
+    # The persons contain personas 0-15, here we get 1-16, so we need to adjust
+    df_scenario["persona"] -= 1
+
     # Prepare indexing
     df_households = df_census[["household_id", "household_size", "weight"]].drop_duplicates("household_id")
     df_households["household_index"] = np.arange(len(df_households))
@@ -65,8 +68,6 @@ def execute(context):
 
     minimum_factors = []
     maximum_factors = []
-
-    print(df_census["persona"].value_counts().sort_index())
 
     for iteration in range(100):
         factors = []    
