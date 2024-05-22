@@ -53,7 +53,7 @@ def execute(context):
         
         attribute_targets.append(target_share * df_census["weight"].sum())
         attribute_membership.append(df_counts.index.values)
-        attribute_targets.append(df_counts.values)
+        attribute_counts.append(df_counts.values)
     
     # Process total
     attribute_targets.append(df_census["weight"].sum())
