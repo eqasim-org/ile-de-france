@@ -7,7 +7,7 @@ This stage updates the census weights to correspond to persona-based scenarios
 """
 
 def configure(context):
-    context.stage("data.census.cleaned")
+    context.stage("data.census.personas")
 
     context.config("personas.scenarios_path")
     context.config("personas.scenario", "none")
