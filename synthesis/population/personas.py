@@ -13,7 +13,7 @@ def configure(context):
     context.config("personas.scenario", "none")
 
 def execute(context):
-    df_census = context.stage("data.census.cleaned")
+    df_census = context.stage("data.census.personas")
 
     scenario = context.config("personas.scenario")
     if scenario == "none":
