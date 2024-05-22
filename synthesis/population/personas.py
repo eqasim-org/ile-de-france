@@ -66,6 +66,8 @@ def execute(context):
     minimum_factors = []
     maximum_factors = []
 
+    print(df_census["persona"].value_counts().sort_index())
+
     for iteration in range(100):
         factors = []    
         for k in np.arange(len(attribute_targets)):
