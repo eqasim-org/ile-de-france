@@ -2,6 +2,10 @@
 
 **Under development**
 
+- feat: make it possible to disable the test run of MATSim before writing everything out
+- feat: check availability of open data sources for every PR
+- feat: make statistical matching attribute list configurable
+- feat: add urban type classifiation (unité urbaine)
 - feat: functionality to make use of INSEE population projection data
 - update: don't remove households with people not living/studying in Île-de-France anymore to be more consistent with other use cases
 - fix bug where always one household_id existed twice

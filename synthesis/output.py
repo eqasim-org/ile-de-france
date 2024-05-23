@@ -1,3 +1,4 @@
+import shutil
 import geopandas as gpd
 import pandas as pd
 import shapely.geometry as geo
@@ -131,20 +132,20 @@ def execute(context):
 
     if context.config("mode_choice"):
         df_mode_choice = pd.read_csv(
-            "{}/{}tripModes.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
+            "{}/mode_choice/output_trips.csv".format(context.path("matsim.simulation.prepare"), output_prefix),
             delimiter = ";")
 
-        df_mode_choice = df_mode_choice.rename(columns = {
-            "personId": "person_id", "person_trip_id": "trip_index", "mode" : "mode"})
+        df_mode_choice = df_mode_choice.rename(columns={"person_trip_id": "trip_index"})
+        columns_to_keep = ["person_id", "trip_index"]
+        columns_to_keep.extend([c for c in df_trips.columns if c not in df_mode_choice.columns])
+        df_trips = df_trips[columns_to_keep]
+        df_trips = pd.merge(df_trips, df_mode_choice, on = [
+            "person_id", "trip_index"], how="left", validate = "one_to_one")
 
-        merged_columns = ["person_id", "trip_index"]
-        excluded_columns = [c for c in df_trips.columns  if c not in merged_columns and c!="mode"]
-        df_mode_choice = df_mode_choice[[c for c in df_mode_choice.columns if c not in excluded_columns]]
+        shutil.copy("%s/mode_choice/output_pt_legs.csv" % (context.path("matsim.simulation.prepare")),
+                    "%s/%spt_legs.csv" % (output_path, output_prefix))
 
-        df_trips = pd.merge(df_trips, df_mode_choice, on =
-            merged_columns, how="left", validate = "one_to_one")
-
-        assert not np.any(df_trips["mode"].isna())
+        assert not np.any(df_trips["mode"].isna())                                 
 
     df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 

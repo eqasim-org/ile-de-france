@@ -54,7 +54,11 @@ def _test_determinism(index, data_path, tmpdir):
         regions = [10, 11], sampling_rate = 1.0, hts = "entd",
         random_seed = 1000, processes = 1,
         secloc_maximum_iterations = 10,
-        maven_skip_tests = True
+        maven_skip_tests = True,
+        matching_attributes = [
+            "sex", "any_cars", "age_class", "socioprofessional_class",
+            "income_class", "departement_id"
+        ]
     )
 
     stages = [
@@ -111,7 +115,11 @@ def _test_determinism_matsim(index, data_path, tmpdir):
         regions = [10, 11], sampling_rate = 1.0, hts = "entd",
         random_seed = 1000, processes = 1,
         secloc_maximum_iterations = 10,
-        maven_skip_tests = True
+        maven_skip_tests = True,
+        matching_attributes = [
+            "sex", "any_cars", "age_class", "socioprofessional_class",
+            "income_class", "departement_id"
+        ]
     )
 
     stages = [
@@ -125,7 +133,7 @@ def _test_determinism_matsim(index, data_path, tmpdir):
         #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
         "ile_de_france_households.xml.gz":  "64a0c9fab72aad51bc6adb926a1c9d44",
         #"ile_de_france_facilities.xml.gz":  "5ad41afff9ae5c470082510b943e6778",
-        "ile_de_france_config.xml":         "f374807f12a5151fe1efb6e9904e1a56"
+        "ile_de_france_config.xml":         "481fac5fb3e7b90810caa38ff460c00a"
     }
 
     # activities.gpkg, trips.gpkg, meta.json,
