@@ -13,8 +13,7 @@ def configure(context):
     context.stage("synthesis.population.activities")
     context.stage("synthesis.population.trips")
 
-    if context.config("generate_vehicles_file", False):
-        context.stage("synthesis.vehicles.selected")
+    context.stage("synthesis.vehicles.vehicles")
 
     context.stage("synthesis.population.spatial.locations")
 
@@ -149,12 +148,11 @@ def execute(context):
 
     df_trips.to_csv("%s/%strips.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
-    if context.config("generate_vehicles_file"):
-        # Prepare vehicles
-        df_vehicle_types, df_vehicles = context.stage("synthesis.vehicles.selected")
+    # Prepare vehicles
+    df_vehicle_types, df_vehicles = context.stage("synthesis.vehicles.vehicles")
 
-        df_vehicle_types.to_csv("%s/%svehicle_types.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
-        df_vehicles.to_csv("%s/%svehicles.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+    df_vehicle_types.to_csv("%s/%svehicle_types.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+    df_vehicles.to_csv("%s/%svehicles.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
     # Prepare spatial data sets
     df_locations = context.stage("synthesis.population.spatial.locations")[[

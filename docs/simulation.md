@@ -145,7 +145,6 @@ Then, in the `config.yml`, you must enable the vehicle fleet generation :
 # ...
 
 config:
-  generate_vehicles_file: True
   generate_vehicles_method: fleet_sample
   vehicles_data_year: 2015
 

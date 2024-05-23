@@ -6,8 +6,8 @@ import matsim.runtime.java as java
 import matsim.runtime.maven as maven
 
 DEFAULT_EQASIM_VERSION = "1.5.0"
-DEFAULT_EQASIM_BRANCH = "develop"
-DEFAULT_EQASIM_COMMIT = "f1af717"
+DEFAULT_EQASIM_BRANCH = "feat/vehicles"
+DEFAULT_EQASIM_COMMIT = "80b0c81"
 
 def configure(context):
     context.stage("matsim.runtime.git")

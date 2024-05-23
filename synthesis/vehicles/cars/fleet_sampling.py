@@ -120,9 +120,11 @@ def execute(context):
 
     df_vehicles = pd.merge(df_persons[["household_id", "person_id"]], df_homes[["household_id", "commune_id"]], on = "household_id")
 
-    df_vehicles = df_vehicles.rename(columns = { "person_id": "vehicle_id" })
-    df_vehicles = df_vehicles.drop_duplicates("vehicle_id")
+    df_vehicles = df_vehicles.rename(columns = { "person_id": "owner_id" })
+    df_vehicles["vehicle_id"] = df_vehicles["vehicle_id"].astype(str) + ":car"
+    df_vehicles = df_vehicles.drop_duplicates("vehicle_id") # is this needed?
     df_vehicles["type_id"] = "default_car"
+    df_vehicles["mode"] = "car"
 
     df_vehicle_fleet_counts, df_vehicle_age_counts = context.stage("data.vehicles.raw")
 
