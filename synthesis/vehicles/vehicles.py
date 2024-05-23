@@ -5,7 +5,7 @@ def configure(context):
 
     if method == "default":
         context.stage("synthesis.vehicles.cars.default", alias = "cars")
-    if method == "fleet_sample":
+    elif method == "fleet_sample":
         context.stage("synthesis.vehicles.cars.fleet_sampling", alias = "cars")
     else:
         raise RuntimeError("Unknown vehicles generation method : %s" % method)
