@@ -33,7 +33,7 @@ TRIP_FIELDS = [
 ]
 
 VEHICLE_FIELDS = [
-    "person_id", "vehicle_id", "mode"
+    "owner_id", "vehicle_id", "mode"
 ]
 
 def add_person(writer, person, activities, trips, vehicles):
@@ -118,8 +118,8 @@ def execute(context):
     df_trips = context.stage("synthesis.population.trips")
     df_trips["travel_time"] = df_trips["arrival_time"] - df_trips["departure_time"]
 
-    df_vehicles = context.stage("synthesis.vehicles.vehicles")
-    df_vehicles = df_vehicles.sort_values(by = ["person_id"])
+    df_vehicles = context.stage("synthesis.vehicles.vehicles")[1]
+    df_vehicles = df_vehicles.sort_values(by = ["owner_id"])
 
     with gzip.open(output_path, 'wb+') as writer:
         with io.BufferedWriter(writer, buffer_size = 2 * 1024**3) as writer:
@@ -166,7 +166,7 @@ def execute(context):
                     while vehicle_iterator.has_next():
                         vehicle = vehicle_iterator.next()
 
-                        if not vehicle[VEHICLE_FIELDS.index("person_id")] == person_id:
+                        if not vehicle[VEHICLE_FIELDS.index("owner_id")] == person_id:
                             vehicle_iterator.previous()
                             break
                         else:

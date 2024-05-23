@@ -13,7 +13,7 @@ def configure(context):
     context.stage("synthesis.vehicles.passengers.default")
 
 def execute(context):
-    df_car_types, df_cars = context.stage("vehicles")
+    df_car_types, df_cars = context.stage("cars")
     df_passenger_types, df_passengers = context.stage("synthesis.vehicles.passengers.default")
 
     df_vehicles = pd.concat([df_cars, df_passengers])
