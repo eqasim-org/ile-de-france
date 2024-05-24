@@ -8,6 +8,7 @@ This stage reweights the census data set according to the projection data for a 
 def configure(context):
     context.stage("data.census.cleaned")
     context.stage("data.census.projection")
+    context.config("projection_year", None)
 
 def execute(context):
     df_census = context.stage("data.census.cleaned")
@@ -17,6 +18,9 @@ def execute(context):
     df_households = df_census[["household_id", "household_size", "weight"]].drop_duplicates("household_id")
     df_households["household_index"] = np.arange(len(df_households))
     df_census = pd.merge(df_census, df_households[["household_id", "household_index"]])
+
+    if context.config("projection_year") == 2019:
+        return df_households[["household_id", "weight"]]
 
     # Obtain weights and sizes as arrays
     household_weights = df_households["weight"].values
