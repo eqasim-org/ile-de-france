@@ -136,12 +136,14 @@ def execute(context):
         df_values["Target"] *= projection_total
         df_values["Value"] = df_values["Value"].replace({ "nA": "-1"}).astype(int)
 
-        for value, target in zip(df_values["Value"], df_values["Target"]):
+        for value, target_share in zip(df_values["Value"], df_values["Target"]):
             f = df_census["location_type"] == value
 
             df_counts = df_census.loc[f, "household_index"].value_counts()
 
-            attribute_targets.append(target)
+            print("location_type=", value, "target=", target_share, "initial=", df_census.loc[f, "weight"].sum() / df_census["weight"].sum())
+
+            attribute_targets.append(target_share * projection_total)
             attribute_membership.append(df_counts.index.values)
             attribute_counts.append(df_counts.values)
             attributes.append("location_type:{}".format(value))
