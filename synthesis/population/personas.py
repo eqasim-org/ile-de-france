@@ -125,6 +125,27 @@ def execute(context):
             attribute_counts.append(df_counts.values)
             attributes.append("persona:{}".format(persona))
 
+        df_scenario = pd.read_excel(
+            "%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")),
+            sheet_name="Results")
+        
+        df_scenario = df_scenario[df_scenario["Scenario"] == scenario].copy()
+        
+        # Process location type attribute
+        df_values = df_scenario[df_scenario["Attribute"] == "Location"][["Value", "Target"]].copy()
+        df_values["Target"] *= projection_total
+        df_values["Value"] = df_values["Value"].replace({ "nA", "-1"}).astype(int)
+
+        for value, target in zip(df_values["Value"], df_values["Target"]):
+            f = df_census["location_type"] == value
+
+            df_counts = df_census.loc[f, "household_index"].value_counts()
+
+            attribute_targets.append(target)
+            attribute_membership.append(df_counts.index.values)
+            attribute_counts.append(df_counts.values)
+            attributes.append("location_type:{}".format(value))
+
     # Perform IPU to obtain update weights
     update = np.ones((len(df_households),))
 
