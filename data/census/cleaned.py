@@ -99,10 +99,16 @@ def execute(context):
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
+    # Location attributes for personas
+    df.loc[df["employed"], "location_type"] = df.loc[df["employed"], "ILT"]
+    df.loc[df["studies"], "location_type"] = df.loc[df["studies"], "ILETUD"]
+    df.loc[~df["location_type"].isin(["1", "2", "3"]), "location_type"] = "-1"
+    df["location_type"] = df["location_type"].astype(int)
+
     df = df[[
         "person_id", "household_id", "weight",
         "iris_id", "commune_id", "departement_id",
-        "age", "sex", "couple",
+        "age", "sex", "couple", "location_type",
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
         "consumption_units", "socioprofessional_class"

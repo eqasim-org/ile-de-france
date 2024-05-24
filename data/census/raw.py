@@ -30,7 +30,9 @@ COLUMNS_DTYPES = {
     "TACT":"str", 
     "TRANS":"str",
     "VOIT":"str", 
-    "DEROU":"str"
+    "DEROU":"str",
+    "ILT": "str",
+    "ILETUD": "str"
 }
 
 def execute(context):
