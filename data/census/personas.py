@@ -6,11 +6,18 @@ This stage attaches persona information to the census (RP 2015)
 """
 
 def configure(context):
-    context.stage("data.census.cleaned")
+    context.stage("synthesis.population.projection.reweighted")
+    context.stage("data.spatial.codes")
+
     context.config("personas.clustering_path")
 
 def execute(context):
-    df = context.stage("data.census.cleaned")
+    df = context.stage("synthesis.population.projection.reweighted")
+
+    # Filter here fore IDF (usually we would only do that in *.filtered)
+    df_codes = context.stage("data.spatial.codes")
+    requested_departements = df_codes["departement_id"].unique()
+    df = df[df["departement_id"].isin(requested_departements)]
 
     # Attach 
     df_clusters = pd.read_csv(
@@ -19,7 +26,6 @@ def execute(context):
             "ID": "persona"
         })
 
-    print(len(df_clusters), len(df))
     assert len(df_clusters) == len(df)
     df["persona"] = df_clusters["persona"].values
 

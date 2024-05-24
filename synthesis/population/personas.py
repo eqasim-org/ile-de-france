@@ -8,7 +8,6 @@ This stage updates the census weights to correspond to persona-based scenarios
 
 def configure(context):
     context.stage("data.census.personas")
-    context.stage("data.census.projection")
 
     context.config("personas.scenarios_path")
     context.config("personas.scenario", "none")
@@ -37,15 +36,13 @@ def execute(context):
     attribute_targets = []
 
     ### PROJECTION PART
-    projection = context.stage("data.census.projection")
+    # Actually, we don't perform a weighting here (already in previous step)
+    # But we keep the values constant
 
     # Proccesing age ...
-    df_marginal = projection["age"]
+    df_marginal = df_census.groupby("age")["weight"].sum().reset_index(name = "projection")
     for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: age", total = len(df_marginal)):
         f = df_census["age"] == row["age"]
-
-        if row["age"] == 0:
-            continue # we skip incompatible values for peopel of zero age
 
         if np.count_nonzero(f) == 0:
             print("Did not find age:", row["age"])
@@ -59,7 +56,7 @@ def execute(context):
             attributes.append("age={}".format(row["age"]))
     
     # Processing sex ...
-    df_marginal = projection["sex"]
+    df_marginal = df_census.groupby("sex")["weight"].sum().reset_index(name = "projection")
     for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: sex", total = len(df_marginal)):
         f = df_census["sex"] == row["sex"]
         
@@ -75,7 +72,7 @@ def execute(context):
             attributes.append("sex={}".format(row["sex"]))
 
     # Processing age x sex ...
-    df_marginal = projection["cross"]
+    df_marginal = df_census.groupby(["age", "sex"])["weight"].sum().reset_index(name = "projection")
     for index, row in context.progress(df_marginal.iterrows(), label = "Processing attributes: sex x age", total = len(df_marginal)):
         f = (df_census["sex"] == row["sex"]) & (df_census["age"] == row["age"])
 
@@ -94,7 +91,7 @@ def execute(context):
             attributes.append("sex={},age={}".format(row["sex"], row["age"]))
 
     # Processing total ...
-    projection_total = projection["total"]["projection"].values[0]
+    projection_total = df_marginal = df_census["weight"].sum()
     attribute_targets.append(projection_total)
     attribute_membership.append(np.arange(len(household_sizes)))
     attribute_counts.append(household_sizes)
