@@ -235,8 +235,8 @@ import scipy.optimize as opt
 
 def find_distribution_for_mean(values, counts, target_mean):
     print("Bisect")
-    print(" values=", values / np.sum(values))
-    print(" counts=", counts)
+    print(" values=", values)
+    print(" counts=", counts / np.sum(counts))
     print(" target=", target_mean)
 
     def objective(alpha, return_density = False):
