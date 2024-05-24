@@ -234,6 +234,14 @@ def validate(context):
 import scipy.optimize as opt
 
 def find_distribution_for_mean(values, counts, target_mean):
+    print("Bisect")
+    print(" values=", values)
+    print(" counts=", counts)
+    print(" target=", target_mean)
+
+    print(" lower=", objective(0.1))
+    print(" upper=", objective(2.0))
+
     def objective(alpha, return_density = False):
         density = counts / np.sum(counts)
 
