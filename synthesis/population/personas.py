@@ -151,7 +151,7 @@ def execute(context):
 
         # Process household size mean
         target_mean = df_scenario[df_scenario["Attribute"] == "Household"]["Target"].values[0]
-        df_values = df_census.groupby("household_size")["weight"].sum().reset_index()
+        df_values = df_census.groupby("household_size")["weight"].sum().reset_index().sort_values(by = "household_size")
         distribution = find_distribution_for_mean(df_values["household_size"].values, df_values["weight"].values, target_mean)
 
         for value, target_share in zip(df_values["household_size"], distribution):
@@ -168,7 +168,7 @@ def execute(context):
 
         # Process number of cars mean
         target_mean = df_scenario[df_scenario["Attribute"] == "Cars"]["Target"].values[0]
-        df_values = df_census.groupby("number_of_vehicles")["weight"].sum().reset_index()
+        df_values = df_census.groupby("number_of_vehicles")["weight"].sum().reset_index().sort_values(by = "number_of_vehicles")
         distribution = find_distribution_for_mean(df_values["number_of_vehicles"].values, df_values["weight"].values, target_mean)
 
         for value, target_share in zip(df_values["number_of_vehicles"], distribution):
