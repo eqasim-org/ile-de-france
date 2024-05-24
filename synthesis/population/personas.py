@@ -134,6 +134,8 @@ def execute(context):
         # Process location type attribute
         df_values = df_scenario[df_scenario["Attribute"] == "Location"][["Value", "Target"]].copy()
         df_values["Value"] = df_values["Value"].replace({ "nA": "-1"}).astype(int)
+        # TODO: Rather fix this in the input!
+        df_values["Target"] = df_values["Target"] / df_values["Target"].sum()
 
         for value, target_share in zip(df_values["Value"], df_values["Target"]):
             f = df_census["location_type"] == value
