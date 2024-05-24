@@ -131,6 +131,7 @@ def execute(context):
     minimum_factors = []
     maximum_factors = []
 
+    print("running IPU with", len(attributes), "attributes")
     for iteration in range(100):
         factors = []    
         for k in np.arange(len(attribute_targets)):
