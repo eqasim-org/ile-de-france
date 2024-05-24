@@ -99,7 +99,7 @@ def execute(context):
     minimum_factors = []
     maximum_factors = []
 
-    for iteration in context.progress(range(100), label = "Performing IPU"):
+    for iteration in range(100):
         factors = []    
         for k in np.arange(len(attributes)):
             selection = attribute_membership[k]
@@ -115,14 +115,16 @@ def execute(context):
         minimum_factors.append(np.min(factors))
         maximum_factors.append(np.max(factors))
 
+        print(
+            "IPU", "it={}".format(iteration), 
+            "min={}".format(np.min(factors)),
+            "max={}".format(np.max(factors))
+        )
+
         if np.max(factors) - np.min(factors) < 1e-3:
             break
     
     criterion = np.max(factors) - np.min(factors)
-
-    # Check that the applied factors in the last iteration are sufficiently small
-    assert criterion > 0.01
-
     assert np.max(factors) - np.min(factors) < 1e-3
 
     # For a sanity check, we check for the obtained distribution in 2019, but this
