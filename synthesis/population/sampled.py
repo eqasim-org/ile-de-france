@@ -9,7 +9,10 @@ through the 'sampling_rate' configuration option.
 """
 
 def configure(context):
-    context.stage("synthesis.population.personas", alias = "source")
+    if context.config("personas.scenario") == "none":
+        context.stage("data.census.personas", alias = "source")
+    else:
+        context.stage("synthesis.population.personas", alias = "source")
     
     context.config("random_seed")
     context.config("sampling_rate")
