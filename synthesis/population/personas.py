@@ -8,32 +8,18 @@ This stage updates the census weights to correspond to persona-based scenarios
 
 def configure(context):
     context.stage("data.census.personas")
+    context.stage("data.census.projection")
 
     context.config("personas.scenarios_path")
     context.config("personas.scenario", "none")
 
 def execute(context):
     df_census = context.stage("data.census.personas")
-
     scenario = context.config("personas.scenario")
+
     if scenario == "none":
         return df_census
-
-    # Load scenario data
-    df_scenario = pd.read_excel(
-        "%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")),
-        sheet_name="Weights")
     
-    df_scenario = df_scenario[["Persona", scenario]]
-    df_scenario = df_scenario.rename(columns = { 
-        "Persona": "persona",
-        scenario: "scenario_share" 
-    })
-    assert len(df_scenario) > 0
-
-    # The persons contain personas 0-15, here we get 1-16, so we need to adjust
-    df_scenario["persona"] -= 1
-
     # Prepare indexing
     df_households = df_census[["household_id", "household_size", "weight"]].drop_duplicates("household_id")
     df_households["household_index"] = np.arange(len(df_households))
@@ -44,24 +30,103 @@ def execute(context):
     household_sizes = df_households["household_size"].values
 
     # Obtain the attribute levels and membership of attributes for all households
+    attributes = []
+
     attribute_membership = []
     attribute_counts = []
     attribute_targets = []
 
-    # Process personas
-    for persona, target_share in zip(df_scenario["persona"], df_scenario["scenario_share"]):
-        f = df_census["persona"] == persona
+    ### PROJECTION PART
+    projection = context.stage("data.census.projection")
 
-        df_counts = df_census.loc[f, "household_index"].value_counts()
+    # Proccesing age ...
+    df_marginal = projection["age"]
+    for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: age", total = len(df_marginal)):
+        f = df_census["age"] == row["age"]
+
+        if row["age"] == 0:
+            continue # we skip incompatible values for peopel of zero age
+
+        if np.count_nonzero(f) == 0:
+            print("Did not find age:", row["age"])
+
+        else:
+            df_counts = df_census.loc[f, "household_index"].value_counts()
         
-        attribute_targets.append(target_share * df_census["weight"].sum())
-        attribute_membership.append(df_counts.index.values)
-        attribute_counts.append(df_counts.values)
+            attribute_targets.append(row["projection"])
+            attribute_membership.append(df_counts.index.values)
+            attribute_counts.append(df_counts.values)
+            attributes.append("age={}".format(row["age"]))
     
-    # Process total
-    attribute_targets.append(df_census["weight"].sum())
-    attribute_membership.append(np.arange(len(household_sizes))) # all
+    # Processing sex ...
+    df_marginal = projection["sex"]
+    for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: sex", total = len(df_marginal)):
+        f = df_census["sex"] == row["sex"]
+        
+        if np.count_nonzero(f) == 0:
+            print("Did not find sex:", row["sex"])
+
+        else:
+            df_counts = df_census.loc[f, "household_index"].value_counts()
+        
+            attribute_targets.append(row["projection"])
+            attribute_membership.append(df_counts.index.values)
+            attribute_counts.append(df_counts.values)
+            attributes.append("sex={}".format(row["sex"]))
+
+    # Processing age x sex ...
+    df_marginal = projection["cross"]
+    for index, row in context.progress(df_marginal.iterrows(), label = "Processing attributes: sex x age", total = len(df_marginal)):
+        f = (df_census["sex"] == row["sex"]) & (df_census["age"] == row["age"])
+
+        if row["age"] == 0:
+            continue
+        
+        if np.count_nonzero(f) == 0:
+            print("Did not find values:", row["sex"], row["age"])
+
+        else:
+            df_counts = df_census.loc[f, "household_index"].value_counts()
+        
+            attribute_targets.append(row["projection"])
+            attribute_membership.append(df_counts.index.values)
+            attribute_counts.append(df_counts.values)
+            attributes.append("sex={},age={}".format(row["sex"], row["age"]))
+
+    # Processing total ...
+    projection_total = projection["total"]["projection"].values[0]
+    attribute_targets.append(projection_total)
+    attribute_membership.append(np.arange(len(household_sizes)))
     attribute_counts.append(household_sizes)
+    attributes.append("total")
+
+    ### PERSONA PART
+    if scenario != "Projection":
+        # Load scenario data
+        df_scenario = pd.read_excel(
+            "%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")),
+            sheet_name="Weights")
+        
+        df_scenario = df_scenario[["Persona", scenario]]
+        df_scenario = df_scenario.rename(columns = { 
+            "Persona": "persona",
+            scenario: "scenario_share" 
+        })
+        assert len(df_scenario) > 0
+
+        # The persons contain personas 0-15, here we get 1-16, so we need to adjust
+        df_scenario["persona"] -= 1
+
+        # Process personas
+        for persona, target_share in zip(df_scenario["persona"], df_scenario["scenario_share"]):
+            f = df_census["persona"] == persona
+
+            df_counts = df_census.loc[f, "household_index"].value_counts()
+            
+            attribute_targets.append(target_share * projection_total)
+            attribute_membership.append(df_counts.index.values)
+            attribute_counts.append(df_counts.values)
+            attributes.append("persona:{}".format(persona))
 
     # Perform IPU to obtain update weights
     update = np.ones((len(df_households),))
