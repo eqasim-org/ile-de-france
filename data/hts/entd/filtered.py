@@ -9,13 +9,22 @@ This stage filters out ENTD observations which live or work outside of
 def configure(context):
     context.stage("data.hts.entd.cleaned")
     context.stage("data.spatial.codes")
+    context.config("use_urban_type", False)
 
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
     df_households, df_persons, df_trips = context.stage("data.hts.entd.cleaned")
 
-    # Filter for non-residents
-    requested_departments = df_codes["departement_id"].unique()
+
+    # Filter for non-residents        
+    if context.config("use_urban_type"):
+        # in case of urban types method we keep all HTS departements in France
+        requested_departments = df_persons["departement_id"].unique()
+    else:    
+        # otherwise we filter on survey location departements
+        requested_departments = df_codes["departement_id"].unique()
+    
+    
     f = df_persons["departement_id"].astype(str).isin(requested_departments)
     df_persons = df_persons[f]
 

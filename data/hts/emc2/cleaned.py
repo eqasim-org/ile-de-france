@@ -8,6 +8,9 @@ This stage cleans the Gironde EMC2.
 
 def configure(context):
     context.stage("data.hts.emc2.raw")
+    if context.config("use_urban_type",False):
+        context.stage("data.hts.emc2.urban_type")
+    
     context.config("departments", [])
     
 PURPOSE_MAP = {
@@ -42,7 +45,6 @@ def execute(context):
     df_trips["edgt_household_id"] = df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000
     df_trips["edgt_person_id"] =  df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000 + df_trips["PER"].astype(int)*100
     df_trips["edgt_trip_id"] = df_trips["DP2"].astype("int64")*100000000 + df_trips["ECH"].astype(int)*1000 + df_trips["PER"].astype(int)*100 + df_trips["NDEP"].astype(int)
-
 
     # Construct new IDs for households, persons and trips (which are unique globally)
     df_households["household_id"] = np.arange(len(df_households))
@@ -85,11 +87,13 @@ def execute(context):
     df_trips.loc[df_trips["D7"] <900000000,"destination_departement_id"] = requested_department #
     df_trips.loc[df_trips["D7"] >900000000,"destination_departement_id"] = "99" #
 
-
     df_households["departement_id"] = df_households["departement_id"].astype("category")
     df_persons["departement_id"] = df_persons["departement_id"].astype("category")
     df_trips["origin_departement_id"] = df_trips["origin_departement_id"].astype("category")
     df_trips["destination_departement_id"] = df_trips["destination_departement_id"].astype("category")
+
+    # Household set zone ID
+    df_households["zone_id"] = df_households["MP2"]
 
     # Clean employment
     df_persons["employed"] = df_persons["P7"].isin(["1", "2"])
@@ -194,5 +198,11 @@ def execute(context):
 
     # Fix activity types (because of inconsistent EGT data and removing in the timing fixing step)
     hts.fix_activity_types(df_trips)
+    
+    if context.config("use_urban_type"):
+        df_urban_type = context.stage("data.hts.emc2.urban_type")
+        number_of_households = len(df_households)
+        df_households = df_households.merge(df_urban_type[["zone_id","urban_type"]],on="zone_id",how="left")
+        assert len(df_households) == number_of_households
 
     return df_households, df_persons, df_trips

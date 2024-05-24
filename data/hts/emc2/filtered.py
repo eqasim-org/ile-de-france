@@ -32,7 +32,12 @@ def execute(context):
     df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
 
     # Finish up
-    df_households = df_households[hts.HOUSEHOLD_COLUMNS]
+    households_columns = hts.HOUSEHOLD_COLUMNS[:]
+    
+    if "urban_type" in df_households:
+        households_columns.append("urban_type")
+    
+    df_households = df_households[households_columns]
     df_persons = df_persons[hts.PERSON_COLUMNS]
     df_trips = df_trips[hts.TRIP_COLUMNS + ["routed_distance", "euclidean_distance"]]
 
