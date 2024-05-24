@@ -8,11 +8,11 @@ This stage filters out census observations which live or work outside of
 """
 
 def configure(context):
-    context.stage("data.census.personas")
+    context.stage("data.census.cleaned")
     context.stage("data.spatial.codes")
 
 def execute(context):
-    df = context.stage("data.census.personas")
+    df = context.stage("data.census.cleaned")
 
     # Filter requested codes
     df_codes = context.stage("data.spatial.codes")
