@@ -152,7 +152,7 @@ def execute(context):
         # Process household size mean
         target_mean = df_scenario[df_scenario["Attribute"] == "Household"]["Target"].values[0]
         df_values = df_census.groupby("household_size")["weight"].sum().reset_index()
-        distribution = find_distribution_for_mean(df_values["household_size"], df_values["weight"], target_mean)
+        distribution = find_distribution_for_mean(df_values["household_size"].values, df_values["weight"].values, target_mean)
 
         for value, target_share in zip(df_values["household_size"], distribution):
             f = df_census["household_size"] == value
@@ -169,7 +169,7 @@ def execute(context):
         # Process number of cars mean
         target_mean = df_scenario[df_scenario["Attribute"] == "Cars"]["Target"].values[0]
         df_values = df_census.groupby("number_of_vehicles")["weight"].sum().reset_index()
-        distribution = find_distribution_for_mean(df_values["number_of_vehicles"], df_values["weight"], target_mean)
+        distribution = find_distribution_for_mean(df_values["number_of_vehicles"].values, df_values["weight"].values, target_mean)
 
         for value, target_share in zip(df_values["number_of_vehicles"], distribution):
             f = df_census["number_of_vehicles"] == value
@@ -235,7 +235,7 @@ import scipy.optimize as opt
 
 def find_distribution_for_mean(values, counts, target_mean):
     print("Bisect")
-    print(" values=", values)
+    print(" values=", values / np.sum(values))
     print(" counts=", counts)
     print(" target=", target_mean)
 
