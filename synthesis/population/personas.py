@@ -256,7 +256,7 @@ def find_distribution_for_mean(values, counts, target_mean):
             return density
         
     print(" lower=", objective(0.1))
-    print(" upper=", objective(2.0))
+    print(" upper=", objective(4.0))
 
-    optimal_alpha = opt.bisect(objective, 0.1, 2.0)
+    optimal_alpha = opt.bisect(objective, 0.1, 4.0)
     return objective(optimal_alpha, True)
