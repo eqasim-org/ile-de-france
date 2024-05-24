@@ -8,10 +8,14 @@ This stage reweights the census data set according to the projection data for a 
 def configure(context):
     context.stage("data.census.filtered")
     context.stage("synthesis.population.projection.ipu")
+    context.config("projection_year", None)
 
 def execute(context):
     df_census = context.stage("data.census.filtered")
     df_weights = context.stage("synthesis.population.projection.ipu")
+
+    if context.config("projection_year") == 2019:
+        return df_census
 
     initial_size = len(df_census)
 
