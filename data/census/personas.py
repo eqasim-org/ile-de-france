@@ -19,6 +19,7 @@ def execute(context):
             "ID": "persona"
         })
 
+    print(len(df_clusters), len(df))
     assert len(df_clusters) == len(df)
     df["persona"] = df_clusters["persona"].values
 
