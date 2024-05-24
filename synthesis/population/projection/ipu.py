@@ -123,6 +123,8 @@ def execute(context):
     # Check that the applied factors in the last iteration are sufficiently small
     assert criterion > 0.01
 
+    assert np.max(factors) - np.min(factors) < 1e-3
+
     # For a sanity check, we check for the obtained distribution in 2019, but this
     # may evolve in the future. 
     assert np.quantile(update, 0.1) > 0.35
