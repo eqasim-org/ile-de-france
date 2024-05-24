@@ -134,7 +134,7 @@ def execute(context):
         # Process location type attribute
         df_values = df_scenario[df_scenario["Attribute"] == "Location"][["Value", "Target"]].copy()
         df_values["Target"] *= projection_total
-        df_values["Value"] = df_values["Value"].replace({ "nA", "-1"}).astype(int)
+        df_values["Value"] = df_values["Value"].replace({ "nA": "-1"}).astype(int)
 
         for value, target in zip(df_values["Value"], df_values["Target"]):
             f = df_census["location_type"] == value
