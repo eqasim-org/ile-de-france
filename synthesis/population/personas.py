@@ -132,6 +132,8 @@ def execute(context):
         df_scenario = df_scenario[df_scenario["Scenario"] == scenario].copy()
         
         # Process location type attribute
+        df_values = pd.DataFrame({})
+
         df_values = df_scenario[df_scenario["Attribute"] == "Location"][["Value", "Target"]].copy()
         df_values["Value"] = df_values["Value"].replace({ "nA": "-1"}).astype(int)
         # TODO: Rather fix this in the input!
@@ -148,40 +150,6 @@ def execute(context):
             attribute_membership.append(df_counts.index.values)
             attribute_counts.append(df_counts.values)
             attributes.append("location_type:{}".format(value))
-
-        # Process household size mean
-        target_mean = df_scenario[df_scenario["Attribute"] == "Household"]["Target"].values[0]
-        df_values = df_census.groupby("household_size")["weight"].sum().reset_index().sort_values(by = "household_size")
-        distribution = find_distribution_for_mean(df_values["household_size"].values, df_values["weight"].values, target_mean)
-
-        for value, target_share in zip(df_values["household_size"], distribution):
-            f = df_census["household_size"] == value
-
-            df_counts = df_census.loc[f, "household_index"].value_counts()
-
-            print("household_size=", value, "target=", target_share, "initial=", df_census.loc[f, "weight"].sum() / df_census["weight"].sum())
-
-            attribute_targets.append(target_share * projection_total)
-            attribute_membership.append(df_counts.index.values)
-            attribute_counts.append(df_counts.values)
-            attributes.append("household_size:{}".format(value))
-
-        # Process number of cars mean
-        target_mean = df_scenario[df_scenario["Attribute"] == "Cars"]["Target"].values[0]
-        df_values = df_census.groupby("number_of_vehicles")["weight"].sum().reset_index().sort_values(by = "number_of_vehicles")
-        distribution = find_distribution_for_mean(df_values["number_of_vehicles"].values, df_values["weight"].values, target_mean)
-
-        for value, target_share in zip(df_values["number_of_vehicles"], distribution):
-            f = df_census["number_of_vehicles"] == value
-
-            df_counts = df_census.loc[f, "household_index"].value_counts()
-
-            print("number_of_vehicles=", value, "target=", target_share, "initial=", df_census.loc[f, "weight"].sum() / df_census["weight"].sum())
-
-            attribute_targets.append(target_share * projection_total)
-            attribute_membership.append(df_counts.index.values)
-            attribute_counts.append(df_counts.values)
-            attributes.append("number_of_vehicles:{}".format(value))
 
     # Perform IPU to obtain update weights
     update = np.ones((len(df_households),))
@@ -230,33 +198,3 @@ def validate(context):
         raise RuntimeError("Persona scenario data is not available")
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")))
-
-import scipy.optimize as opt
-
-def find_distribution_for_mean(values, counts, target_mean):
-    print("Bisect")
-    print(" values=", values)
-    print(" counts=", counts / np.sum(counts))
-    print(" target=", target_mean)
-
-    def objective(alpha, return_density = False):
-        density = counts / np.sum(counts)
-
-        weights = np.linspace(0, 2, len(density)) - 1.0
-        weights = alpha ** weights
-
-        density = density * weights
-        density = density / np.sum(density)
-
-        mean = np.sum(values * density)
-
-        if not return_density:
-            return mean - target_mean
-        else:
-            return density
-        
-    print(" lower=", objective(0.1))
-    print(" upper=", objective(10.0))
-
-    optimal_alpha = opt.bisect(objective, 0.1, 10.0)
-    return objective(optimal_alpha, True)
