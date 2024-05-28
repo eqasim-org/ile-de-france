@@ -10,8 +10,8 @@ def configure(context):
     context.stage("data.spatial.codes")
 
     context.config("data_path")
-    context.config("census_path", "rp_2019/RP2019_INDCVI_csv.zip")
-    context.config("census_csv", "FD_INDCVI_2019.csv")
+    context.config("census_path", "rp/RP2020_INDCVI_csv.zip")
+    context.config("census_csv", "FD_INDCVI_2020.csv")
 
     context.config("projection_year", None)
 

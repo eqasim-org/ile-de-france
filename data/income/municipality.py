@@ -14,9 +14,9 @@ Loads and prepares income distributions by municipality:
 def configure(context):
     context.config("data_path")
     context.stage("data.spatial.municipalities")
-    context.config("income_com_path", "filosofi_2019/indic-struct-distrib-revenu-2019-COMMUNES.zip")
-    context.config("income_com_xlsx", "FILO2019_DISP_COM.xlsx")
-    context.config("income_year", 19)
+    context.config("income_com_path", "filosofi/indic-struct-distrib-revenu-2021-COMMUNES_XLSX.zip")
+    context.config("income_com_xlsx", "FILO2021_DISP_COM.xlsx")
+    context.config("income_year", 21)
 
 def execute(context):
     # Load income distribution
@@ -90,6 +90,7 @@ def execute(context):
 
 def validate(context):
     if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("income_com_path"))):
-        raise RuntimeError("Municipality Filosofi data is not available")
+        # raise RuntimeError("Municipality Filosofi data is not available")
+        raise RuntimeError("%s/%s" % (context.config("data_path"), context.config("income_com_path")))
 
     return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("income_com_path")))

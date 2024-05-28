@@ -8,7 +8,7 @@ selected regions and departments) and merges them together.
 
 def configure(context):
     context.config("data_path")
-    context.config("gtfs_path", "gtfs_idf")
+    context.config("gtfs_path", "gtfs")
 
     context.stage("data.spatial.municipalities")
 
