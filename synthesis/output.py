@@ -75,6 +75,7 @@ def execute(context):
     ]]
 
     df_households.to_csv("%s/%shouseholds.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+    df_households.to_parquet("%s/%shouseholds.parquet" % (output_path, output_prefix))
 
     # Prepare persons
     df_persons = context.stage("synthesis.population.enriched").rename(
@@ -89,6 +90,7 @@ def execute(context):
     ]]
 
     df_persons.to_csv("%s/%spersons.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+    df_persons.to_parquet("%s/%spersons.parquet" % (output_path, output_prefix))
 
     # Prepare activities
     df_activities = context.stage("synthesis.population.activities").rename(
@@ -171,15 +173,20 @@ def execute(context):
     path = "%s/%sactivities.gpkg" % (output_path, output_prefix)
     df_spatial.to_file(path, driver = "GPKG")
     clean_gpkg(path)
+    path = "%s/%sactivities.geoparquet" % (output_path, output_prefix)
+    df_spatial.to_parquet(path)
 
     # Write spatial homes
     path = "%s/%shomes.gpkg" % (output_path, output_prefix)
-    df_spatial[
+    df_spatial_homes = df_spatial[
         df_spatial["purpose"] == "home"
     ].drop_duplicates("household_id")[[
         "household_id", "geometry"
-    ]].to_file(path, driver = "GPKG")
+    ]]
+    df_spatial_homes.to_file(path, driver = "GPKG")
     clean_gpkg(path)
+    path = "%s/%shomes.geoparquet" % (output_path, output_prefix)
+    df_spatial_homes.to_parquet(path)
 
     # Write spatial commutes
     df_spatial = pd.merge(
@@ -196,6 +203,8 @@ def execute(context):
     path = "%s/%scommutes.gpkg" % (output_path, output_prefix)
     df_spatial.to_file(path, driver = "GPKG")
     clean_gpkg(path)
+    path = "%s/%scommutes.geoparquet" % (output_path, output_prefix)
+    df_spatial.to_parquet(path)
 
     # Write spatial trips
     df_spatial = pd.merge(df_trips, df_locations[[
@@ -229,3 +238,5 @@ def execute(context):
     path = "%s/%strips.gpkg" % (output_path, output_prefix)
     df_spatial.to_file(path, driver = "GPKG")
     clean_gpkg(path)
+    path = "%s/%strips.geoparquet" % (output_path, output_prefix)
+    df_spatial.to_parquet(path)
