@@ -25,7 +25,7 @@ dependencies:
   - fiona=1.9.2
   - sqlite=3.42.0
   - mock=5.1.0
-  - pyarrow=16.1.0
+  - pyarrow=14.0.2
 
   - pip:
     - synpp==1.5.1
