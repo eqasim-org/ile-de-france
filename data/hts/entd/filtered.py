@@ -31,10 +31,13 @@ def execute(context):
         ]["person_id"].unique())
 
         df_persons = df_persons[~df_persons["person_id"].isin(remove_ids)]
+    
+    else:
+        df_persons = df_persons[~df_persons["person_id"].isin([34581])] # remove persons leading to activity types error
 
-        # Only keep trips and households that still have a person
-        df_trips = df_trips[df_trips["person_id"].isin(df_persons["person_id"].unique())]
-        df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
+    # Only keep trips and households that still have a person
+    df_trips = df_trips[df_trips["person_id"].isin(df_persons["person_id"].unique())]
+    df_households = df_households[df_households["household_id"].isin(df_persons["household_id"])]
 
     # Finish up
     df_households = df_households[hts.HOUSEHOLD_COLUMNS + ["urban_type", "income_class"]]
