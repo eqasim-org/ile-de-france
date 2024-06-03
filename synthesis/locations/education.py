@@ -7,6 +7,20 @@ def configure(context):
     context.stage("data.bpe.cleaned")
     context.stage("data.spatial.municipalities")
 
+EDUCATION_WEIGHT_MAP = [
+    ("C101", 100),  # Preschools
+    ("C102", 50),  # Intercommunal preschools
+    ("C104", 145),  # Elemantary schools
+    ("C105", 80),  # Intercommunal elemantary schools
+    ("C301", 700),  # General and technological high schools, multi-purpose high schools
+    ("C302", 285),  # Professional high schools
+    ("C303", 100),  # Agricultural high schools
+    ("C304", 30),  # General and technological classes in professional high schools
+    ("C305", 30),  # Professional classes in general and technological high schools
+    ("C403", 1000),  # Business schools
+    ("C5", 2000),  # University
+]
+
 def fake_education(missing_communes, c, df_locations, df_zones):
     # Fake education destinations as the centroid of zones that have no other destinations
     print(
@@ -28,6 +42,7 @@ def fake_education(missing_communes, c, df_locations, df_zones):
     )
     df_added["fake"] = True
     df_added["TYPEQU"] = c
+    df_added["weight"] = 1
 
     return df_added
 
@@ -39,7 +54,11 @@ def execute(context):
     df_locations = df_locations[df_locations["activity_type"] == "education"]
     df_locations = df_locations[["TYPEQU", "commune_id", "geometry"]].copy()
     df_locations["fake"] = False
-
+    df_locations["weight"] = 500
+    for prefix, weight in EDUCATION_WEIGHT_MAP:
+        df_locations.loc[df_locations["TYPEQU"].str.startswith(prefix), "weight"] = (
+            weight
+        )
     # Add education destinations to the centroid of zones that have no other destinations
     df_zones = context.stage("data.spatial.municipalities")
 
@@ -63,4 +82,4 @@ def execute(context):
     df_locations["location_id"] = np.arange(len(df_locations))
     df_locations["location_id"] = "edu_" + df_locations["location_id"].astype(str)
 
-    return df_locations[["location_id", "commune_id", "fake", "geometry"]]
+    return df_locations[["location_id","TYPEQU", "weight", "commune_id", "fake", "geometry"]]

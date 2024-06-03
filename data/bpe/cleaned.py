@@ -134,7 +134,7 @@ def execute(context):
         df.loc[outside_indices, "imputed"] = True
 
     # Package up data set
-    df = df[["enterprise_id", "activity_type","TYPEQU" "commune_id", "imputed", "x", "y"]]
+    df = df[["enterprise_id", "activity_type","TYPEQU", "commune_id", "imputed", "x", "y"]]
 
     df = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.x, df.y),crs="EPSG:2154")
 
