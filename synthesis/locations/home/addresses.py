@@ -15,7 +15,7 @@ many adresses). For every building the housing count is distributed to the match
 adresses. For instance, the assigned addresses of a building with 10 housing units
 and two addresses will have a weight of 5.
 
-If no adresses matches a buidling, its centroid is taken as the unique address.
+If no adresses matches a building, its centroid is taken as the unique address.
 """
 
 def configure(context):
@@ -70,5 +70,5 @@ def execute(context):
     return df_addresses[["building_id", "weight", "geometry"]]
 
 def validate(context):
-    assert context.config("home_location_source") in ("addresses", "buildings")
+    assert context.config("home_location_source") in ("addresses", "buildings","tiles")
     assert context.config("home_location_weight") in ("uniform", "housing")

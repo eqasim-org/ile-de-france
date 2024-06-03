@@ -6,7 +6,8 @@ import geopandas as gpd
 def configure(context):
     context.stage("synthesis.population.spatial.home.zones")
     context.stage("synthesis.locations.home.locations")
-
+    context.config("home_location_source", "addresses")
+    
     context.config("random_seed")
 
 def _sample_locations(context, args):
@@ -39,8 +40,10 @@ def _sample_locations(context, args):
     
     # Apply selection
     df_homes["geometry"] = df_locations.iloc[indices]["geometry"].values
-    df_homes["building_id"] = df_locations.iloc[indices]["building_id"].values
-    
+    if context.config("home_location_source") == "tiles":
+        df_homes["id_tiles"] = df_locations.iloc[indices]["id_tiles"].values
+    else:
+        df_homes["building_id"] = df_locations.iloc[indices]["building_id"].values
     # Update progress
     context.progress.update()
 
@@ -61,5 +64,9 @@ def execute(context):
         )) as parallel:
             seeds = random.randint(10000, size = len(unique_iris_ids))
             df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
-
-    return df_homes[["household_id", "commune_id", "building_id", "geometry"]]
+    out = (
+        ["household_id", "commune_id", "id_tiles", "geometry"]
+        if context.config("home_location_source") == "tiles"
+        else ["household_id", "commune_id", "building_id", "geometry"]
+    )
+    return df_homes[out]
