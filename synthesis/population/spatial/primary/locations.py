@@ -9,6 +9,17 @@ def configure(context):
     context.stage("synthesis.locations.work")
     context.stage("synthesis.locations.education")
 
+EDUCATION_MAPPING = {
+    "primary_school": {"min_age": 0, "max_age": 10, "type_edu": "C1"},
+    "middle_school": {"min_age": 11, "max_age": 14, "type_edu": "C2"},
+    "high_school": {"min_age": 15, "max_age": 17, "type_edu": "C3"},
+    "higher_education": {
+        "min_age": 18,
+        "max_age": 110,
+        "type_edu": ("C4", "C5", "C6"),
+    },
+}
+
 def define_distance_ordering(df_persons, df_candidates, progress):
     indices = []
 
@@ -106,13 +117,15 @@ def execute(context):
     df_work_candidates = pd.merge(df_work_candidates, df_locations, how = "left", on = "location_id")
     df_work_candidates = gpd.GeoDataFrame(df_work_candidates)
 
-    df_locations = context.stage("synthesis.locations.education")[["location_id", "geometry"]]
+    df_locations = context.stage("synthesis.locations.education")[["TYPEQU", "location_id", "geometry"]]
     df_education_candidates = data["education_candidates"]
     df_education_candidates = pd.merge(df_education_candidates, df_locations, how = "left", on = "location_id")
     df_education_candidates = gpd.GeoDataFrame(df_education_candidates)
 
     # Assign destinations
     df_work = process(context, "work", df_work, df_work_candidates)
-    df_education = process(context, "education", df_education, df_education_candidates)
-
+    education = []
+    for prefix, education_type in EDUCATION_MAPPING.items():
+        education.append(process(context, "education_" + prefix,df_education[df_education["age"].between(education_type["min_age"],education_type["max_age"])],df_education_candidates[df_education_candidates["TYPEQU"].str.startswith(education_type["type_edu"])]))
+    df_education = pd.concat(education).sort_index()
     return df_work, df_education

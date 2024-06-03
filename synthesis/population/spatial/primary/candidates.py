@@ -13,6 +13,17 @@ def configure(context):
 
     context.config("random_seed")
 
+EDUCATION_MAPPING = {
+    "primary_school": {"min_age": 0, "max_age": 10, "type_edu": "C1"},
+    "middle_school": {"min_age": 11, "max_age": 14, "type_edu": "C2"},
+    "high_school": {"min_age": 15, "max_age": 17, "type_edu": "C3"},
+    "higher_education": {
+        "min_age": 18,
+        "max_age": 110,
+        "type_edu": ("C4", "C5", "C6"),
+    },
+}
+
 def sample_destination_municipalities(context, arguments):
     # Load data
     origin_id, count, random_seed = arguments
@@ -64,7 +75,7 @@ def sample_locations(context, arguments):
     return df_result
 
 def process(context, purpose, random, df_persons, df_od, df_locations):
-    df_persons = df_persons[df_persons["has_%s_trip" % purpose]]
+    df_persons = df_persons[df_persons["has_%s_trip" % purpose.split("_")[0]]]
 
     # Sample commute flows based on population
     df_demand = df_persons.groupby("commune_id").size().reset_index(name = "count")
@@ -98,7 +109,7 @@ def process(context, purpose, random, df_persons, df_od, df_locations):
 
 def execute(context):
     # Prepare population data
-    df_persons = context.stage("synthesis.population.enriched")[["person_id", "household_id"]].copy()
+    df_persons = context.stage("synthesis.population.enriched")[["person_id", "household_id", "age"]].copy()
     df_trips = context.stage("synthesis.population.trips")
 
     df_persons["has_work_trip"] = df_persons["person_id"].isin(df_trips[
@@ -125,14 +136,19 @@ def execute(context):
     )
 
     df_locations = context.stage("synthesis.locations.education")
-    df_education = process(context, "education", random, df_persons,
-        df_education_od, df_locations
-    )
+    df_education = []
+    for prefix, education_type in EDUCATION_MAPPING.items():
+        df_education.append(
+            process(context, "education_" + prefix, random,
+                df_persons[df_persons["age"].between( education_type["min_age"],education_type["max_age"])],
+                df_education_od,df_locations[df_locations["TYPEQU"].str.startswith(education_type["type_edu"])])
+        )
+    df_education = pd.concat(df_education).sort_values(["origin_id", "destination_id"])
 
     return dict(
         work_candidates = df_work,
         education_candidates = df_education,
         persons = df_persons[df_persons["has_work_trip"] | df_persons["has_education_trip"]][[
-            "person_id", "household_id", "commune_id", "has_work_trip", "has_education_trip"
+            "person_id", "household_id", "age", "commune_id", "has_work_trip", "has_education_trip"
         ]]
     )
