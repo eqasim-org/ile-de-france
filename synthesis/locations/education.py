@@ -7,6 +7,10 @@ def configure(context):
     context.stage("data.bpe.cleaned")
     context.stage("data.spatial.municipalities")
 
+    if context.config("education_location_source", "bpe") == 'addresses' :
+        context.config("data_path")
+        context.config("education_file", "education/education_addresses.geojson")
+
 EDUCATION_WEIGHT_MAP = [
     ("C101", 100),  # Preschools
     ("C102", 50),  # Intercommunal preschools
@@ -59,10 +63,20 @@ def execute(context):
         df_locations.loc[df_locations["TYPEQU"].str.startswith(prefix), "weight"] = (
             weight
         )
+        
     # Add education destinations to the centroid of zones that have no other destinations
     df_zones = context.stage("data.spatial.municipalities")
 
-    required_communes = set(df_zones["commune_id"].unique())
+    required_communes = set(df_zones["commune_id"].unique())    
+    
+    if context.config("education_location_source") == 'addresses':
+        # Data in model of bpe cleaned
+        df_education = gpd.read_file("{}/{}".format(context.config("data_path"), context.config("education_file")))[["TYPEQU", "commune_id","weight", "geometry"]]
+        df_education["fake"] = False
+        df_education = df_education.to_crs("2154")
+        list_type = set(df_education["TYPEQU"].unique())
+        df_locations = pd.concat([df_locations[~(df_locations["TYPEQU"].isin(list_type))],df_education])
+        
     # Add education destinations in function of level education
     for c in ["C1", "C2", "C3"]:
         missing_communes = required_communes - set(
