@@ -67,6 +67,10 @@ def run_population(tmpdir, hts, update = {}):
     assert 447 == len(pd.read_csv("%s/ile_de_france_persons.csv" % output_path, usecols = ["household_id"], sep = ";"))
     assert 149 == len(pd.read_csv("%s/ile_de_france_households.csv" % output_path, usecols = ["household_id"], sep = ";"))
 
+    if "generate_vehicles_file" in update and update["generate_vehicles_file"]:
+        assert 17 == len(pd.read_csv("%s/ile_de_france_vehicle_types.csv" % output_path, usecols = ["type_id"], sep = ";"))
+        assert 447 == len(pd.read_csv("%s/ile_de_france_vehicles.csv" % output_path, usecols = ["vehicle_id"], sep = ";"))
+
 def test_population_with_entd(tmpdir):
     run_population(tmpdir, "entd")
 
@@ -75,6 +79,13 @@ def test_population_with_egt(tmpdir):
 
 def test_population_with_mode_choice(tmpdir):
     run_population(tmpdir, "entd", { "mode_choice": True })
+
+def test_population_with_fleet_sample(tmpdir):
+    run_population(tmpdir, "entd", { 
+        "generate_vehicles_file": True,
+        "generate_vehicles_method": "fleet_sample",
+        "vehicles_data_year": 2015
+    })
 
 def test_population_with_urban_type(tmpdir):
     run_population(tmpdir, "entd", { 

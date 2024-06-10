@@ -16,10 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-java@v2
+    - uses: actions/setup-java@v4
       with:
-        distribution: "adopt"
-        java-version: "11"
+        distribution: "corretto"
+        java-version: "17"
     - uses: actions/cache@v2
       env:
         CACHE_NUMBER: 0
@@ -70,9 +70,3 @@ jobs:
       shell: bash -el {0}
       run: |
         MKL_CBWR=AUTO pytest tests/
-    - name: Verify availability of open data
-      if: matrix.os == 'ubuntu-latest'
-      shell: bash -el {0}
-      run: |
-        python scripts/verify_data.py
-

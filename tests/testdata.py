@@ -820,6 +820,51 @@ def create(output_path):
     import data.gtfs.utils
     data.gtfs.utils.write_feed(feed, "%s/gtfs_idf/IDFM-gtfs.zip" % output_path)
 
+    # Dataset: Parc automobile
+    df_vehicles_region = pd.DataFrame(index = pd.MultiIndex.from_product([
+        df["region"].unique(),
+        np.arange(20),
+    ], names = [
+        "Code région", "Age au 01/01/2015"
+    ])).reset_index()
+
+    # to enforce string
+    df_vehicles_region = pd.concat([df_vehicles_region, pd.DataFrame({
+        "Code région": ["AB"],
+        "Age au 01/01/2015": [0],
+    })])
+
+    df_vehicles_region["Code région"] = df_vehicles_region["Code région"].astype(str)
+
+    df_vehicles_region["Parc au 01/01/2015"] = 100
+    df_vehicles_region["Energie"] = "Gazole"
+    df_vehicles_region["Vignette crit'air"] = "Crit'air 1"
+
+    df_vehicles_region["Age au 01/01/2015"] = df_vehicles_region["Age au 01/01/2015"].astype(str)
+    df_vehicles_region["Age au 01/01/2015"] = df_vehicles_region["Age au 01/01/2015"].replace("20", ">20")
+    df_vehicles_region["Age au 01/01/2015"] = df_vehicles_region["Age au 01/01/2015"] + " ans"
+
+    df_vehicles_commune = pd.DataFrame({
+        "municipality": df["municipality"].unique()
+    })
+    df_vehicles_commune["Parc au 01/01/2015"] = 100
+    df_vehicles_commune["Energie"] = "Gazole"
+    df_vehicles_commune["Vignette Crit'air"] = "Crit'air 1"
+
+    df_vehicles_commune = pd.merge(df_vehicles_commune, df[[
+        "municipality", "region", "department"
+    ]], on = "municipality")
+
+    df_vehicles_commune = df_vehicles_commune.rename(columns = {
+        "municipality": "Code commune",
+        "department": "Code départment",
+        "region": "Code région",
+    })
+
+    os.mkdir("%s/vehicles_2015" % output_path)
+    df_vehicles_region.to_excel("%s/vehicles_2015/Parc_VP_Regions_2015.xlsx" % output_path)
+    df_vehicles_commune.to_excel("%s/vehicles_2015/Parc_VP_Communes_2015.xlsx" % output_path)
+
 if __name__ == "__main__":
     import sys
     create(sys.argv[1])

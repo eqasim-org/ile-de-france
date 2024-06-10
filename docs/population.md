@@ -238,6 +238,8 @@ and arranging all the raw data sets as described above.
 - `output_path`: This should be the path to the folder where the output data
 of the pipeline should be stored. It must exist and should ideally be empty
 for now.
+- `output_formats`: This should specify the formats of outputs. Available formats are
+csv, gpkg, parquet and geoparquet. Default value is csv and gpkg: ["csv", "gpkg"].
 
 To set up the working/output directory, create, for instance, a `cache` and a
 `output` directory. These are already configured in `config.yml`:

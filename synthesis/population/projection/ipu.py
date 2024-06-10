@@ -13,6 +13,9 @@ def execute(context):
     df_census = context.stage("data.census.cleaned")
     projection = context.stage("data.census.projection")
 
+    # Adjust projection data (see below)
+    adjust_projection(projection)
+
     # Prepare indexing
     df_households = df_census[["household_id", "household_size", "weight"]].drop_duplicates("household_id")
     df_households["household_index"] = np.arange(len(df_households))
@@ -20,7 +23,6 @@ def execute(context):
 
     # Obtain weights and sizes as arrays
     household_weights = df_households["weight"].values
-    household_sizes = df_households["household_size"].values
 
     # Obtain the attribute levels and membership of attributes for all households
     attributes = []
@@ -33,69 +35,57 @@ def execute(context):
     df_marginal = projection["age"]
     for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: age", total = len(df_marginal)):
         f = df_census["age"] == row["age"]
+        assert np.count_nonzero(f) > 0
 
-        if row["age"] == 0:
-            continue # we skip incompatible values for peopel of zero age
-
-        if np.count_nonzero(f) == 0:
-            print("Did not find age:", row["age"])
-
-        else:
-            df_counts = df_census.loc[f, "household_index"].value_counts()
-        
-            attribute_targets.append(row["projection"])
-            attribute_membership.append(df_counts.index.values)
-            attribute_counts.append(df_counts.values)
-            attributes.append("age={}".format(row["age"]))
+        df_counts = df_census.loc[f, "household_index"].value_counts()
+        attribute_targets.append(row["projection"])
+        attribute_membership.append(df_counts.index.values)
+        attribute_counts.append(df_counts.values)
+        attributes.append("age={}".format(row["age"]))
     
     # Processing sex ...
     df_marginal = projection["sex"]
     for index, row in context.progress(df_marginal.iterrows(), label = "Processing attribute: sex", total = len(df_marginal)):
         f = df_census["sex"] == row["sex"]
-        
-        if np.count_nonzero(f) == 0:
-            print("Did not find sex:", row["sex"])
+        f &= (df_census["age"] > 0) & (df_census["age"] <= 104)
+        assert np.count_nonzero(f) > 0
 
-        else:
-            df_counts = df_census.loc[f, "household_index"].value_counts()
-        
-            attribute_targets.append(row["projection"])
-            attribute_membership.append(df_counts.index.values)
-            attribute_counts.append(df_counts.values)
-            attributes.append("sex={}".format(row["sex"]))
+        df_counts = df_census.loc[f, "household_index"].value_counts()
+        attribute_targets.append(row["projection"])
+        attribute_membership.append(df_counts.index.values)
+        attribute_counts.append(df_counts.values)
+        attributes.append("sex={}".format(row["sex"]))
 
     # Processing age x sex ...
     df_marginal = projection["cross"]
     for index, row in context.progress(df_marginal.iterrows(), label = "Processing attributes: sex x age", total = len(df_marginal)):
         f = (df_census["sex"] == row["sex"]) & (df_census["age"] == row["age"])
+        assert np.count_nonzero(f) > 0
 
-        if row["age"] == 0:
-            continue
-        
-        if np.count_nonzero(f) == 0:
-            print("Did not find values:", row["sex"], row["age"])
-
-        else:
-            df_counts = df_census.loc[f, "household_index"].value_counts()
-        
-            attribute_targets.append(row["projection"])
-            attribute_membership.append(df_counts.index.values)
-            attribute_counts.append(df_counts.values)
-            attributes.append("sex={},age={}".format(row["sex"], row["age"]))
+        df_counts = df_census.loc[f, "household_index"].value_counts()
+        attribute_targets.append(row["projection"])
+        attribute_membership.append(df_counts.index.values)
+        attribute_counts.append(df_counts.values)
+        attributes.append("sex={},age={}".format(row["sex"], row["age"]))
 
     # Processing total ...
+    f = (df_census["age"] > 0) & (df_census["age"] <= 104)
+    assert np.count_nonzero(f) > 0
+    
+    df_counts = df_census.loc[f, "household_index"].value_counts()
     attribute_targets.append(projection["total"]["projection"].values[0])
-    attribute_membership.append(np.arange(len(household_sizes)))
-    attribute_counts.append(household_sizes)
+    attribute_membership.append(df_counts.index.values)
+    attribute_counts.append(df_counts.values)
     attributes.append("total")
 
     # Perform IPU to obtain update weights
     update = np.ones((len(df_households),))
 
-    minimum_factors = []
-    maximum_factors = []
+    print("Starting IPU with {} attributes".format(len(attributes)))
+    convergence_threshold = 1e-3
+    maximum_iterations = 100
 
-    for iteration in context.progress(range(100), label = "Performing IPU"):
+    for iteration in range(maximum_iterations):
         factors = []    
         for k in np.arange(len(attributes)):
             selection = attribute_membership[k]
@@ -108,24 +98,51 @@ def execute(context):
                 
             update[selection] *= factor
 
-        minimum_factors.append(np.min(factors))
-        maximum_factors.append(np.max(factors))
+        print("IPU it={} min={} max={}".format(iteration, np.min(factors), np.max(factors)))
 
-        if np.max(factors) - np.min(factors) < 1e-3:
-            break
-    
-    criterion = np.max(factors) - np.min(factors)
+        converged = np.abs(1 - np.max(factors)) < convergence_threshold
+        converged &= np.abs(1 - np.min(factors)) < convergence_threshold
+        if converged: break
 
     # Check that the applied factors in the last iteration are sufficiently small
-    assert criterion > 0.01
+    assert converged
 
-    # For a sanity check, we check for the obtained distribution in 2019, but this
-    # may evolve in the future. 
-    assert np.quantile(update, 0.1) > 0.35
-    assert np.quantile(update, 0.8) < 2.0
-    assert np.quantile(update, 0.9) < 2.5
+    print("IPF updates min={} max={} mean={}".format(np.min(update), np.max(update), np.mean(update)))
 
     # Update the weights
     df_households["weight"] *= update
     
     return df_households[["household_id", "weight"]]
+
+def adjust_projection(projection):
+    # The projection data contains information on zero-year old persons. However, there is a big difference between the
+    # RP data and the projection, probably because RP is fixed to a certain reference date and not all of them are 
+    # registered. We, in particular, see that there is a large jump between 0 years and 1 years.
+    # Therefore, we exclude the zero-year persons from the projection. This, however, means adapting all the marginals.
+    # Also, exclude everything that is 105+
+
+    df_cross = projection["cross"]
+    df_age = projection["age"]
+    df_sex = projection["sex"]
+    df_total = projection["total"]
+
+    # Reduce totals from sex distribution and overall population
+    for index, row in df_cross.iterrows():
+        if row["age"] == 0 or row["age"] == "105+":
+            f_sex = df_sex["sex"] == row["sex"]
+
+            df_sex.loc[f_sex, "projection"] = df_sex.loc[f_sex, "projection"] - row["projection"]
+            df_total["projection"] = df_total["projection"] - row["projection"]
+    
+    projection["sex"] = df_sex
+    projection["total"] = df_total
+
+    # Remove zero old years from cross distribution
+    projection["cross"] = df_cross[
+        (df_cross["age"] != 0) & (df_cross["age"] != "105+")
+    ]
+
+    # Remove zero old years from age distribution
+    projection["age"] = df_age[
+        (df_age["age"] != 0) & (df_age["age"] != "105+")
+    ]

@@ -80,7 +80,7 @@ tests = [
     },
    
     {
-        "name": "SIRET géolocalisé",
+        "name": "SIRET gÃ©olocalisÃ©",
         "urls": [
             "https://adresse.data.gouv.fr/donnees-nationales"
         ]
@@ -121,12 +121,15 @@ tests = [
 ]
 
 # Start testing process
+import time
 from urllib.request import urlopen
 
 any_errors = False
+sleep_time = 10 # s
 
 for test in tests:
     print("Testing %s ..." % test["name"])
+    time.sleep(sleep_time)
 
     for url in test["urls"]:
         try:
