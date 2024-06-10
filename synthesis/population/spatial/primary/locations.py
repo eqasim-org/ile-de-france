@@ -9,6 +9,8 @@ def configure(context):
     context.stage("synthesis.locations.work")
     context.stage("synthesis.locations.education")
 
+    context.config("education_location_source", "bpe")
+
 EDUCATION_MAPPING = {
     "primary_school": {"min_age": 0, "max_age": 10, "type_edu": "C1"},
     "middle_school": {"min_age": 11, "max_age": 14, "type_edu": "C2"},
@@ -124,8 +126,11 @@ def execute(context):
 
     # Assign destinations
     df_work = process(context, "work", df_work, df_work_candidates)
-    education = []
-    for prefix, education_type in EDUCATION_MAPPING.items():
-        education.append(process(context, "education_" + prefix,df_education[df_education["age"].between(education_type["min_age"],education_type["max_age"])],df_education_candidates[df_education_candidates["TYPEQU"].str.startswith(education_type["type_edu"])]))
-    df_education = pd.concat(education).sort_index()
+    if context.config("education_location_source") == 'bpe':
+        df_education = process(context, "education", df_education, df_education_candidates)
+    else :
+        education = []
+        for prefix, education_type in EDUCATION_MAPPING.items():
+            education.append(process(context, "education_" + prefix,df_education[df_education["age"].between(education_type["min_age"],education_type["max_age"])],df_education_candidates[df_education_candidates["TYPEQU"].str.startswith(education_type["type_edu"])]))
+        df_education = pd.concat(education).sort_index()
     return df_work, df_education

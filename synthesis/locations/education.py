@@ -58,40 +58,48 @@ def execute(context):
     df_locations = df_locations[df_locations["activity_type"] == "education"]
     df_locations = df_locations[["TYPEQU", "commune_id", "geometry"]].copy()
     df_locations["fake"] = False
-    df_locations["weight"] = 500
-    for prefix, weight in EDUCATION_WEIGHT_MAP:
-        df_locations.loc[df_locations["TYPEQU"].str.startswith(prefix), "weight"] = (
-            weight
-        )
-        
+    df_locations["weight"] = 500 
+
     # Add education destinations to the centroid of zones that have no other destinations
     df_zones = context.stage("data.spatial.municipalities")
 
-    required_communes = set(df_zones["commune_id"].unique())    
+    required_communes = set(df_zones["commune_id"].unique())  
     
-    if context.config("education_location_source") == 'addresses':
-        # Data in model of bpe cleaned
-        df_education = gpd.read_file("{}/{}".format(context.config("data_path"), context.config("education_file")))[["TYPEQU", "commune_id","weight", "geometry"]]
-        df_education["fake"] = False
-        df_education = df_education.to_crs("2154")
-        list_type = set(df_education["TYPEQU"].unique())
-        df_locations = pd.concat([df_locations[~(df_locations["TYPEQU"].isin(list_type))],df_education])
+    if context.config("education_location_source") != 'bpe': # either weighted or addresses
+        for prefix, weight in EDUCATION_WEIGHT_MAP:
+            df_locations.loc[df_locations["TYPEQU"].str.startswith(prefix), "weight"] = (
+                weight
+            ) 
         
-    # Add education destinations in function of level education
-    for c in ["C1", "C2", "C3"]:
-        missing_communes = required_communes - set(
-            df_locations[df_locations["TYPEQU"].str.startswith(c)]["commune_id"].unique())
+        if context.config("education_location_source") == 'addresses':
+            # Data in model of bpe cleaned
+            df_education = gpd.read_file("{}/{}".format(context.config("data_path"), context.config("education_file")))[["TYPEQU", "commune_id","weight", "geometry"]]
+            df_education["fake"] = False
+            df_education = df_education.to_crs("2154")
+            list_type = set(df_education["TYPEQU"].unique())
+            df_locations = pd.concat([df_locations[~(df_locations["TYPEQU"].isin(list_type))],df_education])
+        
+      
+        # Add education destinations in function of level education
+        for c in ["C1", "C2", "C3"]:
+            missing_communes = required_communes - set(
+                df_locations[df_locations["TYPEQU"].str.startswith(c)]["commune_id"].unique())
+
+            if len(missing_communes) > 0:
+                df_locations = pd.concat([df_locations,fake_education(missing_communes, c, df_locations, df_zones)])
+        
+        # Add education destinations for last level education
+        missing_communes = required_communes - set(df_locations[~(df_locations["TYPEQU"].str.startswith(("C1", "C2", "C3")))]["commune_id"].unique())
 
         if len(missing_communes) > 0:
-            df_locations = pd.concat([df_locations,fake_education(missing_communes, c, df_locations, df_zones)])
-    
-    # Add education destinations in function of level education
-    missing_communes = required_communes - set(df_locations[~(df_locations["TYPEQU"].str.startswith(("C1", "C2", "C3")))]["commune_id"].unique())
 
-    if len(missing_communes) > 0:
+            df_locations = pd.concat([df_locations,fake_education(missing_communes, "C4", df_locations, df_zones)])
+    else :
+        missing_communes = required_communes - set(df_locations["commune_id"].unique())
+        if len(missing_communes) > 0:
 
-        df_locations = pd.concat([df_locations,fake_education(missing_communes, "C4", df_locations, df_zones)])
-    
+            df_locations = pd.concat([df_locations,fake_education(missing_communes, "C", df_locations, df_zones)])
+
     # Define identifiers
     df_locations["location_id"] = np.arange(len(df_locations))
     df_locations["location_id"] = "edu_" + df_locations["location_id"].astype(str)
