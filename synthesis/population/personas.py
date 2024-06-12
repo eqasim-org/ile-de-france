@@ -171,9 +171,9 @@ def validate(context):
     total = 0
 
     for slot in ["personas", "number_of_cars", "household_size", "location_type"]:
-        if not os.path.exists("%s/%s/distribution_{}.parquet" % (context.config("data_path"), context.config("personas.input_path"), slot)):
+        if not os.path.exists("%s/%s/distribution_%s.parquet" % (context.config("data_path"), context.config("personas.input_path"), slot)):
             raise RuntimeError("Persona cluster data is not available")
 
-        total += os.path.getsize("%s/%s/distribution_{}.parquet" % (context.config("data_path"), context.config("personas.input_path"), slot))
+        total += os.path.getsize("%s/%s/distribution_%s.parquet" % (context.config("data_path"), context.config("personas.input_path"), slot))
 
     return total
