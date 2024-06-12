@@ -21,7 +21,7 @@ def execute(context):
 
     # Attach 
     df_clusters = pd.read_csv(
-        "%s/%s" % (context.config("data_path"), context.config("personas.clustering_path")),
+        "%s/%s/clusters_2019.csv" % (context.config("data_path"), context.config("personas.input_path")),
         usecols = ["ID"], sep = ",").rename(columns = {
             "ID": "persona"
         })
