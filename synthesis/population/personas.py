@@ -9,7 +9,7 @@ This stage updates the census weights to correspond to persona-based scenarios
 def configure(context):
     context.stage("data.census.personas")
 
-    context.config("personas.scenarios_path")
+    context.config("personas.input_path")
     context.config("personas.scenario", "none")
 
 def execute(context):
@@ -97,59 +97,33 @@ def execute(context):
     attribute_counts.append(household_sizes)
     attributes.append("total")
 
-    ### PERSONA PART
+    ### Apply persona weighting targets
     if scenario != "Projection":
-        # Load scenario data
-        df_scenario = pd.read_excel(
-            "%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")),
-            sheet_name="Weights")
-        
-        df_scenario = df_scenario[["Persona", scenario]]
-        df_scenario = df_scenario.rename(columns = { 
-            "Persona": "persona",
-            scenario: "scenario_share" 
-        })
-        assert len(df_scenario) > 0
+        for slot in ["persona", "number_of_cars", "household_size", "location_type"]:
+            population_column = "personas_{}".format(slot) if slot != "persona" else "persona"
 
-        # The persons contain personas 0-15, here we get 1-16, so we need to adjust
-        df_scenario["persona"] -= 1
+            df_slot = pd.read_parquet("{}/{}/{}".format(
+                context.config("data_path"), context.config("personas.input_path"),
+                "distribution_{}.parquet".format(slot)
+            ))
 
-        # Process personas
-        for persona, target_share in zip(df_scenario["persona"], df_scenario["scenario_share"]):
-            f = df_census["persona"] == persona
+            df_slot = df_slot[df_slot["scenario"] == scenario]
+            assert len(df_slot) > 0
 
-            df_counts = df_census.loc[f, "household_index"].value_counts()
-            
-            attribute_targets.append(target_share * projection_total)
-            attribute_membership.append(df_counts.index.values)
-            attribute_counts.append(df_counts.values)
-            attributes.append("persona:{}".format(persona))
+            slot_total = df_slot["weight"].sum()
 
-        df_scenario = pd.read_excel(
-            "%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")),
-            sheet_name="Results")
-        
-        df_scenario = df_scenario[df_scenario["Scenario"] == scenario].copy()
-        
-        # Process location type attribute
-        df_values = pd.DataFrame({})
+            for value, target_share in zip(df_slot[slot], df_slot["weight"] / slot_total):
+                if str(value) == "9999": continue # skip NA
 
-        df_values = df_scenario[df_scenario["Attribute"] == "Location"][["Value", "Target"]].copy()
-        df_values["Value"] = df_values["Value"].replace({ "nA": "-1"}).astype(int)
-        # TODO: Rather fix this in the input!
-        df_values["Target"] = df_values["Target"] / df_values["Target"].sum()
+                f = df_census[population_column] == value
+                assert np.count_nonzero(f) > 0
 
-        for value, target_share in zip(df_values["Value"], df_values["Target"]):
-            f = df_census["location_type"] == value
+                df_counts = df_census.loc[f, "household_index"].value_counts()
 
-            df_counts = df_census.loc[f, "household_index"].value_counts()
-
-            print("location_type=", value, "target=", target_share, "initial=", df_census.loc[f, "weight"].sum() / df_census["weight"].sum())
-
-            attribute_targets.append(target_share * projection_total)
-            attribute_membership.append(df_counts.index.values)
-            attribute_counts.append(df_counts.values)
-            attributes.append("location_type:{}".format(value))
+                attribute_targets.append(target_share * projection_total)
+                attribute_membership.append(df_counts.index.values)
+                attribute_counts.append(df_counts.values)
+                attributes.append("{}:{}".format(slot, value))
 
     # Perform IPU to obtain update weights
     update = np.ones((len(df_households),))
@@ -194,7 +168,12 @@ def execute(context):
     return df_census
 
 def validate(context):
-    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path"))):
-        raise RuntimeError("Persona scenario data is not available")
+    total = 0
 
-    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("personas.scenarios_path")))
+    for slot in ["personas", "number_of_cars", "household_size", "location_type"]:
+        if not os.path.exists("%s/%s/distribution_{}.parquet" % (context.config("data_path"), context.config("personas.input_path"), slot)):
+            raise RuntimeError("Persona cluster data is not available")
+
+        total += os.path.getsize("%s/%s/distribution_{}.parquet" % (context.config("data_path"), context.config("personas.input_path"), slot))
+
+    return total

@@ -102,13 +102,21 @@ def execute(context):
     # Location attributes for personas
     df.loc[df["employed"], "location_type"] = df.loc[df["employed"], "ILT"]
     df.loc[df["studies"], "location_type"] = df.loc[df["studies"], "ILETUD"]
-    df.loc[~df["location_type"].isin(["1", "2", "3"]), "location_type"] = "-1"
-    df["location_type"] = df["location_type"].astype(int)
+    df.loc[~df["location_type"].isin(["1", "2", "3"]), "location_type"] = "9999"
+    df["personas_location_type"] = df["personas_location_type"].astype(int)
+
+    # Number of cars for personas
+    df["personas_number_of_cars"] = pd.to_numeric(df["VOIT"], errors = "coerce").fillna(9999).astype(int)
+    df.loc[df["personas_number_of_cars"] > 3, "personas_number_of_cars"] = 9999
+
+    # Household size for personas
+    df["personas_household_size"] = pd.to_numeric(df["INPER"], errors = "coerce").fillna(9999).astype(int)
+    df.loc[df["personas_household_size"] > 6, "personas_household_size"] = 9999
 
     df = df[[
         "person_id", "household_id", "weight",
         "iris_id", "commune_id", "departement_id",
-        "age", "sex", "couple", "location_type",
+        "age", "sex", "couple", "personas_location_type", "personas_number_of_cars", "personas_household_size",
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
         "consumption_units", "socioprofessional_class"

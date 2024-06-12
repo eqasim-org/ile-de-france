@@ -27,12 +27,13 @@ def execute(context):
         })
 
     assert len(df_clusters) == len(df)
+    assert set(range(16)) == set(df["persona"].unique())
     df["persona"] = df_clusters["persona"].values
 
     return df
 
 def validate(context):
-    if not os.path.exists("%s/%s" % (context.config("data_path"), context.config("personas.clustering_path"))):
+    if not os.path.exists("%s/%s/clusters_2019.csv" % (context.config("data_path"), context.config("personas.input_path"))):
         raise RuntimeError("Persona cluster data is not available")
 
-    return os.path.getsize("%s/%s" % (context.config("data_path"), context.config("personas.clustering_path")))
+    return os.path.getsize("%s/%s/clusters_2019.csv" % (context.config("data_path"), context.config("personas.input_path")))
