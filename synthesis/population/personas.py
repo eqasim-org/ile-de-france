@@ -114,7 +114,6 @@ def execute(context):
 
             for value, target_share in zip(df_slot[slot], df_slot["weight"] / slot_total):
                 print("Processing {} = {}".format(slot, value))
-                if str(value) == "9999": continue # skip NA
 
                 f = df_census[population_column] == value
                 assert np.count_nonzero(f) > 0
