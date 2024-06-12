@@ -159,6 +159,7 @@ def execute(context):
 
         if np.max(factors) - np.min(factors) < 1e-3:
             converged = True
+            break
 
     assert converged
 
