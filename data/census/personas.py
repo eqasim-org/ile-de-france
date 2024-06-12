@@ -9,7 +9,7 @@ def configure(context):
     context.stage("synthesis.population.projection.reweighted")
     context.stage("data.spatial.codes")
 
-    context.config("personas.clustering_path")
+    context.config("personas.input_path")
 
 def execute(context):
     df = context.stage("synthesis.population.projection.reweighted")
