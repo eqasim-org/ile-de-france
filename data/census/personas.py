@@ -27,7 +27,7 @@ def execute(context):
         })
 
     assert len(df_clusters) == len(df)
-    assert set(range(16)) == set(df["persona"].unique())
+    assert set(range(16)) == set(df_clusters["persona"].unique())
     df["persona"] = df_clusters["persona"].values
 
     return df
