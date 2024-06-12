@@ -113,6 +113,7 @@ def execute(context):
             slot_total = df_slot["weight"].sum()
 
             for value, target_share in zip(df_slot[slot], df_slot["weight"] / slot_total):
+                print("Processing {} = {}".format(slot, value))
                 if str(value) == "9999": continue # skip NA
 
                 f = df_census[population_column] == value
@@ -132,7 +133,9 @@ def execute(context):
     maximum_factors = []
 
     print("running IPU with", len(attributes), "attributes")
-    for iteration in range(100):
+    converged = False
+
+    for iteration in range(500):
         factors = []    
         for k in np.arange(len(attribute_targets)):
             selection = attribute_membership[k]
@@ -155,7 +158,9 @@ def execute(context):
         )
 
         if np.max(factors) - np.min(factors) < 1e-3:
-            break
+            converged = True
+
+    assert converged
 
     # Update the weights
     df_households["weight"] *= update
