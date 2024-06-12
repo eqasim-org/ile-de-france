@@ -85,7 +85,7 @@ def execute(context):
         "person_id", "household_id",
         "age", "employed", "sex", "socioprofessional_class",
         "has_driving_license", "has_pt_subscription",
-        "census_person_id", "hts_id", "persona", "location_type"
+        "census_person_id", "hts_id", "persona", "persona_location_type", "persona_household_size", "persona_number_of_cars"
     ]]
 
     df_persons.to_csv("%s/%spersons.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")

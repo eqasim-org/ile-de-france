@@ -100,7 +100,7 @@ def execute(context):
     ### Apply persona weighting targets
     if scenario != "Projection":
         for slot in ["persona", "number_of_cars", "household_size", "location_type"]:
-            population_column = "personas_{}".format(slot) if slot != "persona" else "persona"
+            population_column = "persona_{}".format(slot) if slot != "persona" else "persona"
 
             df_slot = pd.read_parquet("{}/{}/{}".format(
                 context.config("data_path"), context.config("personas.input_path"),
