@@ -32,7 +32,8 @@ COLUMNS_DTYPES = {
     "VOIT":"str", 
     "DEROU":"str",
     "ILT": "str",
-    "ILETUD": "str"
+    "ILETUD": "str",
+    "INPER": "str"
 }
 
 def execute(context):
