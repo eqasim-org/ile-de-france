@@ -136,13 +136,15 @@ def execute(context):
     
     # Optionally, perform mode choice
     if context.config("mode_choice"):
-        eqasim.run(context, "org.eqasim.ile_de_france.standalone_mode_choice.RunStandaloneModeChoice", [
+        eqasim.run(context, "org.eqasim.core.standalone_mode_choice.RunStandaloneModeChoice", [
             "--config-path", "%sconfig.xml" % context.config("output_prefix"),
             "--config:standaloneModeChoice.outputDirectory", "mode_choice",
             "--config:global.numberOfThreads", context.config("processes"),
             "--write-output-csv-trips", "true",
             "--skip-scenario-check", "true",
-            "--config:plans.inputPlansFile", "prepared_population.xml.gz"
+            "--config:plans.inputPlansFile", "prepared_population.xml.gz",
+            "--eqasim-configurator-class", "org.eqasim.ile_de_france.IDFConfigurator",
+            "--mode-choice-configurator-class", "org.eqasim.ile_de_france.IDFStandaloneModeChoiceConfigurator"
         ])
 
         assert os.path.exists("%s/mode_choice/output_plans.xml.gz" % context.path())
