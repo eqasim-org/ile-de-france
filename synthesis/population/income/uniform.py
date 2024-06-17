@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from synthesis.population.income.utils import income_uniform_sample
 import multiprocessing as mp
 from tqdm import tqdm
 
@@ -20,9 +21,6 @@ def configure(context):
     context.config("random_seed")
 
 
-MAXIMUM_INCOME_FACTOR = 1.5
-
-
 def _sample_income(context, args):
     commune_id, random_seed = args
     df_households, df_income = context.data("households"), context.data("income")
@@ -34,20 +32,9 @@ def _sample_income(context, args):
 
     centiles = list(df_income[df_income["commune_id"] == commune_id][["q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]].iloc[0].values / 12)
 
-    incomes = _income_uniform_sample(random, centiles, len(df_selected))
+    incomes = income_uniform_sample(random, centiles, len(df_selected))
 
     return f, incomes
-
-
-def _income_uniform_sample(random_state, centiles, size):
-    centiles = np.array([0] + centiles + [np.max(centiles) * MAXIMUM_INCOME_FACTOR])
-
-    indices = random_state.randint(10, size=size)
-    lower_bounds, upper_bounds = centiles[indices], centiles[indices + 1]
-
-    incomes = lower_bounds + random_state.random_sample(size=size) * (upper_bounds - lower_bounds)
-
-    return incomes
 
 
 def execute(context):

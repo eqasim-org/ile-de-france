@@ -1,4 +1,4 @@
-from synthesis.population.income.uniform import MAXIMUM_INCOME_FACTOR
+from synthesis.population.income.utils import MAXIMUM_INCOME_FACTOR
 from bhepop2.tools import add_household_size_attribute, add_household_type_attribute
 from bhepop2.sources.marginal_distributions import QuantitativeMarginalDistributions
 import pandas as pd
@@ -82,7 +82,6 @@ def execute(context):
     compare_output_path = os.path.join(context.config("output_path"), COMPARE_INCOME_FOLDER)
     if not os.path.exists(compare_output_path):
         os.mkdir(compare_output_path)
-
 
     # create an analysis instance
     analysis = marginal_distributions_source.compare_with_populations(

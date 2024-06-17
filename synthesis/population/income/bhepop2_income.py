@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from synthesis.population.income.uniform import _income_uniform_sample, MAXIMUM_INCOME_FACTOR
+from synthesis.population.income.utils import income_uniform_sample, MAXIMUM_INCOME_FACTOR
 from bhepop2.tools import add_household_size_attribute, add_household_type_attribute
 from bhepop2.sources.marginal_distributions import QuantitativeMarginalDistributions
 from bhepop2.enrichment.bhepop2 import Bhepop2Enrichment
@@ -85,9 +85,9 @@ def _sample_income(context, args):
         assert len(distrib_all) == 1
         centiles = list(distrib_all[["D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9"]].iloc[0].values / 12)
 
-        incomes = _income_uniform_sample(random, centiles, len(df_selected))
+        incomes = income_uniform_sample(random, centiles, len(df_selected))
 
-        return f, incomes, "eqasim"
+        return f, incomes, "uniform"
 
 
 def execute(context):
