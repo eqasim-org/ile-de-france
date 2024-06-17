@@ -64,8 +64,8 @@ def _sample_income(context, args):
         return f, incomes, "bhepop2"
 
     # if those exceptions are raised, it is likely that some distributions were missing
-    except (PopulationValidationError, SourceValidationError) as e:
-        # print(f"Bhepop2 enrichment init on commune {commune_id} failed: {e}. Evaluate with original method."
+    except (PopulationValidationError, SourceValidationError, ValueError) as e:
+        # print(f"Bhepop2 enrichment init on commune {commune_id} failed: {e}. Evaluate with original method.")
 
         # get global distribution of the commune
         distrib_all = distribs[distribs["modality"] == "all"]

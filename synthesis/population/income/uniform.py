@@ -20,7 +20,7 @@ def configure(context):
     context.config("random_seed")
 
 
-MAXIMUM_INCOME_FACTOR = 1.2
+MAXIMUM_INCOME_FACTOR = 1.5
 
 
 def _sample_income(context, args):

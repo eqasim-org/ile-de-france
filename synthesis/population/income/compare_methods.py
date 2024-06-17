@@ -80,7 +80,7 @@ def execute(context):
         feature_name="household_income",
         output_folder=compare_output_path
     )
-    analysis.plot_title_format = analysis.plot_title_format + f" (commune={commune_id}, population_size={len(bhepop2_pop_df)})"
+    analysis.plot_title_format = analysis.plot_title_format + f" \n(commune={commune_id})"
 
     analysis.generate_analysis_plots()
     analysis.generate_analysis_error_table()
