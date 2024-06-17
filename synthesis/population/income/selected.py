@@ -5,7 +5,7 @@ def configure(context):
     if method == "uniform":
         context.stage("synthesis.population.income.uniform", alias = "income")
     elif method == "bhepop2":
-        context.stage("synthesis.population.income.bhepop2_income", alias = "income")
+        context.stage("synthesis.population.income.bhepop2", alias = "income")
     else:
         raise RuntimeError("Unknown income assignation method : %s" % method)
 
