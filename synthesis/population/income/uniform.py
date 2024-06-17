@@ -55,6 +55,7 @@ def execute(context):
 
     # Load data
     df_income = context.stage("data.income.municipality")
+    df_income = df_income[(df_income["attribute"] == "all") & (df_income["modality"] == "all")]
 
     df_households = context.stage("synthesis.population.sampled")[[
         "household_id", "consumption_units"

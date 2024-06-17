@@ -15,7 +15,7 @@ COMPARE_INCOME_FOLDER = "compare_income_methods"
 
 def configure(context):
     context.config("output_path")
-    context.stage("data.income.municipality_attributes")
+    context.stage("data.income.municipality")
     context.stage("synthesis.population.income.uniform", alias="uniform")
     context.stage("synthesis.population.income.bhepop2_income", alias="bhepop2")
     context.stage("synthesis.population.sampled")
@@ -32,7 +32,20 @@ def execute(context):
     commune_id = df_population.groupby(["commune_id"], observed=True)["commune_id"].count().drop("undefined").idxmax()
 
     # get income distributions by attributes
-    income_df = context.stage("data.income.municipality_attributes").query(f"commune_id == '{commune_id}'")
+    income_df = context.stage("data.income.municipality").query(f"commune_id == '{commune_id}'")
+    income_df = income_df.rename(
+        columns={
+            "q1": "D1",
+            "q2": "D2",
+            "q3": "D3",
+            "q4": "D4",
+            "q5": "D5",
+            "q6": "D6",
+            "q7": "D7",
+            "q8": "D8",
+            "q9": "D9",
+        }
+    )
 
     households_with_attributes = df_population[[
         "household_id", "commune_id", "size", "family_comp"

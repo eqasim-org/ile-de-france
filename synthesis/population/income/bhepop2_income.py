@@ -16,7 +16,7 @@ INCOME_COLUMN = "income"
 
 
 def configure(context):
-    context.stage("data.income.municipality_attributes")
+    context.stage("data.income.municipality")
     context.stage("synthesis.population.sampled")
     context.stage("synthesis.population.spatial.home.zones")
 
@@ -33,6 +33,19 @@ def _sample_income(context, args):
     f = df_households["commune_id"] == commune_id
     df_selected = df_households[f].reset_index(drop=True)
     distribs = df_income[df_income["commune_id"] == commune_id]
+    distribs = distribs.rename(
+        columns={
+            "q1": "D1",
+            "q2": "D2",
+            "q3": "D3",
+            "q4": "D4",
+            "q5": "D5",
+            "q6": "D6",
+            "q7": "D7",
+            "q8": "D8",
+            "q9": "D9",
+        }
+    )
 
     try:
         # create source class from marginal distributions
@@ -81,7 +94,7 @@ def execute(context):
     random = np.random.RandomState(context.config("random_seed"))
 
     # Load data
-    df_income = context.stage("data.income.municipality_attributes")
+    df_income = context.stage("data.income.municipality")
     df_population = context.stage("synthesis.population.sampled")
 
     df_population = add_household_size_attribute(df_population)
