@@ -86,8 +86,8 @@ def execute(context):
     # create an analysis instance
     analysis = marginal_distributions_source.compare_with_populations(
         {
-            "Eqasim original method": uniform_pop_df,
-            "Bhepop2 method": bhepop2_pop_df
+            "Uniform": uniform_pop_df,
+            "Bhepop2": bhepop2_pop_df
         },
         feature_name="household_income",
         output_folder=compare_output_path
