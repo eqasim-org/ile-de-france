@@ -1,7 +1,7 @@
 import numpy as np
 
 # used to evaluate maximum income value by multiplying it with the last decile value
-MAXIMUM_INCOME_FACTOR = 1.5
+MAXIMUM_INCOME_FACTOR = 1.2
 
 
 def income_uniform_sample(random_state, deciles, size):
