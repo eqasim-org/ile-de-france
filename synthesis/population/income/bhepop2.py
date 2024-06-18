@@ -73,12 +73,12 @@ def _sample_income(context, args):
         incomes = pop[INCOME_COLUMN].values
 
         # print(f"Successfully enriched population on commune {commune_id} using bhepop2")
-
+        context.progress.update(1)
         return f, incomes, "bhepop2"
 
     # if those exceptions are raised, it is likely that some distributions were missing
     except (PopulationValidationError, SourceValidationError, ValueError) as e:
-        # print(f"Bhepop2 enrichment init on commune {commune_id} failed: {e}. Evaluate with original method.")
+        print(f"Bhepop2 enrichment init on commune {commune_id} failed: {e}. Evaluate with original method.")
 
         # get global distribution of the commune
         distrib_all = distribs[distribs["modality"] == "all"]
@@ -87,6 +87,7 @@ def _sample_income(context, args):
 
         incomes = income_uniform_sample(random, centiles, len(df_selected))
 
+        context.progress.update(1)
         return f, incomes, "uniform"
 
 
@@ -110,14 +111,16 @@ def execute(context):
 
     df_households = pd.merge(df_households, df_homes)
 
-    # Perform sampling per commune
-    with context.parallel(dict(households = df_households, income = df_income)) as parallel:
-        commune_ids = df_households["commune_id"].unique()
-        random_seeds = random.randint(10000, size = len(commune_ids))
+    commune_ids = df_households["commune_id"].unique()
+    random_seeds = random.randint(10000, size = len(commune_ids))
 
-        for f, incomes, method in context.progress(parallel.imap(_sample_income, zip(commune_ids, random_seeds)), label = "Imputing income ...", total = len(commune_ids)):
-            df_households.loc[f, "household_income"] = incomes * df_households.loc[f, "consumption_units"]
-            df_households.loc[f, "method"] = method
+    # Perform sampling per commune
+    with context.progress(label = "Imputing income ...", total = len(commune_ids)) as progress:
+        with context.parallel(dict(households = df_households, income = df_income)) as parallel:
+
+            for f, incomes, method in parallel.imap(_sample_income, zip(commune_ids, random_seeds)):
+                df_households.loc[f, "household_income"] = incomes * df_households.loc[f, "consumption_units"]
+                df_households.loc[f, "method"] = method
 
     # Cleanup
     df_households = df_households[["household_id", "household_income", "consumption_units"]]

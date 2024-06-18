@@ -2,6 +2,7 @@
 
 **Under development**
 
+- feat: add a new method for attributing income to housholds using the bhepop2 package
 - feat: make it possible to disable the test run of MATSim before writing everything out
 - feat: check availability of open data sources for every PR
 - feat: make statistical matching attribute list configurable
