@@ -264,15 +264,16 @@ def create(output_path):
 
     df_income_ensemble = df_income.copy()
 
-    df_income_ensemble["D119"] = 10940.0
-    df_income_ensemble["D219"] = 14200.0
-    df_income_ensemble["D319"] = 17320.0
-    df_income_ensemble["D419"] = 20140.0
-    df_income_ensemble["Q219"] = 22960.0
-    df_income_ensemble["D619"] = 26100.0
-    df_income_ensemble["D719"] = 29740.0
-    df_income_ensemble["D819"] = 34700.0
-    df_income_ensemble["D919"] = 43700.0
+    # the following data is not related to the `income_data` datasets
+    df_income_ensemble["D119"] = 9122.0
+    df_income_ensemble["D219"] = 11874.0
+    df_income_ensemble["D319"] = 14430.0
+    df_income_ensemble["D419"] = 16907.0
+    df_income_ensemble["Q219"] = 22240.0
+    df_income_ensemble["D619"] = 22827.0
+    df_income_ensemble["D719"] = 25699.0
+    df_income_ensemble["D819"] = 30094.0
+    df_income_ensemble["D919"] = 32303.0
 
     # Deliberately remove some of them
     df_income_ensemble = df_income_ensemble[~df_income_ensemble["CODGEO"].isin([
