@@ -12,7 +12,6 @@ Then, for each household, a centile is selected randomly from the respective
 income distribution and a random income within the selected stratum is chosen.
 """
 
-
 def configure(context):
     context.stage("data.income.municipality")
     context.stage("synthesis.population.sampled")
@@ -35,7 +34,6 @@ def _sample_income(context, args):
     incomes = income_uniform_sample(random, centiles, len(df_selected))
 
     return f, incomes
-
 
 def execute(context):
     random = np.random.RandomState(context.config("random_seed"))
