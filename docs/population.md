@@ -348,13 +348,14 @@ Then, you should be able to run the pipeline with the configuration explained ab
 
 This pipeline allows using the [Bhepop2](https://github.com/tellae/bhepop2) package for income assignation. 
 
-By default, Eqasim infers income from Filosofi global income distribution (on the relevant commune). 
+By default, Eqasim infers income from the global income distribution by municipality from the Filosofi data set. 
 An income value is drawn from this distribution, independent of the household characteristics. This method is called
 `uniform`.
 
 Bhepop2 uses income distributions on subpopulations. For instance, Filosofi provides distributions depending on household size.
 Bhepop2 tries to match all the available distributions, instead of just the global one. This results in more
-accurate income assignation on subpopulations, but also on the global synthetic population.
+accurate income assignation on subpopulations, but also on the global synthetic population. 
+See the [documentation](https://bhepop2.readthedocs.io/en/latest/) for more information on the affectation algorithm.
 
 To use the `bhepop2` method, provide the following config:
 
