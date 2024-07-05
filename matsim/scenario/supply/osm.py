@@ -28,7 +28,7 @@ def execute(context):
 
         content = content.replace(
             '<param name="outputCoordinateSystem" value="null" />',
-            '<param name="outputCoordinateSystem" value="EPSG:{}" />'.format(crs)
+            '<param name="outputCoordinateSystem" value="{}" />'.format(crs)
         )
 
         content = content.replace(
