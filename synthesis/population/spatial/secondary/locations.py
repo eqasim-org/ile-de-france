@@ -25,6 +25,7 @@ def prepare_locations(context):
     # Load persons and their primary locations
     df_home = context.stage("synthesis.population.spatial.home.locations")
     df_work, df_education = context.stage("synthesis.population.spatial.primary.locations")
+    crs = df_home.crs
 
     df_home = df_home.rename(columns = { "geometry": "home" })
     df_work = df_work.rename(columns = { "geometry": "work" })
@@ -35,7 +36,7 @@ def prepare_locations(context):
     df_locations = pd.merge(df_locations, df_work[["person_id", "work"]], how = "left", on = "person_id")
     df_locations = pd.merge(df_locations, df_education[["person_id", "education"]], how = "left", on = "person_id")
 
-    return df_locations[["person_id", "home", "work", "education"]].sort_values(by = "person_id"), df_home.crs
+    return df_locations[["person_id", "home", "work", "education"]].sort_values(by = "person_id"), crs
 
 def prepare_destinations(context):
     df_locations = context.stage("synthesis.locations.secondary")
