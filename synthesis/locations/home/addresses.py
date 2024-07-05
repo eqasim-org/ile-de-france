@@ -57,7 +57,7 @@ def execute(context):
 
     # Put together matched and missing addresses
     df_addresses = pd.concat([df_addresses, df_missing])
-    df_addresses = gpd.GeoDataFrame(df_addresses, crs = "EPSG:2154")
+    df_addresses = gpd.GeoDataFrame(df_addresses, crs = df_buildings.crs)
 
     # Obtain weights for all addresses
     if context.config("home_location_weight") == "housing":
