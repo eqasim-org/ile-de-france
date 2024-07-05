@@ -130,7 +130,7 @@ def process(context, arguments):
   df_trips, df_primary, random_seed = arguments
 
   # Set up RNG
-  random = np.random.RandomState(context.config("random_seed"))
+  random = np.random.RandomState(random_seed)
   maximum_iterations = context.config("secloc_maximum_iterations")
 
   # Set up discretization solver

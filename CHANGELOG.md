@@ -2,6 +2,7 @@
 
 **Under development**
 
+- fix: secondary location model used same random seed in every parallel thread
 - feat: make it possible to disable the test run of MATSim before writing everything out
 - feat: check availability of open data sources for every PR
 - feat: make statistical matching attribute list configurable
