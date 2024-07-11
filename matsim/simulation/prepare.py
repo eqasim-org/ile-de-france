@@ -111,27 +111,29 @@ def execute(context):
             columns = dict(departement_id = "id")
         )
         df_shape["id"] = df_shape["id"].astype(str)
-        df_shape.to_file("%s/departments.shp" % context.path())
 
-        eqasim.run(context, "org.eqasim.core.scenario.spatial.RunImputeSpatialAttribute", [
-            "--input-population-path", "prepared_population.xml.gz",
-            "--output-population-path", "prepared_population.xml.gz",
-            "--input-network-path", "%snetwork.xml.gz" % context.config("output_prefix"),
-            "--output-network-path", "%snetwork.xml.gz" % context.config("output_prefix"),
-            "--shape-path", "departments.shp",
-            "--shape-attribute", "id",
-            "--shape-value", "75",
-            "--attribute", "isUrban"
-        ])
+        if "75" in df_shape["id"].unique():
+            df_shape.to_file("%s/departments.shp" % context.path())
 
-        eqasim.run(context, "org.eqasim.core.scenario.spatial.RunAdjustCapacity", [
-            "--input-path", "%snetwork.xml.gz" % context.config("output_prefix"),
-            "--output-path", "%snetwork.xml.gz" % context.config("output_prefix"),
-            "--shape-path", "departments.shp",
-            "--shape-attribute", "id",
-            "--shape-value", "75",
-            "--factor", str(0.8)
-        ])
+            eqasim.run(context, "org.eqasim.core.scenario.spatial.RunImputeSpatialAttribute", [
+                "--input-population-path", "prepared_population.xml.gz",
+                "--output-population-path", "prepared_population.xml.gz",
+                "--input-network-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+                "--output-network-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+                "--shape-path", "departments.shp",
+                "--shape-attribute", "id",
+                "--shape-value", "75",
+                "--attribute", "isUrban"
+            ])
+
+            eqasim.run(context, "org.eqasim.core.scenario.spatial.RunAdjustCapacity", [
+                "--input-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+                "--output-path", "%snetwork.xml.gz" % context.config("output_prefix"),
+                "--shape-path", "departments.shp",
+                "--shape-attribute", "id",
+                "--shape-value", "75",
+                "--factor", str(0.8)
+            ])
 
     
     # Optionally, perform mode choice
