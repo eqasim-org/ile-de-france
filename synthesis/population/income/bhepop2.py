@@ -35,6 +35,7 @@ def _sample_income(context, args):
     distribs = df_income[df_income["commune_id"] == commune_id]
     distribs = distribs.rename(
         columns={
+            "value": "modality",
             "q1": "D1",
             "q2": "D2",
             "q3": "D3",

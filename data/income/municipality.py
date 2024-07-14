@@ -19,7 +19,7 @@ Loads and prepares income distributions by municipality:
 EQASIM_INCOME_ATTRIBUTES = ["size", "family_comp"]
 
 # final columns of the income DataFrame
-INCOME_DF_COLUMNS = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "attribute", "modality", "is_imputed", "is_missing", "reference_median"]
+INCOME_DF_COLUMNS = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9", "attribute", "value", "is_imputed", "is_missing", "reference_median"]
 
 
 def configure(context):
@@ -35,7 +35,7 @@ def _income_distributions_from_filosofi_ensemble_sheet(filsofi_sheets, year, df_
 
     df = filsofi_sheets["ENSEMBLE"][["CODGEO"] + [("D%d" % q) + year if q != 5 else "Q2" + year for q in range(1, 10)]]
     df.columns = ["commune_id", "q1", "q2", "q3", "q4", "q5", "q6", "q7", "q8", "q9"]
-    df["reference_median"] = df["q5"].values
+    df.loc[:, "reference_median"] = df["q5"].values
 
     # filter requested communes
     df = df[df["commune_id"].isin(requested_communes)]
@@ -90,9 +90,9 @@ def _income_distributions_from_filosofi_ensemble_sheet(filsofi_sheets, year, df_
     assert len(df) == len(df["commune_id"].unique())
     assert len(requested_communes - set(df["commune_id"].unique())) == 0
 
-    # add attribute and modality "all" (ie ENSEMBLE)
+    # add attribute and value "all" (ie ENSEMBLE)
     df["attribute"] = "all"
-    df["modality"] = "all"
+    df["value"] = "all"
 
     return df[INCOME_DF_COLUMNS]
 
@@ -105,6 +105,7 @@ def _income_distributions_from_filosofi_attribute_sheets(filsofi_sheets, year, d
 
     df_with_attributes.rename(
         columns={
+            "modality": "value",
             "D1": "q1",
             "D2": "q2",
             "D3": "q3",

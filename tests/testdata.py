@@ -284,25 +284,25 @@ def create(output_path):
     f = df_income_ensemble["CODGEO"].isin(["1D002", "1D005"])
     df_income_ensemble.loc[f, "D215"] = np.nan
 
-    for modality in income_data["househod_size"]:
-        modality["df"] = df_income.copy()
-        col_pattern = modality["col_pattern"]
+    for value in income_data["househod_size"]:
+        value["df"] = df_income.copy()
+        col_pattern = value["col_pattern"]
         columns = [
             "%sD%d" % (col_pattern, q) + filosofi_year if q != 5 else col_pattern + "Q2" + filosofi_year
             for q in range(1, 10)
         ]
         for i, column in enumerate(columns):
-            modality["df"][column] = modality["data"][i]
+            value["df"][column] = value["data"][i]
         
-    for modality in income_data["family_comp"]:
-        modality["df"] = df_income.copy()
-        col_pattern = modality["col_pattern"]
+    for value in income_data["family_comp"]:
+        value["df"] = df_income.copy()
+        col_pattern = value["col_pattern"]
         columns = [
             "%sD%d" % (col_pattern, q) + filosofi_year if q != 5 else col_pattern + "Q2" + filosofi_year
             for q in range(1, 10)
         ]
         for i, column in enumerate(columns):
-            modality["df"][column] = modality["data"][i]
+            value["df"][column] = value["data"][i]
 
     os.mkdir("%s/filosofi_2019" % output_path)
 
@@ -312,13 +312,13 @@ def create(output_path):
                 df_income_ensemble.to_excel(
                     writer, sheet_name = "ENSEMBLE", startrow = 5, index = False
                 )
-                for modality in income_data["househod_size"]:
-                    modality["df"].to_excel(
-                        writer, sheet_name = modality["sheet"], startrow = 5, index = False
+                for value in income_data["househod_size"]:
+                    value["df"].to_excel(
+                        writer, sheet_name = value["sheet"], startrow = 5, index = False
                     )
-                for modality in income_data["family_comp"]:
-                    modality["df"].to_excel(
-                        writer, sheet_name = modality["sheet"], startrow = 5, index = False
+                for value in income_data["family_comp"]:
+                    value["df"].to_excel(
+                        writer, sheet_name = value["sheet"], startrow = 5, index = False
                     )
 
     # Data set: ENTD

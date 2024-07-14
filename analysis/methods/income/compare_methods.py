@@ -35,6 +35,7 @@ def execute(context):
     income_df = context.stage("data.income.municipality").query(f"commune_id == '{commune_id}'")
     income_df = income_df.rename(
         columns={
+            "value": "modality",
             "q1": "D1",
             "q2": "D2",
             "q3": "D3",
