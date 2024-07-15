@@ -343,3 +343,26 @@ To make use of the urban type, the following data is needed:
 - Put the downloaded *zip* file into `data/urban_type`, so you will have the file `data/urban_type/UU2020_au_01-01-2023.zip`
 
 Then, you should be able to run the pipeline with the configuration explained above.
+
+### Income
+
+This pipeline allows using the [Bhepop2](https://github.com/tellae/bhepop2) package for income assignation. 
+
+By default, Eqasim infers income from the global income distribution by municipality from the Filosofi data set. 
+An income value is drawn from this distribution, independent of the household characteristics. This method is called
+`uniform`.
+
+Bhepop2 uses income distributions on subpopulations. For instance, Filosofi provides distributions depending on household size.
+Bhepop2 tries to match all the available distributions, instead of just the global one. This results in more
+accurate income assignation on subpopulations, but also on the global synthetic population. 
+See the [documentation](https://bhepop2.readthedocs.io/en/latest/) for more information on the affectation algorithm.
+
+To use the `bhepop2` method, provide the following config:
+
+```yaml
+config:
+  income_assignation_method: bhepop2
+```
+
+Caution, this method will fail on communes where the Filosofi subpopulation distributions are missing. In this case,
+we fall back to the `uniform` method.
