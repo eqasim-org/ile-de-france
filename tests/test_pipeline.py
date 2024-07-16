@@ -87,6 +87,11 @@ def test_population_with_fleet_sample(tmpdir):
         "vehicles_data_year": 2015
     })
 
+def test_population_with_bhepop2_income(tmpdir):
+    run_population(tmpdir, "egt", { 
+        "income_assignation_method": "bhepop2"
+    })
+
 def test_population_with_urban_type(tmpdir):
     run_population(tmpdir, "entd", { 
         "use_urban_type": True, 

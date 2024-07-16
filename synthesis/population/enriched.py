@@ -16,7 +16,7 @@ This stage fuses census data with HTS data.
 def configure(context):
     context.stage("synthesis.population.matched")
     context.stage("synthesis.population.sampled")
-    context.stage("synthesis.population.income")
+    context.stage("synthesis.population.income.selected")
 
     hts = context.config("hts")
     context.stage("data.hts.selected", alias = "hts")
@@ -53,7 +53,7 @@ def execute(context):
     ]], on = "hts_household_id")
 
     # Attach income
-    df_income = context.stage("synthesis.population.income")
+    df_income = context.stage("synthesis.population.income.selected")
     df_population = pd.merge(df_population, df_income[[
         "household_id", "household_income"
     ]], on = "household_id")

@@ -240,34 +240,86 @@ def create(output_path):
     # Required attributes: CODGEO, D115, ..., D915
     print("Creating FILOSOFI ...")
 
+    # Use the following data, taken from the Nantes municipality from the 2019 data set
+    filosofi_year = "19"
+    income_data = {
+        "househod_size": [
+            {"name": "1_pers", "sheet": "TAILLEM_1", "col_pattern": "TME1", "data": [9820,13380,15730,18140,20060,22050,24710,28120,34150]},
+            {"name": "2_pers", "sheet": "TAILLEM_2", "col_pattern": "TME2", "data": [12950,16840,19920,22660,25390,28500,32080,37030,45910]},
+            {"name": "3_pers", "sheet": "TAILLEM_3", "col_pattern": "TME3", "data": [11440,14850,18070,21040,23960,27190,30930,36130,45680]},
+            {"name": "4_pers", "sheet": "TAILLEM_4", "col_pattern": "TME4", "data": [11920,15720,19130,22440,25540,28750,32400,37520,46870]},
+            {"name": "5_pers_or_more", "sheet": "TAILLEM_5", "col_pattern": "TME5", "data": [9320,11510,13580,16180,19920,24570,29180,35460,46370]},
+        ],
+        "family_comp": [
+            {"name": "Single_man", "sheet": "TYPMENR_1", "col_pattern": "TYM1", "data": [9180,12830,15100,17740,19800,21890,24780,28290,34850]},
+            {"name": "Single_wom", "sheet": "TYPMENR_2", "col_pattern": "TYM2", "data": [10730,13730,16220,18420,20260,22160,24680,27990,33570]},
+            {"name": "Couple_without_child", "sheet": "TYPMENR_3", "col_pattern": "TYM3", "data": [15360,19560,22600,25260,27990,30980,34710,39640,49110]},
+            {"name": "Couple_with_child", "sheet": "TYPMENR_4", "col_pattern": "TYM4", "data": [11790,15540,19240,22670,25850,29180,33090,38570,48700]},
+            {"name": "Single_parent", "sheet": "TYPMENR_5", "col_pattern": "TYM5", "data": [9350,11150,12830,14660,16640,18760,21230,24700,31170]},
+            {"name": "complex_hh", "sheet": "TYPMENR_6", "col_pattern": "TYM6", "data": [9280,11850,14100,16740,19510,22480,26100,30640,38970]},
+        ]
+    }
 
     df_income = df.drop_duplicates("municipality")[["municipality"]].rename(columns = dict(municipality = "CODGEO"))
-    df_income["D119"] = 9122.0
-    df_income["D219"] = 11874.0
-    df_income["D319"] = 14430.0
-    df_income["D419"] = 16907.0
-    df_income["Q219"] = 22240.0
-    df_income["D619"] = 22827.0
-    df_income["D719"] = 25699.0
-    df_income["D819"] = 30094.0
-    df_income["D919"] = 32303.0
+
+    df_income_ensemble = df_income.copy()
+
+    # the following data is not related to the `income_data` datasets
+    df_income_ensemble["D119"] = 9122.0
+    df_income_ensemble["D219"] = 11874.0
+    df_income_ensemble["D319"] = 14430.0
+    df_income_ensemble["D419"] = 16907.0
+    df_income_ensemble["Q219"] = 22240.0
+    df_income_ensemble["D619"] = 22827.0
+    df_income_ensemble["D719"] = 25699.0
+    df_income_ensemble["D819"] = 30094.0
+    df_income_ensemble["D919"] = 32303.0
 
     # Deliberately remove some of them
-    df_income = df_income[~df_income["CODGEO"].isin([
+    df_income_ensemble = df_income_ensemble[~df_income_ensemble["CODGEO"].isin([
         "1A015", "1A016"
     ])]
 
     # Deliberately only provide median for some
-    f = df_income["CODGEO"].isin(["1D002", "1D005"])
-    df_income.loc[f, "D215"] = np.nan
+    f = df_income_ensemble["CODGEO"].isin(["1D002", "1D005"])
+    df_income_ensemble.loc[f, "D215"] = np.nan
+
+    for value in income_data["househod_size"]:
+        value["df"] = df_income.copy()
+        col_pattern = value["col_pattern"]
+        columns = [
+            "%sD%d" % (col_pattern, q) + filosofi_year if q != 5 else col_pattern + "Q2" + filosofi_year
+            for q in range(1, 10)
+        ]
+        for i, column in enumerate(columns):
+            value["df"][column] = value["data"][i]
+        
+    for value in income_data["family_comp"]:
+        value["df"] = df_income.copy()
+        col_pattern = value["col_pattern"]
+        columns = [
+            "%sD%d" % (col_pattern, q) + filosofi_year if q != 5 else col_pattern + "Q2" + filosofi_year
+            for q in range(1, 10)
+        ]
+        for i, column in enumerate(columns):
+            value["df"][column] = value["data"][i]
 
     os.mkdir("%s/filosofi_2019" % output_path)
 
     with zipfile.ZipFile("%s/filosofi_2019/indic-struct-distrib-revenu-2019-COMMUNES.zip" % output_path, "w") as archive:
         with archive.open("FILO2019_DISP_COM.xlsx", "w") as f:
-            df_income.to_excel(
-                f, sheet_name = "ENSEMBLE", startrow = 5, index = False
-            )
+            with pd.ExcelWriter(f) as writer:  
+                df_income_ensemble.to_excel(
+                    writer, sheet_name = "ENSEMBLE", startrow = 5, index = False
+                )
+                for value in income_data["househod_size"]:
+                    value["df"].to_excel(
+                        writer, sheet_name = value["sheet"], startrow = 5, index = False
+                    )
+                for value in income_data["family_comp"]:
+                    value["df"].to_excel(
+                        writer, sheet_name = value["sheet"], startrow = 5, index = False
+                    )
 
     # Data set: ENTD
     print("Creating ENTD ...")
@@ -866,5 +918,12 @@ def create(output_path):
     df_vehicles_commune.to_excel("%s/vehicles_2015/Parc_VP_Communes_2015.xlsx" % output_path)
 
 if __name__ == "__main__":
+    import shutil
     import sys
+    import os
+    folder = sys.argv[1]
+    os.makedirs(folder, exist_ok=True)
+
+    for dir in os.listdir(folder):
+        shutil.rmtree(os.path.join(folder,dir))
     create(sys.argv[1])
