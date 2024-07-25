@@ -19,7 +19,7 @@ def configure(context):
     
     context.stage("data.spatial.codes")
     
-    context.config("filter_hts",False)
+    context.config("filter_hts",True)
 def execute(context):
     filter_edgt = context.config("filter_hts")
     df_codes = context.stage("data.spatial.codes")
