@@ -77,13 +77,12 @@ def execute(context):
             df_education["fake"] = False
             df_education = df_education.to_crs("2154")
             list_type = set(df_education["TYPEQU"].unique())
-            df_locations = pd.concat([df_locations[~(df_locations["TYPEQU"].isin(list_type))],df_education])
+            df_locations = pd.concat([df_locations[~(df_locations["TYPEQU"].str.startswith(tuple(list_type)))],df_education[df_education["commune_id"].isin(required_communes)]])
         
       
         # Add education destinations in function of level education
         for c in ["C1", "C2", "C3"]:
-            missing_communes = required_communes - set(
-                df_locations[df_locations["TYPEQU"].str.startswith(c)]["commune_id"].unique())
+            missing_communes = required_communes - set(df_locations[df_locations["TYPEQU"].str.startswith(c)]["commune_id"].unique())
 
             if len(missing_communes) > 0:
                 df_locations = pd.concat([df_locations,fake_education(missing_communes, c, df_locations, df_zones)])
@@ -93,7 +92,7 @@ def execute(context):
 
         if len(missing_communes) > 0:
 
-            df_locations = pd.concat([df_locations,fake_education(missing_communes, "C4", df_locations, df_zones)])
+           df_locations = pd.concat([df_locations,fake_education(missing_communes, "C4", df_locations, df_zones)])
     else :
         missing_communes = required_communes - set(df_locations["commune_id"].unique())
         if len(missing_communes) > 0:

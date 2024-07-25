@@ -10,7 +10,7 @@ def configure(context):
     context.stage("synthesis.population.spatial.home.zones")
     context.stage("synthesis.population.enriched")
     context.stage("synthesis.population.trips")
-
+    context.config("output_path")
     context.config("random_seed")
     context.config("education_location_source", "bpe")
 
@@ -149,7 +149,7 @@ def execute(context):
             df_education.append(
                 process(context, "education_" + prefix, random,
                     df_persons[df_persons["age"].between( education_type["min_age"],education_type["max_age"])],
-                    df_education_od,df_locations[df_locations["TYPEQU"].str.startswith(education_type["type_edu"])])
+                    df_education_od[df_education_od["age_range"]==prefix],df_locations[df_locations["TYPEQU"].str.startswith(education_type["type_edu"])])
             )
         df_education = pd.concat(df_education).sort_values(["origin_id", "destination_id"])
 
