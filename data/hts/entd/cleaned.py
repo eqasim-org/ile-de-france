@@ -247,6 +247,8 @@ def execute(context):
 
     # Socioprofessional class
     df_persons["socioprofessional_class"] = df_persons["CS24"].fillna(80).astype(int) // 10
+    
+    hts.fix_activity_types(df_trips)
 
     return df_households, df_persons, df_trips
 

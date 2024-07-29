@@ -10,7 +10,7 @@ def configure(context):
     context.stage("synthesis.population.spatial.home.zones")
     context.stage("synthesis.population.enriched")
     context.stage("synthesis.population.trips")
-    context.config("output_path")
+
     context.config("random_seed")
     context.config("education_location_source", "bpe")
 

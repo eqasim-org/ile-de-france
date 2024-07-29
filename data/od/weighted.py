@@ -12,7 +12,7 @@ Potential TODO: Do this by mode of transport!
 def configure(context):
     context.stage("data.od.cleaned")
     context.stage("data.spatial.codes")
-    context.config("output_path")
+
     context.config("education_location_source","bpe")
 
 def fix_origins(df, commune_ids, purpose,category): 

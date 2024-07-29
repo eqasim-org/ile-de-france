@@ -39,6 +39,7 @@ def execute(context):
         "Yrs:75+":{"min_age": 76, "max_age": 110,},}
     
     if not context.config("analysis_from_file"):
+        print("Récupération simu données ...")
         # from simulation cache
         df_trips = context.stage("synthesis.population.trips")
         df_persons = context.stage("synthesis.population.enriched")[["person_id", "household_id","age"]]
@@ -84,7 +85,6 @@ def execute(context):
     for prefix, figure in figures.items():
         df_select_age = df_stats[df_stats["age"].between(figure["min_age"],figure["max_age"])]
         df_select_age = df_select_age.dissolve(by=["id_carr_1km","following_purpose"],aggfunc="count").reset_index()
-        print(prefix)
         df_select_age = df_select_age[~(df_select_age["geometry"].isna())]
         df_select_age["following_purpose"] = df_select_age["following_purpose"].astype('str')
 
@@ -101,8 +101,9 @@ def execute(context):
                 df_tiles_select = gpd.sjoin(df_tiles_select,df_tile,how='right',predicate="contains").fillna(0)
                 df_select = gpd.sjoin(df_select.drop(columns=['index_right']),df_tiles_select.drop(columns=[ 'index_left']),how='right',predicate="contains").rename(columns={"count_left":"volume_studied_simu","count_right":"volume_compared_simu"}).fillna(0)
                 df_select["volume_difference"] = df_select["volume_studied_simu"] - df_select["volume_compared_simu"]
-                #df_select  = df_select[df_select["volume_difference"] != 0]
-                px.choropleth_mapbox(df_select,geojson=df_select.geometry,locations=df_select.index,color="volume_difference", opacity= 0.7,color_continuous_scale="picnic", color_continuous_midpoint= 0,hover_name="id_carr_1km_right", hover_data=["volume_studied_simu", "volume_compared_simu"],
+                df_select  = df_select[(df_select["volume_studied_simu"] != 0 )| (df_select["volume_compared_simu"] != 0)]
+                df_select["pourcentage_vol"] = df_select["volume_difference"] / df_select["volume_compared_simu"]
+                px.choropleth_mapbox(df_select,geojson=df_select.geometry,locations=df_select.index,color="volume_difference", opacity= 0.7,color_continuous_scale="picnic", color_continuous_midpoint= 0,hover_name="id_carr_1km_right", hover_data=["volume_studied_simu", "volume_compared_simu","pourcentage_vol"],
                                         mapbox_style = 'open-street-map',center=dict(lat= point.y,lon=point.x),title=f"Comparison flow distribution with previous simulation for {prefix} group with {purpose} purpose").write_html(f'{context.config("output_path")}/{context.config("output_prefix")}{prefix}_{purpose}.html')
 
             
