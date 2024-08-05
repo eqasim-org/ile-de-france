@@ -546,7 +546,7 @@ def create(output_path):
     df_education["ARM"] = "Z"
     df_education["IPONDI"] = 1.0
 
-    columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI"]
+    columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI","AGEREV10"]
     df_education.columns = columns
 
     with zipfile.ZipFile("%s/rp_2019/RP2019_MOBSCO_csv.zip" % output_path, "w") as archive:
