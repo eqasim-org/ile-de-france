@@ -6,5 +6,6 @@ output
 data/nantes_2015
 data/lyon_2015
 .vscode
+.idea
 
 config_local_*.yml
