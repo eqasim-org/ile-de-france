@@ -597,6 +597,7 @@ def create(output_path):
     ))
     df_education["ARM"] = "Z"
     df_education["IPONDI"] = 1.0
+    df_education["AGEREV10"] = 1
 
     columns = ["COMMUNE", "DCETUF", "ARM", "IPONDI","AGEREV10"]
     df_education.columns = columns
