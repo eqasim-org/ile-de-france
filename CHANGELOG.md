@@ -2,6 +2,7 @@
 
 **Under development**
 
+- feat : option parameter to remove filtering for requesting departements in hts
 - fix: secondary location model used same random seed in every parallel thread
 - feat: add a new method for attributing income to housholds using the bhepop2 package
 - fix: fixed special case in repairing ENTD for completely overlapping trips
