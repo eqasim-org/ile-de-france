@@ -10,15 +10,14 @@ def configure(context):
     context.stage("data.hts.entd.cleaned")
     context.stage("data.spatial.codes")
 
-    context.config("filter_hts", True)
-
+    context.config("filter_hts",True)
 def execute(context):
-    filter_entd = context.config("filter_hts")
+    filter_entd = context.config("filter_hts")    
     df_codes = context.stage("data.spatial.codes")
     df_households, df_persons, df_trips = context.stage("data.hts.entd.cleaned")
 
-    # Filter for non-residents
-    if filter_entd:
+    if filter_entd :
+        # Filter for non-residents
         requested_departments = df_codes["departement_id"].unique()
         f = df_persons["departement_id"].astype(str).isin(requested_departments)
         df_persons = df_persons[f]
