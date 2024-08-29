@@ -26,6 +26,7 @@ def execute(context):
     df_population = context.stage("synthesis.population.sampled")[[
         "person_id", "household_id",
         "census_person_id", "census_household_id",
+        "iris_id", "commune_id", "departement_id",
         "age", "sex", "employed", "studies",
         "number_of_vehicles", "household_size", "consumption_units",
         "socioprofessional_class"

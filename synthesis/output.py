@@ -69,7 +69,7 @@ def execute(context):
     ).drop_duplicates("household_id")
 
     df_households = df_households[[
-        "household_id",
+        "household_id","iris_id", "commune_id", "departement_id",
         "car_availability", "bike_availability",
         "number_of_vehicles", "number_of_bikes",
         "income",
@@ -107,9 +107,28 @@ def execute(context):
     df_activities["preceding_trip_index"] = df_activities["following_trip_index"].shift(1)
     df_activities.loc[df_activities["is_first"], "preceding_trip_index"] = -1
     df_activities["preceding_trip_index"] = df_activities["preceding_trip_index"].astype(int)
+    # Prepare spatial data sets
+    df_locations = context.stage("synthesis.population.spatial.locations")[[
+        "person_id",  "iris_id", "commune_id","departement_id","region_id","activity_index", "geometry"
+    ]]
 
+    df_activities = pd.merge(df_activities, df_locations[[
+        "person_id", "iris_id", "commune_id","departement_id","region_id","activity_index", "geometry"
+    ]], how = "left", on = ["person_id", "activity_index"])
+
+    # Prepare spatial activities
+    df_spatial = gpd.GeoDataFrame(df_activities[[
+            "person_id", "household_id", "activity_index",
+            "preceding_trip_index", "following_trip_index",
+            "purpose", "start_time", "end_time",
+            "is_first", "is_last", "geometry"
+        ]], crs = df_locations.crs)
+    df_spatial["purpose"] = df_spatial["purpose"].astype(str)
+
+    # Write activities
     df_activities = df_activities[[
         "person_id", "household_id", "activity_index",
+        "iris_id", "commune_id","departement_id","region_id",
         "preceding_trip_index", "following_trip_index",
         "purpose", "start_time", "end_time",
         "is_first", "is_last"
@@ -168,18 +187,7 @@ def execute(context):
         df_vehicle_types.to_csv("%s/%svehicle_types.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
         df_vehicles.to_csv("%s/%svehicles.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
 
-    # Prepare spatial data sets
-    df_locations = context.stage("synthesis.population.spatial.locations")[[
-        "person_id", "activity_index", "geometry"
-    ]]
 
-    df_activities = pd.merge(df_activities, df_locations[[
-        "person_id", "activity_index", "geometry"
-    ]], how = "left", on = ["person_id", "activity_index"])
-
-    # Write spatial activities
-    df_spatial = gpd.GeoDataFrame(df_activities, crs = df_locations.crs)
-    df_spatial["purpose"] = df_spatial["purpose"].astype(str)
     if "gpkg" in output_formats:
         path = "%s/%sactivities.gpkg" % (output_path, output_prefix)
         df_spatial.to_file(path, driver = "GPKG")
