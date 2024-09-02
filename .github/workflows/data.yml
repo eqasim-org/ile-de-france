@@ -1,8 +1,10 @@
 name: Tests if open data is properly accessible
 
 on:
-  schedule:
-  - cron: "0 10 * * 0" # every sunday 10am
+  push:
+    branches: [ develop ]
+  pull_request:
+    branches: [ develop ]
 
 jobs:
   build:
