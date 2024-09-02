@@ -14,6 +14,7 @@ def execute(context):
 
     df_locations = df_locations[df_locations["activity_type"] == "education"]
     df_locations = df_locations[["commune_id", "geometry"]].copy()
+    df_locations["fake"] = False
 
     # Add education destinations to the centroid of zones that have no other destinations
     df_zones = context.stage("data.spatial.municipalities")
@@ -21,26 +22,24 @@ def execute(context):
     required_communes = set(df_zones["commune_id"].unique())
     missing_communes = required_communes - set(df_locations["commune_id"].unique())
 
-    print("Adding fake education locations for %d/%d municipalities" % (
-        len(missing_communes), len(required_communes)
-    ))
+    if len(missing_communes) > 0:
+        print("Adding fake education locations for %d/%d municipalities" % (
+            len(missing_communes), len(required_communes)
+        ))
 
-    df_added = []
+        df_added = []
 
-    for commune_id in missing_communes:
-        centroid = df_zones[df_zones["commune_id"] == commune_id]["geometry"].centroid.iloc[0]
+        for commune_id in sorted(missing_communes):
+            centroid = df_zones[df_zones["commune_id"] == commune_id]["geometry"].centroid.iloc[0]
 
-        df_added.append({
-            "commune_id": commune_id, "geometry": centroid
-        })
+            df_added.append({
+                "commune_id": commune_id, "geometry": centroid
+            })
 
-    df_added = pd.DataFrame.from_records(df_added)
+        df_added = gpd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_locations.crs)
+        df_added["fake"] = True
 
-    # Merge together
-    df_locations["fake"] = False
-    df_added["fake"] = True
-
-    df_locations = pd.concat([df_locations, df_added])
+        df_locations = pd.concat([df_locations, df_added])
 
     # Define identifiers
     df_locations["location_id"] = np.arange(len(df_locations))

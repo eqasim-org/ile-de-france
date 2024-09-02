@@ -13,8 +13,11 @@ def configure(context):
     context.stage("data.census.raw")
     context.stage("data.spatial.codes")
 
+    if context.config("use_urban_type", False):
+        context.stage("data.spatial.urban_type")
+
 def execute(context):
-    df = pd.read_hdf("%s/census.hdf" % context.path("data.census.raw"))
+    df = context.stage("data.census.raw")
 
     # Construct household IDs for persons with NUMMI != Z
     df_household_ids = df[["CANTVILLE", "NUMMI"]]
@@ -26,8 +29,8 @@ def execute(context):
 
     # Fill up undefined household ids (those where NUMMI == Z)
     f = np.isnan(df["household_id"])
-    df.loc[f, "household_id"] = np.arange(np.count_nonzero(f)) + df["household_id"].max()
-    df["household_id"] = df["household_id"].astype(np.int)
+    df.loc[f, "household_id"] = np.arange(np.count_nonzero(f)) + df["household_id"].max() + 1
+    df["household_id"] = df["household_id"].astype(int)
 
     # Put person IDs
     df["person_id"] = np.arange(len(df))
@@ -48,19 +51,8 @@ def execute(context):
     df.loc[f_undefined, "iris_id"] = "undefined"
     df["iris_id"] = df["iris_id"].astype("category")
 
-    # Verify with requested codes
-    df_codes = context.stage("data.spatial.codes")
-
-    excess_communes = set(df["commune_id"].unique()) - set(df_codes["commune_id"].unique())
-    if not excess_communes == {"undefined"}:
-        raise RuntimeError("Found additional communes: %s" % excess_communes)
-
-    excess_iris = set(df["iris_id"].unique()) - set(df_codes["iris_id"].unique())
-    if not excess_iris == {"undefined"}:
-        raise RuntimeError("Found additional IRIS: %s" % excess_iris)
-
     # Age
-    df["age"] = df["AGED"].apply(lambda x: "0" if x == "000" else x.lstrip("0")).astype(np.int)
+    df["age"] = df["AGED"].apply(lambda x: "0" if x == "000" else x.lstrip("0")).astype(int)
 
     # Clean COUPLE
     df["couple"] = df["COUPLE"] == "1"
@@ -75,7 +67,7 @@ def execute(context):
     df["commute_mode"] = df["commute_mode"].astype("category")
 
     # Weight
-    df["weight"] = df["IPONDI"].astype(np.float)
+    df["weight"] = df["IPONDI"].astype(float)
 
     # Clean SEXE
     df.loc[df["SEXE"] == "1", "sex"] = "male"
@@ -91,32 +83,40 @@ def execute(context):
     # Number of vehicles
     df["number_of_vehicles"] = df["VOIT"].apply(
         lambda x: str(x).replace("Z", "0").replace("X", "0")
-    ).astype(np.int)
+    ).astype(int)
 
     df["number_of_vehicles"] += df["DEROU"].apply(
         lambda x: str(x).replace("U", "0").replace("Z", "0").replace("X", "0")
-    ).astype(np.int)
+    ).astype(int)
 
     # Household size
     df_size = df[["household_id"]].groupby("household_id").size().reset_index(name = "household_size")
     df = pd.merge(df, df_size)
 
     # Socioprofessional category
-    df["socioprofessional_class"] = df["CS1"].astype(np.int)
-
-    # Place of work or education
-    df["work_outside_region"] = df["ILT"].isin(("4", "5", "6"))
-    df["education_outside_region"] = df["ILETUD"].isin(("4", "5", "6"))
+    df["socioprofessional_class"] = df["CS1"].astype(int)
 
     # Consumption units
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
-    return df[[
+    df = df[[
         "person_id", "household_id", "weight",
         "iris_id", "commune_id", "departement_id",
         "age", "sex", "couple",
         "commute_mode", "employed",
         "studies", "number_of_vehicles", "household_size",
-        "work_outside_region", "education_outside_region",
         "consumption_units", "socioprofessional_class"
     ]]
+
+    if context.config("use_urban_type"):
+        df_urban_type = context.stage("data.spatial.urban_type")[[
+            "commune_id", "urban_type"
+        ]]
+        
+        # Impute urban type
+        df = pd.merge(df, df_urban_type, on = "commune_id", how = "left")
+        df.loc[df["commune_id"] == "undefined", "urban_type"] = "none"
+        df["commune_id"] = df["commune_id"].astype("category")
+        assert ~np.any(df["urban_type"].isna()) 
+
+    return df

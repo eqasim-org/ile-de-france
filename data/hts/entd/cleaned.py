@@ -42,7 +42,7 @@ MODES_MAP = [
 ]
 
 def convert_time(x):
-    return np.dot(np.array(x.split(":"), dtype = np.float), [3600.0, 60.0, 1.0])
+    return np.dot(np.array(x.split(":"), dtype = float), [3600.0, 60.0, 1.0])
 
 def execute(context):
     df_individu, df_tcm_individu, df_menage, df_tcm_menage, df_deploc = context.stage("data.hts.entd.raw")
@@ -73,10 +73,10 @@ def execute(context):
     ]], on = "IDENT_IND", how = "left")
 
     # Transform original IDs to integer (they are hierarchichal)
-    df_persons["entd_person_id"] = df_persons["IDENT_IND"].astype(np.int)
-    df_persons["entd_household_id"] = df_persons["IDENT_MEN"].astype(np.int)
-    df_households["entd_household_id"] = df_households["idENT_MEN"].astype(np.int)
-    df_trips["entd_person_id"] = df_trips["IDENT_IND"].astype(np.int)
+    df_persons["entd_person_id"] = df_persons["IDENT_IND"].astype(int)
+    df_persons["entd_household_id"] = df_persons["IDENT_MEN"].astype(int)
+    df_households["entd_household_id"] = df_households["idENT_MEN"].astype(int)
+    df_trips["entd_person_id"] = df_trips["IDENT_IND"].astype(int)
 
     # Construct new IDs for households, persons and trips (which are unique globally)
     df_households["household_id"] = np.arange(len(df_households))
@@ -94,8 +94,8 @@ def execute(context):
     df_trips["trip_id"] = np.arange(len(df_trips))
 
     # Weight
-    df_persons["person_weight"] = df_persons["PONDV1"].astype(np.float)
-    df_households["household_weight"] = df_households["PONDV1"].astype(np.float)
+    df_persons["person_weight"] = df_persons["PONDV1"].astype(float)
+    df_households["household_weight"] = df_households["PONDV1"].astype(float)
 
     # Clean age
     df_persons.loc[:, "age"] = df_persons["AGE"]
@@ -115,6 +115,17 @@ def execute(context):
     df_trips["origin_departement_id"] = df_trips["V2_MORIDEP"].fillna("undefined").astype("category")
     df_trips["destination_departement_id"] = df_trips["V2_MDESDEP"].fillna("undefined").astype("category")
 
+    # Clean urban type
+    df_households["urban_type"] = df_households["numcom_UU2010"].replace({
+        "B": "suburb",
+        "C": "central_city",
+        "I": "isolated_city",
+        "R": "none"
+    })
+
+    assert np.all(~df_households["urban_type"].isna())
+    df_households["urban_type"] = df_households["urban_type"].astype("category")
+
     # Clean employment
     df_persons["employed"] = df_persons["SITUA"].isin([1, 2])
 
@@ -128,9 +139,9 @@ def execute(context):
     df_households["number_of_vehicles"] += df_households["V1_JNBVEH"].fillna(0)
     df_households["number_of_vehicles"] += df_households["V1_JNBMOTO"].fillna(0)
     df_households["number_of_vehicles"] += df_households["V1_JNBCYCLO"].fillna(0)
-    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(np.int)
+    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(int)
 
-    df_households["number_of_bikes"] = df_households["V1_JNBVELOADT"].fillna(0).astype(np.int)
+    df_households["number_of_bikes"] = df_households["V1_JNBVELOADT"].fillna(0).astype(int)
 
     # License
     df_persons["has_license"] = (df_persons["V1_GPERMIS"] == 1) | (df_persons["V1_GPERMIS2R"] == 1)
@@ -154,7 +165,7 @@ def execute(context):
     df_households.loc[df_households["TrancheRevenuMensuel"].str.startswith("De 4 000"), "income_class"] = 11
     df_households.loc[df_households["TrancheRevenuMensuel"].str.startswith("De 6 000"), "income_class"] = 12
     df_households.loc[df_households["TrancheRevenuMensuel"].str.startswith("10 000"), "income_class"] = 13
-    df_households["income_class"] = df_households["income_class"].astype(np.int)
+    df_households["income_class"] = df_households["income_class"].astype(int)
 
     # Trip purpose
     df_trips["following_purpose"] = "other"
@@ -162,11 +173,11 @@ def execute(context):
 
     for prefix, activity_type in PURPOSE_MAP:
         df_trips.loc[
-            df_trips["V2_MMOTIFDES"].astype(np.str).str.startswith(prefix), "following_purpose"
+            df_trips["V2_MMOTIFDES"].astype(str).str.startswith(prefix), "following_purpose"
         ] = activity_type
 
         df_trips.loc[
-            df_trips["V2_MMOTIFORI"].astype(np.str).str.startswith(prefix), "preceding_purpose"
+            df_trips["V2_MMOTIFORI"].astype(str).str.startswith(prefix), "preceding_purpose"
         ] = activity_type
 
     df_trips["following_purpose"] = df_trips["following_purpose"].astype("category")
@@ -177,7 +188,7 @@ def execute(context):
 
     for prefix, mode in MODES_MAP:
         df_trips.loc[
-            df_trips["V2_MTP"].astype(np.str).str.startswith(prefix), "mode"
+            df_trips["V2_MTP"].astype(str).str.startswith(prefix), "mode"
         ] = mode
 
     df_trips["mode"] = df_trips["mode"].astype("category")
@@ -206,8 +217,8 @@ def execute(context):
     df_trips = hts.compute_first_last(df_trips)
 
     # Trip times
-    df_trips["departure_time"] = df_trips["V2_MORIHDEP"].apply(convert_time).astype(np.float)
-    df_trips["arrival_time"] = df_trips["V2_MDESHARR"].apply(convert_time).astype(np.float)
+    df_trips["departure_time"] = df_trips["V2_MORIHDEP"].apply(convert_time).astype(float)
+    df_trips["arrival_time"] = df_trips["V2_MDESHARR"].apply(convert_time).astype(float)
     df_trips = hts.fix_trip_times(df_trips)
 
     # Durations
@@ -222,7 +233,7 @@ def execute(context):
         df_persons, df_trips[["person_id", "NDEP"]].drop_duplicates("person_id").rename(columns = { "NDEP": "number_of_trips" }),
         on = "person_id", how = "left"
     )
-    df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(np.int)
+    df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(int)
     df_persons.loc[(df_persons["number_of_trips"] == -1) & df_persons["is_kish"], "number_of_trips"] = 0
 
     # Passenger attribute
@@ -236,6 +247,9 @@ def execute(context):
 
     # Socioprofessional class
     df_persons["socioprofessional_class"] = df_persons["CS24"].fillna(80).astype(int) // 10
+
+    # Fix activity types (because of 1 inconsistent ENTD data)
+    hts.fix_activity_types(df_trips)
 
     return df_households, df_persons, df_trips
 

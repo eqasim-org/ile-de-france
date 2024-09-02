@@ -1,5 +1,5 @@
 import data.gtfs.utils as gtfs
-import os
+import os, pathlib
 
 """
 This file reads GTFS schedules, cuts them to the scenario area (defined by the
@@ -8,20 +8,20 @@ selected regions and departments) and merges them together.
 
 def configure(context):
     context.config("data_path")
-    context.config("gtfs_path", "gtfs/IDFM_gtfs.zip")
+    context.config("gtfs_path", "gtfs_idf")
 
     context.stage("data.spatial.municipalities")
 
 def execute(context):
-    input_files = context.config("gtfs_path").split(";")
-
+    input_files = get_input_files("{}/{}".format(context.config("data_path"), context.config("gtfs_path")))
+    
     # Prepare bounding area
     df_area = context.stage("data.spatial.municipalities")
 
     # Load and cut feeds
     feeds = []
     for path in input_files:
-        feed = gtfs.read_feed("%s/%s" % (context.config("data_path"), path))
+        feed = gtfs.read_feed(path)
         feed = gtfs.cut_feed(feed, df_area)
 
         # This was fixed in pt2matsim, so we can remove one a new release (> 20.7) is available.
@@ -45,14 +45,23 @@ def execute(context):
 
     return "gtfs"
 
+def get_input_files(base_path):
+    gtfs_paths = [
+        str(child)
+        for child in pathlib.Path(base_path).glob("*")
+        if child.suffix.lower() == ".zip"
+    ]
+
+    if len(gtfs_paths) == 0:
+        raise RuntimeError("Did not find any GTFS data (.zip) in {}".format(base_path))
+    
+    return gtfs_paths
+
 def validate(context):
-    input_files = context.config("gtfs_path").split(";")
+    input_files = get_input_files("{}/{}".format(context.config("data_path"), context.config("gtfs_path")))
     total_size = 0
 
     for path in input_files:
-        if not os.path.exists("%s/%s" % (context.config("data_path"), path)):
-            raise RuntimeError("GTFS data is not available: %s" % path)
-        else:
-            total_size += os.path.getsize("%s/%s" % (context.config("data_path"), path))
+        total_size += os.path.getsize(path)
 
     return total_size

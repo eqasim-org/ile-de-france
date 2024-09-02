@@ -29,9 +29,13 @@ config:
   # Only interesting if you run the simulation
   java_memory: 14G
 
+  # Activate if you want to run mode choice
+  mode_choice: false
+
   # Lyon settings
-  census_path: rp_2015/FD_INDCVIZE_2015.dbf
   regions: []
-  departments: ["01", 38, 42, 69, 69M]
-  gtfs_path: gtfs/GTFS_TCL.ZIP;gtfs/export_gtfs_voyages.zip;gtfs/export-intercites-gtfs-last.zip;gtfs/export-ter-gtfs-last.zip;gtfs/CAPI.GTFS.zip;gtfs/GTFS_RX.ZIP;gtfs/SEM-GTFS.zip;gtfs/stas.gtfs.zip;gtfs/VIENNE.GTFS.zip
-  osm_path: osm/rhone-alpes-latest.osm.pbf
+  departments: ["01", "38", "42", "69"]
+  gtfs_path: gtfs_lyon
+  osm_path: osm_lyon
+  ban_path: ban_lyon
+  bdtopo_path: bdtopo_lyon

@@ -52,6 +52,10 @@ def sample_locations(context, arguments):
     location_ids = df_locations["location_id"].values
     location_ids = np.repeat(location_ids, location_counts)
 
+    # Shuffle, as otherwise it is likely that *all* copies 
+    # of the first location id go to the first origin, and so on
+    random.shuffle(location_ids)
+
     # Construct a data set for all commutes to this zone
     origin_id = np.repeat(df_flow["origin_id"].values, df_flow["count"].values)
 
@@ -79,7 +83,7 @@ def process(context, purpose, random, df_persons, df_od, df_locations):
             for df_partial in parallel.imap_unordered(sample_destination_municipalities, df_demand.itertuples(index = False, name = None)):
                 df_flow.append(df_partial)
 
-    df_flow = pd.concat(df_flow)
+    df_flow = pd.concat(df_flow).sort_values(["origin_id", "destination_id"])
 
     # Sample destinations based on the obtained flows
     unique_ids = df_flow["destination_id"].unique()
@@ -92,7 +96,7 @@ def process(context, purpose, random, df_persons, df_od, df_locations):
             for df_partial in parallel.imap_unordered(sample_locations, zip(unique_ids, random_seeds)):
                 df_result.append(df_partial)
 
-    df_result = pd.concat(df_result)
+    df_result = pd.concat(df_result).sort_values(["origin_id", "destination_id"])
 
     return df_result[["origin_id", "destination_id", "location_id"]]
 

@@ -18,7 +18,7 @@ def execute(context):
     f = zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED)
     print(source_path)
 
-    for path in glob.glob("%s/*.txt" % source_path):
+    for path in sorted(list(glob.glob("%s/*.txt" % source_path))):
         name = path.replace(source_path, "")[1:]
 
         if len(name) > 0:

@@ -1,0 +1,23 @@
+name: Tests if open data is properly accessible
+
+on:
+  schedule:
+  - cron: "0 10 * * 0" # every sunday 10am
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: conda-incubator/setup-miniconda@v2
+      with:
+        activate-environment: "ile-de-france"
+        environment-file: environment.yml
+        python-version: "3.10"
+        channels: conda-forge
+
+    - name: Verify availability of open data
+      shell: bash -el {0}
+      run: |
+        python scripts/verify_data.py
