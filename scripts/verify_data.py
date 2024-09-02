@@ -24,8 +24,9 @@ class Report:
                 source["status"] = response.status_code
             except TimeoutError:
                 source["status"] = "timeout"
-            except:
+            except Exception as e:
                 source["status"] = "error"
+                print(e)
             
             print("  Status {}".format(source["status"]))
 
