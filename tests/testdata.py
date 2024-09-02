@@ -913,9 +913,21 @@ def create(output_path):
         "region": "Code région",
     })
 
-    os.mkdir("%s/vehicles_2015" % output_path)
-    df_vehicles_region.to_excel("%s/vehicles_2015/Parc_VP_Regions_2015.xlsx" % output_path)
-    df_vehicles_commune.to_excel("%s/vehicles_2015/Parc_VP_Communes_2015.xlsx" % output_path)
+    os.mkdir("%s/vehicles" % output_path)
+    
+    with zipfile.ZipFile("%s/vehicles/parc_vp_regions.zip" % output_path, "w") as archive:
+        with archive.open("Parc_VP_Regions_2021.xlsx", "w") as f:
+            df_vehicles_region.to_excel(
+                f, sheet_name = "Sheet1",
+                startrow = 5, index = False
+            )
+
+    with zipfile.ZipFile("%s/vehicles/parc_vp_communes.zip" % output_path, "w") as archive:
+        with archive.open("Parc_VP_Communes_2021.xlsx", "w") as f:
+            df_vehicles_region.to_excel(
+                f, sheet_name = "Sheet1",
+                startrow = 5, index = False
+            )
 
 if __name__ == "__main__":
     import shutil
