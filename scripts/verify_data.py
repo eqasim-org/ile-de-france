@@ -1,7 +1,10 @@
 import requests
+import time
 
 # The goal of this script is to verify the availability of the data 
 # that is needed to set up the pipeline
+
+sleep_time = 5 # seconds
 
 class Report:
     def __init__(self):
@@ -19,6 +22,8 @@ class Report:
             try:
                 response = requests.head(source["url"])
                 source["status"] = response.status_code
+            except TimeoutError:
+                source["status"] = "timeout"
             except:
                 source["status"] = "error"
             
@@ -26,6 +31,8 @@ class Report:
 
             if source["status"] != 200:
                 failed.append(source["name"])
+
+            time.sleep(sleep_time)
         
         print("Done.")
         print("Missing: ", len(failed))
