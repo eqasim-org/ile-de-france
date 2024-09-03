@@ -63,23 +63,6 @@ def execute(context):
     output_prefix = context.config("output_prefix")
     output_formats = context.config("output_formats")
 
-    # Prepare households
-    df_households = context.stage("synthesis.population.enriched").rename(
-        columns = { "household_income": "income" }
-    ).drop_duplicates("household_id")
-
-    df_households = df_households[[
-        "household_id","iris_id", "commune_id", "departement_id",
-        "car_availability", "bike_availability",
-        "number_of_vehicles", "number_of_bikes",
-        "income",
-        "census_household_id"
-    ]]
-    if "csv" in output_formats:
-        df_households.to_csv("%s/%shouseholds.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
-    if "parquet" in output_formats:
-        df_households.to_parquet("%s/%shouseholds.parquet" % (output_path, output_prefix))
-
     # Prepare persons
     df_persons = context.stage("synthesis.population.enriched").rename(
         columns = { "has_license": "has_driving_license" }
@@ -119,11 +102,12 @@ def execute(context):
     # Prepare spatial activities
     df_spatial = gpd.GeoDataFrame(df_activities[[
             "person_id", "household_id", "activity_index",
+            "iris_id", "commune_id","departement_id","region_id",
             "preceding_trip_index", "following_trip_index",
             "purpose", "start_time", "end_time",
             "is_first", "is_last", "geometry"
         ]], crs = df_locations.crs)
-    df_spatial["purpose"] = df_spatial["purpose"].astype(str)
+    df_spatial = df_spatial.astype({'purpose': 'str', "departement_id": 'str'})
 
     # Write activities
     df_activities = df_activities[[
@@ -138,6 +122,25 @@ def execute(context):
         df_activities.to_csv("%s/%sactivities.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
     if "parquet" in output_formats:
         df_activities.to_parquet("%s/%sactivities.parquet" % (output_path, output_prefix))
+
+    # Prepare households
+    df_households = context.stage("synthesis.population.enriched").rename(
+        columns = { "household_income": "income" }
+    ).drop_duplicates("household_id")
+
+    df_households = pd.merge(df_households,df_activities[df_activities["purpose"] == "home"][["household_id",
+        "iris_id", "commune_id","departement_id","region_id"]].drop_duplicates("household_id"),how="left")
+    df_households = df_households[[
+        "household_id","iris_id", "commune_id", "departement_id","region_id",
+        "car_availability", "bike_availability",
+        "number_of_vehicles", "number_of_bikes",
+        "income",
+        "census_household_id"
+    ]]
+    if "csv" in output_formats:
+        df_households.to_csv("%s/%shouseholds.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+    if "parquet" in output_formats:
+        df_households.to_parquet("%s/%shouseholds.parquet" % (output_path, output_prefix))
 
     # Prepare trips
     df_trips = context.stage("synthesis.population.trips").rename(
@@ -200,7 +203,7 @@ def execute(context):
     df_spatial_homes = df_spatial[
         df_spatial["purpose"] == "home"
     ].drop_duplicates("household_id")[[
-        "household_id", "geometry"
+        "household_id","iris_id", "commune_id","departement_id","region_id", "geometry"
     ]]
     if "gpkg" in output_formats:
         path = "%s/%shomes.gpkg" % (output_path, output_prefix)
