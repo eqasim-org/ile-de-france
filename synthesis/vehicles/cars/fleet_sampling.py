@@ -13,11 +13,11 @@ def configure(context):
     context.stage("data.vehicles.raw")
     context.stage("data.vehicles.types")
 
-    context.config("vehicles_data_year", 2015)
+    context.config("vehicles_year", 2021)
 
 def _sample_vehicle(context, args):
     vehicle = args
-    year = context.config("vehicles_data_year")
+    year = context.config("vehicles_year")
     df_vehicle_fleet_counts, df_vehicle_age_counts = context.data("fleet"), context.data("age")
 
     commune_id = vehicle["commune_id"]

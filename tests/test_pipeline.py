@@ -85,7 +85,7 @@ def test_population_with_mode_choice(tmpdir):
 def test_population_with_fleet_sample(tmpdir):
     run_population(tmpdir, "entd", { 
         "vehicles_method": "fleet_sample",
-        "vehicles_data_year": 2015
+        "vehicles_year": 2021
     })
 
 def test_population_with_bhepop2_income(tmpdir):

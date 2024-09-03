@@ -15,55 +15,21 @@ def configure(context):
     context.config("vehicles_year", 2021)
     context.stage("data.spatial.codes")
 
-def find_municipalities(path):
-    candidates = sorted(list(glob.glob("{}/*.xlsx".format(path))))
-    candidates = [c for c in candidates if "communes" in c]
-
-    if len(candidates) == 0:
-        raise RuntimeError("Municipalities vehicle data is not available in {}".format(path))
-    
-    if len(candidates) > 1:
-        raise RuntimeError("Found multiple municipalities vehicle data sets in {}".format(path))
-
-    return candidates
-
-def find_regions(path):
-    candidates = sorted(list(glob.glob("{}/*.zip".format(path))))
-    candidates = [c for c in candidates if "regions" in c]
-
-    if len(candidates) == 0:
-        raise RuntimeError("Regions vehicle data is not available in {}".format(path))
-    
-    if len(candidates) > 1:
-        raise RuntimeError("Found multiple regions vehicle data sets in {}".format(path))
-
-    return candidates
-
-
 def execute(context):
     df_codes = context.stage("data.spatial.codes")
 
     # the downloaded excel files meta-data are actually have a badly formatted ISO datetime
     # https://foss.heptapod.net/openpyxl/openpyxl/-/issues/1659 
     with mock.patch.object(excel.ExcelReader, 'read_properties', lambda self: None):
-        with zipfile.ZipFile(find_municipalities("{}/{}".format(context.config("data_path"), context.config("vehicles_path")))) as archive:
-            archive.extractall(context.path())
-
-        with zipfile.ZipFile(find_municipalities("{}/{}".format(context.config("data_path"), context.config("vehicles_path")))) as archive:
-            archive.extractall(context.path())
-
         year = str(context.config("vehicles_year"))
-
-        municipalities_path = [path for path in glob.glob("{}/*.xlsx") if "Communes" in path and year in path]
-        assert len(municipalities_path) == 1
-        municipalities_path = municipalities_path[0]
-
-        regions_path = [path for path in glob.glob("{}/*.xlsx") if "Regions" in path and year in path]
-        assert len(regions_path) == 1
-        regions_path = regions_path[0]
         
-        df_municipalities = pd.read_excel(municipalities_path)
-        df_regions = pd.read_excel(regions_path)
+        with zipfile.ZipFile("{}/{}/{}".format(context.config("data_path"), context.config("vehicles_path"), "parc_vp_communes.zip")) as archive:
+            with archive.open("Parc_VP_Communes_{}.xlsx".format(year)) as f:
+                df_municipalities = pd.read_excel(f)
+
+        with zipfile.ZipFile("{}/{}/{}".format(context.config("data_path"), context.config("vehicles_path"), "parc_vp_regions.zip")) as archive:
+            with archive.open("Parc_VP_Regions_{}.xlsx".format(year)) as f:
+                df_regions = pd.read_excel(f)
     
     df_municipalities["region_id"] = df_municipalities["Code région"].astype("category")
     df_municipalities["departement_id"] = df_municipalities["Code départment"].astype("category")
@@ -92,8 +58,8 @@ def execute(context):
     df_regions["critair"] = df_regions["Vignette crit'air"]
     df_regions["technology"] = df_regions["Energie"]
 
-    count_column_name = "Parc au 01/01/%s" % context.config("vehicles_data_year")
-    age_column_name = "Age au 01/01/%s" % context.config("vehicles_data_year")
+    count_column_name = "Parc au 01/01/%s" % context.config("vehicles_year")
+    age_column_name = "Age au 01/01/%s" % context.config("vehicles_year")
 
     df_municipalities["fleet"] = df_municipalities[count_column_name]
     df_regions["fleet"] = df_regions[count_column_name]
@@ -105,7 +71,13 @@ def execute(context):
     return df_vehicle_fleet_counts, df_vehicle_age_counts
 
 def validate(context):
-    municipalities_path = find_municipalities("{}/{}".format(context.config("data_path"), context.config("vehicles_path")))
-    regions_path = find_regions("{}/{}".format(context.config("data_path"), context.config("vehicles_path")))
+    municipalities_path = "{}/{}/{}".format(context.config("data_path"), context.config("vehicles_path"), "parc_vp_communes.zip")
+    regions_path = "{}/{}/{}".format(context.config("data_path"), context.config("vehicles_path"), "parc_vp_regions.zip")
+
+    if not os.path.exists(municipalities_path):
+        raise RuntimeError("Municipalities vehicle data is not available at {}".format(municipalities_path))
     
+    if not os.path.exists(regions_path):
+        raise RuntimeError("Regions vehicle data is not available at {}".format(regions_path))
+
     return os.path.getsize(municipalities_path) + os.path.getsize(regions_path)
