@@ -5,6 +5,7 @@ import time
 # that is needed to set up the pipeline
 
 sleep_time = 5 # seconds
+timeout = 120 # seconds
 
 class Report:
     def __init__(self):
@@ -20,7 +21,7 @@ class Report:
             print("[{}/{}] Checking {} ...".format(index + 1, len(self.sources), source["name"]))
             
             try:
-                response = requests.head(source["url"])
+                response = requests.head(source["url"], timeout = timeout)
                 source["status"] = response.status_code
             except TimeoutError:
                 source["status"] = "timeout"
