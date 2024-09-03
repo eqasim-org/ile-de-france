@@ -6,6 +6,7 @@ import time
 
 sleep_time = 5 # seconds
 timeout = 120 # seconds
+retries = 3
 
 class Report:
     def __init__(self):
@@ -20,21 +21,26 @@ class Report:
         for index, source in enumerate(self.sources):
             print("[{}/{}] Checking {} ...".format(index + 1, len(self.sources), source["name"]))
             
-            try:
-                response = requests.head(source["url"], timeout = timeout)
-                source["status"] = response.status_code
-            except TimeoutError:
-                source["status"] = "timeout"
-            except Exception as e:
-                source["status"] = "error"
-                print(e)
-            
-            print("  Status {}".format(source["status"]))
+            retry = 0
+            success = False
+
+            while not success and retry < retries:
+                try:
+                    response = requests.head(source["url"], timeout = timeout)
+                    source["status"] = response.status_code
+                except TimeoutError:
+                    source["status"] = "timeout"
+                except Exception as e:
+                    source["status"] = "error"
+                    print(e)
+
+                retry += 1
+                print("  Status {} (retry {}/{})".format(source["status"], retry, retries))
+                
+                time.sleep(sleep_time)
 
             if source["status"] != 200:
                 failed.append(source["name"])
-
-            time.sleep(sleep_time)
         
         print("Done.")
         print("Missing: ", len(failed))
