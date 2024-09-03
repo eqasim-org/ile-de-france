@@ -1,7 +1,7 @@
 import pandas as pd
 
 def configure(context):
-    method = context.config("generate_vehicles_method", "default")
+    method = context.config("vehicles_method", "default")
 
     if method == "default":
         context.stage("synthesis.vehicles.cars.default", alias = "cars")

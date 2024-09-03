@@ -68,7 +68,7 @@ def run_population(tmpdir, hts, update = {}):
     assert 149 == len(pd.read_csv("%s/ile_de_france_households.csv" % output_path, usecols = ["household_id"], sep = ";"))
     
     assert 447 * 2 == len(pd.read_csv("%s/ile_de_france_vehicles.csv" % output_path, usecols = ["vehicle_id"], sep = ";"))
-    if "generate_vehicles_method" in update and update["generate_vehicles_method"] == "fleet_sample":
+    if "vehicles_method" in update and update["vehicles_method"] == "fleet_sample":
         assert 17 + 1 == len(pd.read_csv("%s/ile_de_france_vehicle_types.csv" % output_path, usecols = ["type_id"], sep = ";"))
     else:
         assert 2 == len(pd.read_csv("%s/ile_de_france_vehicle_types.csv" % output_path, usecols = ["type_id"], sep = ";"))
@@ -84,7 +84,7 @@ def test_population_with_mode_choice(tmpdir):
 
 def test_population_with_fleet_sample(tmpdir):
     run_population(tmpdir, "entd", { 
-        "generate_vehicles_method": "fleet_sample",
+        "vehicles_method": "fleet_sample",
         "vehicles_data_year": 2015
     })
 

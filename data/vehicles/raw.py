@@ -11,7 +11,7 @@ https://www.statistiques.developpement-durable.gouv.fr/donnees-sur-le-parc-autom
 
 def configure(context):
     context.config("data_path")
-    context.config("vehicles_path")
+    context.config("vehicles_path", "vehicles")
     context.config("vehicles_year", 2021)
     context.stage("data.spatial.codes")
 

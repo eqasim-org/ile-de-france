@@ -139,7 +139,7 @@ In the `config.yml`, you must enable the vehicle fleet generation :
 
 ```yaml
 config:
-  generate_vehicles_method: fleet_sample
+  vehicles_method: fleet_sample
 ```
 
 After doing so, the `vehicles.xml.gz` and `vehicle_types.xml.gz` in the output will not only contain default vehicles and vehicle types, but realistic ones, based on the regional probabilities.
