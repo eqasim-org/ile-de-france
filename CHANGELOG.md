@@ -2,6 +2,7 @@
 
 **Under development**
 
+- chore: update to `eqasim-java` commit `ece4932`
 - feat: vehicles and vehicle types are now always generated
 - feat: read vehicles data from zip files
 - feat : option parameter to remove filtering for requesting departements in hts
