@@ -40,10 +40,8 @@ def _sample_locations(context, args):
     
     # Apply selection
     df_homes["geometry"] = df_locations.iloc[indices]["geometry"].values
-    if context.config("home_location_source") == "tiles":
-        df_homes["id_tiles"] = df_locations.iloc[indices]["id_tiles"].values
-    else:
-        df_homes["building_id"] = df_locations.iloc[indices]["building_id"].values
+    df_homes["home_location_id"] = df_locations.iloc[indices]["home_location_id"].values
+    
     # Update progress
     context.progress.update()
 
@@ -64,9 +62,6 @@ def execute(context):
         )) as parallel:
             seeds = random.randint(10000, size = len(unique_iris_ids))
             df_homes = pd.concat(parallel.map(_sample_locations, zip(unique_iris_ids, seeds)))
-    out = (
-        ["household_id", "commune_id", "id_tiles", "geometry"]
-        if context.config("home_location_source") == "tiles"
-        else ["household_id", "commune_id", "building_id", "geometry"]
-    )
+    out = ["household_id", "commune_id", "home_location_id", "geometry"]
+        
     return df_homes[out]

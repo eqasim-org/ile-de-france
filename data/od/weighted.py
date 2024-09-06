@@ -24,7 +24,7 @@ def fix_origins(df, commune_ids, purpose,category):
     for origin_id in missing_ids:
         for destination_id in commune_ids:
             for category_name in categories :
-                rows.append((origin_id, destination_id, category_name, 1.0/len(categories) if origin_id == destination_id else 0.0))
+                rows.append((origin_id, destination_id, category_name, 1.0 if origin_id == destination_id else 0.0))
 
     print("Fixing %d origins for %s" % (len(missing_ids), purpose))
 

@@ -34,24 +34,24 @@ def execute(context):
                         f'{context.path()}/{context.config("tiles_file")}',
                         mask=poly_dep,
                     )[["idcar_200m", "lcog_geo", "ind", "men", "geometry"]].rename(
-                        columns={"idcar_200m": "id_tiles", "men": "weight"}
+                        columns={"idcar_200m": "home_location_id", "men": "weight"}
                     )
     else:
         df_tiles = gpd.read_file(
             f'{context.config("data_path")}/{context.config("tiles_path")}/{context.config("tiles_file")}',
             mask=poly_dep,
         )[["idcar_200m", "lcog_geo", "ind", "men", "geometry"]].rename(
-            columns={"idcar_200m": "id_tiles", "men": "weight"}
+            columns={"idcar_200m": "home_location_id", "men": "weight"}
         )
 
-    df_tiles["id_tiles"] = df_tiles["id_tiles"].str[14:]
+    df_tiles["home_location_id"] = df_tiles["home_location_id"].str[14:]
     df_tiles["geometry"] = df_tiles["geometry"].centroid
     df_tiles["department_id"] = df_tiles["lcog_geo"].str[:2]
 
     for department_id in df_departments["departement_id"].values:
         assert np.count_nonzero(df_tiles["department_id"] == department_id) > 0
 
-    return df_tiles[["id_tiles", "weight", "geometry"]]
+    return df_tiles[["home_location_id", "weight", "geometry"]]
 
 
 def validate(context):

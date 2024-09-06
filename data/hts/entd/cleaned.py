@@ -247,8 +247,6 @@ def execute(context):
 
     # Socioprofessional class
     df_persons["socioprofessional_class"] = df_persons["CS24"].fillna(80).astype(int) // 10
-    
-    hts.fix_activity_types(df_trips)
 
     # Fix activity types (because of 1 inconsistent ENTD data)
     hts.fix_activity_types(df_trips)
