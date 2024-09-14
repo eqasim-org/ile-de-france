@@ -5,7 +5,7 @@ import time
 # that is needed to set up the pipeline
 
 sleep_time = 5 # seconds
-timeout = 120 # seconds
+timeout = 30 # seconds
 retries = 3
 
 class Report:
@@ -18,29 +18,32 @@ class Report:
     def validate(self):
         failed = []
 
-        for index, source in enumerate(self.sources):
-            print("[{}/{}] Checking {} ...".format(index + 1, len(self.sources), source["name"]))
-            
-            retry = 0
-            success = False
-
-            while not success and retry < retries:
-                try:
-                    response = requests.head(source["url"], timeout = timeout)
-                    source["status"] = response.status_code
-                except TimeoutError:
-                    source["status"] = "timeout"
-                except Exception as e:
-                    source["status"] = "error"
-                    print(e)
-
-                retry += 1
-                print("  Status {} (retry {}/{})".format(source["status"], retry, retries))
+        with requests.Session() as session:
+            session.headers.update({ "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0" })
+            for index, source in enumerate(self.sources):
+                print("[{}/{}] Checking {} ...".format(index + 1, len(self.sources), source["name"]))
                 
-                time.sleep(sleep_time)
+                retry = 0
+                success = False
 
-            if source["status"] != 200:
-                failed.append(source["name"])
+                while not success and retry < retries:
+                    try:
+                        response = session.head(source["url"], timeout = timeout)
+                        source["status"] = response.status_code
+                        success = True
+                    except TimeoutError:
+                        source["status"] = "timeout"
+                    except Exception as e:
+                        source["status"] = "error"
+                        print(e)
+
+                    retry += 1
+                    print("  Status {} (retry {}/{})".format(source["status"], retry, retries))
+                    
+                    time.sleep(sleep_time)
+
+                if source["status"] != 200:
+                    failed.append(source["name"])
         
         print("Done.")
         print("Missing: ", len(failed))
