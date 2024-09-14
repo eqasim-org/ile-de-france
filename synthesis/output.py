@@ -13,8 +13,7 @@ def configure(context):
     context.stage("synthesis.population.activities")
     context.stage("synthesis.population.trips")
 
-    if context.config("generate_vehicles_file", False):
-        context.stage("synthesis.vehicles.selected")
+    context.stage("synthesis.vehicles.vehicles")
 
     context.stage("synthesis.population.spatial.locations")
 
@@ -161,12 +160,15 @@ def execute(context):
     if "parquet" in output_formats:
         df_trips.to_csv("%s/%strips.parquet" % (output_path, output_prefix))
 
-    if context.config("generate_vehicles_file"):
-        # Prepare vehicles
-        df_vehicle_types, df_vehicles = context.stage("synthesis.vehicles.selected")
+    # Prepare vehicles
+    df_vehicle_types, df_vehicles = context.stage("synthesis.vehicles.vehicles")
 
+    if "csv" in output_formats:
         df_vehicle_types.to_csv("%s/%svehicle_types.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
         df_vehicles.to_csv("%s/%svehicles.csv" % (output_path, output_prefix), sep = ";", index = None, lineterminator = "\n")
+    if "parquet" in output_formats:
+        df_vehicle_types.to_parquet("%s/%svehicle_types.parquet" % (output_path, output_prefix))
+        df_vehicles.to_parquet("%s/%svehicles.parquet" % (output_path, output_prefix))
 
     # Prepare spatial data sets
     df_locations = context.stage("synthesis.population.spatial.locations")[[
