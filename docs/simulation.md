@@ -127,36 +127,31 @@ config:
 
 ## <a name="section-data"></a>Using MATSim's emissions contrib
 
-You can calculate air pollution emissions using matsim by using some additional data.
+In order to use a detailed emissions analysis, you need to let the pipeline generate a meaningful vehicle fleet. Data on the private vehicle stock across France are available from the Ministry of Ecology:
 
-You must download the crit'air data from this site : https://www.statistiques.developpement-durable.gouv.fr/donnees-sur-le-parc-automobile-francais-au-1er-janvier-2021
+- [Vehicle stock data](https://www.statistiques.developpement-durable.gouv.fr/donnees-sur-le-parc-automobile-francais-au-1er-janvier-2021)
+- Click on *Données sur les voitures particulières* (first tab) to get information on the private vehicles
+- Download *Données régionales des voitures particulières - 2011 à 2021*
+- Download *Données communales des voitures particulières - 2011 à 2021*
+- Put both zip files into `data/vehicles`
 
-
-You should download both files :
-
- - Données régionales des voitures particulières - 2011 à 2021 (zip, 1.79 Mo)
- - Données communales des voitures particulières - 2011 à 2021 (zip, 130.33 Mo)
-
-Inside the zip you'll find one data file per year, you can extract the files concerning the year you're intereseted in (let's use `2015` for this exemple). Then unzip and place them in a `data/vehicles_2015/`.
-
-Then, in the `config.yml`, you must enable the vehicle fleet generation :
+In the `config.yml`, you must enable the vehicle fleet generation :
 
 ```yaml
-# ...
-
 config:
-  generate_vehicles_file: True
-  generate_vehicles_method: fleet_sample
-  vehicles_data_year: 2015
-
-# ...
+  vehicles_method: fleet_sample
 ```
 
-You should end up, at the end of the `matsim.output` stage, with a vechicles.xml file.
+After doing so, the `vehicles.xml.gz` and `vehicle_types.xml.gz` in the output will not only contain default vehicles and vehicle types, but realistic ones, based on the regional probabilities.
 
-After you run the full simulation, you'll be able to use some classes defined in `eqasim-java` to analyse and compute emissions based on the MATSim outputs.
+You can also choose to generate vehicles for a different year. The 2021 edition ZIP, for instance, contains all the years from 2012 and newer editions will contain more recent years. You can choose the year by setting:
 
-for exemple :
+```yaml
+config:
+  vehicles_year: 2015
+```
+
+Once have run a full simulation, you'll be able to use some classes defined in `eqasim-java` to analyse and compute emissions based on the MATSim outputs. For example:
 
 ```bash
 java -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.emissions.RunComputeEmissionsEvents --config-path config.xml --hbefa-cold-avg ./EFA_ColdStart_Vehcat_2015_Cold_Average.csv --hbefa-hot-avg ./EFA_HOT_Vehcat_2015_Hot_Average.csv --hbefa-cold-detailed ./EFA_ColdStart_Subsegm_2015_Cold_Detailed.csv --hbefa-hot-detailed ./EFA_HOT_Subsegm_2015_Hot_Detailed.csv
@@ -170,6 +165,4 @@ java -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.emissions.RunExportEmi
 java -cp ile_de_france-1.0.6.jar org.eqasim.ile_de_france.emissions.RunComputeEmissionsGrid --config-path config.xml --domain-shp-path idf_2154.shp
 ```
 
-Please note that you need a copy of the HBEFA database in order to run those.
-
-For further information you can look at [eqasim-java](https://github.com/eqasim-org/eqasim-java) and [matsim-libs/contribs/emissions](https://github.com/matsim-org/matsim-libs/tree/master/contribs/emissions)
+Please note that you need a copy of the HBEFA database in order to run those. For further information you can look at [eqasim-java](https://github.com/eqasim-org/eqasim-java) and [matsim-libs/contribs/emissions](https://github.com/matsim-org/matsim-libs/tree/master/contribs/emissions)
