@@ -94,5 +94,5 @@ def execute(context):
     # Define identifiers
     df_locations["location_id"]= np.arange(len(df_locations))
     df_locations["location_id"] = "edu_" + df_locations["location_id"].astype(str)
-    print(df_locations.columns)
+    
     return df_locations[["location_id","education_type", "commune_id","weight","fake", "geometry"]]

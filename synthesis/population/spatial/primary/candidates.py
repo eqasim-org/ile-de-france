@@ -41,7 +41,7 @@ def sample_locations(context, arguments):
     # Load data
     destination_id, random_seed = arguments
     df_locations, df_flow = context.data("df_locations"), context.data("df_flow")
-    df_locations.to_csv(context.config("output_path")+"/erreur.csv")
+
     # Prepare state
     random = np.random.RandomState(random_seed)
     df_locations = df_locations[df_locations["commune_id"] == destination_id]
