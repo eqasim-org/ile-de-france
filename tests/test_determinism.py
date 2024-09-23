@@ -68,8 +68,8 @@ def _test_determinism(index, data_path, tmpdir):
     synpp.run(stages, config, working_directory = cache_path)
 
     REFERENCE_CSV_HASHES = {
-        "ile_de_france_activities.csv":     "e520003e1876a9542ff1a955a6efcfdc",
-        "ile_de_france_households.csv":     "709ce7ded8a2487e6691d4fb3374754b",
+        "ile_de_france_activities.csv":     "53c44fb4026d2037729ee8ff1c8fb93f",
+        "ile_de_france_households.csv":     "ca2a29ef13467326f937638f1ff8be1a",
         "ile_de_france_persons.csv":        "ddbe9b418c915b14e888b54efbdf9b1e",
         "ile_de_france_trips.csv":          "6c5f3427e41e683da768eeb53796a806",
         "ile_de_france_vehicle_types.csv":  "00bee1ea6d7bc9af43ae6c7101dd75da",
@@ -77,9 +77,9 @@ def _test_determinism(index, data_path, tmpdir):
     }
 
     REFERENCE_GPKG_HASHES = {
-        "ile_de_france_activities.gpkg":    "9cf9a5fd8927c709927f7a940f86efbf",
+        "ile_de_france_activities.gpkg":    "884eec1fd0c29904284eb4362ff89be1",
         "ile_de_france_commutes.gpkg":      "5a4180390a69349cc655c07c5671e8d3",
-        "ile_de_france_homes.gpkg":         "033d1aa7a5350579cbd5e8213b9736f2",
+        "ile_de_france_homes.gpkg":         "a85e973f0e2f51031cd60170d351845e",
         "ile_de_france_trips.gpkg":         "d0aec4033cfc184bf1b91ae13a537ef8",
     }
 

@@ -2,6 +2,7 @@
 
 **Under development**
 
+- feat: add municipality information to households and activities
 - chore: update to `eqasim-java` commit `ece4932`
 - feat: vehicles and vehicle types are now always generated
 - feat: read vehicles data from zip files
