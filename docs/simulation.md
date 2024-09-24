@@ -68,11 +68,14 @@ case you clone the pipeline repository previously, you should be all set.
 
 > [!WARNING]
 > Windows users :
-> the cache file paths can get very long and may break the 256 characters limit in the Microsoft Windows OS. In order to avoid any issue make sure the following regitry entry is set to **1** : `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled`
+> 
+> The cache file paths can get very long and may break the 256 characters limit in the Microsoft Windows OS. In order to avoid any issue make sure the following regitry entry is set to **1** : `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled`
+> 
 > You should also activate long paths in git : `git config --system core.longpaths true`
 
 > [!WARNING]
 > Ubuntu users :
+> 
 > In recent versions of **Ubuntu** you may need to install the `font-config` package to avoid crashes of MATSim when writing images (`sudo apt install fontconfig`).
 
 Then, open your `config.yml` and uncomment the `matsim.output` stage in the
