@@ -64,8 +64,16 @@ to convert, filter and merge OSM data sets. Alternatively, you can set the path
 to the binary using the `osmosis_binary` option in the confiuration file. Osmosis
 can be downloaded [here](https://wiki.openstreetmap.org/wiki/Osmosis).
 - **git** `=> 2.39.2` is used to clone the repositories containing the simulation code. In
-case you clone the pipeline repository previously, you should be all set. However, Windows has problems with working with the long path names that result from the pipelien structure of the project. To avoid the problem, you very likely should set git into *long path mode* by calling `git config --system core.longpaths true`.
-- In recent versions of **Ubuntu** you may need to install the `font-config` package to avoid crashes of MATSim when writing images (`sudo apt install fontconfig`).
+case you clone the pipeline repository previously, you should be all set.
+
+> [!WARNING]
+> Windows users :
+> the cache file paths can get very long and may break the 256 characters limit in the Microsoft Windows OS. In order to avoid any issue make sure the following regitry entry is set to **1** : `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled`
+> You should also activate long paths in git : `git config --system core.longpaths true`
+
+> [!WARNING]
+> Ubuntu users :
+> In recent versions of **Ubuntu** you may need to install the `font-config` package to avoid crashes of MATSim when writing images (`sudo apt install fontconfig`).
 
 Then, open your `config.yml` and uncomment the `matsim.output` stage in the
 `run` section. If you call `python3 -m synpp` again, the pipeline will know
