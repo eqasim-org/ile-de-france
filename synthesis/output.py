@@ -8,6 +8,7 @@ import math
 import numpy as np
 
 def configure(context):
+    context.stage("analysis.synthesis.population")
     context.stage("synthesis.population.enriched")
 
     context.stage("synthesis.population.activities")
@@ -260,3 +261,13 @@ def execute(context):
     if "geoparquet" in output_formats:
         path = "%s/%strips.geoparquet" % (output_path, output_prefix)
         df_spatial.to_parquet(path)
+    
+    # Execution analysis
+    df_spatial = df_spatial.to_crs("EPSG:2154")
+
+    df_spatial["distance"] = df_spatial.length
+    df_spatial["distance_class"] = pd.cut(df_spatial["distance"],list(np.arange(50))+[np.inf])
+    analysis_distance = context.stage("analysis.synthesis.population")
+    analysis_distance = pd.concat([analysis_distance,df_spatial.groupby("distance_class")["person_id"].count()],axis=1).reset_index()
+    analysis_distance.columns = ["Distance class","HTS","EQASIM"]
+    analysis_distance.to_csv(f"{output_path}/{output_prefix}distance.csv")
