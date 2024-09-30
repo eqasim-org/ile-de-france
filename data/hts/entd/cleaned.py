@@ -28,7 +28,7 @@ PURPOSE_MAP = [
 MODES_MAP = [
     ("1", "walk"),
     ("2", "car"), #
-    ("2.20", "bike"), # bike
+    ("2.20", "bicycle"), # bike
     ("2.23", "car_passenger"), # motorcycle passenger
     ("2.25", "car_passenger"), # same
     ("3", "car"),
@@ -135,13 +135,15 @@ def execute(context):
     df_persons.loc[df_persons["age"] < 5, "studies"] = False
 
     # Number of vehicles
-    df_households["number_of_vehicles"] = 0
-    df_households["number_of_vehicles"] += df_households["V1_JNBVEH"].fillna(0)
-    df_households["number_of_vehicles"] += df_households["V1_JNBMOTO"].fillna(0)
-    df_households["number_of_vehicles"] += df_households["V1_JNBCYCLO"].fillna(0)
-    df_households["number_of_vehicles"] = df_households["number_of_vehicles"].astype(int)
+    df_households["number_of_cars"] = df_households["V1_JNBVEH"].fillna(0)
+    df_households["number_of_cars"] = df_households["number_of_cars"].astype(int)
 
-    df_households["number_of_bikes"] = df_households["V1_JNBVELOADT"].fillna(0).astype(int)
+    df_households["number_of_motorbikes"] = 0
+    df_households["number_of_motorbikes"] += df_households["V1_JNBMOTO"].fillna(0)
+    df_households["number_of_motorbikes"] += df_households["V1_JNBCYCLO"].fillna(0)
+    df_households["number_of_motorbikes"] = df_households["number_of_motorbikes"].astype(int)
+
+    df_households["number_of_bicycles"] = df_households["V1_JNBVELOADT"].fillna(0).astype(int)
 
     # License
     df_persons["has_license"] = (df_persons["V1_GPERMIS"] == 1) | (df_persons["V1_GPERMIS2R"] == 1)
