@@ -72,8 +72,8 @@ def _test_determinism(index, data_path, tmpdir):
         "ile_de_france_households.csv":     "cbe8eeef0cde4787a1195849e6f31dbf",
         "ile_de_france_persons.csv":        "5ed3581460cfbb370c27f9aabaaa5c5e",
         "ile_de_france_trips.csv":          "036bdccff43e8fd0026e64b3826423f9",
-        "ile_de_france_vehicle_types.csv":  "7ac638273f0c7bb108b5185393e9da2b",
-        "ile_de_france_vehicles.csv":       "1af584c04278120d5821b6a889e8d378",
+        "ile_de_france_vehicle_types.csv":  "3023be875e29c70814e2bdcbf1d9298d",
+        "ile_de_france_vehicles.csv":       "e1fad37d31ef7625c07de338a054827a",
     }
 
     REFERENCE_GPKG_HASHES = {
@@ -133,10 +133,10 @@ def _test_determinism_matsim(index, data_path, tmpdir):
     REFERENCE_HASHES = {
         #"ile_de_france_population.xml.gz":  "e1407f918cb92166ebf46ad769d8d085",
         #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
-        "ile_de_france_households.xml.gz":  "64a0c9fab72aad51bc6adb926a1c9d44",
+        "ile_de_france_households.xml.gz":  "332a0c5891d0844d71f611887c58900a",
         #"ile_de_france_facilities.xml.gz":  "5ad41afff9ae5c470082510b943e6778",
-        "ile_de_france_config.xml":         "30871dfbbd2b5bf6922be1dfe20ffe73",
-        "ile_de_france_vehicles.xml.gz":    "d7c8d0dba531a21dc83355b2f82778c2"
+        "ile_de_france_config.xml":         "8a10c065eb7a674ac6018e62e86237a5",
+        "ile_de_france_vehicles.xml.gz":    "5779b05f0703e0ad91852902fbaad502"
     }
 
     # activities.gpkg, trips.gpkg, meta.json,
