@@ -86,7 +86,7 @@ def execute(context):
         lambda x: str(x).replace("Z", "0").replace("X", "0")
     ).astype(int)
 
-    df["number_of_motorbikes"] += df["DEROU"].apply(
+    df["number_of_motorbikes"] = df["DEROU"].apply(
         lambda x: str(x).replace("U", "0").replace("Z", "0").replace("X", "0")
     ).astype(int)
 

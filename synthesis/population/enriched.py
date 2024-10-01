@@ -50,7 +50,7 @@ def execute(context):
     ]], on = "hts_id")
 
     df_population = pd.merge(df_population, df_hts_households[[
-        "hts_household_id", "number_of_bikes"
+        "hts_household_id", "number_of_bicycles"
     ]], on = "hts_household_id")
 
     # Attach income

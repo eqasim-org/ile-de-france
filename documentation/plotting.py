@@ -21,7 +21,7 @@ COLORS = {
 
 MODE_LABELS = dict(
     car = "Car driver",
-    car_passenger = "Car passenger",
+    passenger = "Passenger",
     pt = "Public transport",
     bicycle = "Bicycle",
     motorbike = "Motorbike",

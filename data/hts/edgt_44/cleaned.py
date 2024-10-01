@@ -20,7 +20,7 @@ PURPOSE_MAP = {
 
 MODES_MAP = {
     "car": [21, 81],
-    "car_passenger": [14, 16, 22, 82],
+    "passenger": [14, 16, 22, 82],
     "pt": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 51, 52, 53, 61, 71, 72, 73, 91, 92, 94, 95],
     "bicycle": [11, 17, 12, 18, 93, 19],
     "motorbike": [13, 15],
@@ -169,7 +169,7 @@ def execute(context):
 
     # Passenger attribute
     df_persons["is_passenger"] = df_persons["person_id"].isin(
-        df_trips[df_trips["mode"] == "car_passenger"]["person_id"].unique()
+        df_trips[df_trips["mode"] == "passenger"]["person_id"].unique()
     )
 
     # Calculate consumption units
