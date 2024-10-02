@@ -114,8 +114,8 @@ def execute(context):
             df_shape.to_file("%s/departments.shp" % context.path())
 
             eqasim.run(context, "org.eqasim.core.scenario.spatial.RunImputeSpatialAttribute", [
-                "--input-schedule-path", "{}schedule.xml.gz".format(context.config("output_prefix")),
-                "--output-schedule-path", "{}schedule.xml.gz".format(context.config("output_prefix")),
+                "--input-schedule-path", "{}transit_schedule.xml.gz".format(context.config("output_prefix")),
+                "--output-schedule-path", "{}transit_schedule.xml.gz".format(context.config("output_prefix")),
                 "--shape-path", "departments.shp",
                 "--shape-attribute", "id",
                 "--shape-value", "75",
