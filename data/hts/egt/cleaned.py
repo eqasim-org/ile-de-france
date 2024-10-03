@@ -172,11 +172,6 @@ def execute(context):
     # Chain length
     df_persons["number_of_trips"] = df_persons["NBDEPL"].fillna(0).astype(int)
 
-    # Passenger attribute
-    df_persons["is_passenger"] = df_persons["person_id"].isin(
-        df_trips[df_trips["mode"] == "passenger"]["person_id"].unique()
-    )
-
     # Calculate consumption units
     hts.check_household_size(df_households, df_persons)
     df_households = pd.merge(df_households, hts.calculate_consumption_units(df_persons), on = "household_id")

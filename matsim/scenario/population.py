@@ -19,7 +19,7 @@ def configure(context):
 PERSON_FIELDS = [
     "person_id", "household_income", "car_availability", "bicycle_availability", "motorbike_availability",
     "census_household_id", "census_person_id", "household_id",
-    "has_license", "has_pt_subscription", "is_passenger",
+    "has_license", "has_pt_subscription",
     "hts_id", "hts_household_id",
     "age", "employed", "sex"
 ]
@@ -55,8 +55,6 @@ def add_person(writer, person, activities, trips, vehicles):
 
     writer.add_attribute("hasPtSubscription", "java.lang.Boolean", person[PERSON_FIELDS.index("has_pt_subscription")])
     writer.add_attribute("hasLicense", "java.lang.String", writer.yes_no(person[PERSON_FIELDS.index("has_license")]))
-
-    writer.add_attribute("isPassenger", "java.lang.Boolean", person[PERSON_FIELDS.index("is_passenger")])
 
     writer.add_attribute("age", "java.lang.Integer", person[PERSON_FIELDS.index("age")])
     writer.add_attribute("employed", "java.lang.String", person[PERSON_FIELDS.index("employed")])

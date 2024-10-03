@@ -238,11 +238,6 @@ def execute(context):
     df_persons["number_of_trips"] = df_persons["number_of_trips"].fillna(-1).astype(int)
     df_persons.loc[(df_persons["number_of_trips"] == -1) & df_persons["is_kish"], "number_of_trips"] = 0
 
-    # Passenger attribute
-    df_persons["is_passenger"] = df_persons["person_id"].isin(
-        df_trips[df_trips["mode"] == "passenger"]["person_id"].unique()
-    )
-
     # Calculate consumption units
     hts.check_household_size(df_households, df_persons)
     df_households = pd.merge(df_households, hts.calculate_consumption_units(df_persons), on = "household_id")
