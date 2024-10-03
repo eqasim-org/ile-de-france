@@ -61,7 +61,7 @@ def execute(context):
     df.loc[df["TRANS"] == "1", "commute_mode"] = np.nan
     df.loc[df["TRANS"] == "2", "commute_mode"] = "walk"
     df.loc[df["TRANS"] == "3", "commute_mode"] = "bicycle"
-    df.loc[df["TRANS"] == "4", "commute_mode"] = "motorbike"
+    df.loc[df["TRANS"] == "4", "commute_mode"] = "car"
     df.loc[df["TRANS"] == "5", "commute_mode"] = "car"
     df.loc[df["TRANS"] == "6", "commute_mode"] = "pt"
     df.loc[df["TRANS"] == "Z", "commute_mode"] = np.nan
@@ -86,7 +86,7 @@ def execute(context):
         lambda x: str(x).replace("Z", "0").replace("X", "0")
     ).astype(int)
 
-    df["number_of_motorbikes"] = df["DEROU"].apply(
+    df["number_of_cars"] += df["DEROU"].apply(
         lambda x: str(x).replace("U", "0").replace("Z", "0").replace("X", "0")
     ).astype(int)
 
@@ -105,7 +105,7 @@ def execute(context):
         "iris_id", "commune_id", "departement_id",
         "age", "sex", "couple",
         "commute_mode", "employed",
-        "studies", "number_of_cars", "number_of_motorbikes", "household_size",
+        "studies", "number_of_cars", "household_size",
         "consumption_units", "socioprofessional_class"
     ]]
 

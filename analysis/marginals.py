@@ -14,9 +14,6 @@ NUMBER_OF_CARS_LABELS = ["0", "1", "2", "3+"]
 NUMBER_OF_BICYCLES_BOUNDS = [0, 1, 2, np.inf]
 NUMBER_OF_BICYCLES_LABELS = ["0", "1", "2", "3+"]
 
-NUMBER_OF_MOTORBIKES_BOUNDS = [0, 1, 2, np.inf]
-NUMBER_OF_MOTORBIKES_LABELS = ["0", "1", "2", "3+"]
-
 GENERAL_PERSON_MARGINALS = [("age_class",), ("sex",), ("employed",), ("studies",)]
 GENERAL_HOUSEHOLD_MARGINALS = [("household_size_class",), ("number_of_cars_class",)]
 
@@ -42,9 +39,6 @@ def prepare_classes(df):
 
     if "number_of_bicycles" in df:
         df["number_of_bicycles_class"] = np.digitize(df["number_of_bicycles"], NUMBER_OF_BICYCLES_BOUNDS, right = True)
-
-    if "number_of_motorbikes" in df:
-        df["number_of_motorbikes_class"] = np.digitize(df["number_of_motorbikes"], NUMBER_OF_MOTORBIKES_BOUNDS, right = True)
 
 def cross(*marginals):
     result = []

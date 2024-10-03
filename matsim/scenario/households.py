@@ -8,7 +8,7 @@ import matsim.writers as writers
 def configure(context):
     context.stage("synthesis.population.enriched")
 
-FIELDS = ["household_id", "person_id", "household_income", "car_availability", "motorbike_availability", "bicycle_availability", "census_household_id"]
+FIELDS = ["household_id", "person_id", "household_income", "car_availability", "bicycle_availability", "census_household_id"]
 
 def add_household(writer, household, member_ids):
     writer.start_household(household[FIELDS.index("household_id")])
@@ -16,7 +16,6 @@ def add_household(writer, household, member_ids):
 
     writer.start_attributes()
     writer.add_attribute("carAvailability", "java.lang.String", household[FIELDS.index("car_availability")])
-    writer.add_attribute("motorbikeAvailability", "java.lang.String", household[FIELDS.index("motorbike_availability")])
     writer.add_attribute("bicycleAvailability", "java.lang.String", household[FIELDS.index("bicycle_availability")])
     writer.add_attribute("household_income", "java.lang.Double", household[FIELDS.index("household_income")])
     writer.add_attribute("censusId", "java.lang.Long", household[FIELDS.index("census_household_id")])

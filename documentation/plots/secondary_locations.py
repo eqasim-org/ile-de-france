@@ -69,7 +69,7 @@ def execute(context):
     plt.figure(figsize =  (6.0, 2.5), dpi = 100) # 2.5 * 2.5
 
     limits = dict(
-        car = 20 * 1e3, passenger = 20 * 1e3, pt = 20 * 1e3,
+        car = 20 * 1e3, car_passenger = 20 * 1e3, pt = 20 * 1e3,
         bicycle = 6 * 1e3, walk = 1 * 1e3
     )
 

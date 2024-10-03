@@ -19,11 +19,11 @@ PURPOSE_MAP = {
 }
 
 MODES_MAP = {
-    "car": [21, 81],
-    "passenger": [14, 16, 22, 82],
+    "car": [13, 15, 21, 81],
+    "car_passenger": [14, 16, 22, 82],
     "pt": [31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 51, 52, 53, 61, 71, 91, 92, 94, 95],
     "bicycle": [11, 17, 12, 18, 93],
-    "motorbike": [13, 15],
+    # "motorbike": [13, 15],
     "walk": [1, 2] # Actually, 2 is not really explained, but we assume it is walk
 }
 
@@ -107,8 +107,8 @@ def execute(context):
 
     # Number of vehicles
     df_households["number_of_cars"] = df_households["M6"].astype(int)
+    df_households["number_of_cars"] += df_households["M5"].astype(int) # motorbikes
     df_households["number_of_bicycles"] = df_households["M7"].astype(int)
-    df_households["number_of_motorbikes"] = df_households["M5"].astype(int)
 
     # License
     df_persons["has_license"] = df_persons["P5"] == "1"

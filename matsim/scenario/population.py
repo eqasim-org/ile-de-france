@@ -17,7 +17,7 @@ def configure(context):
     context.stage("synthesis.vehicles.vehicles")
 
 PERSON_FIELDS = [
-    "person_id", "household_income", "car_availability", "bicycle_availability", "motorbike_availability",
+    "person_id", "household_income", "car_availability", "bicycle_availability",
     "census_household_id", "census_person_id", "household_id",
     "has_license", "has_pt_subscription",
     "hts_id", "hts_household_id",
@@ -44,7 +44,6 @@ def add_person(writer, person, activities, trips, vehicles):
     writer.add_attribute("householdIncome", "java.lang.Double", person[PERSON_FIELDS.index("household_income")])
 
     writer.add_attribute("carAvailability", "java.lang.String", person[PERSON_FIELDS.index("car_availability")])
-    writer.add_attribute("motorbikeAvailability", "java.lang.String", person[PERSON_FIELDS.index("motorbike_availability")])
     writer.add_attribute("bicycleAvailability", "java.lang.String", person[PERSON_FIELDS.index("bicycle_availability")])
 
     writer.add_attribute("censusHouseholdId", "java.lang.Long", person[PERSON_FIELDS.index("census_household_id")])

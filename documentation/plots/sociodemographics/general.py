@@ -85,9 +85,6 @@ def label(row):
     elif row["attribute"] == "number_of_bicycles_class":
         return "No. bicycles %s" % analysis.marginals.NUMBER_OF_BICYCLES_LABELS[row["value"]]
 
-    elif row["attribute"] == "number_of_motorbikes_class":
-        return "No. motorbikes %s" % analysis.marginals.NUMBER_OF_MOTORBIKES_LABELS[row["value"]]
-
 def add_labels(df_figure):
     df_figure["label"] = df_figure.apply(label, axis = 1, raw = False)
 

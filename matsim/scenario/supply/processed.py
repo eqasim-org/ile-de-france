@@ -58,7 +58,7 @@ def execute(context):
         )
         content = content.replace(
             '<param name="modesToKeepOnCleanUp" value="car" />',
-            '<param name="modesToKeepOnCleanUp" value="car,motorbike,passenger,truck" />'
+            '<param name="modesToKeepOnCleanUp" value="car,car_passenger,truck" />'
         )
 
         with open("%s/config.xml" % context.path(), "w+") as f_write:

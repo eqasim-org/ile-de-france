@@ -47,18 +47,7 @@ def execute(context):
             """
                 <parameterset type="routableSubnetwork">
                     <param name="allowedTransportModes" value="car" />
-                    <param name="subnetworkMode" value="passenger" />
-                </parameterset>
-            </module>
-            """
-        )
-
-        content = content.replace(
-            '</module>',
-            """
-                <parameterset type="routableSubnetwork">
-                    <param name="allowedTransportModes" value="car" />
-                    <param name="subnetworkMode" value="motorbike" />
+                    <param name="subnetworkMode" value="car_passenger" />
                 </parameterset>
             </module>
             """
