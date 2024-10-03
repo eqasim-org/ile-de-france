@@ -231,7 +231,7 @@ PERSON_COLUMNS = [
     "age", "sex", "employed", "studies",
     "has_license", "has_pt_subscription",
     "number_of_trips", "departement_id", "trip_weight",
-    "is_passenger", "socioprofessional_class"
+    "socioprofessional_class"
 ]
 
 TRIP_COLUMNS = [
