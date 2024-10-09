@@ -69,7 +69,7 @@ def _test_determinism(index, data_path, tmpdir):
 
     REFERENCE_CSV_HASHES = {
         "ile_de_france_activities.csv":     "53c44fb4026d2037729ee8ff1c8fb93f",
-        "ile_de_france_households.csv":     "ca2a29ef13467326f937638f1ff8be1a",
+        "ile_de_france_households.csv":     "60c8aafadb084cc56dceed407eba4af0",
         "ile_de_france_persons.csv":        "ddbe9b418c915b14e888b54efbdf9b1e",
         "ile_de_france_trips.csv":          "6c5f3427e41e683da768eeb53796a806",
         "ile_de_france_vehicle_types.csv":  "00bee1ea6d7bc9af43ae6c7101dd75da",
@@ -133,9 +133,9 @@ def _test_determinism_matsim(index, data_path, tmpdir):
     REFERENCE_HASHES = {
         #"ile_de_france_population.xml.gz":  "e1407f918cb92166ebf46ad769d8d085",
         #"ile_de_france_network.xml.gz":     "5f10ec295b49d2bb768451c812955794",
-        "ile_de_france_households.xml.gz":  "64a0c9fab72aad51bc6adb926a1c9d44",
+        "ile_de_france_households.xml.gz":  "936dd42548b205b822099dfd9a20d075",
         #"ile_de_france_facilities.xml.gz":  "5ad41afff9ae5c470082510b943e6778",
-        "ile_de_france_config.xml":         "30871dfbbd2b5bf6922be1dfe20ffe73",
+        "ile_de_france_config.xml":         "6c2adf49fd7c0f7b28fb1a09397ed2b0",
         "ile_de_france_vehicles.xml.gz":    "d7c8d0dba531a21dc83355b2f82778c2"
     }
 
