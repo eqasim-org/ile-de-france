@@ -6,6 +6,7 @@ import os, datetime, json
 import sqlite3
 import math
 import numpy as np
+from analysis.synthesis.population import ANALYSIS_FOLDER
 
 def configure(context):
 
@@ -274,7 +275,7 @@ def execute(context):
         path = "%s/%strips.geoparquet" % (output_path, output_prefix)
         df_spatial.to_parquet(path)
     
-    # Execution analysis
+    # Output population analysis
     SAMPLING_RATE =context.config("sampling_rate")
     df_spatial = df_spatial.to_crs("EPSG:2154")
 
@@ -286,4 +287,4 @@ def execute(context):
     analysis_distance["Proportion_HTS"] = analysis_distance["HTS"] / analysis_distance["HTS"].sum()
     analysis_distance["Proportion_EQASIM"] = analysis_distance["EQASIM"] / len(df_spatial)
     analysis_distance["EQASIM"] = analysis_distance["EQASIM"]/ SAMPLING_RATE
-    analysis_distance.to_csv(f"{output_path}/{output_prefix}distance.csv")
+    analysis_distance.to_csv(f"{output_path}/{ANALYSIS_FOLDER}/{output_prefix}distance.csv")
