@@ -6,8 +6,10 @@ import os, datetime, json
 import sqlite3
 import math
 import numpy as np
+from analysis.synthesis.population import ANALYSIS_FOLDER
 
 def configure(context):
+
     context.stage("synthesis.population.enriched")
 
     context.stage("synthesis.population.activities")
@@ -16,13 +18,14 @@ def configure(context):
     context.stage("synthesis.vehicles.vehicles")
 
     context.stage("synthesis.population.spatial.locations")
-
+    context.stage("analysis.synthesis.population")
     context.stage("documentation.meta_output")
 
     context.config("output_path")
     context.config("output_prefix", "ile_de_france_")
     context.config("output_formats", ["csv", "gpkg"])
-    
+    context.config("sampling_rate")
+
     if context.config("mode_choice", False):
         context.stage("matsim.simulation.prepare")
 
@@ -271,3 +274,19 @@ def execute(context):
     if "geoparquet" in output_formats:
         path = "%s/%strips.geoparquet" % (output_path, output_prefix)
         df_spatial.to_parquet(path)
+    
+    # Output population analysis
+    SAMPLING_RATE =context.config("sampling_rate")
+    df_spatial = df_spatial.to_crs("EPSG:2154")
+
+    df_spatial["distance"] = df_spatial.length/1000
+    df_spatial["distance_class"] = pd.cut(df_spatial["distance"],list(np.arange(100))+[np.inf])
+
+    # Compare distance 
+    analysis_distance = context.stage("analysis.synthesis.population")
+    analysis_distance = pd.concat([analysis_distance,df_spatial.groupby("distance_class")["person_id"].count()],axis=1).reset_index()
+    analysis_distance.columns = ["Distance class","HTS","EQASIM"]
+    analysis_distance["Proportion_HTS"] = analysis_distance["HTS"] / analysis_distance["HTS"].sum()
+    analysis_distance["Proportion_EQASIM"] = analysis_distance["EQASIM"] / len(df_spatial)
+    analysis_distance["EQASIM"] = analysis_distance["EQASIM"]/ SAMPLING_RATE
+    analysis_distance.to_csv(f"{output_path}/{ANALYSIS_FOLDER}/{output_prefix}distance.csv")
