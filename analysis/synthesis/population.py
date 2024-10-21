@@ -84,7 +84,7 @@ def execute(context):
     analysis_travel.to_csv(f"{analysis_output_path}/{prefix}travel.csv")
 
     # Compare distance
-    df_hts_travel["routed_distance"] = df_hts_travel["routed_distance"]/1000
+    df_hts_travel["routed_distance"] = df_hts_travel["routed_distance"]/1000 if "routed_distance" in  df_hts_travel.columns else df_hts_travel["euclidean_distance"]/1000
     df_hts_travel["distance_class"] = pd.cut(df_hts_travel["routed_distance"],list(np.arange(100))+[np.inf])
     analysis_dist = df_hts_travel.groupby("distance_class")["person_weight"].sum()
 
