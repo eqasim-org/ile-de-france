@@ -281,6 +281,8 @@ def execute(context):
 
     df_spatial["distance"] = df_spatial.length/1000
     df_spatial["distance_class"] = pd.cut(df_spatial["distance"],list(np.arange(100))+[np.inf])
+
+    # Compare distance 
     analysis_distance = context.stage("analysis.synthesis.population")
     analysis_distance = pd.concat([analysis_distance,df_spatial.groupby("distance_class")["person_id"].count()],axis=1).reset_index()
     analysis_distance.columns = ["Distance class","HTS","EQASIM"]

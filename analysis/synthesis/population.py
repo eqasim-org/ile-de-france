@@ -45,10 +45,10 @@ def execute(context):
     df_hts_households["vehicles_class"] = pd.cut(df_hts_households["number_of_vehicles"],NUMBER_OF_VEHICLES,right=True,labels=NUMBER_OF_VEHICLES_LABELS)
 
 
-    df_eq_depl = pd.merge(df_trip_eq,df_person_eq[["person_id","age_class"]],on=["person_id"])
-    df_hts_depl = pd.merge(df_hts_trip,df_hts_person[["person_id","age_class","person_weight"]],on=["person_id"])
+    df_eq_travel = pd.merge(df_trip_eq,df_person_eq[["person_id","age_class"]],on=["person_id"])
+    df_hts_travel = pd.merge(df_hts_trip,df_hts_person[["person_id","age_class","person_weight"]],on=["person_id"])
     # Age purpose analysis
-    analysis_age_purpose = pd.pivot_table(df_eq_depl,"person_id",index="age_class",columns="following_purpose",aggfunc="count")
+    analysis_age_purpose = pd.pivot_table(df_eq_travel,"person_id",index="age_class",columns="following_purpose",aggfunc="count")
     analysis_age_purpose = analysis_age_purpose/sampling_rate
     analysis_age_purpose.to_csv(f"{analysis_output_path}/{prefix}age_purpose.csv")
 
@@ -75,18 +75,18 @@ def execute(context):
     analysis_license_class["EQASIM"] = analysis_license_class["EQASIM"]/sampling_rate
     analysis_license_class.to_csv(f"{analysis_output_path}/{prefix}license.csv")
 
-    # Compare depl volume
-    analysis_depl = pd.concat([df_hts_depl.groupby("age_class")["person_weight"].sum(),df_eq_depl.groupby("age_class")["person_id"].count()],axis=1).reset_index()
-    analysis_depl.columns = ["Age class","HTS","EQASIM"]
-    analysis_depl["Proportion_HTS"] = analysis_depl["HTS"] /df_hts_depl["person_weight"].sum()
-    analysis_depl["Proportion_EQASIM"] = analysis_depl["EQASIM"] /len(df_eq_depl)
-    analysis_depl["EQASIM"] = analysis_depl["EQASIM"]/sampling_rate
-    analysis_depl.to_csv(f"{analysis_output_path}/{prefix}deplacement.csv")
+    # Compare travel volume
+    analysis_travel = pd.concat([df_hts_travel.groupby("age_class")["person_weight"].sum(),df_eq_travel.groupby("age_class")["person_id"].count()],axis=1).reset_index()
+    analysis_travel.columns = ["Age class","HTS","EQASIM"]
+    analysis_travel["Proportion_HTS"] = analysis_travel["HTS"] /df_hts_travel["person_weight"].sum()
+    analysis_travel["Proportion_EQASIM"] = analysis_travel["EQASIM"] /len(df_eq_travel)
+    analysis_travel["EQASIM"] = analysis_travel["EQASIM"]/sampling_rate
+    analysis_travel.to_csv(f"{analysis_output_path}/{prefix}travel.csv")
 
-    # Compare dist
-    df_hts_depl["routed_distance"] = df_hts_depl["routed_distance"]/1000
-    df_hts_depl["distance_class"] = pd.cut(df_hts_depl["routed_distance"],list(np.arange(100))+[np.inf])
-    analysis_dist = df_hts_depl.groupby("distance_class")["person_weight"].sum()
+    # Compare distance
+    df_hts_travel["routed_distance"] = df_hts_travel["routed_distance"]/1000
+    df_hts_travel["distance_class"] = pd.cut(df_hts_travel["routed_distance"],list(np.arange(100))+[np.inf])
+    analysis_dist = df_hts_travel.groupby("distance_class")["person_weight"].sum()
 
     return analysis_dist
 
