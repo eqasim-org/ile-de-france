@@ -44,6 +44,12 @@ def execute(context):
     lookup = { name: identifier for identifier, name in DEPARTMENTS.items() }
     df["department_id"] = df["ZONE"].replace(lookup)
 
+    requested_departments = set(df_departments["departement_id"])
+    available_departments = set(df["department_id"])
+    
+    assert len(requested_departments - available_departments) == 0
+    df = df[df["department_id"].isin(df_departments["departement_id"])]
+
     # Clean weight
     column = "POP_{}".format(projection_year)
     if not column in df:
