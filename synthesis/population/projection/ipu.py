@@ -26,7 +26,7 @@ def execute(context):
     attribute_counts = []
     attribute_targets = []
 
-    for index, row in context.progress(df_projection.iterrows(), label = "Processing marginals"):
+    for index, row in context.progress(df_projection.iterrows(), total = len(df_projection), label = "Processing marginals"):
         f = df_census["sex"] == row["sex"]
         f &= df_census["age"].between(row["minimum_age"], row["maximum_age"] - 1)
         f &= df_census["departement_id"] == row["department_id"]
