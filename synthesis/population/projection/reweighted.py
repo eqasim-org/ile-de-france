@@ -16,10 +16,6 @@ def execute(context):
     df_census = context.stage("data.census.filtered")
     df_weights = context.stage("synthesis.population.projection.ipu")
 
-    df_census.to_parquet("{}/{}_original.parquet".format(
-        context.config("output_path"), context.config("projection_year")
-    ))
-
     initial_size = len(df_census)
 
     df_census = df_census.drop(columns = "weight")
@@ -27,9 +23,5 @@ def execute(context):
 
     final_size = len(df_census)
     assert initial_size == final_size
-
-    df_census.to_parquet("{}/{}_projection.parquet".format(
-        context.config("output_path"), context.config("projection_year")
-    ))
 
     return df_census
