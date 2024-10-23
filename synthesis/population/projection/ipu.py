@@ -29,7 +29,7 @@ def execute(context):
     for index, row in context.progress(df_projection.iterrows(), label = "Processing marginals"):
         f = df_census["sex"] == row["sex"]
         f &= df_census["age"].between(row["minimum_age"], row["maximum_age"] - 1)
-        f &= df_census["department_id"] == row["department_id"]
+        f &= df_census["departement_id"] == row["department_id"]
         assert np.count_nonzero(f) > 0
 
         df_counts = df_census.loc[f, "household_index"].value_counts()
