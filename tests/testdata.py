@@ -651,18 +651,19 @@ def create(output_path):
     df_persons = pd.DataFrame.from_records(persons)
     df_persons["MODV"] = random.choice(["a", "b", "c", "d"], len(df_persons))
     df_persons["NBPI"] = random.choice([1, 2, 3, 4], len(df_persons))
+    df_persons["TYPC"] = random.choice(["1", "2", "Z"], len(df_persons))
 
     columns = [
         "CANTVILLE", "NUMMI", "AGEREV", "COUPLE", "GS", "DEPT", "IRIS", "REGION",
         "ETUD", "ILETUD", "ILT", "IPONDI", "STAT_GSEC",
-        "SEXE", "TACT", "TP", "TRANS", "VOIT", "DEROU", "MODV", "NBPI"
+        "SEXE", "TACT", "TP", "TRANS", "VOIT", "DEROU", "MODV", "NBPI", "TYPC"
     ]
 
     df_persons = df_persons[columns]
     df_persons.columns = columns
 
     print("Hash", "df_persons", pd.util.hash_pandas_object(df_persons, index = True).sum())
-    assert pd.util.hash_pandas_object(df_persons, index = True).sum() == 1184464799857281958
+    assert pd.util.hash_pandas_object(df_persons, index = True).sum() == 7247169812493478674
 
     df_persons.to_parquet("%s/rp_2022/RP2022_indcvi.parquet" % output_path)
 
