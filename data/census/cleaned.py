@@ -148,10 +148,10 @@ def execute(context):
     df = pd.merge(df, hts.calculate_consumption_units(df), on = "household_id")
 
     # housing 
-    df["housing"] = pd.to_numeric(df["TYPC"], errors = "coerce").fillna(0)
-    df.loc[df["housing"] > 2, "housing"] = 0
+    df["housing_code"] = pd.to_numeric(df["TYPC"], errors = "coerce").fillna(0).astype(int)
+    df.loc[df["housing_code"].gt(2), "housing_code"] = 0
 
-    df["housing_type"] = pd.Categorical.from_codes(df["housing"], [
+    df["housing_type"] = pd.Categorical.from_codes(df["housing_code"], [
         "collective", "single", "double"])
 
     # additional attributes

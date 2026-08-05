@@ -9,7 +9,7 @@ def configure(context):
     context.config("home_location_source", "addresses")
     
     context.config("random_seed")
-    context.config("match_home_by_housing", False)
+    context.config("use_housing_type", False)
 
 def _sample_locations(context, args):
     # Extract data sets
@@ -39,17 +39,17 @@ def _sample_locations(context, args):
     indices = np.array([np.count_nonzero(cdf < u) 
         for u in random.random(size = home_count)])
 
-    if context.config("match_home_by_housing"):
+    if context.config("use_housing_type"):
         # we already have a basic random assignment
         # now we override it if desired
         assert "housing" in df_locations, "Home locations do not contain housing information. Are you using home_location_source = addresses?"
 
-        for housing in ("single", "double", "collective"):
-            f_homes = df_homes["housing"].eq(housing)
+        for housing_type in ("single", "double", "collective"):
+            f_homes = df_homes["housing_type"].eq(housing_type)
 
-            if housing == "single":
+            if housing_type == "single":
                 f_locations = df_locations["housing"].eq(1)
-            elif housing == "double":
+            elif housing_type == "double":
                 f_locations = df_locations["housing"].eq(2)
             else:
                 f_locations = df_locations["housing"].ge(3)
@@ -57,13 +57,15 @@ def _sample_locations(context, args):
             home_count = np.count_nonzero(f_homes)
             location_count = np.count_nonzero(f_locations)
 
+            home_selector = np.where(f_homes)[0]
+            location_selector = np.where(f_locations)[0]
+
             if home_count > 0 and location_count > 0:
                 cdf = np.cumsum(df_locations.loc[f_locations, "weight"].values)
                 cdf /= cdf[-1]
 
-                selector = np.where(f_homes)[0]
-                indices[selector] = np.array([np.count_nonzero(cdf < u) 
-                    for u in random.random(size = home_count)])
+                indices[home_selector] = location_selector[np.array([np.count_nonzero(cdf < u) 
+                    for u in random.random(size = home_count)])]
 
     # Apply selection
     df_homes["geometry"] = df_locations.iloc[indices]["geometry"].values

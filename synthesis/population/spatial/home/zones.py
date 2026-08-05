@@ -25,7 +25,7 @@ def execute(context):
     random = np.random.default_rng(context.config("random_seed"))
 
     df_households = context.stage("synthesis.population.sampled").drop_duplicates("household_id")[[
-        "household_id", "commune_id", "iris_id", "departement_id"
+        "household_id", "commune_id", "iris_id", "departement_id", "housing_type"
     ]].copy().set_index("household_id")
 
     f_has_commune = df_households["commune_id"] != "undefined"
@@ -100,4 +100,4 @@ def execute(context):
     assert len(invalid_iris) == 0
     assert np.count_nonzero(df_households["iris_id"] == "undefined") == 0
 
-    return df_households.reset_index()[["household_id", "departement_id", "commune_id", "iris_id"]]
+    return df_households.reset_index()[["household_id", "departement_id", "commune_id", "iris_id", "housing_type"]]
