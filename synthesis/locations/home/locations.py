@@ -44,11 +44,16 @@ def execute(context):
         for iris_id in sorted(missing_iris):
             centroid = df_iris[df_iris["iris_id"] == iris_id]["geometry"].centroid.iloc[0]
 
-            df_added.append({
+            added = {
                 "iris_id": iris_id, "geometry": centroid,
                 "commune_id": iris_id[:5],
                 "weight" : 1,
-            })
+            }
+
+            if "housing" in df_addresses["housing"]:
+                added["housing"] = 1
+
+            df_added.append(added)
 
         df_added = gpd.GeoDataFrame(pd.DataFrame.from_records(df_added), crs = df_addresses.crs)
         df_added["fake"] = True
