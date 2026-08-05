@@ -80,9 +80,9 @@ def execute(context):
         print("Attention: Found excess municipalities in SIRENE data: ", excess_communes)
         print("The respective enterprises will be ignored.")
         print("In the future this could be fixed by dating back the entries using municipality history data.")
-        
+
         df_sirene = df_sirene[~df_sirene["commune_id"].isin(excess_communes)]
-        
+    
     df_sirene = df_sirene[["siren", "commune_id", "minimum_employees", "maximum_employees", "ape", "siret"]]
 
     # Add law status

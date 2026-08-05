@@ -32,6 +32,17 @@ def execute(context):
     print("Expecting data for {} departments".format(len(df_departments)))
     
     source_paths = find_bdtopo("{}/{}".format(context.config("data_path"), context.config("bdtopo_path")))
+    requested_departments = set(df_departments["departement_id"].astype(str).unique())
+    filtered_paths = []
+
+    for source_path in source_paths:
+        filename = os.path.basename(source_path)
+        if any(f"D{get_department_string(department_id)}" in filename for department_id in requested_departments):
+            filtered_paths.append(source_path)
+
+    source_paths = filtered_paths
+    if len(source_paths) == 0:
+        raise RuntimeError("No BD-TOPO archives match the requested departments")
 
     df_bdtopo = []
     known_ids = set()
@@ -62,6 +73,8 @@ def execute(context):
             df_buildings["centroid"] = df_buildings["geometry"].centroid
             df_buildings = df_buildings.set_geometry("centroid")
 
+            print("  Filtering ...")
+
             initial_count = len(df_buildings)
             df_buildings = df_buildings[~df_buildings["building_id"].isin(known_ids)]
             final_count = len(df_buildings)
@@ -72,16 +85,8 @@ def execute(context):
             final_count = len(df_buildings)
             print("    {}/{} filtered spatially".format(initial_count - final_count, initial_count))
 
-            f = df_buildings["departement_id"] == "08"
-            if np.count_nonzero(f) > 0:
-                print("    ATTENTION: fixing missing information for Ardennes (08)")
-                df_buildings.loc[f, "housing"] = 1
-
-                # Attention: In Ardennes no information on the number of housing units is
-                # available. To be sure that we don't throw away all buildings, we set the 
-                # number of housing units to one by default. This has, however, implications
-                # in later steps: All buildings are considered as residential candidates and
-                # all buildings are weighted uniformly.
+            # special fix for Ardennes
+            fix_ardennes(df_buildings)
 
             initial_count = len(df_buildings)
             df_buildings = df_buildings[df_buildings["housing"] > 0]
@@ -90,8 +95,6 @@ def execute(context):
 
             df_buildings["department_id"] = df_buildings["departement_id"]
             df_buildings = df_buildings.set_geometry("geometry")
-
-            print("    {} remaining".format(final_count))
 
             df_bdtopo.append(df_buildings[["building_id", "housing", "department_id", "geometry"]])
             known_ids |= set(df_buildings["building_id"].unique())
@@ -103,8 +106,6 @@ def execute(context):
     for department_id in df_departments["departement_id"].values:
         assert np.count_nonzero(df_bdtopo["department_id"] == department_id) > 0
 
-    assert np.count_nonzero(df_bdtopo["department_id"] == department_id) > 0
-
     return df_bdtopo[["building_id", "housing", "geometry"]]
 
 def find_bdtopo(path):
@@ -114,6 +115,20 @@ def find_bdtopo(path):
         raise RuntimeError("BD TOPO data is not available in {}".format(path))
     
     return candidates
+
+def fix_ardennes(df_buildings):
+    """
+    Attention: In Ardennes (08) no information on the number of housing units is
+    available. To be sure that we don't throw away all buildings, we set the 
+    number of housing units to one by default. This has, however, implications
+    in later steps: All buildings are considered as residential candidates and
+    all buildings are weighted uniformly.
+    """
+    f = df_buildings["departement_id"] == "08"
+
+    if np.count_nonzero(f) > 0:
+        print("    ATTENTION: fixing missing information for Ardennes (08), assigning one housing unit to each building")
+        df_buildings.loc[f, "housing"] = 1
 
 def validate(context):
     paths = find_bdtopo("{}/{}".format(context.config("data_path"), context.config("bdtopo_path")))
