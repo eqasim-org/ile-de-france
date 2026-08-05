@@ -38,6 +38,9 @@ def execute(context):
     df_households["commune_id"] = df_households["commune_id"].cat.add_categories(
         sorted(set(df_municipalities.index.unique()) - set(df_households["commune_id"].cat.categories)))
 
+    # for compatibility when setting replacement values further below
+    df_municipalities.index = df_municipalities.index.add_categories(["undefined"])
+
     departements = df_households[~f_has_commune]["departement_id"].unique()
 
     for departement_id in context.progress(departements, label = "Fixing missing communes ..."):
@@ -63,6 +66,9 @@ def execute(context):
 
     df_households["iris_id"] = df_households["iris_id"].cat.add_categories(
         sorted(set(df_iris.index.unique()) - set(df_households["iris_id"].cat.categories)))
+
+    # for compatibility when setting replacement values further below
+    df_iris.index = df_iris.index.add_categories(["undefined"])
 
     communes = df_households[~f_has_iris & f_has_commune]["commune_id"].unique()
 
