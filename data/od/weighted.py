@@ -16,14 +16,14 @@ def configure(context):
 
     context.config("education_location_source","bpe")
 
-def fix_origins(df, commune_ids, purpose, category):
+def fix_origins(df, commune_ids, purpose,category): 
     df_existing = df.groupby(["origin_id", category])["weight"].sum()
-    
+
     # find missing origin x category combinations
     existing = set(df_existing[df_existing > 0.0].index)
     missing = np.array(list(set(product(
         commune_ids, df[category].cat.categories.values)) - existing))
-    
+
     # for each missing origin x category we create a flow to itself
     df_missing = pd.DataFrame({
         "origin_id": pd.Categorical(missing[:, 0], dtype = df["origin_id"].dtype),
@@ -58,8 +58,7 @@ def execute(context):
     
     if context.config("education_location_source") == 'bpe':
         # Aggregate education (we do not consider different age range with bpe source)
-        df_education = df_education[["origin_id", "destination_id", "weight", "total"]].groupby(["origin_id", "destination_id"]).sum().reset_index()    
-    
+        df_education = df_education[["origin_id", "destination_id", "weight","total"]].groupby(["origin_id", "destination_id"]).sum().reset_index()    
     # Compute weight
     df_work["weight"] /= df_work["total"]
     df_education["weight"] /= df_education["total"]
@@ -71,7 +70,7 @@ def execute(context):
     assert not np.any(df_education["weight"].isna())
 
     # at this point, we have a SPARSE flow matrix with the following properties:
-    # each origin x category combination exists at least one with a flow to itself
+    # each origin x category combination exists at least once with a flow to itself
     # each origin x category combination, however, may have multiple destinations
     
     return df_work, df_education

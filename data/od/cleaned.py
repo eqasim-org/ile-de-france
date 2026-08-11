@@ -27,8 +27,9 @@ def execute(context):
     # Verify spatial data for work
     df_codes = context.stage("data.spatial.codes")
 
-    df_work["origin_id"] = df_work["origin_id"].astype(df_codes["commune_id"].dtype)
-    df_work["destination_id"] = df_work["destination_id"].astype(df_codes["commune_id"].dtype)
+    municipality_dtype = df_codes["commune_id"].dtype
+    df_work["origin_id"] = df_work["origin_id"].astype(municipality_dtype)
+    df_work["destination_id"] = df_work["destination_id"].astype(municipality_dtype)
 
     excess_communes = (set(df_work["origin_id"].unique()) | set(df_work["destination_id"].unique())) - set(df_codes["commune_id"].unique())
     if len(excess_communes) > 0:
@@ -37,8 +38,8 @@ def execute(context):
     # Verify spatial data for education
     df_codes = context.stage("data.spatial.codes")
 
-    df_education["origin_id"] = df_education["origin_id"].astype(df_codes["commune_id"].dtype)
-    df_education["destination_id"] = df_education["destination_id"].astype(df_codes["commune_id"].dtype)
+    df_education["origin_id"] = df_education["origin_id"].astype(municipality_dtype)
+    df_education["destination_id"] = df_education["destination_id"].astype(municipality_dtype)
 
     excess_communes = (set(df_education["origin_id"].unique()) | set(df_education["destination_id"].unique())) - set(df_codes["commune_id"].unique())
     if len(excess_communes) > 0:
@@ -72,11 +73,12 @@ def execute(context):
 
     # Aggregate the flows
     print("Aggregating work ...")
-    df_work = df_work.groupby(["origin_id", "destination_id", "commute_mode"], observed = True)["weight"].sum().reset_index()
+    df_work = df_work.groupby(["origin_id", "destination_id", "commute_mode"])["weight"].sum().reset_index()
 
     print("Aggregating education ...")
-    df_education = df_education.groupby(["origin_id", "destination_id", "age_range"], observed = True)["weight"].sum().reset_index()
+    df_education = df_education.groupby(["origin_id", "destination_id","age_range"])["weight"].sum().reset_index()
 
+    # only keep a sparse representation of the flows
     df_work = df_work[df_work["weight"] > 0.0]
     df_education = df_education[df_education["weight"] > 0.0]
 

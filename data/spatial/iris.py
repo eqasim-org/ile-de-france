@@ -44,8 +44,8 @@ def execute(context):
 
     df_iris = df_iris.to_crs(context.config("crs"))
 
-    df_iris["iris_id"] = df_iris["iris_id"].astype("category")
-    df_iris["commune_id"] = df_iris["commune_id"].astype("category")
+    df_iris["iris_id"] = df_iris["iris_id"].astype(df_codes["iris_id"].dtype)
+    df_iris["commune_id"] = df_iris["commune_id"].astype(df_codes["commune_id"].dtype)
 
     # Merge with requested codes and verify integrity
     df_iris["iris_id"] = df_iris["iris_id"].astype(df_codes["iris_id"].dtype)
