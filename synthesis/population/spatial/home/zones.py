@@ -37,9 +37,6 @@ def execute(context):
 
     df_households["commune_id"] = df_households["commune_id"].cat.add_categories(
         sorted(set(df_municipalities.index.unique()) - set(df_households["commune_id"].cat.categories)))
-    
-    # for compatibility when setting replacement values further below
-    df_municipalities.index = df_municipalities.index.add_categories(["undefined"])
 
     # for compatibility when setting replacement values further below
     df_municipalities.index = df_municipalities.index.add_categories(["undefined"])

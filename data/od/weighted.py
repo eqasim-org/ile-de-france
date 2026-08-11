@@ -43,8 +43,8 @@ def execute(context):
     df_work, df_education = context.stage("data.od.cleaned")
 
     # Add missing origins
-    df_work = fix_origins(df_work, commune_ids, "work", "commute_mode")
-    df_education = fix_origins(df_education, commune_ids, "education", "age_range")
+    df_work = fix_origins(df_work, commune_ids, "work","commute_mode")
+    df_education = fix_origins(df_education, commune_ids, "education","age_range")
 
     # Aggregate work (we do not consider different modes at the moment)
     df_work = df_work[["origin_id", "destination_id", "weight"]].groupby(["origin_id", "destination_id"]).sum().reset_index()
