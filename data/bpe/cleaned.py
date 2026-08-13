@@ -177,7 +177,8 @@ def fix_municipalities(df):
 
     print("Replacing to make BPE compatible with IRIS:", mapping)
 
-    df["commune_id"] = df["commune_id"].cat.add_categories(mapping.values())
+    added = set(mapping.values()) - set(df["commune_id"].cat.categories)
+    df["commune_id"] = df["commune_id"].cat.add_categories(added)
     df["commune_id"] = df["commune_id"].replace(mapping)
 
     return df
