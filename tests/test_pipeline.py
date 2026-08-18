@@ -137,3 +137,11 @@ def test_population_with_census_attributes(data_path, tmpdir):
 
     df = pd.read_csv("%s/ile_de_france_households.csv" % output_path, sep = ";", nrows = 2)
     assert "household_type" in df
+
+def test_housing_type(data_path, tmpdir):
+    output_path = run_population(data_path, tmpdir, "entd", { 
+        "use_housing_type": True
+    })["output_path"]
+
+    df = pd.read_csv("%s/ile_de_france_households.csv" % output_path, sep = ";", nrows = 2)
+    assert "housing_type" in df
