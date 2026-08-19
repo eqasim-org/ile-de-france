@@ -1,13 +1,17 @@
 __pycache__
 env
 cache
-output
+/output
 
 data/nantes_2015
 data/lyon_2015
 .vscode
 .idea
 
+config_local_*.yml
+
+# sphinx build files
+docs/_build
+
 .sif
 
-config_local_*.yml

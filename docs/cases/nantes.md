@@ -1,11 +1,7 @@
-# Nantes
+(nantes)=
+# Nantes / Loire-Atlantique
 
-The pipeline makes it easy to create synthetic populations and simulations
-for other regions than Île-de-France. In any case, we recommend to first
-follow instructions to set up a [synthetic population for Île-de-France](../population.md)
-and (if desired) the [respective simulation](../simulation.md). The following
-describes the steps and additional data sets necessary to create a population and
-simulation for **Nantes** and its surrounding department Loire-Atlantique.
+The following page describes the steps and additional data sets necessary to create a population and simulation for **Nantes** and its surrounding department Loire-Atlantique.
 
 ## Additional data
 
@@ -35,12 +31,10 @@ provide a selection of links, which is not necessarily exhaustive:
 
 - [TAN Nantes](https://transport.data.gouv.fr/datasets/tan-arrets-horaires-et-circuits/)
 - [Aléop Loire Atlantique](https://transport.data.gouv.fr/datasets/arrets-horaires-et-circuits-des-lignes-de-transports-aleop-1)
-- [STRAN Saint-Nazaire](https://transport.data.gouv.fr/datasets/stran-arrets-horaires-et-circuits-urbains-et-scolaires-gtfs/)
+- [STRAN Saint-Nazaire](https://transport.data.gouv.fr/datasets/yceo-arrets-horaires-et-lignes-urbaines-et-scolaires-gtfs-1/)
 - [Brévibus](https://transport.data.gouv.fr/datasets/reseau-urbain-brevibus/) (save as `brevibus.gtfs.zip`)
-- [Guérande](https://transport.data.gouv.fr/datasets/lignes-arrets-et-horaires-de-transport-pour-cap-atlantique-lila-presquile-gtfs/)
-- [SNCF TER](https://ressources.data.sncf.com/explore/dataset/sncf-ter-gtfs/information/)
-- [SNCF Intercités](https://ressources.data.sncf.com/explore/dataset/sncf-intercites-gtfs/information/)
-- [SNCF TGV](https://ressources.data.sncf.com/explore/dataset/horaires-des-train-voyages-tgvinouiouigo/information/)
+- [Guérande](https://transport.data.gouv.fr/datasets/reseau-urbain-scolaire-lila-presquile) (save as `lilapresquile.gtfs.zip`)
+- [SNCF TGV, Intercités et TER](https://transport.data.gouv.fr/datasets/horaires-sncf) (save as `sncf-tgv-intercite-ter.gtfs.zip`)
 
 Download all the *zip*'d GTFS schedules and put them into the folder `data/gtfs_nantes`.
 
@@ -73,13 +67,11 @@ Afterwards, you should have the following additional files in your directory str
 
 - `data/osm_nantes/pays-de-la-loire-latest.osm.pbf`
 - `data/gtfs_nantes/gtfs-tan.zip`
-- `data/gtfs_nantes/pdl44.zip`
+- `data/gtfs_nantes/pdl.zip`
 - `data/gtfs_nantes/stran-merge.gtfs.zip`
-- `data/gtfs_nantes/brevibus.gtfs.zipp`
+- `data/gtfs_nantes/brevibus.gtfs.zip`
 - `data/gtfs_nantes/lilapresquile.gtfs.zip`
-- `data/gtfs_nantes/export-ter-gtfs-last.zip`
-- `data/gtfs_nantes/export_gtfs_voyages.zip`
-- `data/gtfs_nantes/export-intercites-gtfs-last.zip`
+- `data/gtfs_nantes/sncf-tgv-intercite-ter.gtfs.zip`
 
 Note that the file names may change slightly over time as GTFS schedule are
 updated continuously.
